@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -9,11 +10,13 @@ using System.Linq;
 
 namespace Spikes
 {
-    class Program
+    static class Program
     {
+        static readonly BinaryFormatter formatter = new BinaryFormatter();
+
         static void Main(string[] args)
         {
-            Run<Tutorial3.Runner>(args);
+            Run<Tutorial4.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
@@ -35,11 +38,11 @@ namespace Spikes
             foreach (var process in processProvider.Processes)
                 StartExternalProcess(process);
 
-            var distinct = processProvider.Processes.Distinct(new ByTypeEqualityComparer<IProcess>()).ToArray();
+            var distinct = processProvider.Processes.Distinct(new ToStringEqualityComparer<IProcess>()).ToArray();
 
             for (int i = 0; i < distinct.Length; i++)
             {
-                Console.WriteLine("{0} - {1}", i+1, distinct[i].GetType().Name);
+                Console.WriteLine("{0} - {1}", i+1, distinct[i].ToString());
             }
 
             Console.WriteLine();
@@ -55,19 +58,24 @@ namespace Spikes
 
         private static void StartExternalProcess(IProcess process)
         {
-            Process.Start(Environment.GetCommandLineArgs().First(),
-                          Convert.ToBase64String(Encoding.UTF8.GetBytes(process.GetType().AssemblyQualifiedName)));
+            using (var serialized = new MemoryStream())
+            {
+                formatter.Serialize(serialized, process);
+
+                Process.Start(Environment.GetCommandLineArgs().First(), Convert.ToBase64String(serialized.GetBuffer()));
+            }
         }
 
         private static void RunProcess(IEnumerable<string> args)
         {
-            var type = Type.GetType(Encoding.UTF8.GetString(Convert.FromBase64String(args.First())));
+            using (var stream = new MemoryStream(Convert.FromBase64String(args.First())))
+            {
+                var process = (IProcess) formatter.Deserialize(stream);
 
-            Console.Title = type.ToString();
+                Console.Title = process.ToString();
 
-            var process = (IProcess) Activator.CreateInstance(type);
-
-            RunProcess(process);
+                RunProcess(process);
+            }
         }
 
         private static void RunProcess(IProcess process)

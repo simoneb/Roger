@@ -7,6 +7,7 @@ using RabbitMQ.Client.Events;
 
 namespace Tutorial2
 {
+    [Serializable]
     public class Worker : IProcess
     {
         readonly Random m_rnd = new Random();

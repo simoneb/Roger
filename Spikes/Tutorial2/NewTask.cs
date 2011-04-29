@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 
 namespace Tutorial2
 {
+    [Serializable]
     public class NewTask : IProcess
     {
         public void Start(WaitHandle waitHandle)

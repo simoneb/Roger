@@ -7,6 +7,7 @@ using RabbitMQ.Client.Events;
 
 namespace Tutorial1
 {
+    [Serializable]
     public class Receiver : IProcess
     {
         public void Start(WaitHandle waitHandle)

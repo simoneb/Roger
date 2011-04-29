@@ -7,6 +7,7 @@ using RabbitMQ.Client.Events;
 
 namespace Tutorial3
 {
+    [Serializable]
     public class Consumer : IProcess
     {
         public void Start(WaitHandle waitHandle)
@@ -22,7 +23,7 @@ namespace Tutorial3
 
                     channel.QueueBind(queue, Constants.ExchangeName, "");
 
-                    var consumer = new EventingBasicConsumer() {Model = channel};
+                    var consumer = new EventingBasicConsumer {Model = channel};
 
                     consumer.Received += ConsumerOnReceived;
 

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial2", "Tutorial2\Tuto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial3", "Tutorial3\Tutorial3.csproj", "{52788849-3FC3-48B6-BCE1-0A9A18E9BA77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial4", "Tutorial4\Tutorial4.csproj", "{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,16 @@ Global
 		{52788849-3FC3-48B6-BCE1-0A9A18E9BA77}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{52788849-3FC3-48B6-BCE1-0A9A18E9BA77}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{52788849-3FC3-48B6-BCE1-0A9A18E9BA77}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
