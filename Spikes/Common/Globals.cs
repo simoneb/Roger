@@ -2,6 +2,6 @@
 {
     public class Globals
     {
-        public static string HostName = "localhost";
+        public static string HostName = "dev.rabbitmq.com";
     }
 }

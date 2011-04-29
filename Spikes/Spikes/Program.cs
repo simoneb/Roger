@@ -13,7 +13,7 @@ namespace Spikes
     {
         static void Main(string[] args)
         {
-            Run<Tutorial2.Runner>(args);
+            Run<Tutorial3.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
@@ -35,9 +35,11 @@ namespace Spikes
             foreach (var process in processProvider.Processes)
                 StartExternalProcess(process);
 
-            for (int i = 0; i < processProvider.Processes.Count(); i++)
+            var distinct = processProvider.Processes.Distinct(new ByTypeEqualityComparer<IProcess>()).ToArray();
+
+            for (int i = 0; i < distinct.Length; i++)
             {
-                Console.WriteLine("{0} - {1}", i+1, processProvider.Processes.ElementAt(i).GetType().Name);
+                Console.WriteLine("{0} - {1}", i+1, distinct[i].GetType().Name);
             }
 
             Console.WriteLine();
@@ -46,8 +48,8 @@ namespace Spikes
             {
                 int choice;
 
-                if (int.TryParse(Console.ReadLine(), out choice) && choice <= processProvider.Processes.Count())
-                    StartExternalProcess(processProvider.Processes.ElementAt(choice-1));
+                if (int.TryParse(Console.ReadLine(), out choice) && choice <= distinct.Length)
+                    StartExternalProcess(distinct[choice-1]);
             }
         }
 
