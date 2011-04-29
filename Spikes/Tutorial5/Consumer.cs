@@ -5,16 +5,16 @@ using Common;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Tutorial4
+namespace Tutorial5
 {
     [Serializable]
     public class Consumer : IProcess
     {
-        private readonly string[] bindingKeys;
+        private readonly string bindingKey;
 
-        public Consumer(params string[] bindingKeys)
+        public Consumer(string bindingKey)
         {
-            this.bindingKeys = bindingKeys;
+            this.bindingKey = bindingKey;
         }
 
         public void Start(WaitHandle waitHandle)
@@ -24,13 +24,12 @@ namespace Tutorial4
             using (var connection = connectionFactory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct);
+                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Topic);
                 var queue = channel.QueueDeclare("", false, true, true, null);
 
-                foreach (var bindingKey in bindingKeys)
-                    channel.QueueBind(queue, Constants.ExchangeName, bindingKey);
+                channel.QueueBind(queue, Constants.ExchangeName, bindingKey);
 
-                var consumer = new EventingBasicConsumer {Model = channel};
+                var consumer = new EventingBasicConsumer { Model = channel };
 
                 consumer.Received += ConsumerOnReceived;
 
@@ -47,7 +46,7 @@ namespace Tutorial4
 
         public override string ToString()
         {
-            return base.ToString() + " " + string.Join(", ", bindingKeys);
+            return base.ToString() + " " + bindingKey;
         }
     }
 }

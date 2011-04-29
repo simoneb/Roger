@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial3", "Tutorial3\Tuto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial4", "Tutorial4\Tutorial4.csproj", "{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial5", "Tutorial5\Tutorial5.csproj", "{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,16 @@ Global
 		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D6F2AD5F-F02B-438B-AA01-704DE9FE485D}.Release|x86.ActiveCfg = Release|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0C718885-D6C9-48BE-A687-AF9E21F7ACF3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

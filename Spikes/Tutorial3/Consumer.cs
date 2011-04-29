@@ -15,22 +15,20 @@ namespace Tutorial3
             var connectionFactory = new ConnectionFactory { HostName = Globals.HostName };
 
             using (var connection = connectionFactory.CreateConnection())
+            using (var channel = connection.CreateModel())
             {
-                using (var channel = connection.CreateModel())
-                {
-                    channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Fanout);
-                    var queue = channel.QueueDeclare("", false, true, true, null);
+                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Fanout);
+                var queue = channel.QueueDeclare("", false, true, true, null);
 
-                    channel.QueueBind(queue, Constants.ExchangeName, "");
+                channel.QueueBind(queue, Constants.ExchangeName, "");
 
-                    var consumer = new EventingBasicConsumer {Model = channel};
+                var consumer = new EventingBasicConsumer {Model = channel};
 
-                    consumer.Received += ConsumerOnReceived;
+                consumer.Received += ConsumerOnReceived;
 
-                    channel.BasicConsume(queue, true, consumer);
+                channel.BasicConsume(queue, true, consumer);
 
-                    waitHandle.WaitOne();
-                }
+                waitHandle.WaitOne();
             }
         }
 

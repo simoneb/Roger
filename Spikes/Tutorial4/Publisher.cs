@@ -11,16 +11,17 @@ namespace Tutorial4
     {
         public void Start(WaitHandle waitHandle)
         {
-            var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection();
-            var model = connection.CreateModel();
-
-            model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct);
-
-            while(!waitHandle.WaitOne(TimeSpan.FromSeconds(5)))
+            using (var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection())
+            using (var model = connection.CreateModel())
             {
-                var severity = Severities.Random();
-                model.BasicPublish(Constants.ExchangeName, severity, null, GetBody(severity));
-                Console.WriteLine("Published {0} message", severity);
+                model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct);
+
+                while (!waitHandle.WaitOne(TimeSpan.FromSeconds(5)))
+                {
+                    var severity = Severities.Random();
+                    model.BasicPublish(Constants.ExchangeName, severity, null, GetBody(severity));
+                    Console.WriteLine("Published {0} message", severity);
+                }
             }
         }
 
@@ -28,6 +29,5 @@ namespace Tutorial4
         {
             return Encoding.UTF8.GetBytes(routingKey + " " + DateTime.Now.ToLongTimeString());
         }
-
     }
 }

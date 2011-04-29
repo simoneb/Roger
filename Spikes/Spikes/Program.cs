@@ -16,7 +16,7 @@ namespace Spikes
 
         static void Main(string[] args)
         {
-            Run<Tutorial4.Runner>(args);
+            Run<Tutorial5.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
@@ -81,12 +81,17 @@ namespace Spikes
         private static void RunProcess(IProcess process)
         {
             var waitHandle = new ManualResetEvent(false);
-            Task.Factory.StartNew(() => process.Start(waitHandle), TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(() => process.Start(waitHandle), TaskCreationOptions.LongRunning).ContinueWith(PrintException, TaskContinuationOptions.OnlyOnFaulted);
 
             Console.WriteLine("Press enter to exit ;)");
             Console.ReadLine();
 
             waitHandle.Set();
+        }
+
+        private static void PrintException(Task obj)
+        {
+            Console.WriteLine(obj.Exception);
         }
     }
 }
