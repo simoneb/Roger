@@ -16,7 +16,7 @@ namespace Spikes
 
         static void Main(string[] args)
         {
-            Run<Tutorial4.Runner>(args);
+            Run<Tutorial6.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
@@ -27,16 +27,16 @@ namespace Spikes
             }
             else
             {
-                StartExternalProcesses<T>();
+                SpawnProcesses<T>();
             }
         }
 
-        private static void StartExternalProcesses<T>() where T : IProcessesProvider
+        private static void SpawnProcesses<T>() where T : IProcessesProvider
         {
             var processProvider = Activator.CreateInstance<T>();
 
             foreach (var process in processProvider.Processes)
-                StartExternalProcess(process);
+                SpawnProcess(process);
 
             Console.WriteLine("Type the number corresponding to the additional instance of the process and press enter to launch:");
             Console.WriteLine();
@@ -46,6 +46,8 @@ namespace Spikes
             for (var i = 0; i < distinctProcesses.Length; i++)
                 Console.WriteLine("{0} - {1}", i + 1, distinctProcesses[i].ToString());
 
+            Console.WriteLine();
+            Console.WriteLine("Press enter to exit");
             Console.WriteLine();
 
             while (true)
@@ -58,11 +60,11 @@ namespace Spikes
                     break;
 
                 if (int.TryParse(line, out choice) && choice <= distinctProcesses.Length)
-                    StartExternalProcess(distinctProcesses[choice-1]);
+                    SpawnProcess(distinctProcesses[choice-1]);
             }
         }
 
-        private static void StartExternalProcess(IProcess process)
+        private static void SpawnProcess(IProcess process)
         {
             using (var serialized = new MemoryStream())
             {

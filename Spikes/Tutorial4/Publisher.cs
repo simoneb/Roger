@@ -14,7 +14,7 @@ namespace Tutorial4
             using (var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct);
+                model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct, false, true, null);
 
                 while (!waitHandle.WaitOne(TimeSpan.FromSeconds(5)))
                 {

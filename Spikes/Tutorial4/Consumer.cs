@@ -24,7 +24,7 @@ namespace Tutorial4
             using (var connection = connectionFactory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct);
+                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct, false, true, null);
                 var queue = channel.QueueDeclare("", false, true, true, null);
 
                 foreach (var bindingKey in bindingKeys)
