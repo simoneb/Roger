@@ -12,11 +12,11 @@ namespace Spikes
 {
     static class Program
     {
-        static readonly BinaryFormatter formatter = new BinaryFormatter();
+        static readonly BinaryFormatter Formatter = new BinaryFormatter();
 
         static void Main(string[] args)
         {
-            Run<Tutorial5.Runner>(args);
+            Run<Tutorial4.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
@@ -38,12 +38,13 @@ namespace Spikes
             foreach (var process in processProvider.Processes)
                 StartExternalProcess(process);
 
-            var distinct = processProvider.Processes.Distinct(new ToStringEqualityComparer<IProcess>()).ToArray();
+            Console.WriteLine("Type the number corresponding to the additional instance of the process and press enter to launch:");
+            Console.WriteLine();
 
-            for (int i = 0; i < distinct.Length; i++)
-            {
-                Console.WriteLine("{0} - {1}", i+1, distinct[i].ToString());
-            }
+            var distinctProcesses = processProvider.Processes.Distinct(new ToStringEqualityComparer<IProcess>()).ToArray();
+
+            for (var i = 0; i < distinctProcesses.Length; i++)
+                Console.WriteLine("{0} - {1}", i + 1, distinctProcesses[i].ToString());
 
             Console.WriteLine();
 
@@ -51,8 +52,13 @@ namespace Spikes
             {
                 int choice;
 
-                if (int.TryParse(Console.ReadLine(), out choice) && choice <= distinct.Length)
-                    StartExternalProcess(distinct[choice-1]);
+                var line = Console.ReadLine();
+
+                if (string.Empty.Equals(line))
+                    break;
+
+                if (int.TryParse(line, out choice) && choice <= distinctProcesses.Length)
+                    StartExternalProcess(distinctProcesses[choice-1]);
             }
         }
 
@@ -60,7 +66,7 @@ namespace Spikes
         {
             using (var serialized = new MemoryStream())
             {
-                formatter.Serialize(serialized, process);
+                Formatter.Serialize(serialized, process);
 
                 Process.Start(Environment.GetCommandLineArgs().First(), Convert.ToBase64String(serialized.GetBuffer()));
             }
@@ -70,7 +76,7 @@ namespace Spikes
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(args.First())))
             {
-                var process = (IProcess) formatter.Deserialize(stream);
+                var process = (IProcess) Formatter.Deserialize(stream);
 
                 Console.Title = process.ToString();
 
@@ -83,7 +89,8 @@ namespace Spikes
             var waitHandle = new ManualResetEvent(false);
             Task.Factory.StartNew(() => process.Start(waitHandle), TaskCreationOptions.LongRunning).ContinueWith(PrintException, TaskContinuationOptions.OnlyOnFaulted);
 
-            Console.WriteLine("Press enter to exit ;)");
+            Console.WriteLine("Press enter to exit");
+            Console.WriteLine();
             Console.ReadLine();
 
             waitHandle.Set();

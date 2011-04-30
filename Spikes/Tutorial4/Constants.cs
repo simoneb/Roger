@@ -1,7 +1,9 @@
-﻿namespace Tutorial4
+﻿using System;
+
+namespace Tutorial4
 {
     static class Constants
     {
-        public const string ExchangeName = "tutorial4_exchange";
+        public static readonly string ExchangeName = "tutorial4_exchange_" + Environment.UserName;
     }
 }

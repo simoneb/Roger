@@ -19,7 +19,7 @@ namespace Tutorial5
             using (var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Topic);
+                model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Topic, false, true, null);
 
                 while (!waitHandle.WaitOne(TimeSpan.FromSeconds(5)))
                 {

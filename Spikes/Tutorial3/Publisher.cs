@@ -16,7 +16,7 @@ namespace Tutorial3
             using (var connection = connectionFactory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Fanout);
+                channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Fanout, false, true, null);
 
                 while (!waitHandle.WaitOne(TimeSpan.FromSeconds(5)))
                 {
