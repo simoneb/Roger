@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using ZMQ;
@@ -9,20 +10,26 @@ namespace ZeroMQ_Guide.Guide
     {
         public override void Run()
         {
+            Run(Publisher);
+
+            Thread.Sleep(100);
+
             Run(Worker, 10);
-            Run(VentilatorMethod);
+            Run(Sink);
         }
 
-        private static void VentilatorMethod()
+        private static void Publisher()
         {
             using (var context = new Context(1))
             using (var sender = context.Socket(SocketType.PUSH))
             {
-                sender.Bind("tcp://*.5557");
+                sender.Bind("tcp://*:5557");
 
                 Console.WriteLine("Press enter when workers are ready");
                 Console.ReadLine();
                 Console.WriteLine("Sending tasks to workers...");
+
+                sender.Send("0", Encoding.UTF8);
 
                 var rnd = new Random();
 
@@ -30,21 +37,61 @@ namespace ZeroMQ_Guide.Guide
 
                 for (int taskNo = 0; taskNo < 100; taskNo++)
                 {
-                    int workload = rnd.Next(100) + 1;
+                    int workload = rnd.Next(1, 100);
                     totalMs += workload;
 
                     sender.Send(workload.ToString(), Encoding.UTF8);
                 }
 
                 Console.WriteLine("Total expected cost: {0} msec", totalMs);
-
-                Thread.Sleep(10);
             }
         }
 
-        private void Worker()
+        private static void Worker(int number)
         {
-            new Context();
+            using (var context = new Context(1))
+            using(var receiver = context.Socket(SocketType.PULL))
+            using(var sender = context.Socket(SocketType.PUSH))
+            {
+                receiver.Connect("tcp://localhost:5557");
+                sender.Connect("tcp://localhost:5558");
+
+                Console.WriteLine(string.Format("Worker {0} ready to receive", number));
+
+                while (true)
+                {
+                    var message = receiver.Recv(Encoding.UTF8);
+
+                    Thread.Sleep(int.Parse(message));
+
+                    sender.Send("", Encoding.UTF8);
+                }
+            }
+        }
+
+        private static void Sink()
+        {
+            using (var context = new Context(1))
+            using (var receiver = context.Socket(SocketType.PULL))
+            {
+                receiver.Bind("tcp://*:5558");
+
+                receiver.Recv(Encoding.UTF8);
+
+                var watch = Stopwatch.StartNew();
+
+                for (int taskNo = 0; taskNo < 100; taskNo++)
+                {
+                    receiver.Recv(Encoding.UTF8);
+
+                    if((taskNo/10)*10 == taskNo)
+                        Console.Write(":");
+                    else
+                        Console.Write(".");
+                }
+
+                Console.WriteLine("Total elapsed time: {0} msec", watch.ElapsedMilliseconds);
+            }
         }
     }
 }

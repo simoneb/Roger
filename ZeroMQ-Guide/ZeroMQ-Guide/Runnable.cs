@@ -17,10 +17,13 @@ namespace ZeroMQ_Guide
 
         public abstract void Run();
 
-        protected void Run(Action action, int number)
+        protected void Run(Action<int> action, int number)
         {
             for (int i = 0; i < number; i++)
-                Run(action);
+            {
+                int copy = i;
+                Run(() => action(copy));
+            }
         }
     }
 }
