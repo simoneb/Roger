@@ -10,7 +10,8 @@ namespace ZeroMQ_Guide
         static void Main(string[] args)
         {
             using (var context = new Context())
-            using (Socket subscriber = context.Socket(SocketType.SUB), publisher = context.Socket(SocketType.PUB))
+            using (Socket subscriber = context.Socket(SocketType.SUB), 
+                          publisher = context.Socket(SocketType.PUB))
             {
                 publisher.Bind("tcp://127.0.0.1:5556");
 

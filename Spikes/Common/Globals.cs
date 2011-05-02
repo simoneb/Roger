@@ -1,7 +1,7 @@
 ﻿namespace Common
 {
-    public class Globals
+    public static class Globals
     {
-        public static string HostName = "dev.rabbitmq.com";
+        public const string HostName = "dev.rabbitmq.com";
     }
 }

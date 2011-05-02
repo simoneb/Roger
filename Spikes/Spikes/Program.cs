@@ -16,7 +16,7 @@ namespace Spikes
 
         static void Main(string[] args)
         {
-            Run<Tutorial6.Runner>(args);
+            Run<Tutorial5.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
