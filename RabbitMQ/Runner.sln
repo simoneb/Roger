@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spikes", "Spikes\Spikes.csproj", "{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial1", "Tutorial1\Tutorial1.csproj", "{94C74F05-EE98-4E6C-A896-872032527332}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{540E7440-1705-4B6B-87A9-99DFA0C366A7}"
@@ -17,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial5", "Tutorial5\Tuto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial6", "Tutorial6\Tutorial6.csproj", "{F602ABE7-309C-4DC6-A266-04042A48623F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,16 +27,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|x86.ActiveCfg = Debug|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|x86.Build.0 = Debug|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|Any CPU.ActiveCfg = Release|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|Mixed Platforms.Build.0 = Release|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|x86.ActiveCfg = Release|x86
-		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|x86.Build.0 = Release|x86
 		{94C74F05-EE98-4E6C-A896-872032527332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94C74F05-EE98-4E6C-A896-872032527332}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94C74F05-EE98-4E6C-A896-872032527332}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -107,6 +97,16 @@ Global
 		{F602ABE7-309C-4DC6-A266-04042A48623F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F602ABE7-309C-4DC6-A266-04042A48623F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F602ABE7-309C-4DC6-A266-04042A48623F}.Release|x86.ActiveCfg = Release|Any CPU
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|x86.ActiveCfg = Debug|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Debug|x86.Build.0 = Debug|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|Any CPU.ActiveCfg = Release|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|Mixed Platforms.Build.0 = Release|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|x86.ActiveCfg = Release|x86
+		{076E9F8B-9C2E-4043-8EBF-9BA88E09A0EC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

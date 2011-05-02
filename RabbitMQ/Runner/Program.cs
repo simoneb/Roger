@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Common;
 using System.Linq;
 
-namespace Spikes
+namespace Runner
 {
     static class Program
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Spikes
+namespace Runner
 {
     internal class ToStringEqualityComparer<T> : IEqualityComparer<T>
     {
