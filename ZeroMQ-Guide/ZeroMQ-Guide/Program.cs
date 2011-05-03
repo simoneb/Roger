@@ -7,7 +7,7 @@ namespace ZeroMQ_Guide
     {
         static void Main(string[] args)
         {
-            Run<VentilatorWithKillSignal>();
+            Run<WeatherProxy>();
             Console.ReadLine();
         }
 

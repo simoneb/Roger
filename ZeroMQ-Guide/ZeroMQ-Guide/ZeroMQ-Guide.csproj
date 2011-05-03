@@ -48,6 +48,7 @@
     <Compile Include="Guide\04-Ventilator.cs" />
     <Compile Include="Guide\05-Polling.cs" />
     <Compile Include="Guide\06-VentilatorWithKillSignal.cs" />
+    <Compile Include="Guide\07-WeatherProxy.cs" />
     <Compile Include="Intro.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="Program.cs" />
