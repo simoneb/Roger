@@ -51,7 +51,7 @@ namespace ZeroMQ_Guide.Guide
             }
         }
 
-        private static void Broker()
+        protected virtual void Broker()
         {
             using (var context = new Context(1))
             using (var frontend = context.Socket(SocketType.XREP))

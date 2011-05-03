@@ -50,6 +50,10 @@
     <Compile Include="Guide\06-VentilatorWithKillSignal.cs" />
     <Compile Include="Guide\07-WeatherProxy.cs" />
     <Compile Include="Guide\08-ReqRepBroker.cs" />
+    <Compile Include="Guide\10-MTHelloWorld.cs" />
+    <Compile Include="Guide\09-ReqRepBrokerWithQueueDevice.cs" />
+    <Compile Include="Guide\11-ThreadSignallingWithPAIR.cs" />
+    <Compile Include="Guide\12-NodeCoordination.cs" />
     <Compile Include="Intro.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="Program.cs" />

@@ -16,6 +16,11 @@ namespace ZeroMQ_Guide.Guide
         private static void Client()
         {
             using (var context = new Context(1))
+                Client(context);
+        }
+
+        public static void Client(Context context)
+        {
             using (var requester = context.Socket(SocketType.REQ))
             {
                 requester.Connect("tcp://localhost:5555");
@@ -33,19 +38,21 @@ namespace ZeroMQ_Guide.Guide
         private static void Server()
         {
             using (var context = new Context(1))
-            using (var responder = context.Socket(SocketType.REP))
             {
-                responder.Bind("tcp://*:5555");
-
-                while (true)
+                using (var responder = context.Socket(SocketType.REP))
                 {
-                    var message = responder.Recv(Encoding.UTF8);
+                    responder.Bind("tcp://*:5555");
 
-                    Console.WriteLine("Server received {0}", message);
+                    while (true)
+                    {
+                        var message = responder.Recv(Encoding.UTF8);
 
-                    Thread.Sleep(1000);
+                        Console.WriteLine("Server received {0}", message);
 
-                    responder.Send("World", Encoding.UTF8);
+                        Thread.Sleep(1000);
+
+                        responder.Send("World", Encoding.UTF8);
+                    }
                 }
             }
         }

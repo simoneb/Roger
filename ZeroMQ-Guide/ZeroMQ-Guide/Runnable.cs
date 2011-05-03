@@ -19,16 +19,26 @@ namespace ZeroMQ_Guide
 
         protected static void Run(int repetitions, Action<int> action)
         {
-            for (int i = 0; i < repetitions; i++)
+            Run(repetitions, (i, @null) => action(i), Null.Value);
+        }
+
+        protected static void Run<T>(int repetitions, Action<int, T> action, T argument)
+        {
+            for (var i = 0; i < repetitions; i++)
             {
-                int copy = i;
-                Run(() => action(copy));
+                var copy = i;
+                Run(() => action(copy, argument));
             }
         }
 
         protected static void Run<T>(Action<T> action, T argument)
         {
             Run(() => action(argument));
+        }
+
+        public class Null
+        {
+            public static readonly Null Value = new Null();
         }
     }
 }
