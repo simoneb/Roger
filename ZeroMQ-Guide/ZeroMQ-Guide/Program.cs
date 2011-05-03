@@ -7,7 +7,7 @@ namespace ZeroMQ_Guide
     {
         static void Main()
         {
-            Run<WeatherProxy>();
+            Run<ReqRepBroker>();
             Console.ReadLine();
         }
 
