@@ -5,7 +5,7 @@ namespace ZeroMQ_Guide
 {
     public abstract class Runnable : IRunnable
     {
-        protected void Run(Action action)
+        protected static void Run(Action action)
         {
             Task.Factory.StartNew(action, TaskCreationOptions.LongRunning).ContinueWith(DisplayException, TaskContinuationOptions.OnlyOnFaulted);
         }
@@ -17,13 +17,18 @@ namespace ZeroMQ_Guide
 
         public abstract void Run();
 
-        protected void Run(Action<int> action, int number)
+        protected static void Run(int repetitions, Action<int> action)
         {
-            for (int i = 0; i < number; i++)
+            for (int i = 0; i < repetitions; i++)
             {
                 int copy = i;
                 Run(() => action(copy));
             }
+        }
+
+        protected static void Run<T>(Action<T> action, T argument)
+        {
+            Run(() => action(argument));
         }
     }
 }

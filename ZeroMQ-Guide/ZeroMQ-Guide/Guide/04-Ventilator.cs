@@ -11,12 +11,12 @@ namespace ZeroMQ_Guide.Guide
         public override void Run()
         {
             EventWaitHandle handle = new ManualResetEvent(false);
-            Run(() => Publisher(handle));
+            Run(Publisher, handle);
 
-
+            // let publisher bind its socket
             Thread.Sleep(100);
 
-            Run(Worker, 10);
+            Run(10, Worker);
 
             Console.WriteLine("Press enter when workers are ready");
             Console.ReadLine();
@@ -31,7 +31,7 @@ namespace ZeroMQ_Guide.Guide
             Publisher(new ManualResetEvent(true));
         }
 
-        public static void Publisher(WaitHandle handle)
+        private static void Publisher(WaitHandle handle)
         {
             using (var context = new Context(1))
             using (var sender = context.Socket(SocketType.PUSH))
@@ -58,7 +58,7 @@ namespace ZeroMQ_Guide.Guide
             }
         }
 
-        private static void Worker(int number)
+        protected virtual void Worker(int repetitionNumber)
         {
             using (var context = new Context(1))
             using(var receiver = context.Socket(SocketType.PULL))
@@ -67,7 +67,7 @@ namespace ZeroMQ_Guide.Guide
                 receiver.Connect("tcp://localhost:5557");
                 sender.Connect("tcp://localhost:5558");
 
-                Console.WriteLine(string.Format("Worker {0} ready to receive", number));
+                Console.WriteLine("Worker {0} ready to receive", repetitionNumber);
 
                 while (true)
                 {
@@ -75,25 +75,30 @@ namespace ZeroMQ_Guide.Guide
 
                     Thread.Sleep(int.Parse(message));
 
-                    sender.Send("", Encoding.UTF8);
+                    sender.Send("ignored", Encoding.UTF8);
                 }
             }
         }
 
-        private static void Sink()
+        private void Sink()
         {
             using (var context = new Context(1))
+            SinkImpl(context);
+        }
+
+        protected virtual void SinkImpl(Context context)
+        {
             using (var receiver = context.Socket(SocketType.PULL))
             {
                 receiver.Bind("tcp://*:5558");
 
-                receiver.Recv(Encoding.UTF8);
+                receiver.Recv();
 
                 var watch = Stopwatch.StartNew();
 
                 for (int taskNo = 0; taskNo < 100; taskNo++)
                 {
-                    receiver.Recv(Encoding.UTF8);
+                    receiver.Recv();
 
                     if((taskNo/10)*10 == taskNo)
                         Console.Write(":");
