@@ -7,7 +7,7 @@ namespace ZeroMQ_Guide
     {
         static void Main()
         {
-            Run<NodeCoordination>();
+            Run<MessageEnvelopes>();
             Console.ReadLine();
         }
 

@@ -54,6 +54,7 @@
     <Compile Include="Guide\09-ReqRepBrokerWithQueueDevice.cs" />
     <Compile Include="Guide\11-ThreadSignallingWithPAIR.cs" />
     <Compile Include="Guide\12-NodeCoordination.cs" />
+    <Compile Include="Guide\13-MessageEnvelopes.cs" />
     <Compile Include="Intro.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="Program.cs" />
@@ -65,6 +66,12 @@
       <Link>libzmq.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ZeroMQExtensions\ZeroMQExtensions\ZeroMQExtensions.csproj">
+      <Project>{6DA36EE7-4646-422A-92F4-38D7A3B0660F}</Project>
+      <Name>ZeroMQExtensions</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -13,11 +13,11 @@ namespace ZeroMQ_Guide
             using (Socket subscriber = context.Socket(SocketType.SUB),
                           publisher = context.Socket(SocketType.PUB))
             {
-                publisher.Bind("tcp://127.0.0.1:5556");
+                publisher.Bind("tcp://*:5556");
 
                 Thread.Sleep(200);
 
-                subscriber.Connect("tcp://127.0.0.1:5556");
+                subscriber.Connect("tcp://localhost:5556");
                 subscriber.Subscribe("NASDAQ", Encoding.UTF8);
 
                 while (true)
