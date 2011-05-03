@@ -37,7 +37,7 @@ namespace ZeroMQ_Guide.Guide
             }
         }
 
-        private static void Publisher()
+        public static void Publisher()
         {
             using (var context = new Context(1))
             using (var publisher = context.Socket(SocketType.PUB))
@@ -49,7 +49,7 @@ namespace ZeroMQ_Guide.Guide
 
                 while (true)
                 {
-                    var zip = rnd.Next(9990, 10010);
+                    var zip = rnd.Next(9000, 11000);
                     var temp = rnd.Next(215) - 80;
                     var relHumidity = rnd.Next(50) + 10;
 

@@ -46,6 +46,7 @@
     <Compile Include="Guide\02-Version.cs" />
     <Compile Include="Guide\03-Weather.cs" />
     <Compile Include="Guide\04-Ventilator.cs" />
+    <Compile Include="Guide\05-Polling.cs" />
     <Compile Include="Intro.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="Program.cs" />

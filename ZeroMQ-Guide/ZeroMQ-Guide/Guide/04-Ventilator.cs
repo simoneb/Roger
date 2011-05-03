@@ -10,24 +10,35 @@ namespace ZeroMQ_Guide.Guide
     {
         public override void Run()
         {
-            Run(Publisher);
+            EventWaitHandle handle = new ManualResetEvent(false);
+            Run(() => Publisher(handle));
+
 
             Thread.Sleep(100);
 
             Run(Worker, 10);
+
+            Console.WriteLine("Press enter when workers are ready");
+            Console.ReadLine();
+            handle.Set();
+            Console.WriteLine("Sending tasks to workers...");
+
             Run(Sink);
         }
 
-        private static void Publisher()
+        public static void Publisher()
+        {
+            Publisher(new ManualResetEvent(true));
+        }
+
+        public static void Publisher(WaitHandle handle)
         {
             using (var context = new Context(1))
             using (var sender = context.Socket(SocketType.PUSH))
             {
                 sender.Bind("tcp://*:5557");
 
-                Console.WriteLine("Press enter when workers are ready");
-                Console.ReadLine();
-                Console.WriteLine("Sending tasks to workers...");
+                handle.WaitOne();
 
                 sender.Send("0", Encoding.UTF8);
 

@@ -7,7 +7,7 @@ namespace ZeroMQ_Guide
     {
         static void Main(string[] args)
         {
-            Run<Ventilator>();
+            Run<Polling>();
             Console.ReadLine();
         }
 
