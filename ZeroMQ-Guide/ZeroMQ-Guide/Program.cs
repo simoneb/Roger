@@ -5,7 +5,7 @@ namespace ZeroMQ_Guide
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Run<WeatherProxy>();
             Console.ReadLine();
