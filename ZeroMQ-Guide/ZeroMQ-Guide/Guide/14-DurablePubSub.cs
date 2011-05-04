@@ -52,7 +52,7 @@ namespace ZeroMQ_Guide.Guide
         {
             using (var context = new Context(1))
             using (var sync = context.Push().ConnectedTo("tcp://localhost:5564"))
-            using (var subscriber = context.Sub().WithIdentity("Hello").SubscribedToAnything().ConnectedTo("tcp://localhost:5565"))
+            using (var subscriber = context.Sub().WithIdentity("Hello", Encoding.Unicode).SubscribedToAnything().ConnectedTo("tcp://localhost:5565"))
             {
                 sync.Send();
 

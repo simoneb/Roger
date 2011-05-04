@@ -4,9 +4,9 @@ namespace ZeroMQExtensions
 {
     public static class ContextExtensions
     {
-        public static IPubSocket Pub(this Context context)
+        public static ISocket Pub(this Context context)
         {
-            return new PubSocket(context.Socket(SocketType.PUB));
+            return new SocketImpl(context.Socket(SocketType.PUB));
         }
 
         public static ISubSocket Sub(this Context context)
@@ -14,14 +14,24 @@ namespace ZeroMQExtensions
             return new SubSocket(context.Socket(SocketType.SUB));
         }
 
-        public static IPullSocket Pull(this Context context)
+        public static ISocket Pull(this Context context)
         {
-            return new PullSocket(context.Socket(SocketType.PULL));
+            return new SocketImpl(context.Socket(SocketType.PULL));
         }
 
-        public static IPushSocket Push(this Context context)
+        public static ISocket Push(this Context context)
         {
-            return new PushSocket(context.Socket(SocketType.PUSH));
+            return new SocketImpl(context.Socket(SocketType.PUSH));
+        }
+
+        public static ISocket Router(this Context context)
+        {
+            return new SocketImpl(context.Socket(SocketType.XREP));
+        }
+
+        public static ISocket Req(this Context context)
+        {
+            return new SocketImpl(context.Socket(SocketType.REQ));
         }
     }
 }

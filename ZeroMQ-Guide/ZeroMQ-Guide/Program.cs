@@ -7,7 +7,7 @@ namespace ZeroMQ_Guide
     {
         static void Main()
         {
-            Run<DurablePubSub>();
+            Run<Identity>();
             Console.ReadLine();
         }
 

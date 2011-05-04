@@ -1,7 +1,9 @@
 using System;
 using System.Text;
+using System.Threading;
 using ZMQ;
 using System.Linq;
+using ZeroMQExtensions;
 
 namespace ZeroMQ_Guide.Guide
 {
@@ -15,11 +17,15 @@ namespace ZeroMQ_Guide.Guide
 
         public static void Publisher()
         {
+            Publisher(new ManualResetEvent(true));
+        }
+
+        public static void Publisher(WaitHandle handle)
+        {
             using (var context = new Context(1))
-            using (var publisher = context.Socket(SocketType.PUB))
+            using (var publisher = context.Pub().BoundTo("tcp://*:5556"))
             {
-                publisher.Bind("tcp://*:5556");
-                //publisher.Bind("ipc://weather.ipc");
+                handle.WaitOne();
 
                 var rnd = new Random();
 
@@ -37,11 +43,8 @@ namespace ZeroMQ_Guide.Guide
         public static void Subscriber(string address)
         {
             using (var context = new Context(1))
-            using (var subscriber = context.Socket(SocketType.SUB))
+            using (var subscriber = context.Sub().SubscribedTo("10001 ", Encoding.UTF8).ConnectedTo(address))
             {
-                subscriber.Subscribe("10001 ", Encoding.UTF8);
-                subscriber.Connect(address);
-
                 int totalTemp = 0;
 
                 int updateNo;
@@ -54,7 +57,7 @@ namespace ZeroMQ_Guide.Guide
                     totalTemp += values.ElementAt(1);
                 }
 
-                Console.WriteLine("Average temp for zipcode was {0}", totalTemp/updateNo);
+                Console.WriteLine("Average temp for zipcode was {0}", (double)totalTemp/updateNo);
             }
         }
     }

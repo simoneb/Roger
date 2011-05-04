@@ -1,6 +1,6 @@
-using System.Text;
 using System.Threading;
 using ZMQ;
+using ZeroMQExtensions;
 
 namespace ZeroMQ_Guide.Guide
 {
@@ -8,34 +8,28 @@ namespace ZeroMQ_Guide.Guide
     {
         public override void Run()
         {
+            var handle = new ManualResetEvent(false);
+            Run(Weather.Publisher, handle);
+
+            Run(Proxy);
             Run(Weather.Subscriber, "tcp://localhost:5556");
             Run(Weather.Subscriber, "tcp://localhost:55567");
 
-            Thread.Sleep(100);
-
-            Run(Proxy);
-
             Thread.Sleep(1000);
 
-            Run(Weather.Publisher);
+            handle.Set();
         }
 
         private static void Proxy()
         {
             using (var context = new Context(1))
-            using (var frontend = context.Socket(SocketType.SUB))
-            using (var backend = context.Socket(SocketType.PUB))
+            using (var frontend = context.Sub().SubscribedToAnything().ConnectedTo("tcp://localhost:5556"))
+            using (var backend = context.Pub().BoundTo("tcp://*:55567"))
             {
-                frontend.Connect("tcp://localhost:5556");
-                frontend.Subscribe("", Encoding.UTF8);
-
-                backend.Bind("tcp://*:55567");
+                Thread.Sleep(1000);
 
                 while (true)
-                {
-                    foreach (var message in frontend.RecvAll())
-                        backend.Send(message);
-                }
+                    backend.Send(frontend.Recv());
             }
         }
     }

@@ -5,11 +5,11 @@ using ZMQ;
 
 namespace ZeroMQExtensions
 {
-    internal abstract class SocketImpl : ISocket
+    internal class SocketImpl : ISocket
     {
-        protected readonly Socket Socket;
+        public Socket Socket { get; private set; }
 
-        protected SocketImpl(Socket socket)
+        internal SocketImpl(Socket socket)
         {
             Socket = socket;
         }

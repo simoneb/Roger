@@ -57,6 +57,7 @@ namespace ZeroMQExtensions
         IntPtr FD { get; }
         IOMultiPlex[] Events { get; }
         string Address { get; }
+        Socket Socket { get; }
         event PollHandler PollInHandler;
         event PollHandler PollOutHandler;
         event PollHandler PollErrHandler;

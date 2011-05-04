@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ZMQ;
 
 namespace ZeroMQExtensions
 {
@@ -40,10 +41,15 @@ namespace ZeroMQExtensions
             return socket;
         }
 
-        public static T WithIdentity<T>(this T socket, string identity) where T : ISocket
+        public static T WithIdentity<T>(this T socket, string identity, Encoding encoding) where T : ISocket
         {
-            socket.StringToIdentity(identity, Encoding.Unicode);
+            socket.StringToIdentity(identity, encoding);
             return socket;
+        }
+
+        public static void Dump(this ISocket socket, Encoding encoding)
+        {
+            ZHelpers.Dump(socket.Socket, encoding);
         }
     }
 }
