@@ -17,7 +17,7 @@ namespace ZeroMQ_Guide.Guide
         private static void Publisher()
         {
             using (var context = new Context(1))
-            using (var socket = context.Pub().BoundTo("tcp://*:5563"))
+            using (var socket = context.Pub().Bind("tcp://*:5563"))
             {
                 while (true)
                 {
@@ -34,7 +34,7 @@ namespace ZeroMQ_Guide.Guide
         private static void Subscriber()
         {
             using (var context = new Context(1))
-            using (var socket = context.Sub().ConnectedTo("tcp://localhost:5563").SubscribedTo("B", Encoding.UTF8))
+            using (var socket = context.Sub().Connect("tcp://localhost:5563").Subscribe("B"))
             {
                 while (true)
                 {

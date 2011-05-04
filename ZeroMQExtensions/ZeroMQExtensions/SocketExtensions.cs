@@ -1,31 +1,30 @@
-﻿using System.Text;
-using ZMQ;
+﻿using ZMQ;
 
 namespace ZeroMQExtensions
 {
     public static class SocketExtensions
     {
-        public static T BoundTo<T>(this T socket, string address) where T : ISocket
+        public static T Bind<T>(this T socket, string address) where T : ISocket
         {
-            socket.Bind(address);
+            socket.Socket.Bind(address);
             return socket;
         }
 
-        public static T ConnectedTo<T>(this T socket, string address) where T : ISocket
+        public static T Connect<T>(this T socket, string address) where T : ISocket
         {
-            socket.Connect(address);
+            socket.Socket.Connect(address);
             return socket;
         }
 
-        public static ISubSocket SubscribedTo(this ISubSocket socket, string filter, Encoding encoding)
+        public static ISubSocket Subscribe(this ISubSocket socket, string filter)
         {
-            socket.Subscribe(filter, encoding);
+            socket.Socket.Subscribe(filter, ZeroMQ.DefaultEncoding);
             return socket;
         }
 
-        public static ISubSocket SubscribedToAnything(this ISubSocket socket)
+        public static ISubSocket SubscribeAll(this ISubSocket socket)
         {
-            socket.Subscribe(new byte[0]);
+            socket.Socket.Subscribe(new byte[0]);
             return socket;
         }
 
@@ -41,15 +40,20 @@ namespace ZeroMQExtensions
             return socket;
         }
 
-        public static T WithIdentity<T>(this T socket, string identity, Encoding encoding) where T : ISocket
+        public static T Identity<T>(this T socket, string identity) where T : ISocket
         {
-            socket.StringToIdentity(identity, encoding);
+            socket.Socket.StringToIdentity(identity, ZeroMQ.DefaultEncoding);
             return socket;
         }
 
-        public static void Dump(this ISocket socket, Encoding encoding)
+        public static void Send(this ISocket socket, string message)
         {
-            ZHelpers.Dump(socket.Socket, encoding);
+            socket.Send(message, ZeroMQ.DefaultEncoding);
+        }
+
+        public static void Dump(this ISocket socket)
+        {
+            ZHelpers.Dump(socket.Socket, ZeroMQ.DefaultEncoding);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using ZeroMQExtensions;
 using ZMQ;
 
 namespace ZeroMQ_Guide.Guide
@@ -34,13 +35,11 @@ namespace ZeroMQ_Guide.Guide
         private static void Publisher(WaitHandle handle)
         {
             using (var context = new Context(1))
-            using (var sender = context.Socket(SocketType.PUSH))
+            using (var sender = context.Push().Bind("tcp://*:5557"))
             {
-                sender.Bind("tcp://*:5557");
-
                 handle.WaitOne();
 
-                sender.Send("0", Encoding.UTF8);
+                sender.Send("0");
 
                 var rnd = new Random();
 
@@ -51,7 +50,7 @@ namespace ZeroMQ_Guide.Guide
                     int workload = rnd.Next(1, 100);
                     totalMs += workload;
 
-                    sender.Send(workload.ToString(), Encoding.UTF8);
+                    sender.Send(workload.ToString());
                 }
 
                 Console.WriteLine("Total expected cost: {0} msec", totalMs);
@@ -61,12 +60,9 @@ namespace ZeroMQ_Guide.Guide
         protected virtual void Worker(int repetitionNumber)
         {
             using (var context = new Context(1))
-            using(var receiver = context.Socket(SocketType.PULL))
-            using(var sender = context.Socket(SocketType.PUSH))
+            using (var receiver = context.Pull().Connect("tcp://localhost:5557"))
+            using (var sender = context.Push().Connect("tcp://localhost:5558"))
             {
-                receiver.Connect("tcp://localhost:5557");
-                sender.Connect("tcp://localhost:5558");
-
                 Console.WriteLine("Worker {0} ready to receive", repetitionNumber);
 
                 while (true)
@@ -75,7 +71,7 @@ namespace ZeroMQ_Guide.Guide
 
                     Thread.Sleep(int.Parse(message));
 
-                    sender.Send("ignored", Encoding.UTF8);
+                    sender.Send("ignored");
                 }
             }
         }
@@ -83,15 +79,13 @@ namespace ZeroMQ_Guide.Guide
         private void Sink()
         {
             using (var context = new Context(1))
-            SinkImpl(context);
+                SinkImpl(context);
         }
 
         protected virtual void SinkImpl(Context context)
         {
-            using (var receiver = context.Socket(SocketType.PULL))
+            using (var receiver = context.Pull().Bind("tcp://*:5558"))
             {
-                receiver.Bind("tcp://*:5558");
-
                 receiver.Recv();
 
                 var watch = Stopwatch.StartNew();

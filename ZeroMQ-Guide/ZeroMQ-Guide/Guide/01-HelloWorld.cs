@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using ZMQ;
+using ZeroMQExtensions;
 
 namespace ZeroMQ_Guide.Guide
 {
@@ -21,14 +22,12 @@ namespace ZeroMQ_Guide.Guide
 
         public static void Client(Context context)
         {
-            using (var requester = context.Socket(SocketType.REQ))
+            using (var requester = context.Req().Connect("tcp://localhost:5555"))
             {
-                requester.Connect("tcp://localhost:5555");
-
                 var requestNo = 0;
                 while (requestNo++ < 10)
                 {
-                    requester.Send("Hello", Encoding.UTF8);
+                    requester.Send("Hello");
 
                     Console.WriteLine("Client received {0}", requester.Recv(Encoding.UTF8));
                 }
@@ -38,21 +37,17 @@ namespace ZeroMQ_Guide.Guide
         private static void Server()
         {
             using (var context = new Context(1))
+            using (var responder = context.Rep().Bind("tcp://*:5555"))
             {
-                using (var responder = context.Socket(SocketType.REP))
+                while (true)
                 {
-                    responder.Bind("tcp://*:5555");
+                    var message = responder.Recv(Encoding.UTF8);
 
-                    while (true)
-                    {
-                        var message = responder.Recv(Encoding.UTF8);
+                    Console.WriteLine("Server received {0}", message);
 
-                        Console.WriteLine("Server received {0}", message);
+                    Thread.Sleep(1000);
 
-                        Thread.Sleep(1000);
-
-                        responder.Send("World", Encoding.UTF8);
-                    }
+                    responder.Send("World", Encoding.UTF8);
                 }
             }
         }

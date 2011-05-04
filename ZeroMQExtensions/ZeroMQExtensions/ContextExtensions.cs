@@ -33,5 +33,20 @@ namespace ZeroMQExtensions
         {
             return new SocketImpl(context.Socket(SocketType.REQ));
         }
+
+        public static ISocket Rep(this Context context)
+        {
+            return new SocketImpl(context.Socket(SocketType.REP));
+        }
+
+        public static ISubSocket Sub(this Context context, string identity)
+        {
+            return Sub(context).Identity(identity);
+        }
+
+        public static ISocket Req(this Context context, string identity)
+        {
+            return Req(context).Identity(identity);
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace ZeroMQ_Guide.Guide
         public static void Publisher(WaitHandle handle)
         {
             using (var context = new Context(1))
-            using (var publisher = context.Pub().BoundTo("tcp://*:5556"))
+            using (var publisher = context.Pub().Bind("tcp://*:5556"))
             {
                 handle.WaitOne();
 
@@ -35,7 +35,7 @@ namespace ZeroMQ_Guide.Guide
                     var temp = rnd.Next(215) - 80;
                     var relHumidity = rnd.Next(50) + 10;
 
-                    publisher.Send(string.Format("{0} {1} {2}", zip, temp, relHumidity), Encoding.UTF8);
+                    publisher.Send(string.Format("{0} {1} {2}", zip, temp, relHumidity));
                 }
             }
         }
@@ -43,7 +43,7 @@ namespace ZeroMQ_Guide.Guide
         public static void Subscriber(string address)
         {
             using (var context = new Context(1))
-            using (var subscriber = context.Sub().SubscribedTo("10001 ", Encoding.UTF8).ConnectedTo(address))
+            using (var subscriber = context.Sub().Subscribe("10001 ").Connect(address))
             {
                 int totalTemp = 0;
 

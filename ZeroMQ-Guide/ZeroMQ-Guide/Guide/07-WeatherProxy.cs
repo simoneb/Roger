@@ -23,8 +23,8 @@ namespace ZeroMQ_Guide.Guide
         private static void Proxy()
         {
             using (var context = new Context(1))
-            using (var frontend = context.Sub().SubscribedToAnything().ConnectedTo("tcp://localhost:5556"))
-            using (var backend = context.Pub().BoundTo("tcp://*:55567"))
+            using (var frontend = context.Sub().SubscribeAll().Connect("tcp://localhost:5556"))
+            using (var backend = context.Pub().Bind("tcp://*:55567"))
             {
                 Thread.Sleep(1000);
 

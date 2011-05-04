@@ -14,10 +14,6 @@ namespace ZeroMQExtensions
         void SetSockOpt(SocketOpt option, int value);
         void SetSockOpt(SocketOpt option, long value);
         object GetSockOpt(SocketOpt option);
-        void Bind(string addr);
-        void Bind(Transport transport, string addr, uint port);
-        void Bind(Transport transport, string addr);
-        void Connect(string addr);
         void Forward(Socket destination);
         byte[] Recv(params SendRecvOpt[] flags);
         byte[] Recv();
@@ -38,10 +34,6 @@ namespace ZeroMQExtensions
         void SendMore(string message, Encoding encoding);
         void SendMore(string message, Encoding encoding, params SendRecvOpt[] flags);
         void Send(string message, Encoding encoding, params SendRecvOpt[] flags);
-        string IdentityToString(Encoding encoding);
-        void StringToIdentity(string identity, Encoding encoding);
-        
-        byte[] Identity { get; set; }
         ulong HWM { get; set; }
         bool RcvMore { get; }
         long Swap { get; set; }

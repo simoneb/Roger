@@ -31,8 +31,8 @@ namespace ZeroMQ_Guide.Guide
         private static void Publisher(ulong hwm)
         {
             using (var context = new Context(1))
-            using (var sync = context.Pull().BoundTo("tcp://*:5564"))
-            using (var publisher = context.Pub().BoundTo("tcp://*:5565").HighWatermark(hwm))
+            using (var sync = context.Pull().Bind("tcp://*:5564"))
+            using (var publisher = context.Pub().Bind("tcp://*:5565").HighWatermark(hwm))
             {
                 sync.Recv();
 
@@ -51,8 +51,8 @@ namespace ZeroMQ_Guide.Guide
         private static void Subscriber(CancellationToken token)
         {
             using (var context = new Context(1))
-            using (var sync = context.Push().ConnectedTo("tcp://localhost:5564"))
-            using (var subscriber = context.Sub().WithIdentity("Hello", Encoding.Unicode).SubscribedToAnything().ConnectedTo("tcp://localhost:5565"))
+            using (var sync = context.Push().Connect("tcp://localhost:5564"))
+            using (var subscriber = context.Sub("Hello").SubscribeAll().Connect("tcp://localhost:5565"))
             {
                 sync.Send();
 
