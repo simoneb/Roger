@@ -55,6 +55,7 @@
     <Compile Include="Guide\11-ThreadSignallingWithPAIR.cs" />
     <Compile Include="Guide\12-NodeCoordination.cs" />
     <Compile Include="Guide\13-MessageEnvelopes.cs" />
+    <Compile Include="Guide\14-DurablePubSub.cs" />
     <Compile Include="Intro.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="Program.cs" />

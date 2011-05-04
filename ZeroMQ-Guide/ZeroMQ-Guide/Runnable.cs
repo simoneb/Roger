@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ZeroMQ_Guide
@@ -7,7 +8,20 @@ namespace ZeroMQ_Guide
     {
         protected static void Run(Action action)
         {
-            Task.Factory.StartNew(action, TaskCreationOptions.LongRunning).ContinueWith(DisplayException, TaskContinuationOptions.OnlyOnFaulted);
+            Task.Factory.StartNew(action, TaskCreationOptions.LongRunning)
+                .ContinueWith(DisplayException, TaskContinuationOptions.OnlyOnFaulted);
+        }
+
+        protected static CancellationTokenSource Run(Action<CancellationToken> action)
+        {
+            var source = new CancellationTokenSource();
+            Task.Factory.StartNew(() => action(source.Token),
+                                                      source.Token,
+                                                      TaskCreationOptions.LongRunning,
+                                                      TaskScheduler.Default)
+                                    .ContinueWith(DisplayException, TaskContinuationOptions.OnlyOnFaulted);
+
+            return source;
         }
 
         private static void DisplayException(Task obj)

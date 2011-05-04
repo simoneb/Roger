@@ -7,7 +7,7 @@ namespace ZeroMQ_Guide
     {
         static void Main()
         {
-            Run<MessageEnvelopes>();
+            Run<DurablePubSub>();
             Console.ReadLine();
         }
 
