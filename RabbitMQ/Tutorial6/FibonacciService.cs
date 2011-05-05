@@ -12,7 +12,7 @@ namespace Tutorial6
     {
         public void Start(WaitHandle waitHandle)
         {
-            using (var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using(var channel = connection.CreateModel())
             {
                 channel.QueueDeclare(Constants.RpcQueueName, false, false, true, null);

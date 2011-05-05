@@ -12,9 +12,7 @@ namespace Tutorial1
     {
         public void Start(WaitHandle waitHandle)
         {
-            var factory = new ConnectionFactory { HostName = Globals.HostName};
-
-            using (var connection = factory.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using (var channel = connection.CreateModel())
             {
                 channel.QueueDeclare("hello", false, false, false, null);

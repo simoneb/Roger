@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading;
 using Common;
-using RabbitMQ.Client;
 
 namespace Tutorial1
 {
@@ -11,9 +10,7 @@ namespace Tutorial1
     {
         public void Start(WaitHandle waitHandle)
         {
-            var factory = new ConnectionFactory { HostName = Globals.HostName };
-
-            using (var connection = factory.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
                 model.QueueDeclare(Constants.QueueName, false, false, false, null);

@@ -39,12 +39,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RabbitMQ.Client">
+      <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Globals.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="IProcess.cs" />
     <Compile Include="IProcessesProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

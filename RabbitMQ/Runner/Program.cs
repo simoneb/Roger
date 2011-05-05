@@ -16,27 +16,23 @@ namespace Runner
 
         static void Main(string[] args)
         {
-            Run<Tutorial5.Runner>(args);
+            Run<Tutorial4.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
         {
-            if(args.Any())
-            {
-                RunProcess(args);
-            }
+            if (args.Any())
+                ExecuteProcess(args);
             else
-            {
-                SpawnProcesses<T>();
-            }
+                SpawnChildProcesses<T>();
         }
 
-        private static void SpawnProcesses<T>() where T : IProcessesProvider
+        private static void SpawnChildProcesses<T>() where T : IProcessesProvider
         {
             var processProvider = Activator.CreateInstance<T>();
 
             foreach (var process in processProvider.Processes)
-                SpawnProcess(process);
+                SpawnChildProcess(process);
 
             Console.WriteLine("Type the number corresponding to the additional instance of the process and press enter to launch:");
             Console.WriteLine();
@@ -46,25 +42,18 @@ namespace Runner
             for (var i = 0; i < distinctProcesses.Length; i++)
                 Console.WriteLine("{0} - {1}", i + 1, distinctProcesses[i].ToString());
 
-            Console.WriteLine();
-            Console.WriteLine("Press enter to exit");
-            Console.WriteLine();
-
             while (true)
             {
                 int choice;
 
                 var line = Console.ReadLine();
 
-                if (string.Empty.Equals(line))
-                    break;
-
                 if (int.TryParse(line, out choice) && choice <= distinctProcesses.Length)
-                    SpawnProcess(distinctProcesses[choice-1]);
+                    SpawnChildProcess(distinctProcesses[choice-1]);
             }
         }
 
-        private static void SpawnProcess(IProcess process)
+        private static void SpawnChildProcess(IProcess process)
         {
             using (var serialized = new MemoryStream())
             {
@@ -74,7 +63,7 @@ namespace Runner
             }
         }
 
-        private static void RunProcess(IEnumerable<string> args)
+        private static void ExecuteProcess(IEnumerable<string> args)
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(args.First())))
             {
@@ -82,20 +71,24 @@ namespace Runner
 
                 Console.Title = process.ToString();
 
-                RunProcess(process);
+                Execute(process);
             }
         }
 
-        private static void RunProcess(IProcess process)
+        private static void Execute(IProcess process)
         {
             var waitHandle = new ManualResetEvent(false);
-            Task.Factory.StartNew(() => process.Start(waitHandle), TaskCreationOptions.LongRunning).ContinueWith(PrintException, TaskContinuationOptions.OnlyOnFaulted);
 
-            Console.WriteLine("Press enter to exit");
-            Console.WriteLine();
-            Console.ReadLine();
+            Task.Factory.StartNew(() => process.Start(waitHandle), TaskCreationOptions.LongRunning)
+                .ContinueWith(PrintException, TaskContinuationOptions.OnlyOnFaulted);
 
-            waitHandle.Set();
+            Console.CancelKeyPress += delegate
+            {
+                Console.WriteLine("Exiting...");
+                waitHandle.Set();
+            };
+
+            waitHandle.WaitOne();
         }
 
         private static void PrintException(Task obj)

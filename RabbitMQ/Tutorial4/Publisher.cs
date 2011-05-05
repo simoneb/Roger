@@ -11,14 +11,14 @@ namespace Tutorial4
     {
         public void Start(WaitHandle waitHandle)
         {
-            using (var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
                 model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct, false, true, null);
 
                 while (!waitHandle.WaitOne(TimeSpan.FromSeconds(5)))
                 {
-                    var severity = Severities.Random();
+                    var severity = Severity.Random();
                     model.BasicPublish(Constants.ExchangeName, severity, null, GetBody(severity));
                     Console.WriteLine("Published {0} message", severity);
                 }

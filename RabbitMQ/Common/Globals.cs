@@ -2,6 +2,7 @@
 {
     public static class Globals
     {
-        public const string HostName = "dev.rabbitmq.com";
+        public const int Port = 5672;
+        public const string HostName = "localhost";
     }
 }

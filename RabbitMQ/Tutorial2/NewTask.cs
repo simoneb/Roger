@@ -11,9 +11,7 @@ namespace Tutorial2
     {
         public void Start(WaitHandle waitHandle)
         {
-            var connectionFactory = new ConnectionFactory {HostName = Globals.HostName};
-
-            using (var connection = connectionFactory.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using (var channel = connection.CreateModel())
             {
                 channel.QueueDeclare(Constants.QueueName, true, false, false, null);

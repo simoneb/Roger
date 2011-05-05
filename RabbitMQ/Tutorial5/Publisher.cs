@@ -16,7 +16,7 @@ namespace Tutorial5
 
         public void Start(WaitHandle waitHandle)
         {
-            using (var connection = new ConnectionFactory {HostName = Globals.HostName}.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
                 model.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Topic, false, true, null);

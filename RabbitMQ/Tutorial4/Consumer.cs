@@ -19,9 +19,7 @@ namespace Tutorial4
 
         public void Start(WaitHandle waitHandle)
         {
-            var connectionFactory = new ConnectionFactory { HostName = Globals.HostName };
-
-            using (var connection = connectionFactory.CreateConnection())
+            using (var connection = Helpers.CreateConnection())
             using (var channel = connection.CreateModel())
             {
                 channel.ExchangeDeclare(Constants.ExchangeName, ExchangeType.Direct, false, true, null);

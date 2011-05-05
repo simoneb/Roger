@@ -10,9 +10,9 @@ namespace Tutorial4
             get
             {
                 yield return new Publisher();
-                yield return new Consumer(Severities.Debug, Severities.Info);
-                yield return new Consumer(Severities.Warning, Severities.Error);
-                yield return new Consumer(Severities.Debug, Severities.Error);
+                yield return new Consumer(Severity.Debug, Severity.Info);
+                yield return new Consumer(Severity.Warning, Severity.Error);
+                yield return new Consumer(Severity.Debug, Severity.Error);
             }
         }
     }
