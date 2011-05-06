@@ -16,7 +16,7 @@ namespace Runner
 
         static void Main(string[] args)
         {
-            Run<Tutorial4.Runner>(args);
+            Run<Shoveling.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
