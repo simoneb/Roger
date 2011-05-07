@@ -1,7 +1,7 @@
 namespace Shoveling
 {
-    public static class Constants
+    public class Constants
     {
-        public const string ExchangeName = "ShovelingExchange";
+        public static string ExchangeName = "ShovelingExchange";
     }
 }
