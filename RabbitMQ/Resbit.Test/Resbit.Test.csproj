@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="AllConfiguration.cs" />
     <Compile Include="Channels.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Connections.cs" />
     <Compile Include="Exchanges.cs" />
     <Compile Include="Nodes.cs" />
