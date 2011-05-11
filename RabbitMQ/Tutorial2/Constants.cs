@@ -1,7 +1,9 @@
-﻿namespace Tutorial2
+﻿using System;
+
+namespace Tutorial2
 {
     class Constants
     {
-        public const string QueueName = "tutorial2";
+        public static readonly string QueueName = "tutorial2_queue_" + Environment.UserName;
     }
 }

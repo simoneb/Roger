@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shoveling", "Shoveling\Shov
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temporary", "Temporary\Temporary.csproj", "{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit", "Resbit\Resbit.csproj", "{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit.Test", "Resbit.Test\Resbit.Test.csproj", "{DC3D0C0F-F024-4A72-83E4-DF3D6AE5DB26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC3D0C0F-F024-4A72-83E4-DF3D6AE5DB26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC3D0C0F-F024-4A72-83E4-DF3D6AE5DB26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC3D0C0F-F024-4A72-83E4-DF3D6AE5DB26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC3D0C0F-F024-4A72-83E4-DF3D6AE5DB26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
