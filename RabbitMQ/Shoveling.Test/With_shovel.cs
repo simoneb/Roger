@@ -1,24 +1,29 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MbUnit.Framework;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Shoveling.Test
 {
-    public class With_shovel
+    public class With_shovel : With_rabbitmq_broker
     {
         [FixtureSetUp]
         public void Setup()
         {
-            //Broker.Instance.AddVHost("secondary");
-            //Broker.Instance.AddPermissions("secondary", "guest");
+            Broker.AddVHost("secondary");
+            Broker.AddPermissions("secondary", "guest");
+            Broker.StopApp();
+            Thread.Sleep(1000);
+            Broker.StartAppAndWait();
         }
 
         [FixtureTearDown]
         public void Teardown()
         {
-            //Broker.Instance.DeleteVHost("secondary");
+            Broker.DeleteVHost("secondary");
         }
 
         [Test]
@@ -26,16 +31,29 @@ namespace Shoveling.Test
         {
             var handle = new ManualResetEvent(false);
 
-            Task.Factory.StartNew(() => Subscribe(handle));
+            Task.Factory.StartNew(() => Subscribe(handle, Helpers.CreateSecondaryConnection(), s => Assert.AreEqual("Ciao", s)));
 
-            Task.Factory.StartNew(Publish);
+            Task.Factory.StartNew(() => Publish(Helpers.CreateConnection()));
 
-            handle.WaitOne();
+            if(!handle.WaitOne(2000))
+                Assert.Fail("Didn't complete in a timely fashion");
         }
 
-        private static void Subscribe(EventWaitHandle handle)
+        [Test]
+        public void Messages_should_not_go_from_destination_to_source()
         {
-            using (var connection = Helpers.CreateSecondaryConnection())
+            var handle = new ManualResetEvent(false);
+
+            Task.Factory.StartNew(() => Subscribe(handle, Helpers.CreateConnection(), s => Assert.Fail("Didn't expect to receive any messages")));
+
+            Task.Factory.StartNew(() => Publish(Helpers.CreateSecondaryConnection()));
+
+            handle.WaitOne(2000);
+        }
+
+        private static void Subscribe(EventWaitHandle handle, IConnection connection, Action<string> onMessageReceived)
+        {
+            using (connection)
             using (var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare("", false, true, true, null);
@@ -44,7 +62,7 @@ namespace Shoveling.Test
 
                 consumer.Received += (sender, args) =>
                 {
-                    Assert.AreEqual("Ciao", args.Body.String());
+                    onMessageReceived(args.Body.String());
                     handle.Set();
                 };
 
@@ -52,9 +70,9 @@ namespace Shoveling.Test
             }
         }
 
-        private static void Publish()
+        private static void Publish(IConnection connection)
         {
-            using (var connection = Helpers.CreateConnection())
+            using (connection)
             using (var model = connection.CreateModel())
                 model.BasicPublish(Globals.ShovelingExchangeName, "", null, "Ciao".Bytes());
         }

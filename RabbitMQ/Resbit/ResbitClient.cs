@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using JsonFx.Json;
@@ -7,8 +8,10 @@ namespace Resbit
 {
     public class ResbitClient
     {
+        private const string DefaultVHost = "%2F";
         private readonly Func<WebClient> webClient;
         private readonly JsonReader jsonReader = new JsonReader();
+        readonly JsonWriter jsonWriter = new JsonWriter();
         private readonly string baseAddress;
         private readonly NetworkCredential networkCredential;
 
@@ -63,11 +66,26 @@ namespace Resbit
 
         private void Delete(string resource)
         {
-            var webRequest = WebRequest.Create(baseAddress + resource);
-            webRequest.Credentials = networkCredential;
-            webRequest.Method = "DELETE";
+            var uri = new Uri(new Uri(baseAddress), resource);
+            ForceCanonicalPathAndQuery(uri);
 
-            using (webRequest.GetResponse()) ;
+            var request = WebRequest.Create(uri);
+            request.Credentials = networkCredential;
+            request.Method = "DELETE";
+            using(request.GetResponse());
+        }
+
+        private void Put(Uri resource, object payload)
+        {
+            var request = WebRequest.Create(resource);
+            request.ContentType = "application/json";
+            request.Credentials = networkCredential;
+            request.Method = "PUT";
+
+            using (var w = new StreamWriter(request.GetRequestStream()))
+                jsonWriter.Write(payload, w);
+
+            using (request.GetResponse()) ;
         }
 
         public dynamic[] Channels()
@@ -92,7 +110,7 @@ namespace Resbit
 
         public dynamic GetExchange(string name)
         {
-            return GetExchange("%2F", name);
+            return GetExchange(DefaultVHost, name);
         }
 
         public dynamic GetExchange(string vhost, string name)
@@ -102,6 +120,59 @@ namespace Resbit
             ForceCanonicalPathAndQuery(resource);
 
             return Get(resource);
+        }
+
+        public void PutExchange(string toString)
+        {
+            throw new NotImplementedException("TODO");
+        }
+
+        public dynamic[] Queues()
+        {
+            return Get("queues");
+        }
+
+        public dynamic[] Queues(string vhost)
+        {
+            return Get(string.Format("queues/{0}", vhost));
+        }
+
+        public dynamic GetQueue(string name)
+        {
+            return GetQueue(DefaultVHost, name);
+        }
+
+        public dynamic GetQueue(string vhost, string name)
+        {
+            var resource = new Uri(new Uri(baseAddress), string.Format("queues/{0}/{1}", vhost, name));
+
+            ForceCanonicalPathAndQuery(resource);
+
+            return Get(resource);
+        }
+
+        public void PutQueue(string name)
+        {
+            PutQueue(DefaultVHost, name);
+        }
+
+        public void PutQueue(string vhost, string name, object options = null)
+        {
+            var resource = new Uri(new Uri(baseAddress), string.Format("queues/{0}/{1}", vhost, name));
+
+            ForceCanonicalPathAndQuery(resource);
+
+            Put(resource, options ?? new object());
+        }
+
+        public void DeleteQueue(string name)
+        {
+            DeleteQueue(DefaultVHost, name);
+        }
+
+        private void DeleteQueue(string vhost, string name)
+        {
+            Delete(string.Format("queues/{0}/{1}", vhost, name));            
         }
 
         private dynamic Get(Uri resource)
@@ -121,11 +192,6 @@ namespace Resbit
             flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
             flagsFieldInfo.SetValue(uri, flags);
             paq = string.Empty;
-        }
-
-        public void PutExchange(string toString)
-        {
-            throw new NotImplementedException("TODO");
         }
     }
 }

@@ -2,32 +2,30 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
 namespace Shoveling.Test
 {
-    public class RabbitMQBroker : IDisposable
+    public class RabbitMQBroker
     {
-        private readonly string m_path;
+        private readonly string brokerFolder;
+        private Process serverProcess;
         private const string ServerExecutableName = "rabbitmq-server.bat";
         private const string ControlExecutableName = "rabbitmqctl.bat";
-        private string ServerExecutablePath { get { return Path.Combine(m_path, @"sbin\" + ServerExecutableName); } }
-        private string ControlExecutablePath { get { return Path.Combine(m_path, @"sbin\" + ControlExecutableName); } }
+        private string ServerExecutablePath { get { return Path.Combine(brokerFolder, @"sbin\" + ServerExecutableName); } }
+        private string ControlExecutablePath { get { return Path.Combine(brokerFolder, @"sbin\" + ControlExecutableName); } }
 
-        public RabbitMQBroker(string path)
+        public RabbitMQBroker(string brokerFolder)
         {
-            m_path = path;
+            this.brokerFolder = brokerFolder;
         }
 
-        public void Start()
+        public void StartAndWait()
         {
             if (Process.GetProcessesByName(ServerExecutableName)
                 .Any(p => p.StartInfo.FileName.Equals(ServerExecutablePath, StringComparison.OrdinalIgnoreCase)))
                 return;
 
-            Process.Start(ServerExecutablePath);
-            Thread.Sleep(2000);
-
+            serverProcess = Process.Start(ServerExecutablePath);
             Wait();
         }
 
@@ -36,14 +34,12 @@ namespace Shoveling.Test
             ControlCommand("wait");
         }
 
-        public void Dispose()
-        {
-            Stop();
-        }
-
         public void Stop()
         {
             ControlCommand("stop");
+
+            if (serverProcess != null)
+                serverProcess.CloseMainWindow();
         }
 
         private void ControlCommand(string command)
@@ -70,6 +66,22 @@ namespace Shoveling.Test
         public void AddPermissions(string path, string user)
         {
             ControlCommand("set_permissions", "-p " + path + " " + user + " \".*\" \".*\" \".*\"");
+        }
+
+        public void StopApp()
+        {
+            ControlCommand("stop_app");
+        }
+
+        public void Reset()
+        {
+            ControlCommand("reset");
+        }
+
+        public void StartAppAndWait()
+        {
+            ControlCommand("start_app");
+            Wait();
         }
     }
 }

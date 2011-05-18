@@ -6,18 +6,20 @@ namespace Resbit.Test
     [TestFixture]
     public class Connections : ResbitTest
     {
-        private IConnection additionalConnection;
+        private IConnection[] additionalConnections;
 
         [FixtureSetUp]
         public void FixtureSetup()
         {
-            additionalConnection = new ConnectionFactory().CreateConnection();
+            var factory = new ConnectionFactory();
+            additionalConnections = new[] {factory.CreateConnection(), factory.CreateConnection()};
         }
 
         [FixtureTearDown]
         public void FixtureTeardown()
         {
-            additionalConnection.Dispose();
+            foreach (var connection in additionalConnections)
+                connection.Dispose();
         }
 
         [Test]
@@ -55,7 +57,7 @@ namespace Resbit.Test
 
                 Client.DeleteConnection(connections[0].name);
 
-                Assert.AreEqual(previousConnections - 1, Client.Connections().Length);
+                Assert.LessThan(Client.Connections().Length, previousConnections);
             }
         }
     }

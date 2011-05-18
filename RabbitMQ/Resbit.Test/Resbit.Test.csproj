@@ -52,6 +52,7 @@
     <Compile Include="Nodes.cs" />
     <Compile Include="Overview.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queues.cs" />
     <Compile Include="ResbitTest.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Common;
-using RabbitMQ.Client.Impl;
 
 namespace Tutorial2
 {

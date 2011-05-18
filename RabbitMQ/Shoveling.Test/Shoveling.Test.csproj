@@ -45,10 +45,13 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Broker.cs" />
+    <Compile Include="Bootstrap.cs" />
+    <Compile Include="CustomModel.cs" />
+    <Compile Include="ICustomModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RabbitMQBroker.cs" />
-    <Compile Include="With_rabbitmq_server.cs" />
+    <Compile Include="With_queues.cs" />
+    <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="With_shovel.cs" />
   </ItemGroup>
   <ItemGroup>

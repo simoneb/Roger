@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading;
 using Common;
-using RabbitMQ.Client;
 
 namespace Tutorial2
 {
