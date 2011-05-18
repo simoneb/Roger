@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Web;
 using JsonFx.Json;
 
 namespace Resbit
@@ -144,7 +145,7 @@ namespace Resbit
 
         public dynamic GetQueue(string vhost, string name)
         {
-            var resource = new Uri(new Uri(baseAddress), string.Format("queues/{0}/{1}", vhost, name));
+            var resource = new Uri(new Uri(baseAddress), string.Format("queues/{0}/{1}", vhost, HttpUtility.UrlEncode(name)));
 
             ForceCanonicalPathAndQuery(resource);
 

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Shoveling.Test
 {
@@ -26,6 +27,8 @@ namespace Shoveling.Test
                 return;
 
             serverProcess = Process.Start(ServerExecutablePath);
+
+            Thread.Sleep(2000);
             Wait();
         }
 

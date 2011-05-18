@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System.Net;
+using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 
@@ -16,26 +17,16 @@ namespace Shoveling.Test
         }
 
         [Test]
-        public void Unnamed_queue_should_disappear_when_model_is_closed()
-        {
-            string queue;
-
-            using (Model)
-            {
-                queue = Model.QueueDeclare();
-            }
-
-            using (Model)
-                Assert.AreEqual(0u, Model.QueueDelete(queue));
-        }
-
-        [Test]
         public void Queue_should_be_deleted()
         {
             using(Model)
             {
                 var queue = Model.QueueDeclare();
-                Assert.AreEqual(1u, Model.QueueDelete(queue));
+                Assert.IsNotNull(Client.GetQueue(queue));
+
+                Model.QueueDelete(queue);
+
+                Assert.Throws<WebException>(() => Client.GetQueue(queue));
             }
         }
 
