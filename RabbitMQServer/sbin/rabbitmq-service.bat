@@ -25,6 +25,10 @@ set P1=%1
 set STAR=%*
 setlocal enabledelayedexpansion
 
+if exist "!TDP0!..\config\startup-config.bat" (
+    CALL "!TDP0!..\config\startup-config.bat"
+)
+
 if "!RABBITMQ_SERVICENAME!"=="" (
     set RABBITMQ_SERVICENAME=RabbitMQ
 )
