@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Shoveling.Test
+namespace Shoveling.Test.Utils
 {
     public class RabbitMQBroker
     {
@@ -22,14 +22,22 @@ namespace Shoveling.Test
 
         public void StartAndWait()
         {
-            if (Process.GetProcessesByName(ServerExecutableName)
-                .Any(p => p.StartInfo.FileName.Equals(ServerExecutablePath, StringComparison.OrdinalIgnoreCase)))
+            if (Running)
                 return;
 
             serverProcess = Process.Start(ServerExecutablePath);
 
             Thread.Sleep(2000);
             Wait();
+        }
+
+        private bool Running
+        {
+            get
+            {
+                return Process.GetProcessesByName(ServerExecutableName)
+                    .Any(p => p.StartInfo.FileName.Equals(ServerExecutablePath, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         private void Wait()

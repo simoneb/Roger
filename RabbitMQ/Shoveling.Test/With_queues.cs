@@ -2,6 +2,7 @@
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
+using Shoveling.Test.Utils;
 
 namespace Shoveling.Test
 {

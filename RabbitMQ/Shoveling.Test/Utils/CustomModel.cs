@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test
+namespace Shoveling.Test.Utils
 {
     public class CustomModel : ICustomModel
     {

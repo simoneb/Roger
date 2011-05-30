@@ -45,11 +45,16 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrap.cs" />
-    <Compile Include="CustomModel.cs" />
-    <Compile Include="ICustomModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RabbitMQBroker.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\Bootstrap.cs" />
+    <Compile Include="Utils\CustomModel.cs" />
+    <Compile Include="Utils\ICustomModel.cs" />
+    <Compile Include="Utils\RabbitMQBroker.cs" />
     <Compile Include="With_queues.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="With_shovel.cs" />
@@ -63,6 +68,13 @@
       <Project>{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}</Project>
       <Name>Resbit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,6 @@
-using System;
 using Common;
 using Resbit;
+using Shoveling.Test.Utils;
 
 namespace Shoveling.Test
 {

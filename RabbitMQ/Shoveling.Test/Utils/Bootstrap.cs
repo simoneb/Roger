@@ -1,6 +1,7 @@
 ﻿using MbUnit.Framework;
+using Shoveling.Test.Properties;
 
-namespace Shoveling.Test
+namespace Shoveling.Test.Utils
 {
     [AssemblyFixture]
     public class Bootstrap
@@ -11,16 +12,30 @@ namespace Shoveling.Test
         public void TestFixtureSetup()
         {
             Broker = new RabbitMQBroker(@"..\..\..\..\RabbitMQServer");
-            Broker.StartAndWait();
+
+            StartBroker();
+
             Broker.StopApp();
             Broker.Reset();
             Broker.StartAppAndWait();
         }
 
+        private static void StartBroker()
+        {
+            if (Settings.Default.RunEmbeddedBroker)
+                Broker.StartAndWait();
+        }
+
         [FixtureTearDown]
         public void TestFixtureTeardown()
         {
-            Broker.Stop();
+            StopBroker();
+        }
+
+        private static void StopBroker()
+        {
+            if (Settings.Default.RunEmbeddedBroker)
+                Broker.Stop();
         }
     }
 }

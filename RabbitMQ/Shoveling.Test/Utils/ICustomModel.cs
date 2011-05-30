@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace Shoveling.Test
+namespace Shoveling.Test.Utils
 {
     public interface ICustomModel : IModel
     {

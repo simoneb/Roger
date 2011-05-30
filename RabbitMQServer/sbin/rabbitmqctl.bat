@@ -23,6 +23,10 @@ set TDP0=%~dp0
 set STAR=%*
 setlocal enabledelayedexpansion
 
+if exist "!TDP0!..\config\startup-config.bat" (
+    CALL "!TDP0!..\config\startup-config.bat"
+)
+
 if "!COMPUTERNAME!"=="" (
     set COMPUTERNAME=localhost
 )
