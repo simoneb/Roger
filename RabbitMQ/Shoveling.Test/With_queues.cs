@@ -23,11 +23,11 @@ namespace Shoveling.Test
             using(Model)
             {
                 var queue = Model.QueueDeclare();
-                Assert.IsNotNull(Client.GetQueue(queue));
+                Assert.IsNotNull(RestClient.GetQueue(queue));
 
                 Model.QueueDelete(queue);
 
-                Assert.Throws<WebException>(() => Client.GetQueue(queue));
+                Assert.Throws<WebException>(() => RestClient.GetQueue(queue));
             }
         }
 

@@ -1,57 +1,43 @@
-using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Common;
 using MbUnit.Framework;
-using RabbitMQ.Client.Events;
 using RabbitMQ.Client.MessagePatterns;
 
 namespace Shoveling.Test.FunctionalSpecs
 {
     [TestFixture]
-    public class As_a_client : With_shovel
+    public class Subscriber_on_secondary_node : With_shovel
     {
-        
-    }
-
-    public class On_secondary_node : As_a_client
-    {
-        private ManualResetEvent m_consumerReadyHandle;
+        private ManualResetEvent m_consumerReady;
 
         [SetUp]
         public void Setup()
         {
-            m_consumerReadyHandle = new ManualResetEvent(false);
+            m_consumerReady = new ManualResetEvent(false);
         }
 
         [Test]
         public void Should_receive_messages_published_on_main_node_after_subscription()
         {
-            var consumer = Start<BasicDeliverEventArgs>(Consumer);
-            Start(Producer);
+            var consumer = Start<int>(OneConsumer);
+            Start(OneProducer);
 
-            Assert.AreEqual(1, consumer.Result.Body.Integer());
+            Assert.AreEqual(1, consumer.Result);
         }
 
-        [Test]
-        public void Should_receive_messages_sent_while_not_subscribed()
-        {
-            
-        }
-
-        private void Producer()
+        private void OneProducer()
         {
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                m_consumerReadyHandle.WaitOne();
+                m_consumerReady.WaitOne();
 
                 int counter = 0;
                 model.BasicPublish(Globals.ShovelingExchangeName, "", null, (++counter).Bytes());
             }
         }
 
-        private BasicDeliverEventArgs Consumer()
+        private int OneConsumer()
         {
             using (var connection = Helpers.CreateSecondaryConnection())
             using (var model = connection.CreateModel())
@@ -60,9 +46,9 @@ namespace Shoveling.Test.FunctionalSpecs
                 model.QueueBind(queue, Globals.ShovelingExchangeName, "#");
                 var subscription = new Subscription(model, queue, true);
 
-                m_consumerReadyHandle.Set();
+                m_consumerReady.Set();
 
-                return subscription.Next();
+                return subscription.Next().Body.Integer();
             }
         }
     }
