@@ -5,7 +5,6 @@ using RabbitMQ.Client.MessagePatterns;
 
 namespace Shoveling.Test.FunctionalSpecs
 {
-    [TestFixture]
     public class Subscriber_on_secondary_node : With_shovel
     {
         private ManualResetEvent m_consumerReady;
