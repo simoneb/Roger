@@ -21,7 +21,7 @@ namespace Shoveling.Test.FunctionalSpecs
             var consumer = Start<int>(OneConsumer);
             Start(OneProducer);
 
-            Assert.AreEqual(1, consumer.Result);
+            Assert.AreEqual(1, consumer.Item1.Result);
         }
 
         private void OneProducer()

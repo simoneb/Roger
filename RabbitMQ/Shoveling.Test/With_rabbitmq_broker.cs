@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MbUnit.Framework;
@@ -19,14 +20,26 @@ namespace Shoveling.Test
             Assert.IsNotNull(RestClient.Overview(), "Broker does not appear to be running");
         }
 
-        protected Task<TResult> Start<TResult>(Func<TResult> function)
+        protected Tuple<Task<TResult>, CancellationTokenSource> Start<TResult>(Func<TResult> function)
         {
-            return Task<TResult>.Factory.StartNew(function);
+            var tokenSource = new CancellationTokenSource();
+            var task = Task<TResult>.Factory.StartNew(function, tokenSource.Token)
+                .ContinueWith(t =>
+                {
+                    if(t.IsFaulted) throw t.Exception;
+
+                    return t.Result;
+                }, tokenSource.Token)
+                ;
+
+            return Tuple.Create(task, tokenSource);
         }
 
-        protected Task Start(Action function)
+        protected CancellationTokenSource Start(Action function)
         {
-            return Task.Factory.StartNew(function);
+            var tokenSource = new CancellationTokenSource();
+            Task.Factory.StartNew(function, tokenSource.Token).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+            return tokenSource;
         }
     }
 }

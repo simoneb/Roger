@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace Shoveling.Test.FunctionalSpecs
 {
     public class Subscription_after_beginning_of_session : With_rabbitmq_broker
     {
-        private ManualResetEvent exitSemaphore;
+        private const int messageNumber = 20;
+        private const string Exchange = "MyMessageExchange";
+        private const string ReplayerQueue = "MyMessageReplayerQueue";
         private ManualResetEvent storeReady;
         private ManualResetEvent replayerReady;
         private ManualResetEvent storeHalfWay;
@@ -20,33 +23,31 @@ namespace Shoveling.Test.FunctionalSpecs
         [SetUp]
         public void Setup()
         {
-            exitSemaphore = new ManualResetEvent(false);
             storeReady = new ManualResetEvent(false);
             replayerReady = new ManualResetEvent(false);
             storeHalfWay = new ManualResetEvent(false);
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            exitSemaphore.Set();            
-        }
-
         [Test]
         public void TEST_NAME()
         {
-            Start(MessageStore);
+            var storeTokens = MessageStore().ToArray();
             Start(Producer);
 
-            var messages = Start<IEnumerable<int>>(Consumer);
+            var consumerResult = Start<IEnumerable<int>>(Consumer);
 
-            Assert.AreEqual(100, messages.Result.Count());
+            Assert.AreEqual(messageNumber, consumerResult.Item1.Result.Count());
+
+            foreach (var token in storeTokens)
+                token.Cancel();
         }
 
         private IEnumerable<int> Consumer()
         {
             replayerReady.WaitOne();
             storeHalfWay.WaitOne();
+
+            Debug.WriteLine("Consumer: starting to listen");
 
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
@@ -56,22 +57,24 @@ namespace Shoveling.Test.FunctionalSpecs
                 var consumer = new QueueingBasicConsumer(model);
                 model.BasicConsume(incomingMessagesQueue, true, consumer);
 
-                var basicProperties = model.CreateBasicProperties();
-                basicProperties.ReplyTo = incomingMessagesQueue;
+                var properties = model.CreateBasicProperties();
+                properties.ReplyTo = incomingMessagesQueue;
 
-                model.BasicPublish("", "MyMessageReplayerQueue", basicProperties, new byte[0]);
+                model.BasicPublish("", ReplayerQueue, properties, new byte[0]);
 
                 object message;
-                int counter = 0;
-
-                while (consumer.Queue.Dequeue(2000, out message))
+                while (consumer.Queue.Dequeue(5000, out message))
                 {
-                    Debug.WriteLine("Consumer received message " + ++counter);
+                    var args = (message as BasicDeliverEventArgs);
+                    var intMessage = args.Body.Integer();
 
-                    var args = message as BasicDeliverEventArgs;
+                    Debug.WriteLine("Consumer: received message " + intMessage + " from " 
+                        +  ((byte[])args.BasicProperties.Headers["Sender"]).String());
 
-                    yield return args.Body.Integer();
+                    yield return intMessage;
                 }
+
+                Debug.WriteLine("Consumer: no message arrived in timely fashion, exiting");
             }
         }
 
@@ -79,99 +82,84 @@ namespace Shoveling.Test.FunctionalSpecs
         {
             storeReady.WaitOne();
 
-            Debug.WriteLine("Publisher starting");
+            Debug.WriteLine("Publisher: starting to publish");
 
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                model.ExchangeDeclare("MyMessageExchange", ExchangeType.Fanout, false, true, null);
+                model.ExchangeDeclare(Exchange, ExchangeType.Fanout, false, true, null);
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 1; i <= messageNumber; i++)
                 {
-                    model.BasicPublish("MyMessageExchange", "", null, 1.Bytes());
-                    Thread.Sleep(200);
+                    var properties = model.CreateBasicProperties();
+                    properties.Headers = new Hashtable {{"Sender", "Producer".Bytes()}};
+                    model.BasicPublish(Exchange, "", properties, i.Bytes());
+                    Thread.Sleep(150);
                 }
             }
 
-            Debug.WriteLine("Publisher completed");
+            Debug.WriteLine("Publisher: completed publishing");
         }
 
-        private void MessageStore()
+        private IEnumerable<CancellationTokenSource> MessageStore()
+        {
+            var messagesInStore = new ConcurrentQueue<BasicDeliverEventArgs>();
+            yield return Start(() => Store(messagesInStore));
+            yield return Start(() => Replayer(messagesInStore));
+        }
+
+        private void Store(ConcurrentQueue<BasicDeliverEventArgs> messagesInStore)
         {
             using (var connection = Helpers.CreateConnection())
-            {
-                var messagesInStore = new List<int>();
-
-                Start(() => Store(messagesInStore, connection));
-
-                Start(() => Replayer(messagesInStore, connection));
-
-                exitSemaphore.WaitOne();
-            }
-        }
-
-        private void Store(List<int> messagesInStore, IConnection connection)
-        {
             using (var model = connection.CreateModel())
             {
                 var storageQueue = model.QueueDeclare();
-                model.ExchangeDeclare("MyMessageExchange", ExchangeType.Fanout, false, true, null);
-                model.QueueBind(storageQueue, "MyMessageExchange", "");
+                model.ExchangeDeclare(Exchange, ExchangeType.Fanout, false, true, null);
+                model.QueueBind(storageQueue, Exchange, "");
 
-                var queueingBasicConsumer = new QueueingBasicConsumer(model);
-                model.BasicConsume(storageQueue, true, queueingBasicConsumer);
+                var consumer = new QueueingBasicConsumer(model);
+                model.BasicConsume(storageQueue, true, consumer);
 
                 storeReady.Set();
-                Debug.WriteLine("Store ready");
 
-                while (!exitSemaphore.WaitOne(100))
+                foreach (BasicDeliverEventArgs message in consumer.Queue)
                 {
-                    object message;
-                    if (queueingBasicConsumer.Queue.Dequeue(100, out message))
-                    {
-                        Debug.WriteLine("Received new message to store in message store");
+                    Debug.WriteLine("Store: received new message to store");
 
-                        var args = message as BasicDeliverEventArgs;
+                    messagesInStore.Enqueue(message);
 
-                        lock (messagesInStore)
-                        {
-                            messagesInStore.Add(args.Body.Integer());
+                    if (messagesInStore.Count == messageNumber/2)
+                        storeHalfWay.Set();
 
-                            if (messagesInStore.Count == 50)
-                                storeHalfWay.Set();
-                        }
-                    }
+                    //Thread.Sleep(100);
                 }
             }
         }
 
-        private void Replayer(List<int> messagesInStore, IConnection connection)
+        private void Replayer(IEnumerable<BasicDeliverEventArgs> messagesInStore)
         {
+            using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                var incomingRequests = model.QueueDeclare("MyMessageReplayerQueue", false, true, true, null);
+                var incomingRequestsQueue = model.QueueDeclare(ReplayerQueue, false, true, true, null);
 
                 var consumer = new QueueingBasicConsumer(model);
-                model.BasicConsume(incomingRequests, true, consumer);
+                model.BasicConsume(incomingRequestsQueue, true, consumer);
 
                 replayerReady.Set();
-                Debug.WriteLine("Replayer ready");
 
-                while (!exitSemaphore.WaitOne(100))
+                foreach (BasicDeliverEventArgs incomingRequest in consumer.Queue)
                 {
-                    object incomingRequest;
+                    model.QueueBind(incomingRequest.BasicProperties.ReplyTo, Exchange, "");
 
-                    if (consumer.Queue.Dequeue(100, out incomingRequest))
+                    Debug.WriteLine("Replayer: received new client request");
+
+                    foreach (var message in messagesInStore)
                     {
-                        Debug.WriteLine("Replayer received new client request");
+                        var properties = message.BasicProperties;
+                        properties.Headers["Sender"] = "Store".Bytes();
 
-                        var args = incomingRequest as BasicDeliverEventArgs;
-
-                        lock (messagesInStore)
-                            foreach (var message in messagesInStore)
-                                model.BasicPublish("", args.BasicProperties.ReplyTo, null, message.Bytes());
-
-                        model.QueueBind(args.BasicProperties.ReplyTo, "MyMessageExchange", "");
+                        model.BasicPublish("", incomingRequest.BasicProperties.ReplyTo, properties, message.Body);
                     }
                 }
             }
