@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,6 +17,9 @@ namespace Shoveling.Test.FunctionalSpecs
         private const int messageNumber = 20;
         private const string Exchange = "MyMessageExchange";
         private const string ReplayerQueue = "MyMessageReplayerQueue";
+        private const string SourceHeader = "X-Source";
+        private const string MessageIdHeader = "X-MessageId";
+        private const string LiveQueueHeader = "X-LiveQueue";
         private ManualResetEvent storeReady;
         private ManualResetEvent replayerReady;
         private ManualResetEvent storeHalfWay;
@@ -28,11 +32,31 @@ namespace Shoveling.Test.FunctionalSpecs
             storeHalfWay = new ManualResetEvent(false);
         }
 
-        [Test]
-        public void TEST_NAME()
+        [TearDown]
+        public void Teardown()
         {
-            var storeTokens = MessageStore().ToArray();
-            Start(Producer);
+            using (var connection = Helpers.CreateConnection())
+            using (var model = connection.CreateModel())
+            {
+                model.ExchangeDelete(Exchange);
+                model.QueueDelete(ReplayerQueue);
+            }
+        }
+
+        [Test]
+        [Row(null, null)]
+        [Row(150, null)]
+        [Row(null, 150)]
+        [Row(300, 150)]
+        public void Should_not_loose_messages(ushort? delayBetweenPublishesInMilliseconds, ushort? delayWhenStoringMessage)
+        {
+            Run(delayBetweenPublishesInMilliseconds, delayWhenStoringMessage);
+        }
+
+        private void Run(ushort? delayBetweenPublishesInMilliseconds = null, ushort? delayWhenStoringMessage = null)
+        {
+            var storeTokens = MessageStore(delayWhenStoringMessage).ToArray();
+            Start(() => Producer(delayBetweenPublishesInMilliseconds));
 
             var consumerResult = Start<IEnumerable<int>>(Consumer);
 
@@ -52,33 +76,66 @@ namespace Shoveling.Test.FunctionalSpecs
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                var incomingMessagesQueue = model.QueueDeclare("", false, false, false, null);
+                var storeMessageQueue = model.QueueDeclare("", false, true, false, null);
+                var liveMessageQueue = model.QueueDeclare("", false, false, false, null);
                 
-                var consumer = new QueueingBasicConsumer(model);
-                model.BasicConsume(incomingMessagesQueue, true, consumer);
+                var storeConsumer = new QueueingBasicConsumer(model);
+                model.BasicConsume(storeMessageQueue, true, storeConsumer);
+
+                var liveConsumer = new QueueingBasicConsumer(model);
+                model.BasicConsume(liveMessageQueue, true, liveConsumer);
 
                 var properties = model.CreateBasicProperties();
-                properties.ReplyTo = incomingMessagesQueue;
+                properties.ReplyTo = storeMessageQueue;
+                properties.Headers = new Hashtable { {LiveQueueHeader, liveMessageQueue.Bytes()} };
 
                 model.BasicPublish("", ReplayerQueue, properties, new byte[0]);
 
-                object message;
-                while (consumer.Queue.Dequeue(5000, out message))
+                var lastMessageId = default(Guid);
+
+                foreach (var message in Consume(storeConsumer))
                 {
-                    var args = (message as BasicDeliverEventArgs);
-                    var intMessage = args.Body.Integer();
+                    lastMessageId = Guid.Parse(((byte[])message.BasicProperties.Headers[MessageIdHeader]).String());
 
-                    Debug.WriteLine("Consumer: received message " + intMessage + " from " 
-                        +  ((byte[])args.BasicProperties.Headers["Sender"]).String());
-
-                    yield return intMessage;
+                    yield return message.Body.Integer();
                 }
+
+                foreach (var message in Consume(liveConsumer, lastMessageId))
+                    yield return message.Body.Integer();
 
                 Debug.WriteLine("Consumer: no message arrived in timely fashion, exiting");
             }
         }
 
-        private void Producer()
+        private IEnumerable<BasicDeliverEventArgs> Consume(QueueingBasicConsumer consumer, Guid startAfterReceivingId = default(Guid))
+        {
+            object message;
+            bool shouldConsume = false;
+
+            while (consumer.Queue.Dequeue(2000, out message))
+            {
+                var args = (BasicDeliverEventArgs)message;
+
+                if(!shouldConsume && startAfterReceivingId != default(Guid))
+                {
+                    var messageId = Guid.Parse(((byte[])args.BasicProperties.Headers[MessageIdHeader]).String());
+
+                    if (messageId.Equals(startAfterReceivingId))
+                        shouldConsume = true;
+
+                    continue;
+                }
+
+                var intMessage = args.Body.Integer();
+
+                Debug.WriteLine("Consumer: received message " + intMessage + " from "
+                    + ((byte[])args.BasicProperties.Headers[SourceHeader]).String());
+
+                yield return args;
+            }
+        }
+
+        private void Producer(ushort? delayBetweenPublishesInMilliseconds = null)
         {
             storeReady.WaitOne();
 
@@ -92,23 +149,26 @@ namespace Shoveling.Test.FunctionalSpecs
                 for (int i = 1; i <= messageNumber; i++)
                 {
                     var properties = model.CreateBasicProperties();
-                    properties.Headers = new Hashtable {{"Sender", "Producer".Bytes()}};
+                    properties.Headers = new Hashtable {{SourceHeader, "Producer".Bytes()}, { MessageIdHeader, Guid.NewGuid().ToString().Bytes() }};
+
                     model.BasicPublish(Exchange, "", properties, i.Bytes());
-                    Thread.Sleep(150);
+                    
+                    if(delayBetweenPublishesInMilliseconds.HasValue)
+                        Thread.Sleep(delayBetweenPublishesInMilliseconds.Value);
                 }
             }
 
             Debug.WriteLine("Publisher: completed publishing");
         }
 
-        private IEnumerable<CancellationTokenSource> MessageStore()
+        private IEnumerable<CancellationTokenSource> MessageStore(ushort? delayWhenStoringMessage = null)
         {
-            var messagesInStore = new ConcurrentQueue<BasicDeliverEventArgs>();
-            yield return Start(() => Store(messagesInStore));
-            yield return Start(() => Replayer(messagesInStore));
+            var messageStore = new ConcurrentQueue<BasicDeliverEventArgs>();
+            yield return Start(() => Store(messageStore, delayWhenStoringMessage));
+            yield return Start(() => Replayer(messageStore));
         }
 
-        private void Store(ConcurrentQueue<BasicDeliverEventArgs> messagesInStore)
+        private void Store(ConcurrentQueue<BasicDeliverEventArgs> messagesInStore, ushort? delayWhenStoringMessage)
         {
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
@@ -131,17 +191,18 @@ namespace Shoveling.Test.FunctionalSpecs
                     if (messagesInStore.Count == messageNumber/2)
                         storeHalfWay.Set();
 
-                    //Thread.Sleep(100);
+                    if(delayWhenStoringMessage.HasValue)
+                        Thread.Sleep(delayWhenStoringMessage.Value);
                 }
             }
         }
 
-        private void Replayer(IEnumerable<BasicDeliverEventArgs> messagesInStore)
+        private void Replayer(ConcurrentQueue<BasicDeliverEventArgs> messagesInStore)
         {
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                var incomingRequestsQueue = model.QueueDeclare(ReplayerQueue, false, true, true, null);
+                var incomingRequestsQueue = model.QueueDeclare(ReplayerQueue, false, false, true, null);
 
                 var consumer = new QueueingBasicConsumer(model);
                 model.BasicConsume(incomingRequestsQueue, true, consumer);
@@ -150,14 +211,17 @@ namespace Shoveling.Test.FunctionalSpecs
 
                 foreach (BasicDeliverEventArgs incomingRequest in consumer.Queue)
                 {
-                    model.QueueBind(incomingRequest.BasicProperties.ReplyTo, Exchange, "");
+                    Debug.WriteLine(string.Format("Replayer: received new client request, sending {0} messages", messagesInStore.Count));
+                    model.QueueBind(((byte[])incomingRequest.BasicProperties.Headers[LiveQueueHeader]).String(), Exchange, "");
 
-                    Debug.WriteLine("Replayer: received new client request");
+                    // this is ugly but how do I know when the client has started receiving messages
+                    // and thus I can start to send mine so that at least one overlaps?
+                    Thread.Sleep(500);
 
                     foreach (var message in messagesInStore)
                     {
                         var properties = message.BasicProperties;
-                        properties.Headers["Sender"] = "Store".Bytes();
+                        properties.Headers[SourceHeader] = "Store".Bytes();
 
                         model.BasicPublish("", incomingRequest.BasicProperties.ReplyTo, properties, message.Body);
                     }
