@@ -45,6 +45,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />
+    <Compile Include="FunctionalSpecs\IMessageStore.cs" />
+    <Compile Include="FunctionalSpecs\IndexedEnumerator.cs" />
     <Compile Include="FunctionalSpecs\Subscriber_on_secondary_node.cs" />
     <Compile Include="FunctionalSpecs\Subscription_after_beginning_of_session.cs" />
     <Compile Include="General_shoveling_tests.cs" />
@@ -57,6 +60,7 @@
     <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />
     <Compile Include="Utils\ICustomModel.cs" />
+    <Compile Include="Utils\MessageExtensions.cs" />
     <Compile Include="Utils\RabbitMQBroker.cs" />
     <Compile Include="With_queues.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
