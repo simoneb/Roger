@@ -53,8 +53,6 @@ namespace Shoveling.Test.FunctionalSpecs
             incomingQueue.Enqueue(message);
         }
 
-        public int Count { get { return storage.Count; } }
-
         public void Dispose()
         {
             if (!m_cancellation.IsCancellationRequested)

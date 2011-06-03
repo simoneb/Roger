@@ -13,11 +13,13 @@ namespace Shoveling.Test.FunctionalSpecs
         private readonly List<BasicDeliverEventArgs> m_storage;
         private int currentIndex;
         private BasicDeliverEventArgs current;
+        private readonly Func<int, bool> m_canAdvance;
 
         public IndexedEnumerator(ConcurrentQueue<BasicDeliverEventArgs> incomingStoreQueue, List<BasicDeliverEventArgs> storage)
         {
             m_incomingStoreQueue = incomingStoreQueue;
             m_storage = storage;
+            m_canAdvance = index => m_storage.Count > index;
         }
 
         public void Dispose()
@@ -27,8 +29,7 @@ namespace Shoveling.Test.FunctionalSpecs
 
         public bool MoveNext()
         {
-            Func<int, bool> canAdvance = index => m_storage.Count > index;
-            var canAdvanceNow = canAdvance(currentIndex);
+            var canAdvanceNow = m_canAdvance(currentIndex);
 
             if (canAdvanceNow)
             {
@@ -36,7 +37,7 @@ namespace Shoveling.Test.FunctionalSpecs
             }
             else if(!m_incomingStoreQueue.IsEmpty)
             {
-                SpinWait.SpinUntil(() => canAdvance(currentIndex));
+                SpinWait.SpinUntil(() => m_canAdvance(currentIndex));
 
                 current = m_storage[currentIndex++];
                 return true;

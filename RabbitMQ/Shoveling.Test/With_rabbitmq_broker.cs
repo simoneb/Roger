@@ -29,13 +29,12 @@ namespace Shoveling.Test
                     if(t.IsFaulted) throw t.Exception;
 
                     return t.Result;
-                }, tokenSource.Token)
-                ;
+                }, tokenSource.Token);
 
             return Tuple.Create(task, tokenSource);
         }
 
-        protected CancellationTokenSource Start(Action function)
+        protected static CancellationTokenSource Start(Action function)
         {
             var tokenSource = new CancellationTokenSource();
             Task.Factory.StartNew(function, tokenSource.Token).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
