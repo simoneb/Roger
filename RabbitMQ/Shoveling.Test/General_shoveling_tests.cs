@@ -15,9 +15,9 @@ namespace Shoveling.Test
         {
             var handle = new ManualResetEvent(false);
 
-            Task.Factory.StartNew(() => Subscribe(handle, Helpers.CreateSecondaryConnection(), s => Assert.AreEqual("Ciao", s)));
+            Task.Factory.StartNew(() => SubscribeAndReceiveOnce(handle, Helpers.CreateSecondaryConnection(), s => Assert.AreEqual("Ciao", s)));
 
-            Task.Factory.StartNew(() => Publish(Helpers.CreateConnection()));
+            Task.Factory.StartNew(() => PublishOnce(Helpers.CreateConnection()));
 
             if (!handle.WaitOne(2000))
                 Assert.Fail("Didn't complete in a timely fashion");
@@ -28,14 +28,14 @@ namespace Shoveling.Test
         {
             var handle = new ManualResetEvent(false);
 
-            Task.Factory.StartNew(() => Subscribe(handle, Helpers.CreateConnection(), s => Assert.Fail("Didn't expect to receive any messages")));
+            Task.Factory.StartNew(() => SubscribeAndReceiveOnce(handle, Helpers.CreateConnection(), s => Assert.Fail("Didn't expect to receive any messages")));
 
-            Task.Factory.StartNew(() => Publish(Helpers.CreateSecondaryConnection()));
+            Task.Factory.StartNew(() => PublishOnce(Helpers.CreateSecondaryConnection()));
 
             handle.WaitOne(2000);
         }
 
-        private static void Subscribe(EventWaitHandle handle, IConnection connection, Action<string> onMessageReceived)
+        private static void SubscribeAndReceiveOnce(EventWaitHandle handle, IConnection connection, Action<string> onMessageReceived)
         {
             using (connection)
             using (var model = connection.CreateModel())
@@ -54,7 +54,7 @@ namespace Shoveling.Test
             }
         }
 
-        private static void Publish(IConnection connection)
+        private static void PublishOnce(IConnection connection)
         {
             using (connection)
             using (var model = connection.CreateModel())

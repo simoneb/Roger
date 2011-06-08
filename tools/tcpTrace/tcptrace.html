@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>tcpTrace</TITLE>
+</HEAD>
+<BODY>
+
+<H1>tcpTrace</h1>
+
+I got fed up with installing Java &amp; <a href="http://xml.apache.org/soap">Apache SOAP</a> just to get tcpTunnelGUI, so here's a native Win32 version, 
+built using <a href="http://www.sellsbrothers.com/attila">Attila</a> (no MFC :) ). It started out as a copy of the Apache tool, but has taken on a life
+of its own!. 
+
+<H2>Huh, it does what ?</h2>
+
+Basically you use it as a tunnel between your client &amp; server.
+Start tcptrace.exe and up comes a dialog box asking for local port #,
+destination server, and destination port # (Ignore the logging options for now) .  Fill these in, click Ok,
+and wow are you going to have fun. For example if you are writing a client 
+and testing against a remote server 
+(say <a href="http://www.razorsoft.net">www.razorsoft.net</a> ), you can setup<BR>
+<PRE>Local Port #         8080
+Destination Server   www.razorsoft.net
+Destination Port #   80</pre>
+
+Now configure your client so that it thinks the server is at
+localhost:8080. tcpTrace will forward all the traffic from
+localport:8080 to the remote server (and vica versa), dumping the
+contents in the process. If you are hosting a server say on port 80 
+and want to use it, then change your server to run on port 81, and setup<BR>
+<PRE>Local Port #         80
+Destination Server   localhost
+Destination Port #   81
+</pre>
+you can now see your incoming traffic.<BR><BR>
+
+It should work with all the text based IP protocols, I've been using
+it with SOAP (port 80) &amp; HTTP (port 80), and I know Peter Drayton has been using it with
+POP3 (port 110) &amp; SMTP (port 25)<BR><BR>
+
+
+<BR><H2>Command Line Options</h2>
+If you prefer to set-up a tcpTrace session via a command line rather than via the GUI, then there are the following command line options
+<UL>
+<LI>/listen &lt;port> : specifies the local port to listen on.
+<LI>/serverPort &lt;port> : specifies the destination port to forward traffic to.
+<LI>/serverName &lt;servername> : specifies the destination server to forward traffic to.
+<LI>/log &lt;log filename> : enables logging to the specified file.
+<LI>/logFormat &lt;xml | plain> : specifies the logfile format (when logging is enabled) use xml or plain (plain is default).
+<LI>/title &lt;window title> : this overrides the default tcpTrace window title, is useful if you regularly run multiple instances of tcpTrace.
+<LI>/kill : stops all running instances of tcpTrace and exits. this can be useful for batch based testing.
+</UL>
+e.g. <BR>
+tcptrace /listen 8080 /serverPort 80 /serverName services2.xmethods.net<BR>
+tcptrace /listen 8081 /serverPort 80 /serverName soap.4s4c.com /log c:\log.xml /logFormat xml<br>
+tcptrace /listen 5049 /serverPort 5049 /serverName nagoya.apache.org /title "Apache Server"
+
+<BR><BR>
+If you're doing pure SOAP/HTTP work, you'll want to take a look at <a href="http://www.pocketsoap.com/tcptrace/pt.asp">proxyTrace</a> as well.<BR><BR>
+
+<BR><BR>My thanks to the following people for helping out
+<UL>
+<LI>Peter Drayton for badgering me into writing the logging support.
+<LI>Matt Humphrey for spotting and fixing a problem with large payloads and the socket shutdown sequence.
+<LI>Steve Witham for fixing my terrible docs, any errors are of course still mine.
+<LI>Everyone who made suggestions for new features.
+</UL>
+
+<BR><H2>Release History</h2>
+
+<h2>v0.8.1 (Build 717) May 28, 2005</h2>
+<ul>
+<li>Can now enter upto 500 characters for the server name.
+</ul>
+
+<h2>v0.8.0 (Build 712) December 17, 2003</h2>
+<ul>
+<li>If it can't listen on the specified local port it reports an error instead of silently failing.
+</ul>
+
+<h2>v0.7.3 (Build 710) December 28, 2002</h2>
+<ul>
+<li>Trace settings are now reflected in the window title when /title hasn't been used. Thanks to Tomas Restrepo for the suggestion.
+</ul>
+
+<h2>v0.7.2 (Build 708) December 28, 2002</h2>
+<ul>
+<li>Added option to fix-up single \r &amp; \n into windows linefeeds so that the display stays formated when tracing against non-windows applications.
+</ul>
+
+<h2>v0.7.1 (Build 683) December 18, 2002</h2>
+<ul>
+<li>Added &quot;Show Nulls&quot; option, so that data past a NULL character can be seen.
+</ul>
+
+<h2>v0.7.0 (Build 669) July 6, 2002</h2>
+<ul>
+<li>Can now select separate fonts for the list view and the text windows.
+<li>word wrap setting now remembered across invocations.
+<li>bug with word wrap toggle loosing font setting fixed.
+</ul>
+
+<h2>v0.6.0 (Build 648) March 27, 2002 [aka the Conference Presenters Edition!]</h2>
+<ul>
+<LI>Font selection is now remembered across invocations.
+<LI>The /title command line option added to override the standard window title, useful if you have lots of instances running at the same time.
+<LI>Connections that were still active when the trace is stopped, now have their data flushed to the log file.
+<LI>A problem with line endings in the XML log was fixed.
+</ul>
+
+<h2>v0.5.0 (Build 626) September 2, 2001</h2>
+<ul>
+<LI>Added support for changing the display font.
+<LI>Fixed the problems with clear.
+<LI>The payload views for the active connection are now dynamically updated.
+</ul>
+
+<h2>v0.4.0 (Build 521) February 21, 2001</h2>
+<UL>
+<LI>Added support to log the trace info to a file either in plain text or XML format.
+<LI>Added support for starting / stopping / logging from the command line (via Chris Sells's excellent <a href="http://www.sellsbrothers.com/tools#cmdline">command line parser</a>).
+<LI>Added a stop trace feature
+</UL>
+
+<h2>v0.3.0 (Build 234) January 15, 2001</h2>
+<UL>
+<LI>Matt Humphrey fixed a problem with large payloads getting truncated / dropped bytes
+<LI>Matt Humphrey fixed a problem with the socket shutdown sequnce
+<LI>Matt Humphrey added support for the up and down cursor keys to work on the connection list
+<LI>Added word wrap support for the request / response windows
+</UL>
+
+<h2>v0.2.1 (Build 122) December 1, 2000</h2>
+<UL>
+<LI>Corrected the tab order on the trace settings dialog
+</UL>
+
+<h2>v0.2.0 (Build 120) September 30, 2000</h2>
+<UL>
+<LI>The last used Trace settings are now remembered for next time
+<LI>Trace dialog box initially pops up
+<LI>Legal gunk added to about dialog box
+<LI>Updated docs with additions from Steve Witham
+<LI>Added copy of these docs to the download
+</ul>
+
+<h2>v0.1.0 (Build 92) September 12, 2000</h2>
+<UL>
+<LI>Initial Release
+</ul>
+
+
+
+<BR><BR><BR><BR><HR>
+Copyright &copy; 2000-2002, Simon Fell, All Rights Reserved
+
+</body>
+</html>
