@@ -7,14 +7,18 @@ namespace Shoveling.Test.Utils
     [AssemblyFixture]
     public class Bootstrap
     {
+        private TcpTrace secondaryClientEndpoint;
         public static RabbitMQBroker Broker { get; private set; }
-        private TcpTrace TcpProxy { get; set; }
+        public static TcpTrace ShovelTcpProxy { get; private set; }
 
         [FixtureSetUp]
         public void TestFixtureSetup()
         {
-            TcpProxy = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
-            TcpProxy.Start(Globals.SecondaryPort, "localhost", Globals.Port);
+            ShovelTcpProxy = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
+            StartShovelLink();
+
+            secondaryClientEndpoint = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
+            secondaryClientEndpoint.Start(Globals.SecondaryPort, "localhost", Globals.Port, "Secondary client link");
 
             Broker = new RabbitMQBroker(@"..\..\..\..\RabbitMQServer");
 
@@ -23,6 +27,11 @@ namespace Shoveling.Test.Utils
             Broker.StopApp();
             Broker.Reset();
             Broker.StartAppAndWait();
+        }
+
+        public static void StartShovelLink()
+        {
+            ShovelTcpProxy.Start(Globals.ShovelPort, "localhost", Globals.Port, "Shovel");
         }
 
         private static void StartBroker()
@@ -36,8 +45,15 @@ namespace Shoveling.Test.Utils
         {
             StopBroker();
 
-            TcpProxy.Stop();
+            StopShovelLink();
+            secondaryClientEndpoint.Stop();
+
             TcpTrace.StopAll(); // safety net
+        }
+
+        public static void StopShovelLink()
+        {
+            ShovelTcpProxy.Stop();
         }
 
         private static void StopBroker()

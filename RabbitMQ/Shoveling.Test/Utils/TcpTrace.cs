@@ -13,14 +13,17 @@ namespace Shoveling.Test.Utils
             _tcpTraceExecutablePath = tcpTraceExecutablePath;
         }
 
-        public void Start(int listenPort, string serverName, int serverPort)
+        public void Start(int listenPort, string serverName, int serverPort, string title)
         {
             var args = new StringBuilder("/listen ")
                 .Append(listenPort)
                 .Append(" /serverPort ")
                 .Append(serverPort)
                 .Append(" /serverName ")
-                .Append(serverName);
+                .Append(serverName)
+                .Append(" /title \"")
+                .Append(title)
+                .Append("\"");
 
             m_process = StartProcess(args.ToString());
         }

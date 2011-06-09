@@ -48,6 +48,7 @@
     <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IndexedEnumerator.cs" />
+    <Compile Include="FunctionalSpecs\Shovel_link_goes_down.cs" />
     <Compile Include="FunctionalSpecs\Subscriber_on_secondary_node.cs" />
     <Compile Include="FunctionalSpecs\Subscription_after_beginning_of_session.cs" />
     <Compile Include="FunctionalSpecs\Subscription_before_beginning_of_session.cs" />
