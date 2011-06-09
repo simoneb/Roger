@@ -19,6 +19,7 @@ namespace Shoveling.Test.FunctionalSpecs
         public void Should_receive_messages_published_on_main_node_after_subscription()
         {
             var consumer = Start<int>(OneConsumer);
+
             Start(OneProducer);
 
             Assert.AreEqual(1, consumer.Item1.Result);

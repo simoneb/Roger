@@ -2,6 +2,7 @@
 {
     public static class Globals
     {
+        public const int SecondaryPort = 5673;
         public const string ShovelingExchangeName = "ShovelingExchange";
         public const string SecondaryVirtualHost = "secondary";
         public const string VirtualHost = "/";

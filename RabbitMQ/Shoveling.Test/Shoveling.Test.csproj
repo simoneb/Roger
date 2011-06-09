@@ -64,6 +64,7 @@
     <Compile Include="Utils\ICustomModel.cs" />
     <Compile Include="Utils\MessageExtensions.cs" />
     <Compile Include="Utils\RabbitMQBroker.cs" />
+    <Compile Include="Utils\TcpTrace.cs" />
     <Compile Include="With_queues.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="With_shovel.cs" />

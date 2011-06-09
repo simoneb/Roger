@@ -29,6 +29,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit.Test", "Resbit.Test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shoveling.Test", "Shoveling.Test\Shoveling.Test.csproj", "{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{2BE65F01-B6DA-48EB-A714-6B4593ECD516}"
+	ProjectSection(SolutionItems) = preProject
+		..\RabbitMQServer\config\rabbitmq.config = ..\RabbitMQServer\config\rabbitmq.config
+		..\RabbitMQServer\config\startup-config.bat = ..\RabbitMQServer\config\startup-config.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

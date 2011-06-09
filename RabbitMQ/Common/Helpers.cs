@@ -19,7 +19,7 @@ namespace Common
             return new ConnectionFactory
             {
                 HostName = Globals.SecondaryHostName,
-                Port = Globals.Port,
+                Port = Globals.SecondaryPort,
                 VirtualHost = Globals.SecondaryVirtualHost
             }.CreateConnection();
         }
