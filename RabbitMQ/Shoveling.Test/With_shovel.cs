@@ -1,5 +1,6 @@
 using System.Threading;
 using MbUnit.Framework;
+using Shoveling.Test.Utils;
 
 namespace Shoveling.Test
 {
@@ -19,6 +20,16 @@ namespace Shoveling.Test
         public void DeleteSecondaryVHost()
         {
             Broker.DeleteVHost("secondary");
+        }
+
+        protected static void StartShovelLink()
+        {
+            Bootstrap.StartShovelLink();
+        }
+
+        protected static void ShutdownShovelLink()
+        {
+            Bootstrap.StopShovelLink();
         }
     }
 }

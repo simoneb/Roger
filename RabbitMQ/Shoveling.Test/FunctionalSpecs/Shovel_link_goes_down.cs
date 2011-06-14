@@ -6,7 +6,6 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Linq;
-using Shoveling.Test.Utils;
 
 namespace Shoveling.Test.FunctionalSpecs
 {
@@ -45,7 +44,7 @@ namespace Shoveling.Test.FunctionalSpecs
 
             Thread.Sleep(2000);
 
-            RestartShovelLink();
+            StartShovelLink();
 
             Thread.Sleep(5000); // leave some time to shovel to redeliver messages
 
@@ -57,16 +56,6 @@ namespace Shoveling.Test.FunctionalSpecs
             Thread.Sleep(100);
 
             Assert.AreElementsEqual(Enumerable.Range(0, 10), result);
-        }
-
-        private static void RestartShovelLink()
-        {
-            Bootstrap.StartShovelLink();
-        }
-
-        private static void ShutdownShovelLink()
-        {
-            Bootstrap.StopShovelLink();
         }
 
         private void Publisher()
