@@ -49,15 +49,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Acks_behavior.cs" />
     <Compile Include="Bus\BusTests.cs" />
-    <Compile Include="Bus\ExchangeOptions.cs" />
-    <Compile Include="Bus\IRabbitMessage.cs" />
-    <Compile Include="Bus\IRabbitObservable.cs" />
-    <Compile Include="Bus\IRabbitSubject.cs" />
-    <Compile Include="Bus\QueueOptions.cs" />
-    <Compile Include="Bus\RabbitMessage.cs" />
-    <Compile Include="Bus\RabbitObservable.cs" />
-    <Compile Include="Bus\RabbitObserver.cs" />
+    <Compile Include="Observable\ObservableTests.cs" />
+    <Compile Include="Observable\ExchangeOptions.cs" />
+    <Compile Include="Observable\IRabbitMessage.cs" />
+    <Compile Include="Observable\IRabbitObservable.cs" />
+    <Compile Include="Observable\IRabbitSubject.cs" />
+    <Compile Include="Observable\QueueOptions.cs" />
+    <Compile Include="Observable\RabbitMessage.cs" />
+    <Compile Include="Observable\RabbitObservable.cs" />
+    <Compile Include="Observable\RabbitObserver.cs" />
     <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IndexedEnumerator.cs" />
@@ -79,7 +81,7 @@
     <Compile Include="Utils\MessageExtensions.cs" />
     <Compile Include="Utils\RabbitMQBroker.cs" />
     <Compile Include="Utils\TcpTrace.cs" />
-    <Compile Include="With_queues.cs" />
+    <Compile Include="Queues_test.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="With_shovel.cs" />
   </ItemGroup>

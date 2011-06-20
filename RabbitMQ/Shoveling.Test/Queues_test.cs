@@ -6,7 +6,7 @@ using Shoveling.Test.Utils;
 
 namespace Shoveling.Test
 {
-    public class With_queues : With_rabbitmq_broker
+    public class Queues_test : With_rabbitmq_broker
     {
         private IConnection connection;
         private ICustomModel model;
