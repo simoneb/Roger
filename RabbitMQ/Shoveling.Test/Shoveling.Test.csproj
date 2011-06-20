@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
-    <Compile Include="Bus\BusTests.cs" />
     <Compile Include="Observable\ObservableTests.cs" />
     <Compile Include="Observable\ExchangeOptions.cs" />
     <Compile Include="Observable\IRabbitMessage.cs" />
