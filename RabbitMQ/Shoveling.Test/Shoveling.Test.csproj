@@ -70,6 +70,7 @@
     <Compile Include="Observable\RabbitObservable.cs" />
     <Compile Include="Observable\RabbitObserver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PublisherConfirms_behavior.cs" />
     <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />
     <Compile Include="Utils\ICustomModel.cs" />

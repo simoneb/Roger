@@ -14,7 +14,7 @@ namespace Shoveling.Test.FunctionalSpecs
         [Row(150, null)]
         [Row(null, 150)]
         [Row(300, 150)]
-        public void Should_not_loose_messages(ushort? delayBetweenPublishesInMilliseconds, ushort? delayWhenStoringMessage)
+        public void Should_not_lose_messages(ushort? delayBetweenPublishesInMilliseconds, ushort? delayWhenStoringMessage)
         {
             using (storage = new FakeMessageStore(delayWhenStoringMessage))
                 Run(delayBetweenPublishesInMilliseconds);
