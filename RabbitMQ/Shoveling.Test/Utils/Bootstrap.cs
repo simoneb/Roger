@@ -1,6 +1,6 @@
-﻿using Common;
+﻿using System.Configuration;
+using Common;
 using MbUnit.Framework;
-using Shoveling.Test.Properties;
 
 namespace Shoveling.Test.Utils
 {
@@ -10,6 +10,7 @@ namespace Shoveling.Test.Utils
         private TcpTrace secondaryClientEndpoint;
         public static RabbitMQBroker Broker { get; private set; }
         public static TcpTrace ShovelTcpProxy { get; private set; }
+        public static bool RunEmbeddedBroker { get { return bool.Parse(ConfigurationManager.AppSettings["RunEmbeddedBroker"]); } }
 
         [FixtureSetUp]
         public void TestFixtureSetup()
@@ -36,7 +37,7 @@ namespace Shoveling.Test.Utils
 
         private static void StartBroker()
         {
-            if (Settings.Default.RunEmbeddedBroker)
+            if (RunEmbeddedBroker)
                 Broker.StartAndWait();
         }
 
@@ -58,7 +59,7 @@ namespace Shoveling.Test.Utils
 
         private static void StopBroker()
         {
-            if (Settings.Default.RunEmbeddedBroker)
+            if (RunEmbeddedBroker)
                 Broker.Stop();
         }
     }

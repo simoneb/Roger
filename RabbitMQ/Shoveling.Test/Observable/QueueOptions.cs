@@ -1,4 +1,4 @@
-﻿namespace Shoveling.Test.Bus
+﻿namespace Shoveling.Test.Observable
 {
     public struct QueueOptions
     {

@@ -32,14 +32,15 @@ namespace Shoveling.Test.FunctionalSpecs
 
             Start(Publisher);
 
-            for (toPublish = 0; toPublish < 10; toPublish++)
+            for (var i = 0; i < 10; i++)
             {
-                publish.Set();
+                Publish(i);
 
-                Thread.Sleep(100); // leave some time to consumer to consume
-
-                if (toPublish == 5)
+                if (i == 5)
+                {
                     ShutdownShovelLink();
+                    Thread.Sleep(100); // without this sleep at times the test fails because of message 6 not being received
+                }
             }
 
             Thread.Sleep(2000);
@@ -50,12 +51,17 @@ namespace Shoveling.Test.FunctionalSpecs
 
             SpinWait.SpinUntil(() => result.Count == 10, 2000);
 
-            toPublish = -1;
-            publish.Set();
-
-            Thread.Sleep(100);
+            Publish(-1);
 
             Assert.AreElementsEqual(Enumerable.Range(0, 10), result);
+        }
+
+        private void Publish(int i)
+        {
+            toPublish = i;
+            publish.Set();
+
+            Thread.Sleep(100); // leave some time to consumer to consume
         }
 
         private void Publisher()

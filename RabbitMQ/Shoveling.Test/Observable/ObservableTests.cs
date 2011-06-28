@@ -1,6 +1,5 @@
 using System;
 using MbUnit.Framework;
-using Shoveling.Test.Bus;
 
 namespace Shoveling.Test.Observable
 {

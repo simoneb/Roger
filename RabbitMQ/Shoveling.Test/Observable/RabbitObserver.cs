@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-namespace Shoveling.Test.Bus
+namespace Shoveling.Test.Observable
 {
     public abstract class RabbitObserver<T> : IRabbitObserver<T>
     {

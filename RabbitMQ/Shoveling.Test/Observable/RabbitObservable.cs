@@ -4,7 +4,7 @@ using System.Reactive.Disposables;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test.Bus
+namespace Shoveling.Test.Observable
 {
     public class RabbitObservable : IRabbitObservable
     {
