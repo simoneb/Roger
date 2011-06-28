@@ -6,7 +6,7 @@ namespace Shoveling.Test.Observable
 {
     public class ObservableTests
     {
-        [Test]
+        [Test, Ignore]
         public void TEST_NAME()
         {
             var observable = new RabbitObservable("testExchange");

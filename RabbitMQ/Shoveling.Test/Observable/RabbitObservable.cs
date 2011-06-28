@@ -21,7 +21,7 @@ namespace Shoveling.Test.Bus
 
         public IDisposable Subscribe(IObserver<RabbitMessage> observer)
         {
-            return Subscribe(observer);
+            return Subscribe(observer,  new QueueOptions());
         }
 
         public IDisposable Subscribe(IObserver<RabbitMessage> observer, QueueOptions queue = default(QueueOptions))
