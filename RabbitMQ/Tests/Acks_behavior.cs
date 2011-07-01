@@ -8,7 +8,7 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test
+namespace Tests
 {
     public class Acks_behavior : With_rabbitmq_broker
     {

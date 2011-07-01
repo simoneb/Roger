@@ -8,8 +8,8 @@
     <ProjectGuid>{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Shoveling.Test</RootNamespace>
-    <AssemblyName>Shoveling.Test</AssemblyName>
+    <RootNamespace>Tests</RootNamespace>
+    <AssemblyName>Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

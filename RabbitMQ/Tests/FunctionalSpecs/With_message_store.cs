@@ -8,9 +8,9 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Util;
-using Shoveling.Test.Utils;
+using Tests.Utils;
 
-namespace Shoveling.Test.FunctionalSpecs
+namespace Tests.FunctionalSpecs
 {
     public class With_message_store : With_rabbitmq_broker
     {

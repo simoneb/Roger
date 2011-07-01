@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit", "Resbit\Resbit.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit.Test", "Resbit.Test\Resbit.Test.csproj", "{DC3D0C0F-F024-4A72-83E4-DF3D6AE5DB26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shoveling.Test", "Shoveling.Test\Shoveling.Test.csproj", "{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

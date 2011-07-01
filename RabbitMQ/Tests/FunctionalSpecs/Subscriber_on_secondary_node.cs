@@ -3,7 +3,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client.MessagePatterns;
 
-namespace Shoveling.Test.FunctionalSpecs
+namespace Tests.FunctionalSpecs
 {
     public class Subscriber_on_secondary_node : With_shovel
     {

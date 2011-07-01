@@ -1,7 +1,7 @@
 using System;
 using MbUnit.Framework;
 
-namespace Shoveling.Test.Observable
+namespace Tests.Observable
 {
     public class ObservableTests
     {

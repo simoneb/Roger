@@ -2,7 +2,7 @@ using System;
 using Common;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test.Utils
+namespace Tests.Utils
 {
     public static class MessageExtensions
     {

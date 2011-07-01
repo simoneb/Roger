@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Common;
 using MbUnit.Framework;
 using Resbit;
-using Shoveling.Test.Utils;
+using Tests.Utils;
 
-namespace Shoveling.Test
+namespace Tests
 {
     [TestFixture]
     public class With_rabbitmq_broker

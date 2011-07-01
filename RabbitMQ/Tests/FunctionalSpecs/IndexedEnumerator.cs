@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test.FunctionalSpecs
+namespace Tests.FunctionalSpecs
 {
     public class IndexedEnumerator : IEnumerator<BasicDeliverEventArgs>
     {

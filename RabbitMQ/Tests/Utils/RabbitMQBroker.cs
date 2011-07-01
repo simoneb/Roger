@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Shoveling.Test.Utils
+namespace Tests.Utils
 {
     public class RabbitMQBroker
     {

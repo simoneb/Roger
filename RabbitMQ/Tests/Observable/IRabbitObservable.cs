@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Shoveling.Test.Observable
+namespace Tests.Observable
 {
     public interface IRabbitObservable : IObservable<RabbitMessage>
     {

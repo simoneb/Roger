@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Shoveling.Test.Observable
+namespace Tests.Observable
 {
     public interface IRabbitObserver<T> : IObserver<RabbitMessage<T>>, IRabbitObserver
     {

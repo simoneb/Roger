@@ -3,7 +3,7 @@ using System.Linq;
 using MbUnit.Framework;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test.FunctionalSpecs
+namespace Tests.FunctionalSpecs
 {
     public class Subscription_after_beginning_of_session : With_message_store
     {

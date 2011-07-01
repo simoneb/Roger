@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace Shoveling.Test.Utils
+namespace Tests.Utils
 {
     public class TcpTrace
     {

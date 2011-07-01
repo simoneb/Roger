@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test.FunctionalSpecs
+namespace Tests.FunctionalSpecs
 {
     public class FakeMessageStore : IMessageStore
     {

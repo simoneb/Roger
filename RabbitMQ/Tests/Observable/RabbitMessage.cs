@@ -1,7 +1,7 @@
 ﻿using System;
 using RabbitMQ.Client.Events;
 
-namespace Shoveling.Test.Observable
+namespace Tests.Observable
 {
     public class RabbitMessage 
     {

@@ -2,9 +2,9 @@
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
-using Shoveling.Test.Utils;
+using Tests.Utils;
 
-namespace Shoveling.Test
+namespace Tests
 {
     public class Queues_test : With_rabbitmq_broker
     {

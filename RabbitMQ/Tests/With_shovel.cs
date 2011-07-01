@@ -1,8 +1,8 @@
 using System.Threading;
 using MbUnit.Framework;
-using Shoveling.Test.Utils;
+using Tests.Utils;
 
-namespace Shoveling.Test
+namespace Tests
 {
     public class With_shovel : With_rabbitmq_broker
     {

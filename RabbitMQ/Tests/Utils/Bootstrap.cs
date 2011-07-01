@@ -2,7 +2,7 @@
 using Common;
 using MbUnit.Framework;
 
-namespace Shoveling.Test.Utils
+namespace Tests.Utils
 {
     [AssemblyFixture]
     public class Bootstrap
