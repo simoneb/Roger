@@ -40,6 +40,9 @@
     <Reference Include="RabbitMQ.Client">
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>
     </Reference>
+    <Reference Include="RabbitMQ.ServiceModel">
+      <HintPath>..\..\lib\RabbitMQ\RabbitMQ.ServiceModel.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -48,6 +51,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\rx\System.Reactive.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
@@ -78,6 +82,15 @@
     <Compile Include="Utils\RabbitMQBroker.cs" />
     <Compile Include="Utils\TcpTrace.cs" />
     <Compile Include="Queues_test.cs" />
+    <Compile Include="WCF\Calculator.cs" />
+    <Compile Include="WCF\ICalculator.cs" />
+    <Compile Include="WCF\ILogger.cs" />
+    <Compile Include="WCF\IOrderCallback.cs" />
+    <Compile Include="WCF\IOrderService.cs" />
+    <Compile Include="WCF\Logger.cs" />
+    <Compile Include="WCF\OrderCallback.cs" />
+    <Compile Include="WCF\OrderService.cs" />
+    <Compile Include="WCF\Wcf_bindings.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="With_shovel.cs" />
   </ItemGroup>
