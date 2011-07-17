@@ -37,6 +37,10 @@
     <Reference Include="MbUnit">
       <HintPath>..\..\tools\mbunit\MbUnit.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\lib\protobuf-net\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="RabbitMQ.Client">
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>
     </Reference>
@@ -46,15 +50,19 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Reactive, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\rx\System.Reactive.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
+    <Compile Include="Bus\DefaultBusTests.cs" />
+    <Compile Include="Bus\FakeConnection.cs" />
+    <Compile Include="Bus\MyConsumer.cs" />
+    <Compile Include="Bus\MyMessage.cs" />
     <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IndexedEnumerator.cs" />
@@ -99,6 +107,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Rabbus\Rabbus.csproj">
+      <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
+      <Name>Rabbus</Name>
     </ProjectReference>
     <ProjectReference Include="..\Resbit\Resbit.csproj">
       <Project>{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}</Project>

@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit.Test", "Resbit.Test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rabbus", "Rabbus\Rabbus.csproj", "{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMessages", "TestMessages\TestMessages.csproj", "{6BFE3EAD-6C83-4F94-B139-193549CADFCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,14 @@ Global
 		{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BFE3EAD-6C83-4F94-B139-193549CADFCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BFE3EAD-6C83-4F94-B139-193549CADFCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BFE3EAD-6C83-4F94-B139-193549CADFCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BFE3EAD-6C83-4F94-B139-193549CADFCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
