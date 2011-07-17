@@ -9,10 +9,5 @@ namespace Rabbus
         {
             return (TAttribute) type.GetCustomAttributes(typeof (TAttribute), true).Single();
         }
-
-        public static string RoutingKey(this Type messageType)
-        {
-            return "";
-        }
     }
 }

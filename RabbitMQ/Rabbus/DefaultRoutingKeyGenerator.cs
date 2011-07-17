@@ -2,7 +2,7 @@
 
 namespace Rabbus
 {
-    public class DefaultRoutingKeyGenerationStrategy : IRoutingKeyGenerationStrategy
+    public class DefaultRoutingKeyGenerator : IRoutingKeyGenerator
     {
         public string GetRoutingKey<T>() where T : class
         {

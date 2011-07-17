@@ -1,7 +1,9 @@
 ﻿namespace Rabbus
 {
-    public interface IConsumer<in T> : IRabbusConsumer
+    /// <summary>
+    /// Marker interface
+    /// </summary>
+    public interface IConsumer
     {
-        void Consume(T message);
     }
 }

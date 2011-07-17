@@ -6,7 +6,7 @@ namespace Temporary
     [TestFixture]
     public class Routing_key_generation
     {
-        private DefaultRoutingKeyGenerationStrategy sut = new DefaultRoutingKeyGenerationStrategy();
+        private DefaultRoutingKeyGenerator sut = new DefaultRoutingKeyGenerator();
 
         [Test]
         public void Normal_type()

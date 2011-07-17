@@ -1,8 +1,6 @@
-using System.IO;
 using System.Threading;
 using Common;
 using MbUnit.Framework;
-using ProtoBuf;
 using RabbitMQ.Client;
 using Rabbus;
 
@@ -12,20 +10,23 @@ namespace Tests.Bus
     {
         private DefaultBus sut;
         private IConnection connection;
-        private DefaultRoutingKeyGenerationStrategy routingKeyGenerationStrategy;
-        private TypeNameGenerationStrategy typeNameGenerationStrategy;
+        private DefaultRoutingKeyGenerator routingKeyGenerator;
+        private TypeNameGenerator typeNameGenerator;
+        private ProtoBufNetSerializer serializer;
 
         [SetUp]
         public void Setup()
         {
             connection = Helpers.CreateConnection();
-            routingKeyGenerationStrategy = new DefaultRoutingKeyGenerationStrategy();
-            typeNameGenerationStrategy = new TypeNameGenerationStrategy();
-            sut = new DefaultBus(connection, routingKeyGenerationStrategy, typeNameGenerationStrategy);
+            routingKeyGenerator = new DefaultRoutingKeyGenerator();
+            typeNameGenerator = new TypeNameGenerator();
+            serializer = new ProtoBufNetSerializer();
+
+            sut = new DefaultBus(connection, routingKeyGenerator, typeNameGenerator, serializer, new DefaultReflection());
         }
 
         [Test]
-        public void Test()
+        public void Test_subscription()
         {
             var consumer = new MyConsumer();
 
@@ -37,18 +38,10 @@ namespace Tests.Bus
 
                 Thread.Sleep(100);
 
-                var properties = model.CreateBasicProperties();
+                sut.Publish(new MyMessage {Value = 1});
 
-                properties.Type = typeNameGenerationStrategy.GetName<MyMessage>();
-
-                using(var s = new MemoryStream())
-                {
-                    Serializer.Serialize(s, new MyMessage(){Value = 1});
-                    model.BasicPublish("TestExchange", routingKeyGenerationStrategy.GetRoutingKey<MyMessage>(), properties, s.ToArray());
-                }
+                Thread.Sleep(100);
             }
-
-            Thread.Sleep(100);
 
             Assert.AreEqual(1, consumer.Received.Value);
         }
