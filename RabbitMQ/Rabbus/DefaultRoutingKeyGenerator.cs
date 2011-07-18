@@ -4,12 +4,12 @@ namespace Rabbus
 {
     public class DefaultRoutingKeyGenerator : IRoutingKeyGenerator
     {
-        public string GetRoutingKey<T>() where T : class
+        public string Generate<T>() where T : class
         {
-            return GetRoutingKey(typeof(T));
+            return Generate(typeof(T));
         }
 
-        public string GetRoutingKey(Type messageType)
+        public string Generate(Type messageType)
         {
             return messageType.FullName;
         }

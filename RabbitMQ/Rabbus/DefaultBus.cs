@@ -34,7 +34,7 @@ namespace Rabbus
                                         where i.IsGenericType
                                         where typeof (IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
                                         select i.GetGenericArguments().Single())
-                model.QueueBind(queue, GetExchange(messageType), routingKeyGenerator.GetRoutingKey(messageType));
+                model.QueueBind(queue, GetExchange(messageType), routingKeyGenerator.Generate(messageType));
 
             var queueConsumer = new QueueingBasicConsumer(model);
             model.BasicConsume(queue, true, queueConsumer);
@@ -70,7 +70,7 @@ namespace Rabbus
                 var properties = FillMessageProperties(model, message);
 
                 model.BasicPublish(GetExchange(message.GetType()), 
-                                   routingKeyGenerator.GetRoutingKey(message.GetType()), 
+                                   routingKeyGenerator.Generate(message.GetType()), 
                                    properties,
                                    serializer.Serialize(message));
             }
@@ -79,7 +79,7 @@ namespace Rabbus
         private IBasicProperties FillMessageProperties(IModel model, object message)
         {
             var properties = model.CreateBasicProperties();
-            properties.Type = typeNameGenerator.GetName(message.GetType());
+            properties.Type = typeNameGenerator.Generate(message.GetType());
             return properties;
         }
     }

@@ -101,6 +101,8 @@
     <Compile Include="WCF\OrderCallback.cs" />
     <Compile Include="WCF\OrderService.cs" />
     <Compile Include="WCF\Wcf_bindings.cs" />
+    <Compile Include="When_dequeuing_manually.cs" />
+    <Compile Include="When_iterating_queue.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="With_shovel.cs" />
   </ItemGroup>

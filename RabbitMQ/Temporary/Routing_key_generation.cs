@@ -11,7 +11,7 @@ namespace Temporary
         [Test]
         public void Normal_type()
         {
-            Assert.AreEqual("Temporary.MyMessage", sut.GetRoutingKey(typeof (MyMessage)));
+            Assert.AreEqual("Temporary.MyMessage", sut.Generate(typeof (MyMessage)));
         }
     }
 }

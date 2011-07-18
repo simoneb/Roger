@@ -9,7 +9,7 @@ namespace Temporary
         [Test]
         public void Should_include_type_and_assembly_name_without_useless_stuff()
         {
-            Assert.AreEqual("Temporary.MyMessage, Temporary", new TypeNameGenerator().GetName<MyMessage>());
+            Assert.AreEqual("Temporary.MyMessage, Temporary", new TypeNameGenerator().Generate<MyMessage>());
         }
     }
 }

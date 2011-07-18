@@ -4,12 +4,12 @@ namespace Rabbus
 {
     public class TypeNameGenerator : ITypeNameGenerator
     {
-        public string GetName<T>()
+        public string Generate<T>()
         {
-            return GetName(typeof(T));
+            return Generate(typeof(T));
         }
 
-        public string GetName(Type type)
+        public string Generate(Type type)
         {
             var fullName = type.AssemblyQualifiedName;
             return fullName.Substring(0, fullName.IndexOf(", Version="));

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
@@ -7,7 +6,6 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using System;
-using System.Linq;
 
 namespace Tests
 {
@@ -80,59 +78,6 @@ namespace Tests
         public void OnCompleted()
         {
             completionSemaphore.Set();
-        }
-    }
-
-    public class When_iterating_queue : QueueingBasicConsumer_behavior
-    {
-        protected override IEnumerable<object> Consume { get { return Consumer.Queue.OfType<object>(); } }
-
-        [Test]
-        public void When_model_closes_will_not_throw_and_queue_will_not_deliver_any_messages()
-        {
-            Model.Dispose();
-
-            Assert.AreSame(InitialMessageValue, WaitForCompletion);
-        }
-
-        [Test]
-        public void When_connection_closes_will_not_throw_and_queue_will_not_deliver_any_messages()
-        {
-            Connection.Dispose();
-
-            Assert.AreSame(InitialMessageValue, WaitForCompletion);
-        }
-    }
-
-    public class When_dequeuing_manually : QueueingBasicConsumer_behavior
-    {
-        protected override IEnumerable<object> Consume
-        {
-            get
-            {
-                while (true)
-                    yield return Consumer.Queue.Dequeue();
-            }
-        }
-
-        [Test]
-        public void When_model_closes_will_throw_and_queue_will_not_deliver_any_messages()
-        {
-            Model.Dispose();
-
-            Assert.IsInstanceOfType<EndOfStreamException>(WaitForError);
-
-            Assert.AreSame(InitialMessageValue, WaitForCompletion);
-        }
-
-        [Test]
-        public void When_connection_closes_will_throw_and_queue_will_not_deliver_any_messages()
-        {
-            Connection.Dispose();
-
-            Assert.IsInstanceOfType<EndOfStreamException>(WaitForError);
-
-            Assert.AreSame(InitialMessageValue, WaitForCompletion);
         }
     }
 }

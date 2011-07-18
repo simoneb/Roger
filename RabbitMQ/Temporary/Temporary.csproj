@@ -37,7 +37,9 @@
     <Reference Include="MbUnit">
       <HintPath>..\..\tools\mbunit\MbUnit.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=1.0.0.282, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL" />
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\lib\protobuf-net\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="RabbitMQ.Client, Version=2.4.1.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>

@@ -4,7 +4,7 @@ namespace Rabbus
 {
     public interface ITypeNameGenerator
     {
-        string GetName<T>();
-        string GetName(Type type);
+        string Generate<T>();
+        string Generate(Type type);
     }
 }
