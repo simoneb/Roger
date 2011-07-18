@@ -23,6 +23,8 @@ namespace Tests.Bus
             serializer = new ProtoBufNetSerializer();
 
             sut = new DefaultBus(connection, routingKeyGenerator, typeNameGenerator, serializer, new DefaultReflection());
+
+            connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]
@@ -30,20 +32,33 @@ namespace Tests.Bus
         {
             var consumer = new MyConsumer();
 
-            using (var model = connection.CreateModel())
-            {
-                model.ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
+            sut.Subscribe(consumer);
 
-                sut.Subscribe(consumer);
+            Thread.Sleep(100);
 
-                Thread.Sleep(100);
+            sut.Publish(new MyMessage {Value = 1});
 
-                sut.Publish(new MyMessage {Value = 1});
-
-                Thread.Sleep(100);
-            }
+            Thread.Sleep(100);
 
             Assert.AreEqual(1, consumer.Received.Value);
+        }
+
+        [Test]
+        public void Test_unsubscription()
+        {
+            var consumer = new MyConsumer();
+
+            var token = sut.Subscribe(consumer);
+
+            Thread.Sleep(100);
+
+            token.Dispose();
+
+            sut.Publish(new MyMessage {Value = 1});
+
+            Thread.Sleep(100);
+
+            Assert.IsNull(consumer.Received);
         }
 
         [TearDown]

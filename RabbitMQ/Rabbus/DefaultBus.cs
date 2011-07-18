@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -14,9 +12,10 @@ namespace Rabbus
         private readonly IRoutingKeyGenerator routingKeyGenerator;
         private readonly ITypeNameGenerator typeNameGenerator;
         private readonly IMessageSerializer serializer;
-        private IReflection reflection;
+        private readonly IReflection reflection;
 
-        public DefaultBus(IConnection connection, IRoutingKeyGenerator routingKeyGenerator, ITypeNameGenerator typeNameGenerator, IMessageSerializer serializer, IReflection reflection)
+        public DefaultBus(IConnection connection, IRoutingKeyGenerator routingKeyGenerator,
+                          ITypeNameGenerator typeNameGenerator, IMessageSerializer serializer, IReflection reflection)
         {
             this.connection = connection;
             this.reflection = reflection;
