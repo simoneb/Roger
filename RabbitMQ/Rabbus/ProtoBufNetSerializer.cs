@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 using ProtoBuf;
-using Rabbus;
 
-namespace Tests.Bus
+namespace Rabbus
 {
     public class ProtoBufNetSerializer : IMessageSerializer
     {

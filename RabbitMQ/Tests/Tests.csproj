@@ -60,10 +60,8 @@
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
     <Compile Include="Bus\DefaultBusTests.cs" />
-    <Compile Include="Bus\FakeConnection.cs" />
     <Compile Include="Bus\MyConsumer.cs" />
     <Compile Include="Bus\MyMessage.cs" />
-    <Compile Include="Bus\ProtoBufNetSerializer.cs" />
     <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IMessageStore.cs" />
     <Compile Include="FunctionalSpecs\IndexedEnumerator.cs" />
