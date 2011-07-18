@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
@@ -6,7 +7,7 @@ using RabbitMQ.Client.Events;
 
 namespace Rabbus
 {
-    public class DefaultBus
+    public class DefaultBus : IRabbitBus
     {
         private readonly IConnection connection;
         private readonly IRoutingKeyGenerator routingKeyGenerator;
@@ -29,10 +30,7 @@ namespace Rabbus
             var model = connection.CreateModel();
             var queue = model.QueueDeclare("", false, true, true, null);
 
-            foreach (var messageType in from i in consumer.GetType().GetInterfaces()
-                                        where i.IsGenericType
-                                        where typeof (IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
-                                        select i.GetGenericArguments().Single())
+            foreach (var messageType in GetMessageTypesFromConsumer(consumer))
                 model.QueueBind(queue, GetExchange(messageType), routingKeyGenerator.Generate(messageType));
 
             var queueConsumer = new QueueingBasicConsumer(model);
@@ -47,6 +45,14 @@ namespace Rabbus
                                   });
 
             return new DisposableAction(model.Dispose);
+        }
+
+        private static IEnumerable<Type> GetMessageTypesFromConsumer(IConsumer consumer)
+        {
+            return from i in consumer.GetType().GetInterfaces()
+                   where i.IsGenericType
+                   where typeof (IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
+                   select i.GetGenericArguments().Single();
         }
 
         private static string GetExchange(Type messageType)
@@ -66,20 +72,57 @@ namespace Rabbus
         {
             using(var model = connection.CreateModel())
             {
-                var properties = FillMessageProperties(model, message);
+                var messageType = message.GetType();
+                var properties = FillMessageProperties(model, messageType);
 
-                model.BasicPublish(GetExchange(message.GetType()), 
-                                   routingKeyGenerator.Generate(message.GetType()), 
+                model.BasicPublish(GetExchange(messageType), 
+                                   routingKeyGenerator.Generate(messageType), 
                                    properties,
                                    serializer.Serialize(message));
             }
         }
 
-        private IBasicProperties FillMessageProperties(IModel model, object message)
+        private IBasicProperties FillMessageProperties(IModel model, Type messageType)
         {
             var properties = model.CreateBasicProperties();
-            properties.Type = typeNameGenerator.Generate(message.GetType());
+            properties.Type = typeNameGenerator.Generate(messageType);
             return properties;
+        }
+
+        public void PublishMandatory(object message, Action<PublishFailureReason> publishFailure)
+        {
+            using (var model = connection.CreateModel())
+            {
+                CallbackOnBasicReturn(model, publishFailure);
+
+                var messageType = message.GetType();
+                var properties = FillMessageProperties(model, messageType);
+
+                model.BasicPublish(GetExchange(messageType),
+                                   routingKeyGenerator.Generate(messageType),
+                                   true,
+                                   false,
+                                   properties,
+                                   serializer.Serialize(message));
+
+                // disposing here, is this correct? what if BasicReturn needs to be invoked by a disposed model?
+                // tests succeed, BTW
+            }
+        }
+
+        private static void CallbackOnBasicReturn(IModel model, Action<PublishFailureReason> publishFailure)
+        {
+            model.BasicReturn += (_, args) =>
+                                 {
+                                     try
+                                     {
+                                         publishFailure(new PublishFailureReason(args.ReplyCode, args.ReplyText));
+                                     }
+                                     finally
+                                     {
+                                         model.Dispose();
+                                     }
+                                 };
         }
     }
 }

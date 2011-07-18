@@ -61,6 +61,36 @@ namespace Tests.Bus
             Assert.IsNull(consumer.Received);
         }
 
+        [Test]
+        public void PublishMandatory_should_invoke_callback()
+        {
+            var handle = new ManualResetEvent(false);
+
+            sut.PublishMandatory(new MyMessage {Value = 1}, reason => handle.Set());
+
+            if(!handle.WaitOne(100))
+                Assert.Fail("Delivery failure callback was not called");
+        }
+
+        [Test]
+        public void PublishMandatory_should_work_when_message_deliverable()
+        {
+            var consumer = new MyConsumer();
+
+            sut.Subscribe(consumer);
+
+            Thread.Sleep(100);
+
+            var handle = new ManualResetEvent(false);
+
+            sut.PublishMandatory(new MyMessage {Value = 1}, reason => handle.Set());
+
+            if(handle.WaitOne(100))
+                Assert.Fail("Delivery failure callback wasn't expected to be called");
+
+            Assert.IsNotNull(consumer.Received);
+        }
+
         [TearDown]
         public void TearDown()
         {

@@ -50,11 +50,13 @@
     <Compile Include="IConsumer`1.cs" />
     <Compile Include="IMessageSerializer.cs" />
     <Compile Include="IConsumer.cs" />
+    <Compile Include="IRabbitBus.cs" />
     <Compile Include="IReflection.cs" />
     <Compile Include="IRoutingKeyGenerator.cs" />
     <Compile Include="ITypeNameGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtoBufNetSerializer.cs" />
+    <Compile Include="PublishFailureReason.cs" />
     <Compile Include="RabbusMessageAttribute.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="TypeNameGenerator.cs" />
