@@ -21,7 +21,7 @@ namespace Tests.Bus
         {
             var consumer = new MyConsumer();
 
-            Bus.Subscribe(consumer);
+            Bus.AddInstanceSubscription(consumer);
 
             Thread.Sleep(100);
 

@@ -7,14 +7,14 @@ namespace Tests.Bus
 {
     public abstract class With_default_bus : With_rabbitmq_broker
     {
-        protected DefaultBus Bus;
-        private IConnection connection;
+        protected IRabbitBus Bus;
+        protected IConnection connection;
         private DefaultRoutingKeyGenerator routingKeyGenerator;
         private TypeNameGenerator typeNameGenerator;
         private ProtoBufNetSerializer serializer;
 
         [SetUp]
-        public void Setup()
+        public void InitializeBus()
         {
             connection = Helpers.CreateConnection();
             routingKeyGenerator = new DefaultRoutingKeyGenerator();
@@ -27,7 +27,7 @@ namespace Tests.Bus
         }
 
         [TearDown]
-        public void TearDown()
+        public void CloseConnection()
         {
             connection.Dispose();
         }

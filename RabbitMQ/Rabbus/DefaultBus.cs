@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,23 @@ namespace Rabbus
         private readonly IMessageSerializer serializer;
         private readonly IReflection reflection;
 
+        [ThreadStatic]
+        private static CurrentMessageInformation _currentMessage;
+
+        private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
+
+        public void Reply(object message)
+        {
+            var model = connection.CreateModel();
+
+            var properties = FillMessageProperties(model, message.GetType());
+            properties.CorrelationId = CurrentMessage.CorrelationId;
+
+            model.BasicPublish("", CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
+        }
+
+        public CurrentMessageInformation CurrentMessage { get { return _currentMessage; } }
+
         public DefaultBus(IConnection connection, IRoutingKeyGenerator routingKeyGenerator,
                           ITypeNameGenerator typeNameGenerator, IMessageSerializer serializer, IReflection reflection)
         {
@@ -25,29 +43,70 @@ namespace Rabbus
             this.typeNameGenerator = typeNameGenerator;
         }
 
-        public IDisposable Subscribe(IConsumer consumer)
+        public IDisposable AddInstanceSubscription(IConsumer consumer)
         {
             var model = connection.CreateModel();
             var queue = model.QueueDeclare("", false, true, true, null);
 
-            foreach (var messageType in GetMessageTypesFromConsumer(consumer))
+            var consumerReference = new WeakReference(consumer);
+            instanceConsumers.TryAdd(consumerReference, model);
+
+            foreach (var messageType in GetSupportedMessageTypes(consumer))
                 model.QueueBind(queue, GetExchange(messageType), routingKeyGenerator.Generate(messageType));
 
             var queueConsumer = new QueueingBasicConsumer(model);
             model.BasicConsume(queue, true, queueConsumer);
 
-            Task.Factory.StartNew(() =>
-                                  {
-                                      foreach (var message in from args in queueConsumer.Queue.OfType<BasicDeliverEventArgs>()
-                                                              let messageType = Type.GetType(args.BasicProperties.Type, true)
-                                                              select serializer.Deserialize(messageType, args.Body))
-                                          reflection.InvokeConsume(consumer, message);
-                                  });
+            ConsumeAsynchronously(consumer, queueConsumer);
 
-            return new DisposableAction(model.Dispose);
+            return RemoveSubscriptionAndDisposeModel(consumerReference);
         }
 
-        private static IEnumerable<Type> GetMessageTypesFromConsumer(IConsumer consumer)
+        private IDisposable RemoveSubscriptionAndDisposeModel(WeakReference consumerReference)
+        {
+            return new DisposableAction(() =>
+            {
+                IModel model;
+
+                if(instanceConsumers.TryRemove(consumerReference, out model))
+                    model.Dispose();
+            });
+        }
+
+        private void ConsumeAsynchronously(IConsumer consumer, QueueingBasicConsumer queueConsumer)
+        {
+            RunConsumeTask(_ => consumer.Return(), queueConsumer, Identity);
+        }
+
+        private static T Identity<T>(T value) { return value; }
+
+        private Task RunConsumeTask(Func<Type, IEnumerable<IConsumer>> resolveConsumers,
+                                    QueueingBasicConsumer queueConsumer,
+                                    Func<IEnumerable<BasicDeliverEventArgs>, 
+                                    IEnumerable<BasicDeliverEventArgs>> queryModifier)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                foreach (var message in from args in queryModifier(queueConsumer.Queue.OfType<BasicDeliverEventArgs>())
+                                        let messageType = Type.GetType(args.BasicProperties.Type, true)
+                                        let replyTo = args.BasicProperties.ReplyTo
+                                        let correlationId = args.BasicProperties.ReplyTo
+                                        select new { messageType, replyTo, correlationId, body = serializer.Deserialize(messageType, args.Body)})
+                {
+                    _currentMessage = new CurrentMessageInformation
+                    {
+                        ReplyTo = message.replyTo,
+                        CorrelationId = message.correlationId,
+                        MessageType = message.messageType
+                    };
+
+                    foreach (var consumer in resolveConsumers(_currentMessage.MessageType))
+                        reflection.InvokeConsume(consumer, message.body);
+                }
+            });
+        }
+
+        private static IEnumerable<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
             return from i in consumer.GetType().GetInterfaces()
                    where i.IsGenericType
@@ -93,36 +152,72 @@ namespace Rabbus
         {
             using (var model = connection.CreateModel())
             {
-                CallbackOnBasicReturn(model, publishFailure);
-
                 var messageType = message.GetType();
                 var properties = FillMessageProperties(model, messageType);
 
-                model.BasicPublish(GetExchange(messageType),
-                                   routingKeyGenerator.Generate(messageType),
-                                   true,
-                                   false,
-                                   properties,
-                                   serializer.Serialize(message));
+                PublishMandatoryInternal(message, properties, model, messageType, publishFailure);
 
                 // disposing here, is this correct? what if BasicReturn needs to be invoked by a disposed model?
                 // tests succeed, BTW
             }
         }
 
+        private void PublishMandatoryInternal(object message, IBasicProperties properties, IModel model, Type messageType, Action<PublishFailureReason> publishFailure)
+        {
+            CallbackOnBasicReturn(model, publishFailure);
+
+            model.BasicPublish(GetExchange(messageType),
+                               routingKeyGenerator.Generate(messageType),
+                               true,
+                               false,
+                               properties,
+                               serializer.Serialize(message));
+        }
+
+        public void Request(object message)
+        {
+            var responseModel = connection.CreateModel();
+            var responseQueue = responseModel.QueueDeclare("", false, true, true, null);
+            
+            var responseConsumer = new QueueingBasicConsumer(responseModel);
+            responseModel.BasicConsume(responseQueue, true, responseConsumer);
+
+            using (var requestModel = connection.CreateModel())
+            {
+                var messageType = message.GetType();
+
+                var properties = FillMessageProperties(requestModel, messageType);
+                properties.CorrelationId = Guid.NewGuid().ToString();
+                properties.ReplyTo = responseQueue;
+
+                PublishMandatoryInternal(message, properties, requestModel, messageType, _ => {});
+            }
+
+            RunConsumeTask(GetConsumers, responseConsumer, m => m.First().Return())
+                .ContinueWith(_ => responseModel.Dispose());
+        }
+
+        private IEnumerable<IConsumer> GetConsumers(Type messageType)
+        {
+            return instanceConsumers.Keys.Where(r => r.IsAlive)
+                .Select(r => r.Target)
+                .Cast<IConsumer>()
+                .Where(c => GetSupportedMessageTypes(c).Any(m => m.Equals(messageType)));
+        }
+
         private static void CallbackOnBasicReturn(IModel model, Action<PublishFailureReason> publishFailure)
         {
             model.BasicReturn += (_, args) =>
-                                 {
-                                     try
-                                     {
-                                         publishFailure(new PublishFailureReason(args.ReplyCode, args.ReplyText));
-                                     }
-                                     finally
-                                     {
-                                         model.Dispose();
-                                     }
-                                 };
+            {
+                try
+                {
+                    publishFailure(new PublishFailureReason(args.ReplyCode, args.ReplyText));
+                }
+                finally
+                {
+                    model.Dispose();
+                }
+            };
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Tests.Bus
         {
             var consumer = new MyConsumer();
 
-            Bus.Subscribe(consumer);
+            Bus.AddInstanceSubscription(consumer);
 
             Thread.Sleep(100);
 
@@ -26,7 +26,7 @@ namespace Tests.Bus
         {
             var consumer = new MyConsumer();
 
-            var token = Bus.Subscribe(consumer);
+            var token = Bus.AddInstanceSubscription(consumer);
 
             Thread.Sleep(100);
 
