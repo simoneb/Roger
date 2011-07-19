@@ -33,7 +33,7 @@ namespace Rabbus
         void Request(object message);
 
         /// <summary>
-        /// Replies to a request sent by means of <see cref="Request"/>
+        /// Replies to a request sent by means of <see cref="Request(object)"/>
         /// </summary>
         /// <param name="message">The response message</param>
         void Reply(object message);
@@ -42,5 +42,9 @@ namespace Rabbus
         /// Contains the message information related to the message being handled currently
         /// </summary>
         CurrentMessageInformation CurrentMessage { get; }
+
+        void Request(object message, Action<PublishFailureReason> requestFailure);
+        void Request(object message, Action<ReplyFailureReason> replyFailure);
+        void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure);
     }
 }

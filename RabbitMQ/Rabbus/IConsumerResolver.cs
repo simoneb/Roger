@@ -7,5 +7,6 @@ namespace Rabbus
     {
         IEnumerable<IConsumer> Resolve(Type messageType);
         void Release(IEnumerable<IConsumer> consumers);
+        IEnumerable<Type> GetAllConsumersTypes();
     }
 }

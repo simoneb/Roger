@@ -45,13 +45,13 @@
   <ItemGroup>
     <Compile Include="CurrentMessageInformation.cs" />
     <Compile Include="DefaultBus.cs" />
-    <Compile Include="DefaultConsumerToMessageTypes.cs" />
+    <Compile Include="DefaultConsumerTypeToMessageTypes.cs" />
     <Compile Include="DefaultReflection.cs" />
     <Compile Include="DefaultRoutingKeyGenerator.cs" />
     <Compile Include="DisposableAction.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="IConsumerResolver.cs" />
-    <Compile Include="IConsumerToMessageTypes.cs" />
+    <Compile Include="IConsumerTypeToMessageTypes.cs" />
     <Compile Include="IConsumer`1.cs" />
     <Compile Include="IMessageSerializer.cs" />
     <Compile Include="IConsumer.cs" />
@@ -64,6 +64,7 @@
     <Compile Include="PublishFailureReason.cs" />
     <Compile Include="RabbusMessageAttribute.cs" />
     <Compile Include="ReflectionExtensions.cs" />
+    <Compile Include="ReplyFailureReason.cs" />
     <Compile Include="TypeNameGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -8,12 +8,12 @@ namespace Tests.Bus
 {
     public class FakeConsumerResolver : IConsumerResolver
     {
-        private readonly IConsumerToMessageTypes m_consumerToMessageTypes;
+        private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
         readonly ConcurrentDictionary<Type, List<IConsumer>> consumers = new ConcurrentDictionary<Type, List<IConsumer>>();
 
-        public FakeConsumerResolver(IConsumerToMessageTypes consumerToMessageTypes)
+        public FakeConsumerResolver(IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
         {
-            m_consumerToMessageTypes = consumerToMessageTypes;
+            this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
         }
 
         public IEnumerable<IConsumer> Resolve(Type messageType)
@@ -30,12 +30,17 @@ namespace Tests.Bus
             
         }
 
+        public IEnumerable<Type> GetAllConsumersTypes()
+        {
+            return consumers.SelectMany(c => c.Value.Select(v => v.GetType()));
+        }
+
         public void Register(IConsumer consumer)
         {
-            foreach (var supportedMessageType in m_consumerToMessageTypes.Get(consumer))
+            foreach (var supportedMessageType in consumerTypeToMessageTypes.Get(consumer.GetType()))
             {
                 consumers.AddOrUpdate(supportedMessageType,
-                                      new List<IConsumer>(),
+                                      new List<IConsumer> {consumer},
                                       (type, list) =>
                                       {
                                           list.Add(consumer);

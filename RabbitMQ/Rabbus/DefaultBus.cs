@@ -16,10 +16,10 @@ namespace Rabbus
         private readonly IMessageSerializer serializer;
         private readonly IReflection reflection;
         private readonly IConsumerResolver consumerResolver;
-        private readonly IConsumerToMessageTypes consumerToMessageTypes;
+        private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
 
         [ThreadStatic]
-        private static CurrentMessageInformation _currentMessage;
+        private static CurrentMessageInformation currentMessage;
 
         private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
 
@@ -33,7 +33,7 @@ namespace Rabbus
             model.BasicPublish("", CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
         }
 
-        public CurrentMessageInformation CurrentMessage { get { return _currentMessage; } }
+        public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
 
         public DefaultBus(IConnection connection,
                           IRoutingKeyGenerator routingKeyGenerator,
@@ -41,12 +41,12 @@ namespace Rabbus
                           IMessageSerializer serializer,
                           IReflection reflection,
                           IConsumerResolver consumerResolver,
-                          IConsumerToMessageTypes consumerToMessageTypes)
+                          IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
         {
             this.connection = connection;
             this.reflection = reflection;
             this.consumerResolver = consumerResolver;
-            this.consumerToMessageTypes = consumerToMessageTypes;
+            this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
             this.serializer = serializer;
             this.routingKeyGenerator = routingKeyGenerator;
             this.typeNameGenerator = typeNameGenerator;
@@ -60,15 +60,35 @@ namespace Rabbus
             var consumerReference = new WeakReference(consumer);
             instanceConsumers.TryAdd(consumerReference, model);
 
-            foreach (var messageType in GetSupportedMessageTypes(consumer))
-                model.QueueBind(queue, GetExchange(messageType), routingKeyGenerator.Generate(messageType));
-
-            var queueConsumer = new QueueingBasicConsumer(model);
-            model.BasicConsume(queue, true, queueConsumer);
+            var queueConsumer = Subscribe(model, GetSupportedMessageTypes(consumer), queue);
 
             ConsumeAsynchronously(consumer, queueConsumer);
 
             return RemoveSubscriptionAndDisposeModel(consumerReference);
+        }
+
+        private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
+        {
+            foreach (var messageType in messageTypes)
+                model.QueueBind(queue, GetMessageExchange(messageType), routingKeyGenerator.Generate(messageType));
+
+            var queueConsumer = new QueueingBasicConsumer(model);
+            model.BasicConsume(queue, true, queueConsumer);
+            return queueConsumer;
+        }
+
+        public void Initialize()
+        {
+            var allMessages = consumerResolver.GetAllConsumersTypes()
+                .SelectMany(type => consumerTypeToMessageTypes.Get(type))
+                .Distinct();
+
+            var model = connection.CreateModel();
+            var queue = model.QueueDeclare("", false, true, true, null);
+
+            var consumer = Subscribe(model, allMessages, queue);
+
+            ConsumeAsynchronously(ResolveConsumers, consumer, Identity, Identity);
         }
 
         private IDisposable RemoveSubscriptionAndDisposeModel(WeakReference consumerReference)
@@ -84,7 +104,7 @@ namespace Rabbus
 
         private void ConsumeAsynchronously(IConsumer consumer, QueueingBasicConsumer queueConsumer)
         {
-            RunConsumeTask(_ => consumer.Return(), queueConsumer, Identity);
+            ConsumeAsynchronously(_ => Tuple.Create(consumer.Return(), Enumerable.Empty<IConsumer>()), queueConsumer, Identity, Identity);
         }
 
         private static T Identity<T>(T value)
@@ -92,64 +112,73 @@ namespace Rabbus
             return value;
         }
 
-        private Task RunConsumeTask(Func<Type, IEnumerable<IConsumer>> resolveConsumers,
-                                    QueueingBasicConsumer queueConsumer,
-                                    Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> queryModifier)
+        private Task ConsumeAsynchronously(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers,
+                                           QueueingBasicConsumer queueConsumer,
+                                           Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter, 
+                                           Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                foreach (var message in from args in queryModifier(queueConsumer.Queue.OfType<BasicDeliverEventArgs>())
-                                        let messageType = Type.GetType(args.BasicProperties.Type, true)
-                                        let replyTo = args.BasicProperties.ReplyTo
-                                        let correlationId = args.BasicProperties.ReplyTo
-                                        select new
-                                        {
-                                            messageType,
-                                            replyTo,
-                                            correlationId,
-                                            body = serializer.Deserialize(messageType, args.Body)
-                                        })
-                {
-                    _currentMessage = new CurrentMessageInformation
-                    {
-                        ReplyTo = message.replyTo,
-                        CorrelationId = message.correlationId,
-                        MessageType = message.messageType
-                    };
-
-                    var consumers = resolveConsumers(_currentMessage.MessageType);
-
-                    foreach (var consumer in consumers)
-                        reflection.InvokeConsume(consumer, message.body);
-
-                    ReleaseConsumers(consumers);
-                }
-            });
+            return Task.Factory.StartNew(() => ConsumeSynchronously(resolveConsumers, queueConsumer, messageFilter, consumerFilter));
         }
 
-        private void ReleaseConsumers(IEnumerable<IConsumer> consumers)
+        private void ConsumeSynchronously(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers,
+                                          QueueingBasicConsumer queueConsumer,
+                                          Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter, 
+                                          Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
         {
-            consumerResolver.Release(consumers);
+            foreach (var message in from args in messageFilter(queueConsumer.Queue.OfType<BasicDeliverEventArgs>())
+                                    let messageType = Type.GetType(args.BasicProperties.Type, true)
+                                    let replyTo = args.BasicProperties.ReplyTo
+                                    let correlationId = args.BasicProperties.ReplyTo
+                                    select new
+                                           {
+                                               messageType,
+                                               replyTo,
+                                               correlationId,
+                                               body = serializer.Deserialize(messageType, args.Body)
+                                           })
+            {
+                currentMessage = new CurrentMessageInformation
+                                 {
+                                     ReplyTo = message.replyTo,
+                                     CorrelationId = message.correlationId,
+                                     MessageType = message.messageType
+                                 };
+
+                var consumers = resolveConsumers(currentMessage.MessageType);
+                var autoConsumers = consumers.Item2;
+
+                foreach (var consumer in consumerFilter(consumers.Item1.Concat(autoConsumers)))
+                    reflection.InvokeConsume(consumer, message.body);
+
+                consumerResolver.Release(autoConsumers);
+            }
         }
 
         private IEnumerable<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
-            return consumerToMessageTypes.Get(consumer);
+            return consumerTypeToMessageTypes.Get(consumer.GetType());
         }
 
-        private static string GetExchange(Type messageType)
+        private static string GetMessageExchange(Type messageType)
         {
             EnsureCorrectMessageType(messageType);
 
-            return messageType.Attribute<RabbusMessageAttribute>().Exchange;
+            var exchange = messageType.Attribute<RabbusMessageAttribute>().Exchange;
+
+            if(string.IsNullOrWhiteSpace(exchange))
+                throw new InvalidOperationException(string.Format(@"Message type {0} should have a valid exchange name where it should be published.
+It can be specified using the {1} attribute", messageType.FullName, typeof(RabbusMessageAttribute).FullName));
+
+            return exchange;
         }
 
         private static void EnsureCorrectMessageType(Type messageType)
         {
             if (!messageType.IsDefined(typeof(RabbusMessageAttribute), true))
-                throw new InvalidOperationException(string.Format("Message {0} should be decorated with {1} attribute",
+                throw new InvalidOperationException(string.Format("Message type {0} should be decorated with {1} attribute",
                                                                   messageType.FullName,
                                                                   typeof(RabbusMessageAttribute).FullName));
+
         }
 
         public void Publish(object message)
@@ -159,7 +188,7 @@ namespace Rabbus
                 var messageType = message.GetType();
                 var properties = PopulatePropertiesWithMessageType(model, messageType);
 
-                model.BasicPublish(GetExchange(messageType),
+                model.BasicPublish(GetMessageExchange(messageType),
                                    routingKeyGenerator.Generate(messageType),
                                    properties,
                                    serializer.Serialize(message));
@@ -194,7 +223,7 @@ namespace Rabbus
         {
             CallbackOnBasicReturn(model, publishFailure);
 
-            model.BasicPublish(GetExchange(messageType),
+            model.BasicPublish(GetMessageExchange(messageType),
                                routingKeyGenerator.Generate(messageType),
                                true,
                                false,
@@ -204,34 +233,63 @@ namespace Rabbus
 
         public void Request(object message)
         {
+            Request(message, _ => {}, _ => {});
+        }
+
+        public void Request(object message, Action<PublishFailureReason> requestFailure)
+        {
+            Request(message, requestFailure, _ => {});
+        }
+
+        public void Request(object message, Action<ReplyFailureReason> replyFailure)
+        {
+            Request(message, _ => { }, replyFailure);
+        }
+
+        public void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure)
+        {
             var responseModel = connection.CreateModel();
             var responseQueue = responseModel.QueueDeclare("", false, true, true, null);
 
             var responseConsumer = new QueueingBasicConsumer(responseModel);
             responseModel.BasicConsume(responseQueue, true, responseConsumer);
 
-            using (var requestModel = connection.CreateModel())
+            SendRequest(responseQueue, message, requestFailure);
+
+            ListenForResponseAsync(responseConsumer, replyFailure);
+        }
+
+        private void SendRequest(string responseQueue, object message, Action<PublishFailureReason> requestFailure)
+        {
+            using (var model = connection.CreateModel())
             {
                 var messageType = message.GetType();
-                var properties = PopulatePropertiesWithMessageType(requestModel, messageType);
+                var properties = PopulatePropertiesWithMessageType(model, messageType);
 
                 properties.CorrelationId = Guid.NewGuid().ToString();
                 properties.ReplyTo = responseQueue;
 
-                PublishMandatoryInternal(message, properties, requestModel, messageType, _ => { });
+                PublishMandatoryInternal(message, properties, model, messageType, requestFailure);
             }
-
-            RunConsumeTask(ResolveConsumers, responseConsumer, m => m.First().Return())
-                .ContinueWith(_ => responseModel.Dispose());
         }
 
-        private IEnumerable<IConsumer> ResolveConsumers(Type messageType)
+        private void ListenForResponseAsync(QueueingBasicConsumer consumer, Action<ReplyFailureReason> replyFailure)
         {
-            return instanceConsumers.Keys.Where(r => r.IsAlive)
-                .Select(r => r.Target)
-                .Cast<IConsumer>()
-                .Where(c => GetSupportedMessageTypes(c).Any(m => m.Equals(messageType)))
-                .Concat(consumerResolver.Resolve(messageType));
+            ConsumeAsynchronously(ResolveConsumers, consumer, 
+                                  messages => messages.First().Return(),
+                                  consumers => consumers.Single().Return())
+                .ContinueWith(t => replyFailure(new ReplyFailureReason(t.Exception)), TaskContinuationOptions.OnlyOnFaulted)
+                .ContinueWith(_ => consumer.Model.Dispose());
+        }
+
+        private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)
+        {
+            return Tuple.Create(instanceConsumers.Keys
+                                    .Where(r => r.IsAlive)
+                                    .Select(r => r.Target)
+                                    .Cast<IConsumer>()
+                                    .Where(c => GetSupportedMessageTypes(c).Any(m => m.Equals(messageType))),
+                                consumerResolver.Resolve(messageType));
         }
 
         private static void CallbackOnBasicReturn(IModel model, Action<PublishFailureReason> publishFailure)

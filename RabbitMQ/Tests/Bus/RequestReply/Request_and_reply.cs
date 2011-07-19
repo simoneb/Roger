@@ -1,10 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using MbUnit.Framework;
-using ProtoBuf;
 using RabbitMQ.Client;
-using Rabbus;
 
-namespace Tests.Bus
+namespace Tests.Bus.RequestReply
 {
     public class Request_and_reply : With_default_bus
     {
@@ -43,44 +42,26 @@ namespace Tests.Bus
 
             Assert.IsNotNull(responseConsumer.Received);
         }
-    }
 
-    public class MyResponseConsumer : IConsumer<MyResponse>
-    {
-        public MyResponse Received;
-
-        public void Consume(MyResponse message)
+        [Test]
+        public void Should_throw_if_more_than_one_consumer_can_receive_the_reply()
         {
-            Received = message;
+            var requestConsumer = new MyRequestConsumer(Bus);
+            var responseConsumer1 = new MyResponseConsumer();
+            var responseConsumer2 = new MyResponseConsumer();
+
+            Bus.AddInstanceSubscription(requestConsumer);
+            Bus.AddInstanceSubscription(responseConsumer1);
+            Bus.AddInstanceSubscription(responseConsumer2);
+
+            AggregateException error = null;
+            Bus.Request(new MyRequest(), reason => error = reason.Exception);
+
+            Thread.Sleep(1000);
+
+            Assert.IsNull(responseConsumer1.Received);
+            Assert.IsNull(responseConsumer2.Received);
+            Assert.IsNotNull(error);
         }
-    }
-
-    public class MyRequestConsumer : IConsumer<MyRequest>
-    {
-        private readonly IRabbitBus m_bus;
-        public MyRequest Received;
-
-        public MyRequestConsumer(IRabbitBus bus)
-        {
-            m_bus = bus;
-        }
-
-        public void Consume(MyRequest message)
-        {
-            Received = message;
-            m_bus.Reply(new MyResponse());
-        }
-    }
-
-    [RabbusMessage("RequestExchange")]
-    [ProtoContract]
-    public class MyResponse
-    {
-    }
-
-    [RabbusMessage("RequestExchange")]
-    [ProtoContract]
-    public class MyRequest
-    {
     }
 }
