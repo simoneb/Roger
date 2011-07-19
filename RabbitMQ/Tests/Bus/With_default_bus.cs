@@ -21,7 +21,8 @@ namespace Tests.Bus
             typeNameGenerator = new TypeNameGenerator();
             serializer = new ProtoBufNetSerializer();
 
-            Bus = new DefaultBus(connection, routingKeyGenerator, typeNameGenerator, serializer, new DefaultReflection());
+            var consumerToMessageTypes = new DefaultConsumerToMessageTypes();
+            Bus = new DefaultBus(connection, routingKeyGenerator, typeNameGenerator, serializer, new DefaultReflection(), new FakeConsumerResolver(consumerToMessageTypes), consumerToMessageTypes);
 
             connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
         }
@@ -32,4 +33,5 @@ namespace Tests.Bus
             connection.Dispose();
         }
     }
+
 }

@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
+    <Compile Include="Bus\FakeConsumerResolver.cs" />
     <Compile Include="Bus\Mandatory_publishing.cs" />
     <Compile Include="Bus\MyConsumer.cs" />
     <Compile Include="Bus\MyMessage.cs" />

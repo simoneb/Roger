@@ -45,10 +45,13 @@
   <ItemGroup>
     <Compile Include="CurrentMessageInformation.cs" />
     <Compile Include="DefaultBus.cs" />
+    <Compile Include="DefaultConsumerToMessageTypes.cs" />
     <Compile Include="DefaultReflection.cs" />
     <Compile Include="DefaultRoutingKeyGenerator.cs" />
     <Compile Include="DisposableAction.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="IConsumerResolver.cs" />
+    <Compile Include="IConsumerToMessageTypes.cs" />
     <Compile Include="IConsumer`1.cs" />
     <Compile Include="IMessageSerializer.cs" />
     <Compile Include="IConsumer.cs" />
