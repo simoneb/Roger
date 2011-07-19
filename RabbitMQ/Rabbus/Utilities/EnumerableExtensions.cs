@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Rabbus
+namespace Rabbus.Utilities
 {
     public static class EnumerableExtensions
     {

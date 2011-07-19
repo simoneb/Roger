@@ -43,29 +43,29 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsumerToMessageType\DefaultConsumerTypeToMessageTypes.cs" />
+    <Compile Include="ConsumerToMessageType\IConsumerTypeToMessageTypes.cs" />
     <Compile Include="CurrentMessageInformation.cs" />
     <Compile Include="DefaultBus.cs" />
-    <Compile Include="DefaultConsumerTypeToMessageTypes.cs" />
-    <Compile Include="DefaultReflection.cs" />
-    <Compile Include="DefaultRoutingKeyGenerator.cs" />
-    <Compile Include="DisposableAction.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Errors\PublishFailureReason.cs" />
+    <Compile Include="Errors\ReplyFailureReason.cs" />
     <Compile Include="IConsumerResolver.cs" />
-    <Compile Include="IConsumerTypeToMessageTypes.cs" />
     <Compile Include="IConsumer`1.cs" />
-    <Compile Include="IMessageSerializer.cs" />
     <Compile Include="IConsumer.cs" />
     <Compile Include="IRabbitBus.cs" />
-    <Compile Include="IReflection.cs" />
-    <Compile Include="IRoutingKeyGenerator.cs" />
-    <Compile Include="ITypeNameGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtoBufNetSerializer.cs" />
-    <Compile Include="PublishFailureReason.cs" />
     <Compile Include="RabbusMessageAttribute.cs" />
-    <Compile Include="ReflectionExtensions.cs" />
-    <Compile Include="ReplyFailureReason.cs" />
-    <Compile Include="TypeNameGenerator.cs" />
+    <Compile Include="Reflection\DefaultReflection.cs" />
+    <Compile Include="Reflection\IReflection.cs" />
+    <Compile Include="Reflection\ReflectionExtensions.cs" />
+    <Compile Include="RoutingKeys\DefaultRoutingKeyGenerator.cs" />
+    <Compile Include="RoutingKeys\IRoutingKeyGenerator.cs" />
+    <Compile Include="Serialization\IMessageSerializer.cs" />
+    <Compile Include="Serialization\ProtoBufNetSerializer.cs" />
+    <Compile Include="TypeNames\ITypeNameGenerator.cs" />
+    <Compile Include="TypeNames\TypeNameGenerator.cs" />
+    <Compile Include="Utilities\DisposableAction.cs" />
+    <Compile Include="Utilities\EnumerableExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,7 +12,7 @@ namespace Tests.Bus
         {
             consumer = new MyConsumer();
             ConsumerResolver.Register(consumer);
-            connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
+            Connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]

@@ -10,7 +10,7 @@ namespace Tests.Bus.RequestReply
         [SetUp]
         public void Setup()
         {
-            connection.CreateModel().ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
+            Connection.CreateModel().ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]

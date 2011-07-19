@@ -1,9 +1,15 @@
 ﻿using System;
+using Rabbus.Errors;
 
 namespace Rabbus
 {
     public interface IRabbitBus
     {
+        /// <summary>
+        /// Contains the message information related to the message being handled currently
+        /// </summary>
+        CurrentMessageInformation CurrentMessage { get; }
+
         /// <summary>
         /// Subscribes a consumer manually to the messages it is interested in
         /// This is not usually necessary as consumer subscription is carried out automatically
@@ -23,28 +29,45 @@ namespace Rabbus
         /// but fails if there are no subscribers to which the message can be routed
         /// </summary>
         /// <param name="message">The message to be published</param>
-        /// <param name="publishFailure">A callback invoked when the message cannot be routed to any subscribers</param>
+        /// <param name="publishFailure">A callback invoked when the message cannot be routed to any subscriber</param>
         void PublishMandatory(object message, Action<PublishFailureReason> publishFailure);
 
         /// <summary>
-        /// Sends a request by means of <paramref name="message"/>, expecting a reply
+        /// Sends a request by means of <paramref name="message"/>, expecting a reply,
+        /// but fails if there are no subscribers to which the message can be routed
         /// </summary>
         /// <param name="message">The request message</param>
         void Request(object message);
+
+        /// <summary>
+        /// Sends a request by means of <paramref name="message"/>, expecting a reply,
+        /// but fails if there are no subscribers to which the message can be routed
+        /// </summary>
+        /// <param name="message">The request message</param>
+        /// <param name="requestFailure">A callback invoked when the message cannot be routed to any subscriber</param>
+        void Request(object message, Action<PublishFailureReason> requestFailure);
+
+        /// <summary>
+        /// Sends a request by means of <paramref name="message"/>, expecting a reply,
+        /// but fails if there are no subscribers to which the message can be routed
+        /// </summary>
+        /// <param name="message">The request message</param>
+        /// <param name="replyFailure">A callback invoked when the reply to the message cannot be handled</param>
+        void Request(object message, Action<ReplyFailureReason> replyFailure);
+
+        /// <summary>
+        /// Sends a request by means of <paramref name="message"/>, expecting a reply,
+        /// but fails if there are no subscribers to which the message can be routed
+        /// </summary>
+        /// <param name="message">The request message</param>
+        /// <param name="requestFailure">A callback invoked when the message cannot be routed to any subscriber</param>
+        /// <param name="replyFailure">A callback invoked when the reply to the message cannot be handled</param>
+        void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure);
 
         /// <summary>
         /// Replies to a request sent by means of <see cref="Request(object)"/>
         /// </summary>
         /// <param name="message">The response message</param>
         void Reply(object message);
-
-        /// <summary>
-        /// Contains the message information related to the message being handled currently
-        /// </summary>
-        CurrentMessageInformation CurrentMessage { get; }
-
-        void Request(object message, Action<PublishFailureReason> requestFailure);
-        void Request(object message, Action<ReplyFailureReason> replyFailure);
-        void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure);
     }
 }

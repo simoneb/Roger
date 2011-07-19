@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus
+namespace Rabbus.Utilities
 {
     internal class DisposableAction : IDisposable
     {

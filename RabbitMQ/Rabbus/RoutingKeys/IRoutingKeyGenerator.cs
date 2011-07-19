@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus
+namespace Rabbus.RoutingKeys
 {
     public interface IRoutingKeyGenerator
     {

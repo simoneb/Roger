@@ -2,7 +2,7 @@
 using System.IO;
 using ProtoBuf;
 
-namespace Rabbus
+namespace Rabbus.Serialization
 {
     public class ProtoBufNetSerializer : IMessageSerializer
     {

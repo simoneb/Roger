@@ -1,4 +1,4 @@
-﻿namespace Rabbus
+﻿namespace Rabbus.Reflection
 {
     public interface IReflection
     {

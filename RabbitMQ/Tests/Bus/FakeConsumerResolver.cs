@@ -3,13 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Rabbus;
+using Rabbus.ConsumerToMessageType;
 
 namespace Tests.Bus
 {
     public class FakeConsumerResolver : IConsumerResolver
     {
         private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
-        readonly ConcurrentDictionary<Type, List<IConsumer>> consumers = new ConcurrentDictionary<Type, List<IConsumer>>();
+        readonly ConcurrentDictionary<Type, List<IConsumer>> messageTypeToConsumers = new ConcurrentDictionary<Type, List<IConsumer>>();
 
         public FakeConsumerResolver(IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
         {
@@ -20,7 +21,7 @@ namespace Tests.Bus
         {
             List<IConsumer> supportedConsumers;
 
-            return consumers.TryGetValue(messageType, out supportedConsumers)
+            return messageTypeToConsumers.TryGetValue(messageType, out supportedConsumers)
                        ? supportedConsumers
                        : Enumerable.Empty<IConsumer>();
         }
@@ -32,20 +33,20 @@ namespace Tests.Bus
 
         public IEnumerable<Type> GetAllConsumersTypes()
         {
-            return consumers.SelectMany(c => c.Value.Select(v => v.GetType()));
+            return messageTypeToConsumers.SelectMany(c => c.Value.Select(v => v.GetType()));
         }
 
         public void Register(IConsumer consumer)
         {
             foreach (var supportedMessageType in consumerTypeToMessageTypes.Get(consumer.GetType()))
             {
-                consumers.AddOrUpdate(supportedMessageType,
-                                      new List<IConsumer> {consumer},
-                                      (type, list) =>
-                                      {
-                                          list.Add(consumer);
-                                          return list;
-                                      });
+                messageTypeToConsumers.AddOrUpdate(supportedMessageType,
+                                                   new List<IConsumer> {consumer},
+                                                   (type, list) =>
+                                                   {
+                                                       list.Add(consumer);
+                                                       return list;
+                                                   });
             }
         }
     }

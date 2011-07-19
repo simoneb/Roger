@@ -1,4 +1,4 @@
-﻿namespace Rabbus
+﻿namespace Rabbus.Errors
 {
     public class PublishFailureReason
     {

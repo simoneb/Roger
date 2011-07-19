@@ -1,12 +1,12 @@
 using MbUnit.Framework;
-using Rabbus;
+using Rabbus.RoutingKeys;
 
 namespace Temporary
 {
     [TestFixture]
     public class Routing_key_generation
     {
-        private DefaultRoutingKeyGenerator sut = new DefaultRoutingKeyGenerator();
+        private readonly DefaultRoutingKeyGenerator sut = new DefaultRoutingKeyGenerator();
 
         [Test]
         public void Normal_type()

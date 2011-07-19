@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 
-namespace Rabbus
+namespace Rabbus.Reflection
 {
     public static class ReflectionExtensions
     {

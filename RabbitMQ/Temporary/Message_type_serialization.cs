@@ -1,5 +1,5 @@
 using MbUnit.Framework;
-using Rabbus;
+using Rabbus.TypeNames;
 
 namespace Temporary
 {

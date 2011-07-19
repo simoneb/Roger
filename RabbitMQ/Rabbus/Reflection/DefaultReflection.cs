@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Rabbus
+namespace Rabbus.Reflection
 {
     public class DefaultReflection : IReflection
     {
