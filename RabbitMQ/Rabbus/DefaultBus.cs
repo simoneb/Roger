@@ -8,7 +8,7 @@ using RabbitMQ.Client.Events;
 
 namespace Rabbus
 {
-    public class DefaultBus : IRabbitBus
+    public class DefaultBus : IRabbitBus, IDisposable
     {
         private readonly IConnection connection;
         private readonly IRoutingKeyGenerator routingKeyGenerator;
@@ -22,6 +22,7 @@ namespace Rabbus
         private static CurrentMessageInformation currentMessage;
 
         private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
+        private IModel mainModel;
 
         public void Reply(object message)
         {
@@ -83,10 +84,10 @@ namespace Rabbus
                 .SelectMany(type => consumerTypeToMessageTypes.Get(type))
                 .Distinct();
 
-            var model = connection.CreateModel();
-            var queue = model.QueueDeclare("", false, true, true, null);
+            mainModel = connection.CreateModel();
+            var queue = mainModel.QueueDeclare("", false, true, true, null);
 
-            var consumer = Subscribe(model, allMessages, queue);
+            var consumer = Subscribe(mainModel, allMessages, queue);
 
             ConsumeAsynchronously(ResolveConsumers, consumer, Identity, Identity);
         }
@@ -305,6 +306,12 @@ It can be specified using the {1} attribute", messageType.FullName, typeof(Rabbu
                     model.Dispose();
                 }
             };
+        }
+
+        public void Dispose()
+        {
+            if(mainModel != null && mainModel.IsOpen)
+                mainModel.Dispose();
         }
     }
 }
