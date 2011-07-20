@@ -107,32 +107,31 @@ namespace Rabbus
                                     let replyTo = args.BasicProperties.ReplyTo
                                     let correlationId = args.BasicProperties.ReplyTo
                                     let deliveryTag = args.DeliveryTag
-                                    select new
+                                    select new CurrentMessageInformation
                                            {
-                                               messageType,
-                                               replyTo,
-                                               correlationId,
-                                               deliveryTag,
-                                               body = serializer.Deserialize(messageType, args.Body)
+                                               MessageType = messageType,
+                                               ReplyTo = replyTo,
+                                               CorrelationId = correlationId,
+                                               DeliveryTag = deliveryTag,
+                                               Body = serializer.Deserialize(messageType, args.Body)
                                            })
             {
-                currentMessage = new CurrentMessageInformation
-                                 {
-                                     ReplyTo = message.replyTo,
-                                     CorrelationId = message.correlationId,
-                                     MessageType = message.messageType
-                                 };
-
-                var consumers = resolveConsumers(currentMessage.MessageType);
-                var autoConsumers = consumers.Item2;
-
-                foreach (var c in consumerFilter(consumers.Item1.Concat(autoConsumers)))
-                    reflection.InvokeConsume(c, message.body);
-
-                consumer.Model.BasicAck(message.deliveryTag, false);
-
-                consumerResolver.Release(autoConsumers);
+                InvokeConsumers(resolveConsumers, consumerFilter, message);
+                consumer.Model.BasicAck(currentMessage.DeliveryTag, false);
             }
+        }
+
+        private void InvokeConsumers(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers, Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter, CurrentMessageInformation message)
+        {
+            currentMessage = message;
+
+            var consumers = resolveConsumers(currentMessage.MessageType);
+            var autoConsumers = consumers.Item2.ToArray();
+
+            foreach (var c in consumerFilter(consumers.Item1.Concat(autoConsumers)))
+                reflection.InvokeConsume(c, currentMessage.Body);
+
+            consumerResolver.Release(autoConsumers);
         }
 
         public IDisposable AddInstanceSubscription(IConsumer consumer)
@@ -328,6 +327,15 @@ It can be specified using the {1} attribute", messageType.FullName, typeof(Rabbu
         {
             if(mainModel != null && mainModel.IsOpen)
                 mainModel.Dispose();
+        }
+
+        public void Consume(object message)
+        {
+            InvokeConsumers(ResolveConsumers, Identity, new CurrentMessageInformation
+            {
+                Body = message,
+                MessageType = message.GetType()
+            });
         }
     }
 }

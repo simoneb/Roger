@@ -69,5 +69,11 @@ namespace Rabbus
         /// </summary>
         /// <param name="message">The response message</param>
         void Reply(object message);
+
+        /// <summary>
+        /// Manually shove a message into the bus and let consumers consume them
+        /// </summary>
+        /// <param name="message">The message</param>
+        void Consume(object message);
     }
 }

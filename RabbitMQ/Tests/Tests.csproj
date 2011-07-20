@@ -62,6 +62,7 @@
     <Compile Include="Bus\Consumer_resolution.cs" />
     <Compile Include="Bus\FakeConsumerResolver.cs" />
     <Compile Include="Bus\Mandatory_publishing.cs" />
+    <Compile Include="Bus\Manual_consuming.cs" />
     <Compile Include="Bus\MyConsumer.cs" />
     <Compile Include="Bus\MyMessage.cs" />
     <Compile Include="Bus\RequestReply\MyRequest.cs" />
