@@ -27,9 +27,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resbit.Test", "Resbit.Test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rabbus", "Rabbus\Rabbus.csproj", "{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Integration", "Tests\Tests.Integration.csproj", "{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Integration", "Tests.Integration\Tests.Integration.csproj", "{5AACB2EF-9199-41E8-B08C-81CAE4F29DD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Unit", "Temporary\Tests.Unit.csproj", "{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Unit", "Tests.Unit\Tests.Unit.csproj", "{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
