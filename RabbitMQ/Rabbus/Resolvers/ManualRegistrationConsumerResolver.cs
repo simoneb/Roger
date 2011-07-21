@@ -1,19 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Rabbus.ConsumerToMessageType;
 
-namespace Rabbus
+namespace Rabbus.Resolvers
 {
     public class ManualRegistrationConsumerResolver : IConsumerResolver
     {
-        private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
+        private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         readonly ConcurrentDictionary<Type, List<IConsumer>> messageTypeToConsumers = new ConcurrentDictionary<Type, List<IConsumer>>();
 
-        public ManualRegistrationConsumerResolver(IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
+        public ManualRegistrationConsumerResolver(ISupportedMessageTypesResolver supportedMessageTypesResolver)
         {
-            this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
+            this.supportedMessageTypesResolver = supportedMessageTypesResolver;
         }
 
         public IEnumerable<IConsumer> Resolve(Type messageType)
@@ -27,16 +26,17 @@ namespace Rabbus
 
         public void Release(IEnumerable<IConsumer> consumers)
         {
+            // nothing to do here
         }
 
         public IEnumerable<Type> GetAllConsumersTypes()
         {
-            return messageTypeToConsumers.SelectMany(c => c.Value.Select(v => v.GetType()));
+            return messageTypeToConsumers.Values.SelectMany(v => v.Select(c => c.GetType())).Distinct();
         }
 
         public void Register(IConsumer consumer)
         {
-            foreach (var supportedMessageType in consumerTypeToMessageTypes.Get(consumer.GetType()))
+            foreach (var supportedMessageType in supportedMessageTypesResolver.Get(consumer.GetType()))
             {
                 messageTypeToConsumers.AddOrUpdate(supportedMessageType,
                                                    new List<IConsumer> {consumer},

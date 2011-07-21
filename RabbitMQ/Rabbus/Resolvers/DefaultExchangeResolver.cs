@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Rabbus.Reflection;
 
-namespace Rabbus.Exchanges
+namespace Rabbus.Resolvers
 {
     public class DefaultExchangeResolver : IExchangeResolver
     {
@@ -12,11 +11,16 @@ namespace Rabbus.Exchanges
         {
             EnsureCorrectMessageType(messageType);
 
-            var exchange = messageType.Attribute<RabbusMessageAttribute>().Exchange;
+            var exchange = GetExchangeName(messageType);
 
-            EnsureCorrectExchangeName(messageType, exchange);
+            EnsureCorrectExchangeName(exchange);
 
             return exchange;
+        }
+
+        private static string GetExchangeName(Type messageType)
+        {
+            return ((RabbusMessageAttribute) messageType.GetCustomAttributes(typeof (RabbusMessageAttribute), false).Single()).Exchange;
         }
 
         private static void EnsureCorrectMessageType(Type messageType)
@@ -28,12 +32,11 @@ namespace Rabbus.Exchanges
 
         }
 
-        private static void EnsureCorrectExchangeName(Type messageType, string exchange)
+        private static void EnsureCorrectExchangeName(string exchange)
         {
             if(string.IsNullOrWhiteSpace(exchange) || ContainsInvalidChars(exchange))
-                throw new ArgumentException(string.Format(@"Message type {0} does not have a valid exchange name. It can be specified using the {1} attribute",
-                                                          messageType.FullName,
-                                                          typeof (RabbusMessageAttribute).FullName));
+                throw new ArgumentException(string.Format(@"Value {0} is not a valid exchange name",
+                                                          exchange));
         }
 
         private static bool ContainsInvalidChars(string exchangeName)

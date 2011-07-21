@@ -5,26 +5,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Rabbus.ConsumerToMessageType;
 using Rabbus.Errors;
-using Rabbus.Exchanges;
 using Rabbus.Reflection;
-using Rabbus.RoutingKeys;
+using Rabbus.Resolvers;
 using Rabbus.Serialization;
-using Rabbus.TypeNames;
 using Rabbus.Utilities;
 
 namespace Rabbus
 {
-    public class DefaultBus : IRabbitBus
+    public class DefaultRabbitBus : IRabbitBus
     {
         private readonly IConnection connection;
-        private readonly IRoutingKeyGenerator routingKeyGenerator;
+        private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly ITypeResolver typeResolver;
         private readonly IMessageSerializer serializer;
         private readonly IReflection reflection;
         private readonly IConsumerResolver consumerResolver;
-        private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
+        private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IExchangeResolver exchangeResolver;
 
         public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
@@ -35,33 +32,33 @@ namespace Rabbus
         private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
         private IModel mainModel;
 
-        public DefaultBus(IConnectionFactory connectionFactory, IConsumerResolver consumerResolver) :
+        public DefaultRabbitBus(IConnectionFactory connectionFactory, IConsumerResolver consumerResolver) :
             this(connectionFactory,
-                 new DefaultRoutingKeyGenerator(),
+                 new DefaultRoutingKeyResolver(),
                  new DefaultTypeResolver(),
                  new ProtoBufNetSerializer(),
                  new DefaultReflection(),
                  consumerResolver,
-                 new DefaultConsumerTypeToMessageTypes(),
+                 new DefaultSupportedMessageTypesResolver(),
                  new DefaultExchangeResolver())
         {
         }
 
-        public DefaultBus(IConnectionFactory connectionFactory,
-                          IRoutingKeyGenerator routingKeyGenerator,
-                          ITypeResolver typeResolver,
-                          IMessageSerializer serializer,
-                          IReflection reflection,
-                          IConsumerResolver consumerResolver,
-                          IConsumerTypeToMessageTypes consumerTypeToMessageTypes,
-                          IExchangeResolver exchangeResolver)
+        public DefaultRabbitBus(IConnectionFactory connectionFactory,
+                                IRoutingKeyResolver routingKeyResolver,
+                                ITypeResolver typeResolver,
+                                IMessageSerializer serializer,
+                                IReflection reflection,
+                                IConsumerResolver consumerResolver,
+                                ISupportedMessageTypesResolver supportedMessageTypesResolver,
+                                IExchangeResolver exchangeResolver)
         {
             this.reflection = reflection;
             this.consumerResolver = consumerResolver;
-            this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
+            this.supportedMessageTypesResolver = supportedMessageTypesResolver;
             this.exchangeResolver = exchangeResolver;
             this.serializer = serializer;
-            this.routingKeyGenerator = routingKeyGenerator;
+            this.routingKeyResolver = routingKeyResolver;
             this.typeResolver = typeResolver;
 
             connection = connectionFactory.CreateConnection();
@@ -80,7 +77,7 @@ namespace Rabbus
         public void Initialize()
         {
             var allMessages = consumerResolver.GetAllConsumersTypes()
-                .SelectMany(type => consumerTypeToMessageTypes.Get(type))
+                .SelectMany(type => supportedMessageTypesResolver.Get(type))
                 .Distinct();
 
             mainModel = CreateModel();
@@ -99,7 +96,7 @@ namespace Rabbus
         private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
         {
             foreach (var messageType in messageTypes)
-                model.QueueBind(queue, exchangeResolver.Resolve(messageType), routingKeyGenerator.Generate(messageType));
+                model.QueueBind(queue, exchangeResolver.Resolve(messageType), routingKeyResolver.Resolve(messageType));
 
             var queueConsumer = new QueueingBasicConsumer(model);
             model.BasicConsume(queue, false, queueConsumer);
@@ -189,7 +186,7 @@ namespace Rabbus
 
         private IEnumerable<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
-            return consumerTypeToMessageTypes.Get(consumer.GetType());
+            return supportedMessageTypesResolver.Get(consumer.GetType());
         }
 
         public void Publish(object message)
@@ -200,7 +197,7 @@ namespace Rabbus
                 var properties = PopulatePropertiesWithMessageType(model, messageType);
 
                 model.BasicPublish(exchangeResolver.Resolve(messageType),
-                                   routingKeyGenerator.Generate(messageType),
+                                   routingKeyResolver.Resolve(messageType),
                                    properties,
                                    serializer.Serialize(message));
             }
@@ -209,7 +206,7 @@ namespace Rabbus
         private IBasicProperties PopulatePropertiesWithMessageType(IModel model, Type messageType)
         {
             var properties = model.CreateBasicProperties();
-            properties.Type = typeResolver.GenerateTypeName(messageType);
+            properties.Type = typeResolver.Unresolve(messageType);
             return properties;
         }
 
@@ -235,7 +232,7 @@ namespace Rabbus
             CallbackOnBasicReturn(model, publishFailure);
 
             model.BasicPublish(exchangeResolver.Resolve(messageType),
-                               routingKeyGenerator.Generate(messageType),
+                               routingKeyResolver.Resolve(messageType),
                                true,
                                false,
                                properties,
@@ -250,11 +247,6 @@ namespace Rabbus
         public void Request(object message, Action<PublishFailureReason> requestFailure)
         {
             Request(message, requestFailure, _ => {});
-        }
-
-        public void Request(object message, Action<ReplyFailureReason> replyFailure)
-        {
-            Request(message, _ => { }, replyFailure);
         }
 
         public void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure)

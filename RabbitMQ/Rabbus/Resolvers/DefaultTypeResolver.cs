@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace Rabbus.TypeNames
+namespace Rabbus.Resolvers
 {
     public class DefaultTypeResolver : ITypeResolver
     {
-        public string GenerateTypeName<T>()
+        public string Unresolve<T>()
         {
-            return GenerateTypeName(typeof(T));
+            return Unresolve(typeof(T));
         }
 
-        public string GenerateTypeName(Type type)
+        public string Unresolve(Type type)
         {
             var fullName = type.AssemblyQualifiedName;
             return fullName.Substring(0, fullName.IndexOf(", Version="));

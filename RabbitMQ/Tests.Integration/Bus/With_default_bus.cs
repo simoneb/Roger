@@ -2,21 +2,18 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus;
-using Rabbus.ConsumerToMessageType;
-using Rabbus.Exchanges;
 using Rabbus.Reflection;
-using Rabbus.RoutingKeys;
+using Rabbus.Resolvers;
 using Rabbus.Serialization;
-using Rabbus.TypeNames;
 
 namespace Tests.Integration.Bus
 {
     public abstract class With_default_bus : With_rabbitmq_broker
     {
-        protected DefaultBus Bus;
+        protected DefaultRabbitBus Bus;
         protected IConnection Connection;
         protected ManualRegistrationConsumerResolver ConsumerResolver;
-        private DefaultRoutingKeyGenerator routingKeyGenerator;
+        private DefaultRoutingKeyResolver routingKeyResolver;
         private DefaultTypeResolver typeResolver;
         private ProtoBufNetSerializer serializer;
 
@@ -24,14 +21,14 @@ namespace Tests.Integration.Bus
         public void InitializeBus()
         {
             Connection = Helpers.CreateConnection();
-            routingKeyGenerator = new DefaultRoutingKeyGenerator();
+            routingKeyResolver = new DefaultRoutingKeyResolver();
             typeResolver = new DefaultTypeResolver();
             serializer = new ProtoBufNetSerializer();
 
-            var consumerToMessageTypes = new DefaultConsumerTypeToMessageTypes();
+            var consumerToMessageTypes = new DefaultSupportedMessageTypesResolver();
             ConsumerResolver = new ManualRegistrationConsumerResolver(consumerToMessageTypes);
-            Bus = new DefaultBus(new IdentityConnectionFactory(Connection),
-                                 routingKeyGenerator,
+            Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Connection),
+                                 routingKeyResolver,
                                  typeResolver,
                                  serializer,
                                  new DefaultReflection(),

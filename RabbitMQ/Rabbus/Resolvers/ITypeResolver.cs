@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Rabbus.TypeNames
+namespace Rabbus.Resolvers
 {
     public interface ITypeResolver
     {
-        string GenerateTypeName<T>();
-        string GenerateTypeName(Type type);
+        string Unresolve<T>();
+        string Unresolve(Type type);
         Type ResolveType(string typeName);
     }
 }

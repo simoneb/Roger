@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Rabbus
+namespace Rabbus.Resolvers
 {
     public interface IConsumerResolver
     {

@@ -55,7 +55,7 @@ namespace Tests.Integration.Bus.RequestReply
             Bus.AddInstanceSubscription(responseConsumer2);
 
             AggregateException error = null;
-            Bus.Request(new MyRequest(), reason => error = reason.Exception);
+            Bus.Request(new MyRequest(), _ => {}, reason => error = reason.Exception);
 
             Thread.Sleep(1000);
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Rabbus.ConsumerToMessageType
+namespace Rabbus.Resolvers
 {
-    public interface IConsumerTypeToMessageTypes
+    public interface ISupportedMessageTypesResolver
     {
         IEnumerable<Type> Get(Type consumerType);
     }

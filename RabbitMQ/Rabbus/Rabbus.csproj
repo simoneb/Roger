@@ -43,32 +43,31 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsumerToMessageType\DefaultConsumerTypeToMessageTypes.cs" />
-    <Compile Include="ConsumerToMessageType\IConsumerTypeToMessageTypes.cs" />
     <Compile Include="CurrentMessageInformation.cs" />
-    <Compile Include="DefaultBus.cs" />
+    <Compile Include="DefaultRabbitBus.cs" />
     <Compile Include="DefaultConnectionFactory.cs" />
     <Compile Include="Errors\PublishFailureReason.cs" />
     <Compile Include="Errors\ReplyFailureReason.cs" />
-    <Compile Include="Exchanges\DefaultExchangeResolver.cs" />
-    <Compile Include="Exchanges\IExchangeResolver.cs" />
     <Compile Include="IConnectionFactory.cs" />
-    <Compile Include="IConsumerResolver.cs" />
     <Compile Include="IConsumer`1.cs" />
     <Compile Include="IConsumer.cs" />
     <Compile Include="IRabbitBus.cs" />
-    <Compile Include="ManualRegistrationConsumerResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RabbusMessageAttribute.cs" />
     <Compile Include="Reflection\DefaultReflection.cs" />
     <Compile Include="Reflection\IReflection.cs" />
-    <Compile Include="Reflection\ReflectionExtensions.cs" />
-    <Compile Include="RoutingKeys\DefaultRoutingKeyGenerator.cs" />
-    <Compile Include="RoutingKeys\IRoutingKeyGenerator.cs" />
+    <Compile Include="Resolvers\DefaultExchangeResolver.cs" />
+    <Compile Include="Resolvers\DefaultRoutingKeyResolver.cs" />
+    <Compile Include="Resolvers\DefaultSupportedMessageTypesResolver.cs" />
+    <Compile Include="Resolvers\DefaultTypeResolver.cs" />
+    <Compile Include="Resolvers\IConsumerResolver.cs" />
+    <Compile Include="Resolvers\IExchangeResolver.cs" />
+    <Compile Include="Resolvers\IRoutingKeyResolver.cs" />
+    <Compile Include="Resolvers\ISupportedMessageTypesResolver.cs" />
+    <Compile Include="Resolvers\ITypeResolver.cs" />
+    <Compile Include="Resolvers\ManualRegistrationConsumerResolver.cs" />
     <Compile Include="Serialization\IMessageSerializer.cs" />
     <Compile Include="Serialization\ProtoBufNetSerializer.cs" />
-    <Compile Include="TypeNames\ITypeResolver.cs" />
-    <Compile Include="TypeNames\DefaultTypeResolver.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
   </ItemGroup>

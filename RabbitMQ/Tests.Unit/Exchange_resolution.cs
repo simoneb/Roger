@@ -1,7 +1,7 @@
 using System;
 using MbUnit.Framework;
 using Rabbus;
-using Rabbus.Exchanges;
+using Rabbus.Resolvers;
 
 namespace Tests.Unit
 {
@@ -35,6 +35,59 @@ namespace Tests.Unit
             Assert.Throws<ArgumentException>(() => sut.Resolve(typeof(DecoratedWithNullString)));
             Assert.Throws<ArgumentException>(() => sut.Resolve(typeof(DecoratedWithBlankSpaces)));
             Assert.Throws<ArgumentException>(() => sut.Resolve(typeof(DecoratedWithStringContainingBlankSpaces)));
+        }
+
+        [Test]
+        public void Should_support_attribute_derived_from_native_one()
+        {
+            Assert.AreEqual("SomeExchange", sut.Resolve(typeof(DecoratedWithInheritedAttribute)));
+        }
+
+        [Test]
+        public void Should_not_support_multiple_attributes()
+        {
+            Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof(DecoratedWithMultipleAttributes)));
+        }
+
+        [Test]
+        public void Sould_not_currently_support_attribute_decorating_base_message_class()
+        {
+            Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof(InheritorOfDecoratedMessage)));            
+        }
+    }
+
+    public class InheritorOfDecoratedMessage : DecoratedMessageBase
+    {
+    }
+
+    [RabbusMessage("whatever")]
+    public class DecoratedMessageBase
+    {
+    }
+
+    [RabbusMessage("a")]
+    [RabbusMessageInheritor("b")]
+    public class DecoratedWithMultipleAttributes
+    {
+    }
+
+    public class RabbusMessageInheritorAttribute : RabbusMessageAttribute
+    {
+        public RabbusMessageInheritorAttribute(string exchange) : base(exchange)
+        {
+            
+        }
+    }
+
+    [SomeExchangeRabbusMessage]
+    public class DecoratedWithInheritedAttribute
+    {
+    }
+
+    public class SomeExchangeRabbusMessageAttribute : RabbusMessageAttribute
+    {
+        public SomeExchangeRabbusMessageAttribute() : base("SomeExchange")
+        {
         }
     }
 

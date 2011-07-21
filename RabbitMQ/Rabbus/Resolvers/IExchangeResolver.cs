@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus.Exchanges
+namespace Rabbus.Resolvers
 {
     public interface IExchangeResolver
     {
