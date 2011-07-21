@@ -1,6 +1,6 @@
 ﻿using Rabbus;
 
-namespace Tests.Bus.RequestReply
+namespace Tests.Integration.Bus.RequestReply
 {
     public class MyRequestConsumer : IConsumer<MyRequest>
     {

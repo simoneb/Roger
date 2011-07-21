@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-namespace Tests.Observable
+namespace Tests.Integration.Observable
 {
     public abstract class RabbitObserver<T> : IRabbitObserver<T>
     {

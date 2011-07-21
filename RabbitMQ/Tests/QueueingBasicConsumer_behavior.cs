@@ -7,7 +7,7 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using System;
 
-namespace Tests
+namespace Tests.Integration
 {
     public abstract class QueueingBasicConsumer_behavior : With_rabbitmq_broker, IObserver<object>
     {

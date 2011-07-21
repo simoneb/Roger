@@ -8,9 +8,9 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Util;
-using Tests.Utils;
+using Tests.Integration.Utils;
 
-namespace Tests.FunctionalSpecs
+namespace Tests.Integration.FunctionalSpecs
 {
     public class With_message_store : With_rabbitmq_broker
     {

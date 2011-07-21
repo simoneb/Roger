@@ -4,7 +4,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.ServiceModel;
 
-namespace Tests.WCF
+namespace Tests.Integration.WCF
 {
     public class Wcf_bindings : With_rabbitmq_broker
     {

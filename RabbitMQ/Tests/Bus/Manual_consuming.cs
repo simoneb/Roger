@@ -1,6 +1,6 @@
 ﻿using MbUnit.Framework;
 
-namespace Tests.Bus
+namespace Tests.Integration.Bus
 {
     public class Manual_consuming : With_default_bus
     {

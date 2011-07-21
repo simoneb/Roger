@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Tests.Observable
+namespace Tests.Integration.Observable
 {
     public interface IRabbitObserver<T> : IObserver<RabbitMessage<T>>, IRabbitObserver
     {

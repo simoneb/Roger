@@ -4,7 +4,7 @@ using MbUnit.Framework;
 using ProtoBuf;
 using Rabbus;
 
-namespace Temporary
+namespace Tests.Unit
 {
     [TestFixture]
     public class GenericsTest

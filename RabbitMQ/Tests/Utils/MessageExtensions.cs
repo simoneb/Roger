@@ -2,7 +2,7 @@ using System;
 using Common;
 using RabbitMQ.Client.Events;
 
-namespace Tests.Utils
+namespace Tests.Integration.Utils
 {
     public static class MessageExtensions
     {

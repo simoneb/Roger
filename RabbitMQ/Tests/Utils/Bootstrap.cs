@@ -2,7 +2,7 @@
 using Common;
 using MbUnit.Framework;
 
-namespace Tests.Utils
+namespace Tests.Integration.Utils
 {
     [AssemblyFixture]
     public class Bootstrap

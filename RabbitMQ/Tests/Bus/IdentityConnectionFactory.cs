@@ -1,7 +1,7 @@
 using RabbitMQ.Client;
 using Rabbus;
 
-namespace Tests.Bus
+namespace Tests.Integration.Bus
 {
     public class IdentityConnectionFactory : IConnectionFactory
     {

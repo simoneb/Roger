@@ -1,7 +1,7 @@
 using MbUnit.Framework;
 using RabbitMQ.Client;
 
-namespace Temporary
+namespace Tests.Unit
 {
     [TestFixture]
     public class TimestampTest

@@ -1,7 +1,7 @@
 using MbUnit.Framework;
 using Rabbus.TypeNames;
 
-namespace Temporary
+namespace Tests.Unit
 {
     [TestFixture]
     public class Message_type_serialization
@@ -9,7 +9,7 @@ namespace Temporary
         [Test]
         public void Should_include_type_and_assembly_name_without_useless_stuff()
         {
-            Assert.AreEqual("Temporary.MyMessage, Temporary", new DefaultTypeNameGenerator().Generate<MyMessage>());
+            Assert.AreEqual("Tests.Unit.MyMessage, Tests.Unit", new DefaultTypeResolver().GenerateTypeName<MyMessage>());
         }
     }
 }

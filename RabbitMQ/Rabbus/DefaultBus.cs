@@ -7,6 +7,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Rabbus.ConsumerToMessageType;
 using Rabbus.Errors;
+using Rabbus.Exchanges;
 using Rabbus.Reflection;
 using Rabbus.RoutingKeys;
 using Rabbus.Serialization;
@@ -19,11 +20,12 @@ namespace Rabbus
     {
         private readonly IConnection connection;
         private readonly IRoutingKeyGenerator routingKeyGenerator;
-        private readonly ITypeNameGenerator typeNameGenerator;
+        private readonly ITypeResolver typeResolver;
         private readonly IMessageSerializer serializer;
         private readonly IReflection reflection;
         private readonly IConsumerResolver consumerResolver;
         private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
+        private readonly IExchangeResolver exchangeResolver;
 
         public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
 
@@ -36,28 +38,31 @@ namespace Rabbus
         public DefaultBus(IConnectionFactory connectionFactory, IConsumerResolver consumerResolver) :
             this(connectionFactory,
                  new DefaultRoutingKeyGenerator(),
-                 new DefaultTypeNameGenerator(),
+                 new DefaultTypeResolver(),
                  new ProtoBufNetSerializer(),
                  new DefaultReflection(),
                  consumerResolver,
-                 new DefaultConsumerTypeToMessageTypes())
+                 new DefaultConsumerTypeToMessageTypes(),
+                 new DefaultExchangeResolver())
         {
         }
 
         public DefaultBus(IConnectionFactory connectionFactory,
                           IRoutingKeyGenerator routingKeyGenerator,
-                          ITypeNameGenerator typeNameGenerator,
+                          ITypeResolver typeResolver,
                           IMessageSerializer serializer,
                           IReflection reflection,
                           IConsumerResolver consumerResolver,
-                          IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
+                          IConsumerTypeToMessageTypes consumerTypeToMessageTypes,
+                          IExchangeResolver exchangeResolver)
         {
             this.reflection = reflection;
             this.consumerResolver = consumerResolver;
             this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
+            this.exchangeResolver = exchangeResolver;
             this.serializer = serializer;
             this.routingKeyGenerator = routingKeyGenerator;
-            this.typeNameGenerator = typeNameGenerator;
+            this.typeResolver = typeResolver;
 
             connection = connectionFactory.CreateConnection();
         }
@@ -94,7 +99,7 @@ namespace Rabbus
         private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
         {
             foreach (var messageType in messageTypes)
-                model.QueueBind(queue, GetMessageExchange(messageType), routingKeyGenerator.Generate(messageType));
+                model.QueueBind(queue, exchangeResolver.Resolve(messageType), routingKeyGenerator.Generate(messageType));
 
             var queueConsumer = new QueueingBasicConsumer(model);
             model.BasicConsume(queue, false, queueConsumer);
@@ -115,7 +120,7 @@ namespace Rabbus
                                           Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
         {
             foreach (var message in from args in messageFilter(consumer.Queue.OfType<BasicDeliverEventArgs>())
-                                    let messageType = Type.GetType(args.BasicProperties.Type, true)
+                                    let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
                                     let replyTo = args.BasicProperties.ReplyTo
                                     let correlationId = args.BasicProperties.ReplyTo
                                     let deliveryTag = args.DeliveryTag
@@ -187,28 +192,6 @@ namespace Rabbus
             return consumerTypeToMessageTypes.Get(consumer.GetType());
         }
 
-        private static string GetMessageExchange(Type messageType)
-        {
-            EnsureCorrectMessageType(messageType);
-
-            var exchange = messageType.Attribute<RabbusMessageAttribute>().Exchange;
-
-            if(string.IsNullOrWhiteSpace(exchange))
-                throw new InvalidOperationException(string.Format(@"Message type {0} should have a valid exchange name where it should be published.
-It can be specified using the {1} attribute", messageType.FullName, typeof(RabbusMessageAttribute).FullName));
-
-            return exchange;
-        }
-
-        private static void EnsureCorrectMessageType(Type messageType)
-        {
-            if (!messageType.IsDefined(typeof(RabbusMessageAttribute), true))
-                throw new InvalidOperationException(string.Format("Message type {0} should be decorated with {1} attribute",
-                                                                  messageType.FullName,
-                                                                  typeof(RabbusMessageAttribute).FullName));
-
-        }
-
         public void Publish(object message)
         {
             using (var model = CreateModel())
@@ -216,7 +199,7 @@ It can be specified using the {1} attribute", messageType.FullName, typeof(Rabbu
                 var messageType = message.GetType();
                 var properties = PopulatePropertiesWithMessageType(model, messageType);
 
-                model.BasicPublish(GetMessageExchange(messageType),
+                model.BasicPublish(exchangeResolver.Resolve(messageType),
                                    routingKeyGenerator.Generate(messageType),
                                    properties,
                                    serializer.Serialize(message));
@@ -226,7 +209,7 @@ It can be specified using the {1} attribute", messageType.FullName, typeof(Rabbu
         private IBasicProperties PopulatePropertiesWithMessageType(IModel model, Type messageType)
         {
             var properties = model.CreateBasicProperties();
-            properties.Type = typeNameGenerator.Generate(messageType);
+            properties.Type = typeResolver.GenerateTypeName(messageType);
             return properties;
         }
 
@@ -251,7 +234,7 @@ It can be specified using the {1} attribute", messageType.FullName, typeof(Rabbu
         {
             CallbackOnBasicReturn(model, publishFailure);
 
-            model.BasicPublish(GetMessageExchange(messageType),
+            model.BasicPublish(exchangeResolver.Resolve(messageType),
                                routingKeyGenerator.Generate(messageType),
                                true,
                                false,

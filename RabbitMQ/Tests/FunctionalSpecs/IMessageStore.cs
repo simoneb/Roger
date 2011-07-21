@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using RabbitMQ.Client.Events;
 
-namespace Tests.FunctionalSpecs
+namespace Tests.Integration.FunctionalSpecs
 {
     public interface IMessageStore : IEnumerable<BasicDeliverEventArgs>, IDisposable
     {

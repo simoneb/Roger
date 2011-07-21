@@ -1,6 +1,6 @@
 using System.ServiceModel;
 
-namespace Tests.WCF
+namespace Tests.Integration.WCF
 {
     [ServiceContract(CallbackContract = typeof(IOrderCallback))]
     public interface IOrderService

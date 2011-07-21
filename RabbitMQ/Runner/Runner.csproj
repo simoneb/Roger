@@ -77,10 +77,6 @@
       <Project>{03F4533A-B8B4-4729-BA99-1B8F2A1ACF5D}</Project>
       <Name>Shoveling</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Temporary\Temporary.csproj">
-      <Project>{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}</Project>
-      <Name>Temporary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tutorial1\Tutorial1.csproj">
       <Project>{94C74F05-EE98-4E6C-A896-872032527332}</Project>
       <Name>Tutorial1</Name>

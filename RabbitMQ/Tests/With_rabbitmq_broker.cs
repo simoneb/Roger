@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Common;
 using MbUnit.Framework;
 using Resbit;
-using Tests.Utils;
+using Tests.Integration.Utils;
 
-namespace Tests
+namespace Tests.Integration
 {
     [TestFixture]
     public class With_rabbitmq_broker

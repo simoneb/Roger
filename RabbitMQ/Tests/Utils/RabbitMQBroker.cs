@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Tests.Utils
+namespace Tests.Integration.Utils
 {
     public class RabbitMQBroker
     {

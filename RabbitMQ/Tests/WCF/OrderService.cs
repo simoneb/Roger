@@ -1,6 +1,6 @@
 using System.ServiceModel;
 
-namespace Tests.WCF
+namespace Tests.Integration.WCF
 {
     [ServiceBehavior]
     public class OrderService : IOrderService

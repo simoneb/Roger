@@ -1,7 +1,7 @@
 ﻿using ProtoBuf;
 using Rabbus;
 
-namespace Tests.Bus.RequestReply
+namespace Tests.Integration.Bus.RequestReply
 {
     [RabbusMessage("RequestExchange")]
     [ProtoContract]

@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace Tests.Utils
+namespace Tests.Integration.Utils
 {
     public interface ICustomModel : IModel
     {

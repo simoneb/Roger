@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MbUnit.Framework;
 
-namespace Tests
+namespace Tests.Integration
 {
     public class When_iterating_queue : QueueingBasicConsumer_behavior
     {

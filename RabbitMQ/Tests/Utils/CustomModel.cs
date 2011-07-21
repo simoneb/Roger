@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Tests.Utils
+namespace Tests.Integration.Utils
 {
     public class CustomModel : ICustomModel
     {

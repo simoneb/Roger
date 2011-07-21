@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Temporary
+namespace Tests.Unit
 {
     [ProtoContract]
     public class MyMessage

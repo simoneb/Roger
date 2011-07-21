@@ -1,4 +1,4 @@
-﻿namespace Tests.Observable
+﻿namespace Tests.Integration.Observable
 {
     public struct ExchangeOptions
     {

@@ -5,7 +5,7 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Tests
+namespace Tests.Integration
 {
     public class General_shoveling_tests : With_shovel
     {

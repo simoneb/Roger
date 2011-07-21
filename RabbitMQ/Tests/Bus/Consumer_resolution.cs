@@ -2,7 +2,7 @@ using System.Threading;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 
-namespace Tests.Bus
+namespace Tests.Integration.Bus
 {
     public class Consumer_resolution : With_default_bus
     {

@@ -1,7 +1,7 @@
 using System;
 using MbUnit.Framework;
 
-namespace Tests.Observable
+namespace Tests.Integration.Observable
 {
     public class ObservableTests
     {

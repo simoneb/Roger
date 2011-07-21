@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tests.Observable
+namespace Tests.Integration.Observable
 {
     public interface IRabbitObservable : IObservable<RabbitMessage>
     {

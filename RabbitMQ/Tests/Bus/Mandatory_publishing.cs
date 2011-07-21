@@ -1,7 +1,7 @@
 using System.Threading;
 using MbUnit.Framework;
 
-namespace Tests.Bus
+namespace Tests.Integration.Bus
 {
     public class Mandatory_publishing : With_default_bus
     {

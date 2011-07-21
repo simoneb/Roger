@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using MbUnit.Framework;
 
-namespace Tests
+namespace Tests.Integration
 {
     public class When_dequeuing_manually : QueueingBasicConsumer_behavior
     {

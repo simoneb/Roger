@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using RabbitMQ.Client.Events;
 
-namespace Tests.FunctionalSpecs
+namespace Tests.Integration.FunctionalSpecs
 {
     public class IndexedEnumerator : IEnumerator<BasicDeliverEventArgs>
     {

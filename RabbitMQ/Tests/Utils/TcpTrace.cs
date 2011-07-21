@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace Tests.Utils
+namespace Tests.Integration.Utils
 {
     public class TcpTrace
     {

@@ -50,6 +50,8 @@
     <Compile Include="DefaultConnectionFactory.cs" />
     <Compile Include="Errors\PublishFailureReason.cs" />
     <Compile Include="Errors\ReplyFailureReason.cs" />
+    <Compile Include="Exchanges\DefaultExchangeResolver.cs" />
+    <Compile Include="Exchanges\IExchangeResolver.cs" />
     <Compile Include="IConnectionFactory.cs" />
     <Compile Include="IConsumerResolver.cs" />
     <Compile Include="IConsumer`1.cs" />
@@ -65,11 +67,12 @@
     <Compile Include="RoutingKeys\IRoutingKeyGenerator.cs" />
     <Compile Include="Serialization\IMessageSerializer.cs" />
     <Compile Include="Serialization\ProtoBufNetSerializer.cs" />
-    <Compile Include="TypeNames\ITypeNameGenerator.cs" />
-    <Compile Include="TypeNames\DefaultTypeNameGenerator.cs" />
+    <Compile Include="TypeNames\ITypeResolver.cs" />
+    <Compile Include="TypeNames\DefaultTypeResolver.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

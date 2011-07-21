@@ -2,9 +2,9 @@
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
-using Tests.Utils;
+using Tests.Integration.Utils;
 
-namespace Tests
+namespace Tests.Integration
 {
     public class Queues_test : With_rabbitmq_broker
     {

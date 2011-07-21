@@ -1,7 +1,7 @@
 using MbUnit.Framework;
 using Rabbus.RoutingKeys;
 
-namespace Temporary
+namespace Tests.Unit
 {
     [TestFixture]
     public class Routing_key_generation
@@ -11,7 +11,7 @@ namespace Temporary
         [Test]
         public void Normal_type()
         {
-            Assert.AreEqual("Temporary.MyMessage", sut.Generate(typeof (MyMessage)));
+            Assert.AreEqual("Tests.Unit.MyMessage", sut.Generate(typeof(MyMessage)));
         }
     }
 }

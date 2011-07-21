@@ -8,8 +8,8 @@
     <ProjectGuid>{3913DB80-18C2-4326-B6E4-BDE0B21DDCE1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Temporary</RootNamespace>
-    <AssemblyName>Temporary</AssemblyName>
+    <RootNamespace>Tests.Unit</RootNamespace>
+    <AssemblyName>Tests.Unit</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -50,6 +50,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exchange_resolution.cs" />
     <Compile Include="GenericsTest.cs" />
     <Compile Include="Message_type_serialization.cs" />
     <Compile Include="MyMessage.cs" />

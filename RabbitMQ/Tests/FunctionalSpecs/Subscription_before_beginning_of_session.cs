@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using MbUnit.Framework;
 using RabbitMQ.Client.Events;
-using Tests.Utils;
+using Tests.Integration.Utils;
 
-namespace Tests.FunctionalSpecs
+namespace Tests.Integration.FunctionalSpecs
 {
     public class Subscription_before_beginning_of_session : With_message_store
     {

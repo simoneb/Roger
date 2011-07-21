@@ -3,7 +3,7 @@ using System.Threading;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 
-namespace Tests.Bus.RequestReply
+namespace Tests.Integration.Bus.RequestReply
 {
     public class Request_and_reply : With_default_bus
     {
