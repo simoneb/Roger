@@ -2,7 +2,7 @@
 
 namespace Rabbus.TypeNames
 {
-    public class TypeNameGenerator : ITypeNameGenerator
+    public class DefaultTypeNameGenerator : ITypeNameGenerator
     {
         public string Generate<T>()
         {

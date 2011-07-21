@@ -2,17 +2,16 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Rabbus;
 using Rabbus.ConsumerToMessageType;
 
-namespace Tests.Bus
+namespace Rabbus
 {
-    public class FakeConsumerResolver : IConsumerResolver
+    public class ManualRegistrationConsumerResolver : IConsumerResolver
     {
         private readonly IConsumerTypeToMessageTypes consumerTypeToMessageTypes;
         readonly ConcurrentDictionary<Type, List<IConsumer>> messageTypeToConsumers = new ConcurrentDictionary<Type, List<IConsumer>>();
 
-        public FakeConsumerResolver(IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
+        public ManualRegistrationConsumerResolver(IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
         {
             this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
         }
@@ -28,7 +27,6 @@ namespace Tests.Bus
 
         public void Release(IEnumerable<IConsumer> consumers)
         {
-            
         }
 
         public IEnumerable<Type> GetAllConsumersTypes()

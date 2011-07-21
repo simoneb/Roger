@@ -14,9 +14,9 @@ namespace Tests.Bus
     {
         protected DefaultBus Bus;
         protected IConnection Connection;
-        protected FakeConsumerResolver ConsumerResolver;
+        protected ManualRegistrationConsumerResolver ConsumerResolver;
         private DefaultRoutingKeyGenerator routingKeyGenerator;
-        private TypeNameGenerator typeNameGenerator;
+        private DefaultTypeNameGenerator typeNameGenerator;
         private ProtoBufNetSerializer serializer;
 
         [SetUp]
@@ -24,13 +24,18 @@ namespace Tests.Bus
         {
             Connection = Helpers.CreateConnection();
             routingKeyGenerator = new DefaultRoutingKeyGenerator();
-            typeNameGenerator = new TypeNameGenerator();
+            typeNameGenerator = new DefaultTypeNameGenerator();
             serializer = new ProtoBufNetSerializer();
 
             var consumerToMessageTypes = new DefaultConsumerTypeToMessageTypes();
-            ConsumerResolver = new FakeConsumerResolver(consumerToMessageTypes);
-            Bus = new DefaultBus(Connection, routingKeyGenerator, typeNameGenerator, serializer, new DefaultReflection(),
-                                 ConsumerResolver, consumerToMessageTypes);
+            ConsumerResolver = new ManualRegistrationConsumerResolver(consumerToMessageTypes);
+            Bus = new DefaultBus(new IdentityConnectionFactory(Connection),
+                                 routingKeyGenerator,
+                                 typeNameGenerator,
+                                 serializer,
+                                 new DefaultReflection(),
+                                 ConsumerResolver,
+                                 consumerToMessageTypes);
 
             BeforeBusInitialization();
 

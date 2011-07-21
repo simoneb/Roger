@@ -15,7 +15,7 @@ using Rabbus.Utilities;
 
 namespace Rabbus
 {
-    public class DefaultBus : IRabbitBus, IDisposable
+    public class DefaultBus : IRabbitBus
     {
         private readonly IConnection connection;
         private readonly IRoutingKeyGenerator routingKeyGenerator;
@@ -33,7 +33,18 @@ namespace Rabbus
         private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
         private IModel mainModel;
 
-        public DefaultBus(IConnection connection,
+        public DefaultBus(IConnectionFactory connectionFactory, IConsumerResolver consumerResolver) :
+            this(connectionFactory,
+                 new DefaultRoutingKeyGenerator(),
+                 new DefaultTypeNameGenerator(),
+                 new ProtoBufNetSerializer(),
+                 new DefaultReflection(),
+                 consumerResolver,
+                 new DefaultConsumerTypeToMessageTypes())
+        {
+        }
+
+        public DefaultBus(IConnectionFactory connectionFactory,
                           IRoutingKeyGenerator routingKeyGenerator,
                           ITypeNameGenerator typeNameGenerator,
                           IMessageSerializer serializer,
@@ -41,13 +52,14 @@ namespace Rabbus
                           IConsumerResolver consumerResolver,
                           IConsumerTypeToMessageTypes consumerTypeToMessageTypes)
         {
-            this.connection = connection;
             this.reflection = reflection;
             this.consumerResolver = consumerResolver;
             this.consumerTypeToMessageTypes = consumerTypeToMessageTypes;
             this.serializer = serializer;
             this.routingKeyGenerator = routingKeyGenerator;
             this.typeNameGenerator = typeNameGenerator;
+
+            connection = connectionFactory.CreateConnection();
         }
 
         public void Reply(object message)
@@ -58,11 +70,6 @@ namespace Rabbus
             properties.CorrelationId = CurrentMessage.CorrelationId;
 
             model.BasicPublish("", CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
-        }
-
-        private IModel CreateModel()
-        {
-            return connection.CreateModel();
         }
 
         public void Initialize()
@@ -77,6 +84,11 @@ namespace Rabbus
             var consumer = Subscribe(mainModel, allMessages, queue);
 
             ConsumeAsynchronously(ResolveConsumers, consumer, Identity, Identity);
+        }
+
+        private IModel CreateModel()
+        {
+            return connection.CreateModel();
         }
 
         private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
@@ -325,8 +337,8 @@ It can be specified using the {1} attribute", messageType.FullName, typeof(Rabbu
 
         public void Dispose()
         {
-            if(mainModel != null && mainModel.IsOpen)
-                mainModel.Dispose();
+            if(connection != null && connection.IsOpen)
+                connection.Dispose();
         }
 
         public void Consume(object message)

@@ -3,7 +3,7 @@ using Rabbus.Errors;
 
 namespace Rabbus
 {
-    public interface IRabbitBus
+    public interface IRabbitBus : IDisposable
     {
         /// <summary>
         /// Contains the message information related to the message being handled currently
