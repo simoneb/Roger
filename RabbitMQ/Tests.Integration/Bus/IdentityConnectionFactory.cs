@@ -5,16 +5,16 @@ namespace Tests.Integration.Bus
 {
     public class IdentityConnectionFactory : IConnectionFactory
     {
-        private readonly IConnection m_connection;
+        private readonly IConnection connection;
 
         public IdentityConnectionFactory(IConnection connection)
         {
-            m_connection = connection;
+            this.connection = connection;
         }
 
         public IConnection CreateConnection()
         {
-            return m_connection;
+            return connection;
         }
     }
 }

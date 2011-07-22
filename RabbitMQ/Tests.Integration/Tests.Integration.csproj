@@ -65,8 +65,9 @@
     <Compile Include="Bus\Manual_consuming.cs" />
     <Compile Include="Bus\MyConsumer.cs" />
     <Compile Include="Bus\MyMessage.cs" />
+    <Compile Include="Bus\RequestReply\CatchingMyRequestResponder.cs" />
     <Compile Include="Bus\RequestReply\MyRequest.cs" />
-    <Compile Include="Bus\RequestReply\MyRequestConsumer.cs" />
+    <Compile Include="Bus\RequestReply\MyRequestResponder.cs" />
     <Compile Include="Bus\RequestReply\MyResponse.cs" />
     <Compile Include="Bus\RequestReply\MyResponseConsumer.cs" />
     <Compile Include="Bus\RequestReply\Request_and_reply.cs" />

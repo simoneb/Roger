@@ -55,7 +55,10 @@ namespace Tests.Integration.Utils
 
         private void ControlCommand(string command)
         {
-            using (var process = Process.Start(ControlExecutablePath, command))
+            using (var process = Process.Start(new ProcessStartInfo(ControlExecutablePath, command)
+                                               {
+                                                   WindowStyle = ProcessWindowStyle.Minimized
+                                               }))
                 process.WaitForExit();
         }
 

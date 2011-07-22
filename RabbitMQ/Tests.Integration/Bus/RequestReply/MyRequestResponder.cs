@@ -2,12 +2,12 @@
 
 namespace Tests.Integration.Bus.RequestReply
 {
-    public class MyRequestConsumer : IConsumer<MyRequest>
+    public class MyRequestResponder : IConsumer<MyRequest>
     {
         private readonly IRabbitBus bus;
         public MyRequest Received;
 
-        public MyRequestConsumer(IRabbitBus bus)
+        public MyRequestResponder(IRabbitBus bus)
         {
             this.bus = bus;
         }

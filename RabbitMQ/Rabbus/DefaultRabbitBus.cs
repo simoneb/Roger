@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Rabbus.Errors;
+using Rabbus.Logging;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
 using Rabbus.Serialization;
@@ -23,6 +24,7 @@ namespace Rabbus
         private readonly IConsumerResolver consumerResolver;
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IExchangeResolver exchangeResolver;
+        private readonly IRabbusLog log;
 
         public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
 
@@ -31,61 +33,59 @@ namespace Rabbus
 
         private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
         private IModel mainModel;
-
-        public DefaultRabbitBus(IConnectionFactory connectionFactory, IConsumerResolver consumerResolver) :
-            this(connectionFactory,
-                 new DefaultRoutingKeyResolver(),
-                 new DefaultTypeResolver(),
-                 new ProtoBufNetSerializer(),
-                 new DefaultReflection(),
-                 consumerResolver,
-                 new DefaultSupportedMessageTypesResolver(),
-                 new DefaultExchangeResolver())
-        {
-        }
+        private const string DefaultExchange = "";
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
-                                IRoutingKeyResolver routingKeyResolver,
-                                ITypeResolver typeResolver,
-                                IMessageSerializer serializer,
-                                IReflection reflection,
-                                IConsumerResolver consumerResolver,
-                                ISupportedMessageTypesResolver supportedMessageTypesResolver,
-                                IExchangeResolver exchangeResolver)
+                                IConsumerResolver consumerResolver = null,
+                                ITypeResolver typeResolver = null,
+                                ISupportedMessageTypesResolver supportedMessageTypesResolver = null,
+                                IExchangeResolver exchangeResolver = null,
+                                IRoutingKeyResolver routingKeyResolver = null,
+                                IMessageSerializer serializer = null,
+                                IReflection reflection = null,
+                                IRabbusLog log = null)
         {
-            this.reflection = reflection;
-            this.consumerResolver = consumerResolver;
-            this.supportedMessageTypesResolver = supportedMessageTypesResolver;
-            this.exchangeResolver = exchangeResolver;
-            this.serializer = serializer;
-            this.routingKeyResolver = routingKeyResolver;
-            this.typeResolver = typeResolver;
+            this.consumerResolver = consumerResolver ?? new OneWayBusConsumerResolver();
+            this.typeResolver = typeResolver ?? new DefaultTypeResolver();
+            this.supportedMessageTypesResolver = supportedMessageTypesResolver ?? new DefaultSupportedMessageTypesResolver();
+            this.exchangeResolver = exchangeResolver ?? new DefaultExchangeResolver();
+            this.reflection = reflection ?? new DefaultReflection();
+            this.routingKeyResolver = routingKeyResolver ?? new DefaultRoutingKeyResolver();
+            this.serializer = serializer ?? new ProtoBufNetSerializer();
+            this.log = log ?? new NullLog();
 
             connection = connectionFactory.CreateConnection();
         }
 
+        public void Initialize()
+        {
+            log.Debug("Initializing bus");
+
+            var allMessageTypes = (from consumerType in consumerResolver.GetAllConsumersTypes()
+                                   from messageType in supportedMessageTypesResolver.Get(consumerType)
+                                   select messageType).Distinct();
+
+            mainModel = CreateModel();
+            var queue = mainModel.QueueDeclare("", false, true, true, null);
+
+            var consumer = Subscribe(mainModel, allMessageTypes, queue);
+
+            ConsumeAsynchronously(ResolveConsumers, consumer, Identity, Identity);
+
+            log.Debug("Bus initialization completed");
+        }
+
         public void Reply(object message)
         {
+            if (CurrentMessage == null || string.IsNullOrWhiteSpace(CurrentMessage.ReplyTo))
+                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
+
             var model = CreateModel();
 
             var properties = PopulatePropertiesWithMessageType(model, message.GetType());
             properties.CorrelationId = CurrentMessage.CorrelationId;
 
-            model.BasicPublish("", CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
-        }
-
-        public void Initialize()
-        {
-            var allMessages = consumerResolver.GetAllConsumersTypes()
-                .SelectMany(type => supportedMessageTypesResolver.Get(type))
-                .Distinct();
-
-            mainModel = CreateModel();
-            var queue = mainModel.QueueDeclare("", false, true, true, null);
-
-            var consumer = Subscribe(mainModel, allMessages, queue);
-
-            ConsumeAsynchronously(ResolveConsumers, consumer, Identity, Identity);
+            model.BasicPublish(DefaultExchange, CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
         }
 
         private IModel CreateModel()

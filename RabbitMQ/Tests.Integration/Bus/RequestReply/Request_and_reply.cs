@@ -2,6 +2,7 @@
 using System.Threading;
 using MbUnit.Framework;
 using RabbitMQ.Client;
+using Rabbus.Errors;
 
 namespace Tests.Integration.Bus.RequestReply
 {
@@ -16,29 +17,29 @@ namespace Tests.Integration.Bus.RequestReply
         [Test]
         public void Should_send_request_to_request_consumer()
         {
-            var requestConsumer = new MyRequestConsumer(Bus);
+            var responder = new MyRequestResponder(Bus);
 
-            Bus.AddInstanceSubscription(requestConsumer);
+            Bus.AddInstanceSubscription(responder);
 
             Bus.Request(new MyRequest());
 
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
 
-            Assert.IsNotNull(requestConsumer.Received);
+            Assert.IsNotNull(responder.Received);
         }
 
         [Test]
         public void Should_reply_to_response_consumer()
         {
-            var requestConsumer = new MyRequestConsumer(Bus);
+            var responder = new MyRequestResponder(Bus);
             var responseConsumer = new MyResponseConsumer();
 
-            Bus.AddInstanceSubscription(requestConsumer);
+            Bus.AddInstanceSubscription(responder);
             Bus.AddInstanceSubscription(responseConsumer);
 
             Bus.Request(new MyRequest());
 
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
 
             Assert.IsNotNull(responseConsumer.Received);
         }
@@ -46,22 +47,42 @@ namespace Tests.Integration.Bus.RequestReply
         [Test]
         public void Should_throw_if_more_than_one_consumer_can_receive_the_reply()
         {
-            var requestConsumer = new MyRequestConsumer(Bus);
+            var responder = new MyRequestResponder(Bus);
             var responseConsumer1 = new MyResponseConsumer();
             var responseConsumer2 = new MyResponseConsumer();
 
-            Bus.AddInstanceSubscription(requestConsumer);
+            Bus.AddInstanceSubscription(responder);
             Bus.AddInstanceSubscription(responseConsumer1);
             Bus.AddInstanceSubscription(responseConsumer2);
 
             AggregateException error = null;
             Bus.Request(new MyRequest(), _ => {}, reason => error = reason.Exception);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
 
             Assert.IsNull(responseConsumer1.Received);
             Assert.IsNull(responseConsumer2.Received);
             Assert.IsNotNull(error);
+        }
+
+        [Test]
+        public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_message()
+        {
+            Assert.Throws<InvalidOperationException>(() => Bus.Reply(new MyResponse()));
+        }
+
+        [Test]
+        public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_request()
+        {
+            var responder = new CatchingMyRequestResponder(Bus);
+            Bus.AddInstanceSubscription(responder);
+
+            Bus.Publish(new MyRequest());
+
+            Thread.Sleep(100);
+
+            Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
+            Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);
         }
     }
 }
