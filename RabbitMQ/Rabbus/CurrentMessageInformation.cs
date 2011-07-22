@@ -9,5 +9,6 @@ namespace Rabbus
         public string CorrelationId { get; set; }
         public Type MessageType { get; set; }
         public ulong DeliveryTag { get; set; }
+        public string Exchange { get; set; }
     }
 }

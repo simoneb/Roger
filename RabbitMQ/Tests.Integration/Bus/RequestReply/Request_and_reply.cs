@@ -12,6 +12,7 @@ namespace Tests.Integration.Bus.RequestReply
         public void Setup()
         {
             Connection.CreateModel().ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
+            Connection.CreateModel().ExchangeDeclare("ResponseExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]
@@ -42,6 +43,22 @@ namespace Tests.Integration.Bus.RequestReply
             Thread.Sleep(100);
 
             Assert.IsNotNull(responseConsumer.Received);
+        }
+
+        [Test]
+        public void Reply_should_come_through_exchange_defined_by_reply_message()
+        {
+            var responder = new MyRequestResponder(Bus);
+            var responseConsumer = new MyResponseCurrentMessageConsumer(Bus);
+
+            Bus.AddInstanceSubscription(responder);
+            Bus.AddInstanceSubscription(responseConsumer);
+
+            Bus.Request(new MyRequest());
+
+            Thread.Sleep(100);
+
+            Assert.AreEqual("ResponseExchange", responseConsumer.CurrentMessage.Exchange);
         }
 
         [Test]

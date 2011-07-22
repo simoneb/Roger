@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,19 +76,6 @@ namespace Rabbus
             log.Debug("Bus initialization completed");
         }
 
-        public void Reply(object message)
-        {
-            if (CurrentMessage == null || string.IsNullOrWhiteSpace(CurrentMessage.ReplyTo))
-                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
-
-            var model = CreateModel();
-
-            var properties = PopulatePropertiesWithMessageType(model, message.GetType());
-            properties.CorrelationId = CurrentMessage.CorrelationId;
-
-            model.BasicPublish(DefaultExchange, CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
-        }
-
         private IModel CreateModel()
         {
             return connection.CreateModel();
@@ -98,9 +86,9 @@ namespace Rabbus
             foreach (var messageType in messageTypes)
                 model.QueueBind(queue, exchangeResolver.Resolve(messageType), routingKeyResolver.Resolve(messageType));
 
-            var queueConsumer = new QueueingBasicConsumer(model);
-            model.BasicConsume(queue, false, queueConsumer);
-            return queueConsumer;
+            var consumer = new QueueingBasicConsumer(model);
+            model.BasicConsume(queue, false, consumer);
+            return consumer;
         }
 
         private Task ConsumeAsynchronously(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers,
@@ -116,23 +104,26 @@ namespace Rabbus
                                           Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter, 
                                           Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
         {
-            foreach (var message in from args in messageFilter(consumer.Queue.OfType<BasicDeliverEventArgs>())
-                                    let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
-                                    let replyTo = args.BasicProperties.ReplyTo
-                                    let correlationId = args.BasicProperties.ReplyTo
-                                    let deliveryTag = args.DeliveryTag
-                                    select new CurrentMessageInformation
-                                           {
-                                               MessageType = messageType,
-                                               ReplyTo = replyTo,
-                                               CorrelationId = correlationId,
-                                               DeliveryTag = deliveryTag,
-                                               Body = serializer.Deserialize(messageType, args.Body)
-                                           })
+            foreach (var message in DequeMessagesSynchronously(messageFilter, consumer.Queue))
             {
                 InvokeConsumers(resolveConsumers, consumerFilter, message);
                 consumer.Model.BasicAck(currentMessage.DeliveryTag, false);
             }
+        }
+
+        private IEnumerable<CurrentMessageInformation> DequeMessagesSynchronously(Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter,
+                                                                                  IEnumerable queue)
+        {
+            return from args in messageFilter(queue.OfType<BasicDeliverEventArgs>())
+                   select new CurrentMessageInformation
+                          {
+                              MessageType = typeResolver.ResolveType(args.BasicProperties.Type),
+                              ReplyTo = args.BasicProperties.ReplyTo,
+                              CorrelationId = args.BasicProperties.CorrelationId,
+                              DeliveryTag = args.DeliveryTag,
+                              Exchange = args.Exchange,
+                              Body = serializer.Deserialize(typeResolver.ResolveType(args.BasicProperties.Type), args.Body)
+                          };
         }
 
         private void InvokeConsumers(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers, Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter, CurrentMessageInformation message)
@@ -283,6 +274,21 @@ namespace Rabbus
                                   consumers => consumers.Single().Return())
                 .ContinueWith(t => replyFailure(new ReplyFailureReason(t.Exception)), TaskContinuationOptions.OnlyOnFaulted)
                 .ContinueWith(_ => consumer.Model.Dispose());
+        }
+
+        public void Reply(object message)
+        {
+            if (CurrentMessage == null || string.IsNullOrWhiteSpace(CurrentMessage.ReplyTo))
+                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
+
+            using (var model = CreateModel())
+            {
+                var messageType = message.GetType();
+                var properties = PopulatePropertiesWithMessageType(model, messageType);
+                properties.CorrelationId = CurrentMessage.CorrelationId;
+
+                model.BasicPublish(DefaultExchange, CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
+            }
         }
 
         private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)

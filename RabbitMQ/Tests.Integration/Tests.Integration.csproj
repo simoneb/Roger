@@ -70,6 +70,7 @@
     <Compile Include="Bus\RequestReply\MyRequestResponder.cs" />
     <Compile Include="Bus\RequestReply\MyResponse.cs" />
     <Compile Include="Bus\RequestReply\MyResponseConsumer.cs" />
+    <Compile Include="Bus\RequestReply\MyResponseCurrentMessageConsumer.cs" />
     <Compile Include="Bus\RequestReply\Request_and_reply.cs" />
     <Compile Include="Bus\Subscription_tests.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
