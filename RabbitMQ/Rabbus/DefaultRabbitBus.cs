@@ -110,25 +110,26 @@ namespace Rabbus
                                           Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter, 
                                           Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
         {
-            foreach (var message in DequeMessagesSynchronously(messageFilter, consumer.Queue))
+            foreach (var message in DequeSynchronously(messageFilter, consumer.Queue))
             {
                 SetCurrentMessageAndInvokeConsumers(resolveConsumers, consumerFilter, message);
                 consumer.Model.BasicAck(message.DeliveryTag, false);
             }
         }
 
-        private IEnumerable<CurrentMessageInformation> DequeMessagesSynchronously(Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter,
+        private IEnumerable<CurrentMessageInformation> DequeSynchronously(Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter,
                                                                                   IEnumerable queue)
         {
             return from args in messageFilter(queue.OfType<BasicDeliverEventArgs>())
+                   let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
                    select new CurrentMessageInformation
                           {
-                              MessageType = typeResolver.ResolveType(args.BasicProperties.Type),
+                              MessageType = messageType,
                               ReplyTo = args.BasicProperties.ReplyTo,
                               CorrelationId = args.BasicProperties.CorrelationId,
                               DeliveryTag = args.DeliveryTag,
                               Exchange = args.Exchange,
-                              Body = serializer.Deserialize(typeResolver.ResolveType(args.BasicProperties.Type), args.Body)
+                              Body = serializer.Deserialize(messageType, args.Body)
                           };
         }
 
@@ -267,11 +268,13 @@ namespace Rabbus
         {
             var responseModel = CreateModel();
             var responseQueue = responseModel.QueueDeclare("", false, true, true, null);
-            var exchange = exchangeResolver.Resolve(message.GetType());
+            var messageType = message.GetType();
+            var exchange = exchangeResolver.Resolve(messageType);
+
             responseModel.QueueBind(responseQueue, exchange, responseQueue);
 
             log.DebugFormat("Listening for response to message {0} with queue {1} on exchange {2} and routing key {3}",
-                            message.GetType(), responseQueue, exchange, responseQueue);
+                            messageType, responseQueue, exchange, responseQueue);
 
             var responseConsumer = new QueueingBasicConsumer(responseModel);
             responseModel.BasicConsume(responseQueue, false, responseConsumer);

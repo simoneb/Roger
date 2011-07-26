@@ -52,7 +52,7 @@ namespace Tests.Integration.Bus
         [TearDown]
         public void CloseConnection()
         {
-            Connection.Dispose();
+            Bus.Dispose();
         }
     }
 }
