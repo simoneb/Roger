@@ -1,6 +1,5 @@
 using System.Threading;
 using MbUnit.Framework;
-using RabbitMQ.Client;
 
 namespace Tests.Integration.Bus
 {
@@ -12,7 +11,6 @@ namespace Tests.Integration.Bus
         {
             consumer = new MyConsumer();
             ConsumerResolver.Register(consumer);
-            Connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]
@@ -20,7 +18,7 @@ namespace Tests.Integration.Bus
         {
             Bus.Publish(new MyMessage());
 
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
 
             Assert.IsNotNull(consumer.Received);
         }

@@ -18,11 +18,6 @@ namespace Rabbus.Resolvers
             return exchange;
         }
 
-        private static string GetExchangeName(Type messageType)
-        {
-            return ((RabbusMessageAttribute) messageType.GetCustomAttributes(typeof (RabbusMessageAttribute), false).Single()).Exchange;
-        }
-
         private static void EnsureCorrectMessageType(Type messageType)
         {
             if (!messageType.IsDefined(typeof(RabbusMessageAttribute), true))
@@ -30,6 +25,11 @@ namespace Rabbus.Resolvers
                                                                   messageType.FullName,
                                                                   typeof (RabbusMessageAttribute).FullName));
 
+        }
+
+        private static string GetExchangeName(Type messageType)
+        {
+            return ((RabbusMessageAttribute) messageType.GetCustomAttributes(typeof (RabbusMessageAttribute), false).Single()).Exchange;
         }
 
         private static void EnsureCorrectExchangeName(string exchange)

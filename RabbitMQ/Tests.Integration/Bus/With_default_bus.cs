@@ -32,11 +32,11 @@ namespace Tests.Integration.Bus
                                        ConsumerResolver,
                                        typeResolver, consumerToMessageTypes, new DefaultExchangeResolver(), routingKeyResolver, serializer, new DefaultReflection(), new NullLog());
 
+            Connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
+
             BeforeBusInitialization();
 
             Bus.Initialize();
-
-            Connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
         }
 
         protected virtual void BeforeBusInitialization()

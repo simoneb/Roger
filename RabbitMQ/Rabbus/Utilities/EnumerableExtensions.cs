@@ -1,12 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rabbus.Utilities
 {
-    public static class EnumerableExtensions
+    internal static class EnumerableExtensions
     {
-         public static IEnumerable<T> Return<T>(this T value)
-         {
-             yield return value;
-         }
+        internal static IEnumerable<T> Return<T>(this T value)
+        {
+            yield return value;
+        }
+
+        internal static IEnumerable<Type> ExceptReplies(this IEnumerable<Type> messageTypes)
+        {
+            return messageTypes.Where(t => !t.IsDefined(typeof (RabbusReplyAttribute), false));
+        }
     }
 }

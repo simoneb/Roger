@@ -8,11 +8,9 @@ namespace Tests.Integration.Bus.RequestReply
 {
     public class Request_and_reply : With_default_bus
     {
-        [SetUp]
-        public void Setup()
+        protected override void BeforeBusInitialization()
         {
             Connection.CreateModel().ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
-            Connection.CreateModel().ExchangeDeclare("ResponseExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]
@@ -24,7 +22,7 @@ namespace Tests.Integration.Bus.RequestReply
 
             Bus.Request(new MyRequest());
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             Assert.IsNotNull(responder.Received);
         }
@@ -40,13 +38,13 @@ namespace Tests.Integration.Bus.RequestReply
 
             Bus.Request(new MyRequest());
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             Assert.IsNotNull(responseConsumer.Received);
         }
 
         [Test]
-        public void Reply_should_come_through_exchange_defined_by_reply_message()
+        public void Reply_should_come_through_exchange_defined_by_response_message()
         {
             var responder = new MyRequestResponder(Bus);
             var responseConsumer = new MyResponseCurrentMessageConsumer(Bus);
@@ -56,9 +54,17 @@ namespace Tests.Integration.Bus.RequestReply
 
             Bus.Request(new MyRequest());
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
-            Assert.AreEqual("ResponseExchange", responseConsumer.CurrentMessage.Exchange);
+            Assert.AreEqual("RequestExchange", responseConsumer.CurrentMessage.Exchange);
+        }
+
+        [Test]
+        public void Should_not_require_exchange_to_be_defined_on_reply_message_type()
+        {
+            var responseConsumer = new MyResponseConsumer();
+
+            Bus.AddInstanceSubscription(responseConsumer);
         }
 
         [Test]
@@ -75,7 +81,7 @@ namespace Tests.Integration.Bus.RequestReply
             AggregateException error = null;
             Bus.Request(new MyRequest(), _ => {}, reason => error = reason.Exception);
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             Assert.IsNull(responseConsumer1.Received);
             Assert.IsNull(responseConsumer2.Received);
@@ -96,10 +102,15 @@ namespace Tests.Integration.Bus.RequestReply
 
             Bus.Publish(new MyRequest());
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
             Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);
+        }
+
+        private static void WaitForDelivery()
+        {
+            Thread.Sleep(400);
         }
     }
 }

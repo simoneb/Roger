@@ -3,8 +3,8 @@ using Rabbus;
 
 namespace Tests.Integration.Bus.RequestReply
 {
-    [RabbusMessage("ResponseExchange")]
     [ProtoContract]
+    [RabbusReply]
     public class MyResponse
     {
     }

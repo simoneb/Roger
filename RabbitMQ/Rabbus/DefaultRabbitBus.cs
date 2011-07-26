@@ -63,7 +63,7 @@ namespace Rabbus
             log.Debug("Initializing bus");
 
             var allMessageTypes = (from consumerType in consumerResolver.GetAllConsumersTypes()
-                                   from messageType in supportedMessageTypesResolver.Get(consumerType)
+                                   from messageType in GetSupportedMessageTypes(consumerType)
                                    select messageType).Distinct();
 
             mainModel = CreateModel();
@@ -83,7 +83,7 @@ namespace Rabbus
 
         private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
         {
-            foreach (var messageType in messageTypes)
+            foreach (var messageType in messageTypes.ExceptReplies())
                 model.QueueBind(queue, exchangeResolver.Resolve(messageType), routingKeyResolver.Resolve(messageType));
 
             var consumer = new QueueingBasicConsumer(model);
@@ -180,6 +180,11 @@ namespace Rabbus
             return supportedMessageTypesResolver.Get(consumer.GetType());
         }
 
+        private IEnumerable<Type> GetSupportedMessageTypes(Type consumerType)
+        {
+            return supportedMessageTypesResolver.Get(consumerType);
+        }
+
         public void Publish(object message)
         {
             using (var model = CreateModel())
@@ -244,6 +249,7 @@ namespace Rabbus
         {
             var responseModel = CreateModel();
             var responseQueue = responseModel.QueueDeclare("", false, true, true, null);
+            responseModel.QueueBind(responseQueue, exchangeResolver.Resolve(message.GetType()), responseQueue);
 
             var responseConsumer = new QueueingBasicConsumer(responseModel);
             responseModel.BasicConsume(responseQueue, false, responseConsumer);
@@ -283,11 +289,13 @@ namespace Rabbus
 
             using (var model = CreateModel())
             {
-                var messageType = message.GetType();
-                var properties = PopulatePropertiesWithMessageType(model, messageType);
+                var properties = PopulatePropertiesWithMessageType(model, message.GetType());
                 properties.CorrelationId = CurrentMessage.CorrelationId;
 
-                model.BasicPublish(DefaultExchange, CurrentMessage.ReplyTo, properties, serializer.Serialize(message));
+                model.BasicPublish(exchangeResolver.Resolve(CurrentMessage.MessageType),
+                                   CurrentMessage.ReplyTo,
+                                   properties,
+                                   serializer.Serialize(message));
             }
         }
 
