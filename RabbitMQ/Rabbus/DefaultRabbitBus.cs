@@ -34,7 +34,6 @@ namespace Rabbus
 
         private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
         private IModel mainModel;
-        private const string DefaultExchange = "";
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -84,7 +83,14 @@ namespace Rabbus
         private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
         {
             foreach (var messageType in messageTypes.ExceptReplies())
-                model.QueueBind(queue, exchangeResolver.Resolve(messageType), routingKeyResolver.Resolve(messageType));
+            {
+                var exchange = exchangeResolver.Resolve(messageType);
+                var routingKey = routingKeyResolver.Resolve(messageType);
+
+                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", queue, exchange, routingKey);
+
+                model.QueueBind(queue, exchange, routingKey);
+            }
 
             var consumer = new QueueingBasicConsumer(model);
             model.BasicConsume(queue, false, consumer);
@@ -106,8 +112,8 @@ namespace Rabbus
         {
             foreach (var message in DequeMessagesSynchronously(messageFilter, consumer.Queue))
             {
-                InvokeConsumers(resolveConsumers, consumerFilter, message);
-                consumer.Model.BasicAck(currentMessage.DeliveryTag, false);
+                SetCurrentMessageAndInvokeConsumers(resolveConsumers, consumerFilter, message);
+                consumer.Model.BasicAck(message.DeliveryTag, false);
             }
         }
 
@@ -126,17 +132,29 @@ namespace Rabbus
                           };
         }
 
-        private void InvokeConsumers(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers, Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter, CurrentMessageInformation message)
+        private void SetCurrentMessageAndInvokeConsumers(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers, Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter, CurrentMessageInformation message)
         {
             currentMessage = message;
 
             var consumers = resolveConsumers(currentMessage.MessageType);
-            var autoConsumers = consumers.Item2.ToArray();
 
-            foreach (var c in consumerFilter(consumers.Item1.Concat(autoConsumers)))
+            var localInstanceConsumers = consumers.Item1.ToArray();
+            var defaultConsumers = consumers.Item2.ToArray();
+
+            log.DebugFormat("Found {0} instance consumers and {1} default consumers for message {2}",
+                            localInstanceConsumers.Length, defaultConsumers.Length, currentMessage.MessageType);
+
+            var filteredConsumers = consumerFilter(localInstanceConsumers.Concat(defaultConsumers)).ToArray();
+
+            log.DebugFormat("Found {0} available consumers for message {1} after filtering", filteredConsumers.Length, currentMessage.MessageType);
+
+            foreach (var c in filteredConsumers)
+            {
+                log.DebugFormat("Invoking consume method on consumer {0} for message {1}", c.GetType(), currentMessage.MessageType);
                 reflection.InvokeConsume(c, currentMessage.Body);
+            }
 
-            consumerResolver.Release(autoConsumers);
+            consumerResolver.Release(defaultConsumers);
         }
 
         public IDisposable AddInstanceSubscription(IConsumer consumer)
@@ -249,7 +267,11 @@ namespace Rabbus
         {
             var responseModel = CreateModel();
             var responseQueue = responseModel.QueueDeclare("", false, true, true, null);
-            responseModel.QueueBind(responseQueue, exchangeResolver.Resolve(message.GetType()), responseQueue);
+            var exchange = exchangeResolver.Resolve(message.GetType());
+            responseModel.QueueBind(responseQueue, exchange, responseQueue);
+
+            log.DebugFormat("Listening for response to message {0} with queue {1} on exchange {2} and routing key {3}",
+                            message.GetType(), responseQueue, exchange, responseQueue);
 
             var responseConsumer = new QueueingBasicConsumer(responseModel);
             responseModel.BasicConsume(responseQueue, false, responseConsumer);
@@ -270,6 +292,8 @@ namespace Rabbus
                 properties.ReplyTo = responseQueue;
 
                 PublishMandatoryInternal(message, properties, model, messageType, requestFailure);
+
+                log.DebugFormat("Issued request with message {0}", messageType);
             }
         }
 
@@ -285,7 +309,10 @@ namespace Rabbus
         public void Reply(object message)
         {
             if (CurrentMessage == null || string.IsNullOrWhiteSpace(CurrentMessage.ReplyTo))
+            {
+                log.Error("Reply method called out of the context of a message handling request");
                 throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
+            }
 
             using (var model = CreateModel())
             {
@@ -309,12 +336,13 @@ namespace Rabbus
                                 consumerResolver.Resolve(messageType));
         }
 
-        private static void CallbackOnBasicReturn(IModel model, Action<PublishFailureReason> publishFailure)
+        private void CallbackOnBasicReturn(IModel model, Action<PublishFailureReason> publishFailure)
         {
             model.BasicReturn += (_, args) =>
             {
                 try
                 {
+                    log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
                     publishFailure(new PublishFailureReason(args.ReplyCode, args.ReplyText));
                 }
                 finally
@@ -324,19 +352,21 @@ namespace Rabbus
             };
         }
 
-        public void Dispose()
-        {
-            if(connection != null && connection.IsOpen)
-                connection.Dispose();
-        }
-
         public void Consume(object message)
         {
-            InvokeConsumers(ResolveConsumers, Identity, new CurrentMessageInformation
+            SetCurrentMessageAndInvokeConsumers(ResolveConsumers, Identity, new CurrentMessageInformation
             {
                 Body = message,
                 MessageType = message.GetType()
             });
+        }
+
+        public void Dispose()
+        {
+            log.Debug("Disposing bus connection");
+
+            if(connection != null && connection.IsOpen)
+                connection.Dispose();
         }
     }
 }

@@ -1,8 +1,8 @@
+using System;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus;
-using Rabbus.Logging;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
 using Rabbus.Serialization;
@@ -30,7 +30,13 @@ namespace Tests.Integration.Bus
             ConsumerResolver = new ManualRegistrationConsumerResolver(consumerToMessageTypes);
             Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Connection),
                                        ConsumerResolver,
-                                       typeResolver, consumerToMessageTypes, new DefaultExchangeResolver(), routingKeyResolver, serializer, new DefaultReflection(), new NullLog());
+                                       typeResolver, 
+                                       consumerToMessageTypes, 
+                                       new DefaultExchangeResolver(), 
+                                       routingKeyResolver, 
+                                       serializer, 
+                                       new DefaultReflection(), 
+                                       new DebugLog());
 
             Connection.CreateModel().ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
 
