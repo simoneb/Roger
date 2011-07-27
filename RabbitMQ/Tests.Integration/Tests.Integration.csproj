@@ -87,15 +87,6 @@
     <Compile Include="FunctionalSpecs\Subscription_before_beginning_of_session.cs" />
     <Compile Include="FunctionalSpecs\With_message_store.cs" />
     <Compile Include="General_shoveling_tests.cs" />
-    <Compile Include="Observable\ExchangeOptions.cs" />
-    <Compile Include="Observable\IRabbitMessage.cs" />
-    <Compile Include="Observable\IRabbitObservable.cs" />
-    <Compile Include="Observable\IRabbitSubject.cs" />
-    <Compile Include="Observable\ObservableTests.cs" />
-    <Compile Include="Observable\QueueOptions.cs" />
-    <Compile Include="Observable\RabbitMessage.cs" />
-    <Compile Include="Observable\RabbitObservable.cs" />
-    <Compile Include="Observable\RabbitObserver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirms_behavior.cs" />
     <Compile Include="QueueingBasicConsumer_behavior.cs" />
