@@ -17,6 +17,8 @@ namespace Rabbus
 {
     public class DefaultRabbitBus : IRabbitBus
     {
+        private delegate Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ConsumerResolver(Type messageType);
+
         private readonly IConnection connection;
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly ITypeResolver typeResolver;
@@ -28,12 +30,13 @@ namespace Rabbus
         private readonly IRabbusLog log;
 
         public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
+        public string LocalQueue { get; private set; }
 
         [ThreadStatic]
         private static CurrentMessageInformation currentMessage;
 
-        private readonly ConcurrentDictionary<WeakReference, IModel> instanceConsumers = new ConcurrentDictionary<WeakReference, IModel>();
-        private IModel mainModel;
+        private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
+        private IModel localModel;
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -61,66 +64,74 @@ namespace Rabbus
         {
             log.Debug("Initializing bus");
 
-            var allMessageTypes = (from consumerType in consumerResolver.GetAllConsumersTypes()
-                                   from messageType in GetSupportedMessageTypes(consumerType)
-                                   select messageType).Distinct();
+            localModel = NewModel;
+            LocalQueue = localModel.QueueDeclare("", false, true, false, null);
 
-            mainModel = CreateModel();
-            var queue = mainModel.QueueDeclare("", false, true, true, null);
+            var consumer = Subscribe(consumerResolver.GetAllConsumersTypes());
 
-            var consumer = Subscribe(mainModel, allMessageTypes, queue);
-
-            ConsumeAsynchronously(ResolveConsumers, consumer, Identity, Identity);
+            ConsumeAsynchronously(ResolveConsumers, consumer);
 
             log.Debug("Bus initialization completed");
         }
 
-        private IModel CreateModel()
+        private IModel NewModel { get { return connection.CreateModel(); } }
+
+        private QueueingBasicConsumer Subscribe(IEnumerable<Type> consumerTypes)
         {
-            return connection.CreateModel();
+            var allMessageTypes = consumerTypes.SelectMany(GetSupportedMessageTypes).Distinct();
+
+            AddBindings(allMessageTypes);
+
+            var consumer = new QueueingBasicConsumer(localModel);
+            localModel.BasicConsume(LocalQueue, false, consumer);
+            return consumer;
         }
 
-        private QueueingBasicConsumer Subscribe(IModel model, IEnumerable<Type> messageTypes, string queue)
+        private void AddBindings(IEnumerable<Type> messageTypes)
         {
+            var allExchanges = new HashSet<string>();
+
+            log.Debug("Performing pub/sub bindings");
+
             foreach (var messageType in messageTypes.ExceptReplies())
             {
                 var exchange = exchangeResolver.Resolve(messageType);
                 var routingKey = routingKeyResolver.Resolve(messageType);
 
-                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", queue, exchange, routingKey);
+                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalQueue, exchange, routingKey);
 
-                model.QueueBind(queue, exchange, routingKey);
+                localModel.QueueBind(LocalQueue, exchange, routingKey);
+
+                allExchanges.Add(exchange);
             }
 
-            var consumer = new QueueingBasicConsumer(model);
-            model.BasicConsume(queue, false, consumer);
-            return consumer;
-        }
+            log.Debug("Performing private messages bindings");
 
-        private Task ConsumeAsynchronously(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers,
-                                           QueueingBasicConsumer queueConsumer,
-                                           Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter, 
-                                           Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
-        {
-            return Task.Factory.StartNew(() => ConsumeSynchronously(resolveConsumers, queueConsumer, messageFilter, consumerFilter));
-        }
-
-        private void ConsumeSynchronously(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers,
-                                          QueueingBasicConsumer consumer,
-                                          Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter, 
-                                          Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter)
-        {
-            foreach (var message in DequeSynchronously(messageFilter, consumer.Queue))
+            foreach (var exchange in allExchanges)
             {
-                SetCurrentMessageAndInvokeConsumers(resolveConsumers, consumerFilter, message);
+                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalQueue, exchange, LocalQueue);
+
+                localModel.QueueBind(LocalQueue, exchange, LocalQueue);
+            }
+        }
+
+        private void ConsumeAsynchronously(ConsumerResolver resolveConsumers, QueueingBasicConsumer queueConsumer)
+        {
+            Task.Factory.StartNew(() => ConsumeSynchronously(resolveConsumers, queueConsumer));
+        }
+
+        private void ConsumeSynchronously(ConsumerResolver resolveConsumers, QueueingBasicConsumer consumer)
+        {
+            foreach (var message in DequeSynchronously(consumer.Queue))
+            {
+                SetCurrentMessageAndInvokeConsumers(resolveConsumers, message);
                 consumer.Model.BasicAck(message.DeliveryTag, false);
             }
         }
 
-        private IEnumerable<CurrentMessageInformation> DequeSynchronously(Func<IEnumerable<BasicDeliverEventArgs>, IEnumerable<BasicDeliverEventArgs>> messageFilter,
-                                                                                  IEnumerable queue)
+        private IEnumerable<CurrentMessageInformation> DequeSynchronously(IEnumerable queue)
         {
-            return from args in messageFilter(queue.OfType<BasicDeliverEventArgs>())
+            return from args in queue.OfType<BasicDeliverEventArgs>()
                    let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
                    select new CurrentMessageInformation
                           {
@@ -133,7 +144,7 @@ namespace Rabbus
                           };
         }
 
-        private void SetCurrentMessageAndInvokeConsumers(Func<Type, Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>>> resolveConsumers, Func<IEnumerable<IConsumer>, IEnumerable<IConsumer>> consumerFilter, CurrentMessageInformation message)
+        private void SetCurrentMessageAndInvokeConsumers(ConsumerResolver resolveConsumers, CurrentMessageInformation message)
         {
             currentMessage = message;
 
@@ -143,15 +154,18 @@ namespace Rabbus
             var defaultConsumers = consumers.Item2.ToArray();
 
             log.DebugFormat("Found {0} instance consumers and {1} default consumers for message {2}",
-                            localInstanceConsumers.Length, defaultConsumers.Length, currentMessage.MessageType);
+                            localInstanceConsumers.Length,
+                            defaultConsumers.Length,
+                            currentMessage.MessageType);
 
-            var filteredConsumers = consumerFilter(localInstanceConsumers.Concat(defaultConsumers)).ToArray();
+            var allConsumers = localInstanceConsumers.Concat(defaultConsumers).ToArray();
 
-            log.DebugFormat("Found {0} available consumers for message {1} after filtering", filteredConsumers.Length, currentMessage.MessageType);
-
-            foreach (var c in filteredConsumers)
+            foreach (var c in allConsumers)
             {
-                log.DebugFormat("Invoking consume method on consumer {0} for message {1}", c.GetType(), currentMessage.MessageType);
+                log.DebugFormat("Invoking consume method on consumer {0} for message {1}",
+                                c.GetType(),
+                                currentMessage.MessageType);
+
                 reflection.InvokeConsume(c, currentMessage.Body);
             }
 
@@ -160,38 +174,23 @@ namespace Rabbus
 
         public IDisposable AddInstanceSubscription(IConsumer consumer)
         {
-            var model = CreateModel();
-            var queue = model.QueueDeclare("", false, true, true, null);
-
             var consumerReference = new WeakReference(consumer);
-            instanceConsumers.TryAdd(consumerReference, model);
+            instanceConsumers.TryAdd(consumerReference, null);
 
-            var queueConsumer = Subscribe(model, GetSupportedMessageTypes(consumer), queue);
+            AddBindings(GetSupportedMessageTypes(consumer));
 
-            ConsumeAsynchronously(consumer, queueConsumer);
+            // TODO: queue bindings are not removed, no problem unless we start adding too many instance subscriptions
 
-            return RemoveSubscriptionAndDisposeModel(consumerReference);
+            return RemoveConsumer(consumerReference);
         }
 
-        private IDisposable RemoveSubscriptionAndDisposeModel(WeakReference consumerReference)
+        private IDisposable RemoveConsumer(WeakReference consumerReference)
         {
             return new DisposableAction(() =>
             {
-                IModel model;
-
-                if (instanceConsumers.TryRemove(consumerReference, out model))
-                    model.Dispose();
+                object _;
+                instanceConsumers.TryRemove(consumerReference, out _);
             });
-        }
-
-        private void ConsumeAsynchronously(IConsumer consumer, QueueingBasicConsumer queueConsumer)
-        {
-            ConsumeAsynchronously(_ => Tuple.Create(consumer.Return(), Enumerable.Empty<IConsumer>()), queueConsumer, Identity, Identity);
-        }
-
-        private static T Identity<T>(T value)
-        {
-            return value;
         }
 
         private IEnumerable<Type> GetSupportedMessageTypes(IConsumer consumer)
@@ -206,7 +205,7 @@ namespace Rabbus
 
         public void Publish(object message)
         {
-            using (var model = CreateModel())
+            using (var model = NewModel)
             {
                 var messageType = message.GetType();
                 var properties = PopulatePropertiesWithMessageType(model, messageType);
@@ -227,7 +226,7 @@ namespace Rabbus
 
         public void PublishMandatory(object message, Action<PublishFailureReason> publishFailure)
         {
-            using (var model = CreateModel())
+            using (var model = NewModel)
             {
                 var messageType = message.GetType();
                 var properties = PopulatePropertiesWithMessageType(model, messageType);
@@ -256,57 +255,23 @@ namespace Rabbus
 
         public void Request(object message)
         {
-            Request(message, _ => {}, _ => {});
+            Request(message, _ => {});
         }
 
         public void Request(object message, Action<PublishFailureReason> requestFailure)
         {
-            Request(message, requestFailure, _ => {});
-        }
-
-        public void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure)
-        {
-            var responseModel = CreateModel();
-            var responseQueue = responseModel.QueueDeclare("", false, true, true, null);
-            var messageType = message.GetType();
-            var exchange = exchangeResolver.Resolve(messageType);
-
-            responseModel.QueueBind(responseQueue, exchange, responseQueue);
-
-            log.DebugFormat("Listening for response to message {0} with queue {1} on exchange {2} and routing key {3}",
-                            messageType, responseQueue, exchange, responseQueue);
-
-            var responseConsumer = new QueueingBasicConsumer(responseModel);
-            responseModel.BasicConsume(responseQueue, false, responseConsumer);
-
-            SendRequest(responseQueue, message, requestFailure);
-
-            ListenForResponseAsync(responseConsumer, replyFailure);
-        }
-
-        private void SendRequest(string responseQueue, object message, Action<PublishFailureReason> requestFailure)
-        {
-            using (var model = CreateModel())
+            using (var model = NewModel)
             {
                 var messageType = message.GetType();
                 var properties = PopulatePropertiesWithMessageType(model, messageType);
 
                 properties.CorrelationId = Guid.NewGuid().ToString();
-                properties.ReplyTo = responseQueue;
+                properties.ReplyTo = LocalQueue;
 
                 PublishMandatoryInternal(message, properties, model, messageType, requestFailure);
 
                 log.DebugFormat("Issued request with message {0}", messageType);
             }
-        }
-
-        private void ListenForResponseAsync(QueueingBasicConsumer consumer, Action<ReplyFailureReason> replyFailure)
-        {
-            ConsumeAsynchronously(ResolveConsumers, consumer, 
-                                  messages => messages.First().Return(),
-                                  consumers => consumers.Single().Return())
-                .ContinueWith(t => replyFailure(new ReplyFailureReason(t.Exception)), TaskContinuationOptions.OnlyOnFaulted)
-                .ContinueWith(_ => consumer.Model.Dispose());
         }
 
         public void Reply(object message)
@@ -317,7 +282,7 @@ namespace Rabbus
                 throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
             }
 
-            using (var model = CreateModel())
+            using (var model = NewModel)
             {
                 var properties = PopulatePropertiesWithMessageType(model, message.GetType());
                 properties.CorrelationId = CurrentMessage.CorrelationId;
@@ -357,7 +322,7 @@ namespace Rabbus
 
         public void Consume(object message)
         {
-            SetCurrentMessageAndInvokeConsumers(ResolveConsumers, Identity, new CurrentMessageInformation
+            SetCurrentMessageAndInvokeConsumers(ResolveConsumers, new CurrentMessageInformation
             {
                 Body = message,
                 MessageType = message.GetType()
@@ -366,10 +331,24 @@ namespace Rabbus
 
         public void Dispose()
         {
-            log.Debug("Disposing bus connection");
+            log.Debug("Disposing bus");
 
             if(connection != null && connection.IsOpen)
                 connection.Dispose();
+        }
+
+        public void Send(string queue, object message)
+        {
+            using (var model = NewModel)
+            {
+                var messageType = message.GetType();
+                var properties = PopulatePropertiesWithMessageType(model, messageType);
+
+                model.BasicPublish(exchangeResolver.Resolve(messageType),
+                                   queue,
+                                   properties,
+                                   serializer.Serialize(message));
+            }
         }
     }
 }

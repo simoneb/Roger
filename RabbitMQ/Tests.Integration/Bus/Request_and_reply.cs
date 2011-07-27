@@ -1,16 +1,17 @@
-﻿using System;
+using System;
 using System.Threading;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus.Errors;
+using Tests.Integration.Bus.SupportClasses;
 
-namespace Tests.Integration.Bus.RequestReply
+namespace Tests.Integration.Bus
 {
     public class Request_and_reply : With_default_bus
     {
         protected override void BeforeBusInitialization()
         {
-            Connection.CreateModel().ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
+            TestModel.ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
         }
 
         [Test]
@@ -68,6 +69,7 @@ namespace Tests.Integration.Bus.RequestReply
         }
 
         [Test]
+        [Ignore("This is no longer the expected behavior, who knows whether it will make sense once again one day")]
         public void Should_throw_if_more_than_one_consumer_can_receive_the_reply()
         {
             var responder = new MyRequestResponder(Bus);
@@ -79,7 +81,7 @@ namespace Tests.Integration.Bus.RequestReply
             Bus.AddInstanceSubscription(responseConsumer2);
 
             AggregateException error = null;
-            Bus.Request(new MyRequest(), _ => {}, reason => error = reason.Exception);
+            Bus.Request(new MyRequest(), _ => {});
 
             WaitForDelivery();
 
@@ -110,7 +112,7 @@ namespace Tests.Integration.Bus.RequestReply
 
         private static void WaitForDelivery()
         {
-            Thread.Sleep(400);
+            Thread.Sleep(2000);
         }
     }
 }

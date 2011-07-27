@@ -1,6 +1,6 @@
-﻿using Rabbus;
+using Rabbus;
 
-namespace Tests.Integration.Bus
+namespace Tests.Integration.Bus.SupportClasses
 {
     public class MyConsumer : IConsumer<MyMessage>
     {

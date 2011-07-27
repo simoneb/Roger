@@ -1,6 +1,6 @@
-﻿using Rabbus.Logging;
+using Rabbus.Logging;
 
-namespace Tests.Integration.Bus
+namespace Tests.Integration.Bus.SupportClasses
 {
     public class DebugLog : IRabbusLog
     {

@@ -48,15 +48,6 @@ namespace Rabbus
         void Request(object message, Action<PublishFailureReason> requestFailure);
 
         /// <summary>
-        /// Sends a request by means of <paramref name="message"/>, expecting a reply,
-        /// but fails if there are no subscribers to which the message can be routed
-        /// </summary>
-        /// <param name="message">The request message</param>
-        /// <param name="requestFailure">A callback invoked when the message cannot be routed to any subscriber</param>
-        /// <param name="replyFailure">A callback invoked when the reply to the message cannot be handled</param>
-        void Request(object message, Action<PublishFailureReason> requestFailure, Action<ReplyFailureReason> replyFailure);
-
-        /// <summary>
         /// Replies to a request sent by means of <see cref="Request(object)"/>
         /// </summary>
         /// <param name="message">The response message</param>
@@ -67,5 +58,7 @@ namespace Rabbus
         /// </summary>
         /// <param name="message">The message</param>
         void Consume(object message);
+
+        void Send(string queue, object message);
     }
 }

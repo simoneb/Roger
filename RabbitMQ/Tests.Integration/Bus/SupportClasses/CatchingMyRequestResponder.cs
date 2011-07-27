@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using Rabbus;
 
-namespace Tests.Integration.Bus.RequestReply
+namespace Tests.Integration.Bus.SupportClasses
 {
     public class CatchingMyRequestResponder : IConsumer<MyRequest>
     {

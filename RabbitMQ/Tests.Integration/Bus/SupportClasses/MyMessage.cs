@@ -1,7 +1,7 @@
-﻿using ProtoBuf;
+using ProtoBuf;
 using Rabbus;
 
-namespace Tests.Integration.Bus
+namespace Tests.Integration.Bus.SupportClasses
 {
     [RabbusMessage("TestExchange")]
     [ProtoContract]

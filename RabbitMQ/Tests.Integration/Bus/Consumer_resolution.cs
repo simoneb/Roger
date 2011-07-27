@@ -1,5 +1,6 @@
 using System.Threading;
 using MbUnit.Framework;
+using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
 {
