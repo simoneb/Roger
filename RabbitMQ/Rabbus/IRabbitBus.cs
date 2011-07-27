@@ -59,6 +59,7 @@ namespace Rabbus
         /// <param name="message">The message</param>
         void Consume(object message);
 
-        void Send(string queue, object message);
+        void Send(RabbusEndpoint endpoint, object message);
+        void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailure);
     }
 }

@@ -1,5 +1,8 @@
-﻿using MbUnit.Framework;
+﻿using System.Collections.Generic;
+using MbUnit.Framework;
 using RabbitMQ.Client;
+using Rabbus;
+using Rabbus.Errors;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -16,11 +19,55 @@ namespace Tests.Integration.Bus
         {
             var consumer = new SendConsumer();
             Bus.AddInstanceSubscription(consumer);
-            Bus.Send(Bus.LocalQueue, new SendMessage());
+            Bus.Send(Bus.LocalEndpoint, new SendMessage());
 
             WaitForDelivery();
 
             Assert.IsTrue(consumer.Received);
+        }
+
+        [Test]
+        public void Should_report_error_if_send_cannot_be_performed()
+        {
+            var consumer = new SendConsumer();
+            Bus.AddInstanceSubscription(consumer);
+
+            PublishFailureReason error = null;
+            Bus.Send(new RabbusEndpoint("inexistent"), new SendMessage(), reason => error = reason);
+
+            WaitForDelivery();
+
+            Assert.IsFalse(consumer.Received);
+            Assert.IsNotNull(error);
+        }
+
+        [Test]
+        public void Error_reports_should_be_raised_only_for_the_call_which_triggered_them()
+        {
+            var consumer = new SendConsumer();
+            Bus.AddInstanceSubscription(consumer);
+
+            var errors = new SynchronizedCollection<PublishFailureReason>();
+
+            Bus.Send(new RabbusEndpoint("inexistent1"), new SendMessage(), errors.Add);
+            Bus.Send(new RabbusEndpoint("inexistent2"), new SendMessage(), errors.Add);
+
+            WaitForDelivery();
+
+            Assert.IsFalse(consumer.Received);
+            Assert.AreEqual(2, errors.Count);
+        }
+
+        [Test]
+        public void Sends_should_contain_reply_endpoint()
+        {
+            var consumer = new SendCurrentMessageConsumer(Bus);
+            Bus.AddInstanceSubscription(consumer);
+            Bus.Send(Bus.LocalEndpoint, new SendMessage());
+
+            WaitForDelivery();
+
+            Assert.AreEqual(Bus.LocalEndpoint, consumer.CurrentMessage.Endpoint);
         }
     }
 }

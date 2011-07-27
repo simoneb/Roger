@@ -30,7 +30,7 @@ namespace Rabbus
         private readonly IRabbusLog log;
 
         public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
-        public string LocalQueue { get; private set; }
+        public RabbusEndpoint LocalEndpoint { get; private set; }
 
         [ThreadStatic]
         private static CurrentMessageInformation currentMessage;
@@ -65,7 +65,7 @@ namespace Rabbus
             log.Debug("Initializing bus");
 
             localModel = NewModel;
-            LocalQueue = localModel.QueueDeclare("", false, true, false, null);
+            LocalEndpoint = new RabbusEndpoint(localModel.QueueDeclare("", false, true, false, null));
 
             var consumer = Subscribe(consumerResolver.GetAllConsumersTypes());
 
@@ -83,12 +83,16 @@ namespace Rabbus
             AddBindings(allMessageTypes);
 
             var consumer = new QueueingBasicConsumer(localModel);
-            localModel.BasicConsume(LocalQueue, false, consumer);
+            localModel.BasicConsume(LocalEndpoint.Queue, false, consumer);
             return consumer;
         }
 
         private void AddBindings(IEnumerable<Type> messageTypes)
         {
+            // Here we allow eventual duplicate bindings if this method is called multiple times which result
+            // in queues being bound to the same exchange with the same arguments
+            // http://www.rabbitmq.com/amqp-0-9-1-reference.html#queue.bind
+
             var allExchanges = new HashSet<string>();
 
             log.Debug("Performing pub/sub bindings");
@@ -98,9 +102,9 @@ namespace Rabbus
                 var exchange = exchangeResolver.Resolve(messageType);
                 var routingKey = routingKeyResolver.Resolve(messageType);
 
-                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalQueue, exchange, routingKey);
+                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalEndpoint, exchange, routingKey);
 
-                localModel.QueueBind(LocalQueue, exchange, routingKey);
+                localModel.QueueBind(LocalEndpoint.Queue, exchange, routingKey);
 
                 allExchanges.Add(exchange);
             }
@@ -109,35 +113,37 @@ namespace Rabbus
 
             foreach (var exchange in allExchanges)
             {
-                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalQueue, exchange, LocalQueue);
+                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalEndpoint, exchange, LocalEndpoint);
 
-                localModel.QueueBind(LocalQueue, exchange, LocalQueue);
+                localModel.QueueBind(LocalEndpoint.Queue, exchange, LocalEndpoint.Queue);
             }
         }
 
         private void ConsumeAsynchronously(ConsumerResolver resolveConsumers, QueueingBasicConsumer queueConsumer)
         {
-            Task.Factory.StartNew(() => ConsumeSynchronously(resolveConsumers, queueConsumer));
+            Task.Factory.StartNew(() => ConsumeSynchronously(resolveConsumers, queueConsumer), TaskCreationOptions.LongRunning);
         }
 
         private void ConsumeSynchronously(ConsumerResolver resolveConsumers, QueueingBasicConsumer consumer)
         {
-            foreach (var message in DequeSynchronously(consumer.Queue))
+            foreach (var message in BlockingDequeue(consumer.Queue))
             {
                 SetCurrentMessageAndInvokeConsumers(resolveConsumers, message);
                 consumer.Model.BasicAck(message.DeliveryTag, false);
             }
         }
 
-        private IEnumerable<CurrentMessageInformation> DequeSynchronously(IEnumerable queue)
+        private IEnumerable<CurrentMessageInformation> BlockingDequeue(IEnumerable queue)
         {
             return from args in queue.OfType<BasicDeliverEventArgs>()
                    let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
                    select new CurrentMessageInformation
                           {
                               MessageType = messageType,
-                              ReplyTo = args.BasicProperties.ReplyTo,
-                              CorrelationId = args.BasicProperties.CorrelationId,
+                              Endpoint = new RabbusEndpoint(args.BasicProperties.ReplyTo),
+                              CorrelationId = string.IsNullOrWhiteSpace(args.BasicProperties.CorrelationId)
+                                                  ? Guid.Empty
+                                                  : new Guid(args.BasicProperties.CorrelationId),
                               DeliveryTag = args.DeliveryTag,
                               Exchange = args.Exchange,
                               Body = serializer.Deserialize(messageType, args.Body)
@@ -158,7 +164,7 @@ namespace Rabbus
                             defaultConsumers.Length,
                             currentMessage.MessageType);
 
-            var allConsumers = localInstanceConsumers.Concat(defaultConsumers).ToArray();
+            var allConsumers = localInstanceConsumers.Concat(defaultConsumers);
 
             foreach (var c in allConsumers)
             {
@@ -180,11 +186,10 @@ namespace Rabbus
             AddBindings(GetSupportedMessageTypes(consumer));
 
             // TODO: queue bindings are not removed, no problem unless we start adding too many instance subscriptions
-
-            return RemoveConsumer(consumerReference);
+            return RemoveInstanceConsumer(consumerReference);
         }
 
-        private IDisposable RemoveConsumer(WeakReference consumerReference)
+        private IDisposable RemoveInstanceConsumer(WeakReference consumerReference)
         {
             return new DisposableAction(() =>
             {
@@ -208,7 +213,7 @@ namespace Rabbus
             using (var model = NewModel)
             {
                 var messageType = message.GetType();
-                var properties = PopulatePropertiesWithMessageType(model, messageType);
+                var properties = PopulateProperties(model, messageType);
 
                 model.BasicPublish(exchangeResolver.Resolve(messageType),
                                    routingKeyResolver.Resolve(messageType),
@@ -217,10 +222,13 @@ namespace Rabbus
             }
         }
 
-        private IBasicProperties PopulatePropertiesWithMessageType(IModel model, Type messageType)
+        private IBasicProperties PopulateProperties(IModel model, Type messageType)
         {
             var properties = model.CreateBasicProperties();
+
             properties.Type = typeResolver.Unresolve(messageType);
+            properties.ReplyTo = LocalEndpoint.Queue;
+
             return properties;
         }
 
@@ -228,10 +236,9 @@ namespace Rabbus
         {
             using (var model = NewModel)
             {
-                var messageType = message.GetType();
-                var properties = PopulatePropertiesWithMessageType(model, messageType);
+                var properties = PopulateProperties(model, message.GetType());
 
-                PublishMandatoryInternal(message, properties, model, messageType, publishFailure);
+                PublishMandatoryInternal(message, properties, model, publishFailure);
                 // disposing here, is this correct? what if BasicReturn needs to be invoked by a disposed model?
                 // tests succeed, BTW
             }
@@ -240,18 +247,44 @@ namespace Rabbus
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
                                               IModel model,
-                                              Type messageType,
                                               Action<PublishFailureReason> publishFailure)
+        {
+            PublishMandatoryInternal(message, properties, model, publishFailure, routingKeyResolver.Resolve(message.GetType()));
+        }
+
+        private void PublishMandatoryInternal(object message,
+                                              IBasicProperties properties,
+                                              IModel model,
+                                              Action<PublishFailureReason> publishFailure,
+                                              string routingKey)
         {
             CallbackOnBasicReturn(model, publishFailure);
 
-            model.BasicPublish(exchangeResolver.Resolve(messageType),
-                               routingKeyResolver.Resolve(messageType),
+            model.BasicPublish(exchangeResolver.Resolve(message.GetType()),
+                               routingKey,
                                true,
                                false,
                                properties,
                                serializer.Serialize(message));
         }
+
+        public void Send(RabbusEndpoint endpoint, object message)
+        {
+            Send(endpoint, message, Nop);
+        }
+
+        public void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailure)
+        {
+            using (var model = NewModel)
+            {
+                var properties = PopulateProperties(model, message.GetType());
+
+                PublishMandatoryInternal(message, properties, model, publishFailure, endpoint.Queue);
+            }
+        }
+
+        private static void Nop<T>(T input)
+        {}
 
         public void Request(object message)
         {
@@ -262,21 +295,20 @@ namespace Rabbus
         {
             using (var model = NewModel)
             {
-                var messageType = message.GetType();
-                var properties = PopulatePropertiesWithMessageType(model, messageType);
-
+                var properties = PopulateProperties(model, message.GetType());
                 properties.CorrelationId = Guid.NewGuid().ToString();
-                properties.ReplyTo = LocalQueue;
 
-                PublishMandatoryInternal(message, properties, model, messageType, requestFailure);
+                PublishMandatoryInternal(message, properties, model, requestFailure);
 
-                log.DebugFormat("Issued request with message {0}", messageType);
+                log.DebugFormat("Issued request with message {0}", message.GetType());
             }
         }
 
         public void Reply(object message)
         {
-            if (CurrentMessage == null || string.IsNullOrWhiteSpace(CurrentMessage.ReplyTo))
+            if (CurrentMessage == null || 
+                CurrentMessage.Endpoint.IsEmpty() ||
+                CurrentMessage.CorrelationId.IsEmpty())
             {
                 log.Error("Reply method called out of the context of a message handling request");
                 throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
@@ -284,11 +316,11 @@ namespace Rabbus
 
             using (var model = NewModel)
             {
-                var properties = PopulatePropertiesWithMessageType(model, message.GetType());
-                properties.CorrelationId = CurrentMessage.CorrelationId;
+                var properties = PopulateProperties(model, message.GetType());
+                properties.CorrelationId = CurrentMessage.CorrelationId.ToString();
 
                 model.BasicPublish(exchangeResolver.Resolve(CurrentMessage.MessageType),
-                                   CurrentMessage.ReplyTo,
+                                   CurrentMessage.Endpoint,
                                    properties,
                                    serializer.Serialize(message));
             }
@@ -335,20 +367,6 @@ namespace Rabbus
 
             if(connection != null && connection.IsOpen)
                 connection.Dispose();
-        }
-
-        public void Send(string queue, object message)
-        {
-            using (var model = NewModel)
-            {
-                var messageType = message.GetType();
-                var properties = PopulatePropertiesWithMessageType(model, messageType);
-
-                model.BasicPublish(exchangeResolver.Resolve(messageType),
-                                   queue,
-                                   properties,
-                                   serializer.Serialize(message));
-            }
         }
     }
 }

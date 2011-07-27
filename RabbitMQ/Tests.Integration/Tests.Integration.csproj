@@ -76,6 +76,7 @@
     <Compile Include="Bus\SupportClasses\MyResponseConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyResponseCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendConsumer.cs" />
+    <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
     <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />

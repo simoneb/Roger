@@ -73,7 +73,7 @@ namespace Tests.Integration.Bus
 
         protected static void WaitForDelivery()
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
         }
     }
 }
