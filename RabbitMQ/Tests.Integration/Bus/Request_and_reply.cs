@@ -23,7 +23,7 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            WaitForDelivery();
+            WaitForRoundtrip();
 
             Assert.IsNotNull(responder.Received);
         }
@@ -39,7 +39,7 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            WaitForDelivery();
+            WaitForRoundtrip();
 
             Assert.IsNotNull(responseConsumer.Received);
         }
@@ -55,7 +55,7 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            WaitForDelivery();
+            WaitForRoundtrip();
 
             Assert.AreEqual("RequestExchange", responseConsumer.CurrentMessage.Exchange);
         }
@@ -83,7 +83,7 @@ namespace Tests.Integration.Bus
             AggregateException error = null;
             Bus.Request(new MyRequest(), _ => {});
 
-            WaitForDelivery();
+            WaitForRoundtrip();
 
             Assert.IsNull(responseConsumer1.Received);
             Assert.IsNull(responseConsumer2.Received);
@@ -104,15 +104,10 @@ namespace Tests.Integration.Bus
 
             Bus.Publish(new MyRequest());
 
-            WaitForDelivery();
+            WaitForRoundtrip();
 
             Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
             Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);
-        }
-
-        private static void WaitForDelivery()
-        {
-            Thread.Sleep(2000);
         }
     }
 }

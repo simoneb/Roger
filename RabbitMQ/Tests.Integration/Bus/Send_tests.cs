@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using MbUnit.Framework;
+﻿using MbUnit.Framework;
 using RabbitMQ.Client;
 using Tests.Integration.Bus.SupportClasses;
 
@@ -19,7 +18,7 @@ namespace Tests.Integration.Bus
             Bus.AddInstanceSubscription(consumer);
             Bus.Send(Bus.LocalQueue, new SendMessage());
 
-            Thread.Sleep(2000);
+            WaitForDelivery();
 
             Assert.IsTrue(consumer.Received);
         }

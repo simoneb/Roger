@@ -1,4 +1,3 @@
-using System.Threading;
 using MbUnit.Framework;
 using Tests.Integration.Bus.SupportClasses;
 
@@ -13,11 +12,9 @@ namespace Tests.Integration.Bus
 
             Bus.AddInstanceSubscription(consumer);
 
-            Thread.Sleep(100);
-
             Bus.Publish(new MyMessage { Value = 1 });
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             Assert.AreEqual(1, consumer.Received.Value);
         }
@@ -29,13 +26,11 @@ namespace Tests.Integration.Bus
 
             var token = Bus.AddInstanceSubscription(consumer);
 
-            Thread.Sleep(100);
-
             token.Dispose();
 
             Bus.Publish(new MyMessage { Value = 1 });
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             Assert.IsNull(consumer.Received);
         }

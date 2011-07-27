@@ -1,3 +1,4 @@
+using System.Threading;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
@@ -62,6 +63,17 @@ namespace Tests.Integration.Bus
         public void CloseConnection()
         {
             Bus.Dispose();
+        }
+
+        protected static void WaitForRoundtrip()
+        {
+            WaitForDelivery();
+            WaitForDelivery();
+        }
+
+        protected static void WaitForDelivery()
+        {
+            Thread.Sleep(1000);
         }
     }
 }

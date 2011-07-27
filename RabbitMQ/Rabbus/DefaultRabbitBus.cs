@@ -162,7 +162,7 @@ namespace Rabbus
 
             foreach (var c in allConsumers)
             {
-                log.DebugFormat("Invoking consume method on consumer {0} for message {1}",
+                log.DebugFormat("Invoking Consume method on consumer {0} for message {1}",
                                 c.GetType(),
                                 currentMessage.MessageType);
 

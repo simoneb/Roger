@@ -24,7 +24,7 @@ namespace Tests.Integration.Bus
 
             Bus.AddInstanceSubscription(consumer);
 
-            Thread.Sleep(100);
+            WaitForDelivery();
 
             var handle = new ManualResetEvent(false);
 

@@ -19,7 +19,7 @@ namespace Tests.Integration.Bus
         {
             Bus.Publish(new MyMessage());
 
-            Thread.Sleep(200);
+            WaitForDelivery();
 
             Assert.IsNotNull(consumer.Received);
         }
