@@ -6,9 +6,14 @@ namespace Rabbus
     public interface IRabbitBus : IDisposable
     {
         /// <summary>
-        /// Contains the message information related to the message being handled currently
+        /// Contains the message information related to the message being currently handled
         /// </summary>
         CurrentMessageInformation CurrentMessage { get; }
+
+        /// <summary>
+        /// Initializes the bus
+        /// </summary>
+        void Initialize();
 
         /// <summary>
         /// Subscribes a consumer manually to the messages it is interested in
@@ -59,7 +64,19 @@ namespace Rabbus
         /// <param name="message">The message</param>
         void Consume(object message);
 
+        /// <summary>
+        /// Sends a message to a specific endpoint
+        /// </summary>
+        /// <param name="endpoint">The destination endpoint</param>
+        /// <param name="message">The message</param>
         void Send(RabbusEndpoint endpoint, object message);
+
+        /// <summary>
+        /// Sends a message to a specific endpoint, communicating if the was a failure during publishing
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="message"></param>
+        /// <param name="publishFailure"></param>
         void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailure);
     }
 }
