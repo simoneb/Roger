@@ -11,7 +11,12 @@ namespace Rabbus.Resolvers
 
         public string Resolve(Type messageType)
         {
-            return messageType.FullName;
+            var routingKey = messageType.FullName;
+
+            if(routingKey.Length > 255)
+                throw new InvalidOperationException("Routing key should be shorter than 256 characters");
+
+            return routingKey;
         }
     }
 }
