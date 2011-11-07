@@ -28,7 +28,9 @@ namespace Tests.Integration.FunctionalSpecs
         public void Messages_sent_while_link_is_down_should_be_received_later()
         {
             Start(Consumer);
-            consumerReady.WaitOne();
+
+            if (!consumerReady.WaitOne(5000))
+                Assert.Fail("Consumer did not start in time");
 
             Start(Publisher);
 

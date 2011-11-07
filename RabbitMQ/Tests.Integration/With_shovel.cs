@@ -14,6 +14,9 @@ namespace Tests.Integration
             Broker.StopApp();
             Thread.Sleep(1000);
             Broker.StartAppAndWait();
+
+            // leave some time to TcpTrace to reestabilish the connection to the server
+            Thread.Sleep(2000);
         }
 
         [FixtureTearDown]
