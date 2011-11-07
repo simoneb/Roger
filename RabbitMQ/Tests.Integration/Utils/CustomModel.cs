@@ -21,6 +21,16 @@ namespace Tests.Integration.Utils
 
         public bool Disposed { get; private set; }
 
+        public void WaitForConfirmsOrDie()
+        {
+            inner.WaitForConfirmsOrDie();
+        }
+
+        public bool WaitForConfirms()
+        {
+            return inner.WaitForConfirms();
+        }
+
         public IBasicProperties CreateBasicProperties()
         {
             return inner.CreateBasicProperties();
@@ -91,17 +101,17 @@ namespace Tests.Integration.Utils
             inner.ExchangeUnbind(destination, source, routingKey);
         }
 
-        public string QueueDeclare()
+        public QueueDeclareOk QueueDeclare()
         {
             return inner.QueueDeclare();
         }
 
-        public string QueueDeclarePassive(string queue)
+        public QueueDeclareOk QueueDeclarePassive(string queue)
         {
             return inner.QueueDeclarePassive(queue);
         }
 
-        public string QueueDeclare(string queue, bool durable, bool exclusive, bool autoDelete, IDictionary arguments)
+        public QueueDeclareOk QueueDeclare(string queue, bool durable, bool exclusive, bool autoDelete, IDictionary arguments)
         {
             return inner.QueueDeclare(queue, durable, exclusive, autoDelete, arguments);
         }

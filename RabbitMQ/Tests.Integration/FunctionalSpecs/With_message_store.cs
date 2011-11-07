@@ -63,7 +63,7 @@ namespace Tests.Integration.FunctionalSpecs
 
                 var properties = model.CreateBasicProperties();
                 properties.ReplyTo = storeMessageQueue;
-                properties.Headers = new Hashtable { {LiveQueueHeader, liveMessageQueue.Bytes()} };
+                properties.Headers = new Hashtable { {LiveQueueHeader, liveMessageQueue.QueueName.Bytes()} };
 
                 model.BasicPublish("", ReplayerQueue, properties, new byte[0]);
 
