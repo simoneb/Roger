@@ -1,4 +1,6 @@
 using System;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -17,7 +19,14 @@ namespace Tests.Integration
         [FixtureSetUp]
         public void Check_broker_running()
         {
-            Assert.IsNotNull(RestClient.Overview(), "Broker does not appear to be running");
+            try
+            {
+                Assert.IsNotNull(RestClient.Overview(), "Broker does not appear to be running");
+            }
+            catch (WebException e)
+            {
+                Assert.Fail("Broker does not appear to be running: {0}", e);
+            }
         }
 
         protected Tuple<Task<TResult>, CancellationTokenSource> Start<TResult>(Func<TResult> function)

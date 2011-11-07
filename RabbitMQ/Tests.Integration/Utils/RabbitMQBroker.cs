@@ -28,6 +28,10 @@ namespace Tests.Integration.Utils
             serverProcess = Process.Start(ServerExecutablePath);
 
             Thread.Sleep(2000);
+
+            if (serverProcess == null || serverProcess.HasExited)
+                throw new InvalidOperationException("Server was expected to be running, but it isn't");
+
             Wait();
         }
 
@@ -49,7 +53,7 @@ namespace Tests.Integration.Utils
         {
             ControlCommand("stop");
 
-            if (serverProcess != null)
+            if (serverProcess != null && !serverProcess.HasExited)
                 serverProcess.CloseMainWindow();
         }
 
