@@ -59,7 +59,7 @@ namespace Rabbus
         void Reply(object message);
 
         /// <summary>
-        /// Manually shove a message into the bus and let consumers consume them
+        /// Manually shove a message into the bus and let consumers consume it
         /// </summary>
         /// <param name="message">The message</param>
         void Consume(object message);
@@ -72,7 +72,7 @@ namespace Rabbus
         void Send(RabbusEndpoint endpoint, object message);
 
         /// <summary>
-        /// Sends a message to a specific endpoint, communicating if the was a failure during publishing
+        /// Sends a message to a specific endpoint, communicating if there was a failure during publishing
         /// </summary>
         /// <param name="endpoint"></param>
         /// <param name="message"></param>
