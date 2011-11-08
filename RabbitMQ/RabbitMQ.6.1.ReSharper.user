@@ -1,0 +1,30 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="BD4CC6D5-8212-4BFF-BFA0-B6F84E668230/f:IRabbitBus.cs" caret="613" fromTop="16" />
+      <File id="BD4CC6D5-8212-4BFF-BFA0-B6F84E668230/d:Properties/f:AssemblyInfo.cs" caret="861" fromTop="19" />
+      <File id="BD4CC6D5-8212-4BFF-BFA0-B6F84E668230/d:Reflection/f:DefaultReflection.cs" caret="462" fromTop="12" />
+      <File id="BD4CC6D5-8212-4BFF-BFA0-B6F84E668230/f:DefaultRabbitBus.cs" caret="7302" fromTop="15" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="BD4CC6D5-8212-4BFF-BFA0-B6F84E668230/d:Properties/f:AssemblyInfo.cs" caret="439" fromTop="10" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False" />
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+</Configuration>
