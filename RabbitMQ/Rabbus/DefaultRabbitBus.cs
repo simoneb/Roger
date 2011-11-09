@@ -122,6 +122,7 @@ namespace Rabbus
 
         private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)
         {
+            // remove handler to be safe and prevent eventual callbacks from being invoked by closed connections
             conn.ConnectionShutdown -= HandleConnectionShutdown;
 
             if (disposed)
@@ -222,18 +223,23 @@ namespace Rabbus
         {
             return from args in queue.OfType<BasicDeliverEventArgs>()
                    let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
-                   select new CurrentMessageInformation
-                          {
-                              MessageId = new Guid(args.BasicProperties.MessageId),
-                              MessageType = messageType,
-                              Endpoint = new RabbusEndpoint(args.BasicProperties.ReplyTo),
-                              CorrelationId = string.IsNullOrWhiteSpace(args.BasicProperties.CorrelationId)
-                                                  ? Guid.Empty
-                                                  : new Guid(args.BasicProperties.CorrelationId),
-                              DeliveryTag = args.DeliveryTag,
-                              Exchange = args.Exchange,
-                              Body = serializer.Deserialize(messageType, args.Body)
-                          };
+                   select CurrentMessageInformation(messageType, args);
+        }
+
+        private CurrentMessageInformation CurrentMessageInformation(Type messageType, BasicDeliverEventArgs args)
+        {
+            var properties = args.BasicProperties;
+
+            return new CurrentMessageInformation
+                   {
+                       MessageId = new Guid(properties.MessageId),
+                       MessageType = messageType,
+                       Endpoint = new RabbusEndpoint(properties.ReplyTo),
+                       CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? Guid.Empty : new Guid(properties.CorrelationId),
+                       DeliveryTag = args.DeliveryTag,
+                       Exchange = args.Exchange,
+                       Body = serializer.Deserialize(messageType, args.Body)
+                   };
         }
 
         private void SetCurrentMessageAndInvokeConsumers(ConsumerResolver resolveConsumers, CurrentMessageInformation message)
@@ -245,9 +251,9 @@ namespace Rabbus
             var localInstanceConsumers = consumers.Item1.ToArray();
             var defaultConsumers = consumers.Item2.ToArray();
 
-            log.DebugFormat("Found {0} instance consumers and {1} default consumers for message {2}",
-                            localInstanceConsumers.Length,
+            log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             defaultConsumers.Length,
+                            localInstanceConsumers.Length,
                             _currentMessage.MessageType);
 
             var allConsumers = localInstanceConsumers.Concat(defaultConsumers);
@@ -427,10 +433,17 @@ namespace Rabbus
 
             log.Debug("Disposing bus");
 
-            // here we dispose just the connection because the client library user guide
-            // says that doing so all channels are implicitly closed as well
-            if(connection != null && connection.IsOpen)
-                connection.Dispose();
+            if (connection != null)
+                try
+                {
+                    // here we dispose just the connection because the client library user guide
+                    // says that doing so all channels are implicitly closed as well
+                    connection.Dispose();
+                }
+                catch (AlreadyClosedException e)
+                {
+                    log.ErrorFormat("Trying to close connection but it was already closed.\r\n{0}", e);
+                }
         }
     }
 }
