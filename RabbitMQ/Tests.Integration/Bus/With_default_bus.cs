@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Threading;
 using Common;
 using MbUnit.Framework;
@@ -19,18 +21,18 @@ namespace Tests.Integration.Bus
         private DefaultTypeResolver typeResolver;
         private ProtoBufNetSerializer serializer;
         protected IModel TestModel;
+        private IConnection localConnection;
 
         [SetUp]
         public void InitializeBus()
         {
-            connection = Helpers.CreateConnection();
             routingKeyResolver = new DefaultRoutingKeyResolver();
             typeResolver = new DefaultTypeResolver();
             serializer = new ProtoBufNetSerializer();
 
             var consumerToMessageTypes = new DefaultSupportedMessageTypesResolver();
             ConsumerResolver = new ManualRegistrationConsumerResolver(consumerToMessageTypes);
-            Bus = new DefaultRabbitBus(new IdentityConnectionFactory(connection),
+            Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Helpers.CreateConnection),
                                        ConsumerResolver,
                                        typeResolver, 
                                        consumerToMessageTypes, 
@@ -40,9 +42,13 @@ namespace Tests.Integration.Bus
                                        new DefaultReflection(), 
                                        new DebugLog());
 
-            TestModel = connection.CreateModel();
-
-            TestModel.ExchangeDeclare("TestExchange", ExchangeType.Direct, false, true, null);
+            localConnection = Helpers.CreateConnection();
+            TestModel = localConnection.CreateModel();
+            TestModel.ExchangeDeclare("TestExchange", 
+                                      ExchangeType.Direct, 
+                                      true /* to have the exchange there when restarting broker app within tests */, 
+                                      false, 
+                                      null);
 
             BeforeBusInitialization();
 
@@ -63,6 +69,14 @@ namespace Tests.Integration.Bus
         public void CloseConnection()
         {
             Bus.Dispose();
+            try
+            {
+                localConnection.Dispose();
+            }
+            catch (IOException e)
+            {
+                // happens sometimes, figure out why
+            }
         }
 
         protected static void WaitForRoundtrip()

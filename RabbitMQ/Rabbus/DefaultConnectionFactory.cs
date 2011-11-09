@@ -4,7 +4,7 @@ namespace Rabbus
 {
     public class DefaultConnectionFactory : IConnectionFactory
     {
-        private readonly ConnectionFactory m_inner;
+        private readonly ConnectionFactory inner;
 
         public DefaultConnectionFactory(string hostName,
                                         string virtualHost = ConnectionFactory.DefaultVHost,
@@ -12,7 +12,7 @@ namespace Rabbus
                                         string userName = ConnectionFactory.DefaultUser,
                                         string password =  ConnectionFactory.DefaultPass)
         {
-            m_inner = new ConnectionFactory
+            inner = new ConnectionFactory
             {
                 HostName = hostName,
                 VirtualHost = virtualHost,
@@ -24,7 +24,7 @@ namespace Rabbus
 
         public IConnection CreateConnection()
         {
-            return m_inner.CreateConnection();
+            return inner.CreateConnection();
         }
     }
 }

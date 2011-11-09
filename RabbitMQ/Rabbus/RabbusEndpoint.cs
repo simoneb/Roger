@@ -18,5 +18,10 @@ namespace Rabbus
         {
             return endpoint.Queue;
         }
+
+        public override string ToString()
+        {
+            return this;
+        }
     }
 }

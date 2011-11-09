@@ -11,6 +11,11 @@ namespace Rabbus
         CurrentMessageInformation CurrentMessage { get; }
 
         /// <summary>
+        /// Returns the delay, in milliseconds, between connection retries when the connection shuts down
+        /// </summary>
+        int ConnectionAttemptMillisecondsInterval { get; }
+
+        /// <summary>
         /// Initializes the bus
         /// </summary>
         void Initialize();
