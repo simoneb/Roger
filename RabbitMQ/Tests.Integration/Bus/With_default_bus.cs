@@ -57,11 +57,11 @@ namespace Tests.Integration.Bus
             AfterBusInitialization();
         }
 
-        protected virtual void AfterBusInitialization()
+        protected virtual void BeforeBusInitialization()
         {
         }
 
-        protected virtual void BeforeBusInitialization()
+        protected virtual void AfterBusInitialization()
         {
         }
 
