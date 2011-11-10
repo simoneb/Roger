@@ -62,7 +62,7 @@ namespace Rabbus
             this.serializer = serializer.Or(Default.Serializer);
             this.log = log.Or(Default.Log);
 
-            connection = new ReliableConnection(connectionFactory, log, AfterConnectionEstabilished);
+            connection = new ReliableConnection(connectionFactory, this.log, AfterConnectionEstabilished);
             publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
         }
 
