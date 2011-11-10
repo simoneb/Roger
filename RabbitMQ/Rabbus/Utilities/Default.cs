@@ -1,4 +1,5 @@
 using System;
+using Rabbus.GuidGeneration;
 using Rabbus.Logging;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
@@ -16,6 +17,7 @@ namespace Rabbus.Utilities
         private static readonly Lazy<IRoutingKeyResolver> routingKeyResolver = new Lazy<IRoutingKeyResolver>(() => new DefaultRoutingKeyResolver());
         private static readonly Lazy<IMessageSerializer> serializer = new Lazy<IMessageSerializer>(() => new ProtoBufNetSerializer());
         private static readonly Lazy<IRabbusLog> log = new Lazy<IRabbusLog>(() => new NullLog());
+        private static readonly Lazy<IGuidGenerator> guidGenerator = new Lazy<IGuidGenerator>(() => new RandomGuidGenerator());
 
         public static IConsumerResolver ConsumerResolver { get { return consumerResolver.Value; } }
         public static ITypeResolver TypeResolver { get { return typeResolver.Value; } }
@@ -25,5 +27,6 @@ namespace Rabbus.Utilities
         public static IRoutingKeyResolver RoutingKeyResolver { get { return routingKeyResolver.Value; } }
         public static IMessageSerializer Serializer { get { return serializer.Value; } }
         public static IRabbusLog Log { get { return log.Value; } }
+        public static IGuidGenerator GuidGenerator { get { return guidGenerator.Value; } }
     }
 }

@@ -43,6 +43,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GuidGeneration\IGuidGenerator.cs" />
+    <Compile Include="GuidGeneration\RandomGuidGenerator.cs" />
+    <Compile Include="GuidGeneration\RabbusGuid.cs" />
     <Compile Include="IReliableConnection.cs" />
     <Compile Include="ReliableConnection.cs" />
     <Compile Include="CurrentMessageInformation.cs" />
@@ -79,7 +82,6 @@
     <Compile Include="Utilities\Default.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
-    <Compile Include="Utilities\GuidExtensions.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup />

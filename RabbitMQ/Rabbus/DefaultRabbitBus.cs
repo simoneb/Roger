@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Rabbus.Errors;
+using Rabbus.GuidGeneration;
 using Rabbus.Logging;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
@@ -29,19 +30,19 @@ namespace Rabbus
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRabbusLog log;
         private readonly ThreadLocal<IModel> publishModelHolder;
+        private readonly IReliableConnection connection;
+        private readonly IGuidGenerator guidGenerator;
 
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
 
         public CurrentMessageInformation CurrentMessage { get { return _currentMessage; } }
         public RabbusEndpoint LocalEndpoint { get; private set; }
+        public TimeSpan ConnectionAttemptInterval { get { return connection.ConnectionAttemptInterval; } }
 
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
         private bool disposed;
-        private readonly IReliableConnection connection;
-
-        public TimeSpan ConnectionAttemptInterval { get { return connection.ConnectionAttemptInterval; } }
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -51,7 +52,8 @@ namespace Rabbus
                                 IRoutingKeyResolver routingKeyResolver = null,
                                 IMessageSerializer serializer = null,
                                 IReflection reflection = null,
-                                IRabbusLog log = null)
+                                IRabbusLog log = null,
+                                IGuidGenerator guidGenerator = null)
         {
             this.consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
             this.typeResolver = typeResolver.Or(Default.TypeResolver);
@@ -61,6 +63,7 @@ namespace Rabbus
             this.routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
             this.serializer = serializer.Or(Default.Serializer);
             this.log = log.Or(Default.Log);
+            this.guidGenerator = guidGenerator.Or(Default.GuidGenerator);
 
             connection = new ReliableConnection(connectionFactory, this.log, AfterConnectionEstabilished);
             publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
@@ -191,10 +194,10 @@ namespace Rabbus
 
             return new CurrentMessageInformation
                    {
-                       //MessageId = new Guid(properties.MessageId),
+                       MessageId = string.IsNullOrWhiteSpace(properties.MessageId) ? RabbusGuid.Empty : new RabbusGuid(properties.MessageId),
                        MessageType = messageType,
                        Endpoint = new RabbusEndpoint(properties.ReplyTo),
-                       CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? Guid.Empty : new Guid(properties.CorrelationId),
+                       CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? RabbusGuid.Empty : new RabbusGuid(properties.CorrelationId),
                        DeliveryTag = args.DeliveryTag,
                        Exchange = args.Exchange,
                        Body = serializer.Deserialize(messageType, args.Body)
@@ -276,7 +279,7 @@ namespace Rabbus
 
             properties.Type = typeResolver.Unresolve(messageType);
             properties.ReplyTo = LocalEndpoint.Queue;
-            properties.MessageId = Guid.NewGuid().ToString();
+            properties.MessageId = guidGenerator.Next();
 
             return properties;
         }
@@ -289,7 +292,7 @@ namespace Rabbus
         public void Request(object message, Action<PublishFailureReason> requestFailure)
         {
             var properties = CreateProperties(message.GetType());
-            properties.CorrelationId = Guid.NewGuid().ToString();
+            properties.CorrelationId = guidGenerator.Next();
 
             PublishMandatoryInternal(message, properties, requestFailure);
 
@@ -346,7 +349,7 @@ namespace Rabbus
         {
             if (CurrentMessage == null || 
                 CurrentMessage.Endpoint.IsEmpty() ||
-                CurrentMessage.CorrelationId.IsEmpty())
+                CurrentMessage.CorrelationId.IsEmpty)
             {
                 log.Error("Reply method called out of the context of a message handling request");
                 throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
@@ -376,7 +379,7 @@ namespace Rabbus
         {
             SetCurrentMessageAndInvokeConsumers(ResolveConsumers, new CurrentMessageInformation
             {
-                //MessageId = Guid.NewGuid(),
+                MessageId = guidGenerator.Next(),
                 Body = message,
                 MessageType = message.GetType()
             });
