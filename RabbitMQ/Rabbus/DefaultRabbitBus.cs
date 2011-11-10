@@ -58,14 +58,15 @@ namespace Rabbus
                                 IRabbusLog log = null)
         {
             this.connectionFactory = connectionFactory;
-            this.consumerResolver = consumerResolver ?? new OneWayBusConsumerResolver();
-            this.typeResolver = typeResolver ?? new DefaultTypeResolver();
-            this.supportedMessageTypesResolver = supportedMessageTypesResolver ?? new DefaultSupportedMessageTypesResolver();
-            this.exchangeResolver = exchangeResolver ?? new DefaultExchangeResolver();
-            this.reflection = reflection ?? new DefaultReflection();
-            this.routingKeyResolver = routingKeyResolver ?? new DefaultRoutingKeyResolver();
-            this.serializer = serializer ?? new ProtoBufNetSerializer();
-            this.log = log ?? new NullLog();
+
+            this.consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
+            this.typeResolver = typeResolver.Or(Default.TypeResolver);
+            this.supportedMessageTypesResolver = supportedMessageTypesResolver.Or(Default.SupportedMessageTypesResolver);
+            this.exchangeResolver = exchangeResolver.Or(Default.ExchangeResolver);
+            this.reflection = reflection.Or(Default.Reflection);
+            this.routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
+            this.serializer = serializer.Or(Default.Serializer);
+            this.log = log.Or(Default.Log);
         }
 
         private IModel CreatePublishModel()

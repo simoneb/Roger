@@ -14,9 +14,7 @@ namespace Rabbus.Resolvers
         }
 
         public void Release(IEnumerable<IConsumer> consumers)
-        {
-            
-        }
+        {}
 
         public IEnumerable<Type> GetAllConsumersTypes()
         {

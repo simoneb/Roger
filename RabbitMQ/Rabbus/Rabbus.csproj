@@ -74,9 +74,11 @@
     <Compile Include="Resolvers\OneWayBusConsumerResolver.cs" />
     <Compile Include="Serialization\IMessageSerializer.cs" />
     <Compile Include="Serialization\ProtoBufNetSerializer.cs" />
+    <Compile Include="Utilities\Default.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\GuidExtensions.cs" />
+    <Compile Include="Utilities\ObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

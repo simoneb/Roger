@@ -1,6 +1,6 @@
 namespace Rabbus.Logging
 {
-    public class NullLog : IRabbusLog
+    internal class NullLog : IRabbusLog
     {
         public void Debug(string message)
         {

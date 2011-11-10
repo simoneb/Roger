@@ -1,5 +1,8 @@
 namespace Rabbus
 {
+    /// <summary>
+    /// Represents an addressable endpoint which can receive messages
+    /// </summary>
     public struct RabbusEndpoint
     {
         public RabbusEndpoint(string queue)
