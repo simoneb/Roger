@@ -1,5 +1,3 @@
-using System;
-
 namespace Rabbus.GuidGeneration
 {
     internal class RandomGuidGenerator : IGuidGenerator
