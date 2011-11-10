@@ -328,7 +328,7 @@ namespace Rabbus
                                               Action<PublishFailureReason> publishFailureCallback,
                                               string routingKey)
         {
-            publishFailureHandler.AddCallback(new RabbusGuid(properties.MessageId), publishFailureCallback);
+            publishFailureHandler.Subscribe(new RabbusGuid(properties.MessageId), publishFailureCallback);
 
             PublishModel.BasicPublish(exchangeResolver.Resolve(message.GetType()),
                                       routingKey,
