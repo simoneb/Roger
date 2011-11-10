@@ -28,7 +28,7 @@ namespace Rabbus
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRabbusLog log;
-        private ThreadLocal<IModel> publishModelHolder;
+        private readonly ThreadLocal<IModel> publishModelHolder;
 
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
@@ -63,6 +63,7 @@ namespace Rabbus
             this.log = log.Or(Default.Log);
 
             connection = new ReliableConnection(connectionFactory, log, AfterConnectionEstabilished);
+            publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
         }
 
         private IModel CreatePublishModel()
@@ -97,7 +98,6 @@ namespace Rabbus
 
         private void AfterConnectionEstabilished()
         {
-            publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
             CreateReceivingModel();
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
