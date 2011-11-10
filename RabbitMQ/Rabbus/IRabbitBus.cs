@@ -39,8 +39,8 @@ namespace Rabbus
         /// but fails if there are no subscribers to which the message can be routed
         /// </summary>
         /// <param name="message">The message to be published</param>
-        /// <param name="publishFailure">A callback invoked when the message cannot be routed to any subscriber</param>
-        void PublishMandatory(object message, Action<PublishFailureReason> publishFailure);
+        /// <param name="publishFailureCallback">A callback invoked when the message cannot be routed to any subscriber</param>
+        void PublishMandatory(object message, Action<PublishFailureReason> publishFailureCallback);
 
         /// <summary>
         /// Sends a request by means of <paramref name="message"/>, expecting a reply,
@@ -81,7 +81,7 @@ namespace Rabbus
         /// </summary>
         /// <param name="endpoint"></param>
         /// <param name="message"></param>
-        /// <param name="publishFailure"></param>
-        void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailure);
+        /// <param name="publishFailureCallback"></param>
+        void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailureCallback);
     }
 }

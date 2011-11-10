@@ -10,6 +10,7 @@ using RabbitMQ.Client.Events;
 using Rabbus.Errors;
 using Rabbus.GuidGeneration;
 using Rabbus.Logging;
+using Rabbus.PublishFailureHandling;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
 using Rabbus.Serialization;
@@ -43,7 +44,7 @@ namespace Rabbus
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
         private bool disposed;
-        private readonly ConcurrentDictionary<string, Func<PublishFailureReason, bool>> returnCallbacks = new ConcurrentDictionary<string, Func<PublishFailureReason, bool>>();
+        private readonly IPublishFailureHandler publishFailureHandler;
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -66,6 +67,7 @@ namespace Rabbus
             this.log = log.Or(Default.Log);
             this.guidGenerator = guidGenerator.Or(Default.GuidGenerator);
 
+            publishFailureHandler = new DefaultPublishFailureHandler(this.log);
             connection = new ReliableConnection(connectionFactory, this.log, AfterConnectionEstabilished);
             publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
         }
@@ -85,20 +87,7 @@ namespace Rabbus
             // should use the model parameter rather than the ThreadLocal property
 
             log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
-            HandlePublishFailure(new PublishFailureReason(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
-        }
-
-        private void HandlePublishFailure(PublishFailureReason publishFailureReason)
-        {
-            var toRemove = returnCallbacks.Where(pair => pair.Value(publishFailureReason)).Select(p => p.Key).ToArray();
-
-            log.DebugFormat("Removing {0} return callbacks from internal storage", toRemove.Length);
-
-            foreach (var callback in toRemove)
-            {
-                Func<PublishFailureReason, bool> _;
-                returnCallbacks.TryRemove(callback, out _);
-            }
+            publishFailureHandler.Handle(new PublishFailureReason(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
         public void Initialize()
@@ -313,33 +302,33 @@ namespace Rabbus
             Send(endpoint, message, Nop);
         }
 
-        public void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailure)
+        public void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailureCallback)
         {
             var properties = CreateProperties(message.GetType());
 
-            PublishMandatoryInternal(message, properties, publishFailure, endpoint.Queue);
+            PublishMandatoryInternal(message, properties, publishFailureCallback, endpoint.Queue);
         }
 
-        public void PublishMandatory(object message, Action<PublishFailureReason> publishFailure)
+        public void PublishMandatory(object message, Action<PublishFailureReason> publishFailureCallback)
         {
             var properties = CreateProperties(message.GetType());
 
-            PublishMandatoryInternal(message, properties, publishFailure);
+            PublishMandatoryInternal(message, properties, publishFailureCallback);
         }
 
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
-                                              Action<PublishFailureReason> publishFailure)
+                                              Action<PublishFailureReason> publishFailureCallback)
         {
-            PublishMandatoryInternal(message, properties, publishFailure, routingKeyResolver.Resolve(message.GetType()));
+            PublishMandatoryInternal(message, properties, publishFailureCallback, routingKeyResolver.Resolve(message.GetType()));
         }
 
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
-                                              Action<PublishFailureReason> publishFailure,
+                                              Action<PublishFailureReason> publishFailureCallback,
                                               string routingKey)
         {
-            CallbackOnReturn(publishFailure, properties.MessageId);
+            publishFailureHandler.AddCallback(new RabbusGuid(properties.MessageId), publishFailureCallback);
 
             PublishModel.BasicPublish(exchangeResolver.Resolve(message.GetType()),
                                       routingKey,
@@ -347,31 +336,6 @@ namespace Rabbus
                                       false,
                                       properties,
                                       serializer.Serialize(message));
-        }
-
-        private void CallbackOnReturn(Action<PublishFailureReason> callback, string messageId)
-        {
-            returnCallbacks.TryAdd(messageId, HandleReturn(new WeakReference(callback), messageId));
-        }
-
-        private Func<PublishFailureReason, bool> HandleReturn(WeakReference callback, string messageId)
-        {
-            var myMessageId = new RabbusGuid(messageId);
-
-            return reason =>
-            {
-                if (!callback.IsAlive)
-                    return true;
-
-                if(reason.MessageId == myMessageId)
-                {
-                    log.DebugFormat("Invoking basic return callback for message id {0}", reason.MessageId);
-                    ((Action<PublishFailureReason>)callback.Target)(reason);
-                    return true;
-                }
-
-                return false;
-            };
         }
 
         public void Reply(object message)
