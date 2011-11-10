@@ -14,6 +14,7 @@ namespace Rabbus
         private IConnection connection;
         private bool disposed;
         private Timer initializationTimer;
+        private static readonly TimeSpan Never = TimeSpan.FromMilliseconds(-1);
         public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
 
         public ReliableConnection(IConnectionFactory connectionFactory, IRabbusLog log, Action onSuccessfulConnection)
@@ -68,7 +69,7 @@ namespace Rabbus
 
             log.DebugFormat("Scheduling initialization to be executed in {0}", ConnectionAttemptInterval);
 
-            initializationTimer.Change(ConnectionAttemptInterval, TimeSpan.FromMilliseconds(-1));
+            initializationTimer.Change(ConnectionAttemptInterval, Never);
         }
 
         public void Dispose()
