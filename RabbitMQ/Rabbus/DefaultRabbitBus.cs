@@ -191,7 +191,7 @@ namespace Rabbus
 
             return new CurrentMessageInformation
                    {
-                       MessageId = new Guid(properties.MessageId),
+                       //MessageId = new Guid(properties.MessageId),
                        MessageType = messageType,
                        Endpoint = new RabbusEndpoint(properties.ReplyTo),
                        CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? Guid.Empty : new Guid(properties.CorrelationId),
@@ -376,7 +376,7 @@ namespace Rabbus
         {
             SetCurrentMessageAndInvokeConsumers(ResolveConsumers, new CurrentMessageInformation
             {
-                MessageId = Guid.NewGuid(),
+                //MessageId = Guid.NewGuid(),
                 Body = message,
                 MessageType = message.GetType()
             });

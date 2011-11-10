@@ -4,7 +4,7 @@ namespace Rabbus
 {
     public class CurrentMessageInformation
     {
-        public Guid MessageId { get; set; }
+        //public Guid MessageId { get; set; }
         public object Body { get; set; }
         public RabbusEndpoint Endpoint { get; set; }
         public Guid CorrelationId { get; set; }
