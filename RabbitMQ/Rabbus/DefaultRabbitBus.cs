@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RabbitMQ.Client.Exceptions;
 using Rabbus.Errors;
 using Rabbus.Logging;
 using Rabbus.Reflection;
@@ -19,11 +18,8 @@ namespace Rabbus
 {
     public class DefaultRabbitBus : IRabbitBus
     {
-        private readonly IConnectionFactory connectionFactory;
-
         private delegate Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ConsumerResolver(Type messageType);
 
-        private IConnection connection;
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly ITypeResolver typeResolver;
         private readonly IMessageSerializer serializer;
@@ -42,10 +38,10 @@ namespace Rabbus
 
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
-        private Timer initializationTimer;
         private bool disposed;
+        private readonly IReliableConnection connection;
 
-        public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
+        public TimeSpan ConnectionAttemptInterval { get { return connection.ConnectionAttemptInterval; } }
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -57,8 +53,6 @@ namespace Rabbus
                                 IReflection reflection = null,
                                 IRabbusLog log = null)
         {
-            this.connectionFactory = connectionFactory;
-
             this.consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
             this.typeResolver = typeResolver.Or(Default.TypeResolver);
             this.supportedMessageTypesResolver = supportedMessageTypesResolver.Or(Default.SupportedMessageTypesResolver);
@@ -67,6 +61,8 @@ namespace Rabbus
             this.routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
             this.serializer = serializer.Or(Default.Serializer);
             this.log = log.Or(Default.Log);
+
+            connection = new ReliableConnection(connectionFactory, log, AfterConnectionEstabilished);
         }
 
         private IModel CreatePublishModel()
@@ -96,19 +92,11 @@ namespace Rabbus
         {
             log.Debug("Initializing bus");
 
-            try
-            {
-                connection = connectionFactory.CreateConnection();
-                log.Debug("Connection created");
-            }
-            catch (BrokerUnreachableException e)
-            {
-                log.ErrorFormat("Cannot create connection, broker is unreachable, rescheduling.\r\n{0}", e);
-                ScheduleInitialize();
-                return;
-            }
+            connection.Connect();
+        }
 
-            connection.ConnectionShutdown += HandleConnectionShutdown;
+        private void AfterConnectionEstabilished()
+        {
             publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
             CreateReceivingModel();
 
@@ -119,36 +107,6 @@ namespace Rabbus
             ConsumeAsynchronously(ResolveConsumers, consumer);
 
             log.Debug("Bus initialization completed");
-        }
-
-        private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)
-        {
-            // remove handler to be safe and prevent eventual callbacks from being invoked by closed connections
-            conn.ConnectionShutdown -= HandleConnectionShutdown;
-
-            if (disposed)
-                log.Debug("Connection has been shut down");
-            else
-            {
-                log.DebugFormat("Connection (hashcode {0}) was shut down unexpectedly, rescheduling: {1}", conn.GetHashCode(), reason);
-
-                ScheduleInitialize();
-            }
-        }
-
-        private void ScheduleInitialize()
-        {
-            initializationTimer = new Timer(timer =>
-            {
-                ((Timer)timer).Dispose();
-
-                if(!disposed)
-                    Initialize();
-            });
-
-            log.DebugFormat("Scheduling initialization to be executed in {0}", ConnectionAttemptInterval);
-
-            initializationTimer.Change(ConnectionAttemptInterval, TimeSpan.FromMilliseconds(-1));
         }
 
         private void CreateReceivingModel()
@@ -433,18 +391,7 @@ namespace Rabbus
             disposed = true;
 
             log.Debug("Disposing bus");
-
-            if (connection != null)
-                try
-                {
-                    // here we dispose just the connection because the client library user guide
-                    // says that doing so all channels are implicitly closed as well
-                    connection.Dispose();
-                }
-                catch (AlreadyClosedException e)
-                {
-                    log.ErrorFormat("Trying to close connection but it was already closed.\r\n{0}", e);
-                }
+            connection.Dispose();
         }
     }
 }
