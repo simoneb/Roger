@@ -45,7 +45,7 @@ namespace Rabbus
         private Timer initializationTimer;
         private bool disposed;
 
-        public int ConnectionAttemptMillisecondsInterval { get { return 5000; } }
+        public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -145,9 +145,9 @@ namespace Rabbus
                     Initialize();
             });
 
-            log.DebugFormat("Scheduling initialization to be executed in {0} milliseconds", ConnectionAttemptMillisecondsInterval);
+            log.DebugFormat("Scheduling initialization to be executed in {0}", ConnectionAttemptInterval);
 
-            initializationTimer.Change(ConnectionAttemptMillisecondsInterval, Timeout.Infinite);
+            initializationTimer.Change(ConnectionAttemptInterval, TimeSpan.FromMilliseconds(-1));
         }
 
         private void CreateReceivingModel()

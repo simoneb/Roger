@@ -13,7 +13,7 @@ namespace Rabbus
         /// <summary>
         /// Returns the delay, in milliseconds, between connection retries when the connection shuts down
         /// </summary>
-        int ConnectionAttemptMillisecondsInterval { get; }
+        TimeSpan ConnectionAttemptInterval { get; }
 
         /// <summary>
         /// Initializes the bus

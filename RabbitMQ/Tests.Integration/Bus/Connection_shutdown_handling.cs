@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Threading;
 using MbUnit.Framework;
@@ -27,7 +28,7 @@ namespace Tests.Integration.Bus
             Debug.WriteLine("Started app");
 
             // wait for reconnection
-            Thread.Sleep(1000 + Bus.ConnectionAttemptMillisecondsInterval);
+            Thread.Sleep(Bus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1));
 
             Bus.Publish(new MyMessage());
 
