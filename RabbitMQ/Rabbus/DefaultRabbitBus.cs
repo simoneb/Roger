@@ -43,6 +43,7 @@ namespace Rabbus
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
         private bool disposed;
+        private readonly ConcurrentDictionary<string, Func<PublishFailureReason, bool>> returnCallbacks = new ConcurrentDictionary<string, Func<PublishFailureReason, bool>>();
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -84,12 +85,20 @@ namespace Rabbus
             // should use the model parameter rather than the ThreadLocal property
 
             log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
-            HandlePublishFailure(new PublishFailureReason(new Guid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
+            HandlePublishFailure(new PublishFailureReason(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
         private void HandlePublishFailure(PublishFailureReason publishFailureReason)
         {
-            // doing nothing
+            var toRemove = returnCallbacks.Where(pair => pair.Value(publishFailureReason)).Select(p => p.Key).ToArray();
+
+            log.DebugFormat("Removing {0} return callbacks from internal storage", toRemove.Length);
+
+            foreach (var callback in toRemove)
+            {
+                Func<PublishFailureReason, bool> _;
+                returnCallbacks.TryRemove(callback, out _);
+            }
         }
 
         public void Initialize()
@@ -342,7 +351,27 @@ namespace Rabbus
 
         private void CallbackOnReturn(Action<PublishFailureReason> callback, string messageId)
         {
-            
+            returnCallbacks.TryAdd(messageId, HandleReturn(new WeakReference(callback), messageId));
+        }
+
+        private Func<PublishFailureReason, bool> HandleReturn(WeakReference callback, string messageId)
+        {
+            var myMessageId = new RabbusGuid(messageId);
+
+            return reason =>
+            {
+                if (!callback.IsAlive)
+                    return true;
+
+                if(reason.MessageId == myMessageId)
+                {
+                    log.DebugFormat("Invoking basic return callback for message id {0}", reason.MessageId);
+                    ((Action<PublishFailureReason>)callback.Target)(reason);
+                    return true;
+                }
+
+                return false;
+            };
         }
 
         public void Reply(object message)
