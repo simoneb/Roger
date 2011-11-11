@@ -12,8 +12,7 @@ namespace Tests.Integration.Bus
 
         protected override void BeforeBusInitialization()
         {
-            consumer = new MyConsumer();
-            ConsumerResolver.Register(consumer);
+            Register(consumer = new MyConsumer());
         }
 
         [Test]

@@ -38,6 +38,17 @@ namespace Tests.Integration
             Assert.AreEqual(0, lost.Count);
         }
 
+        private void Publisher(IModel model)
+        {
+            for (int i = 0; i < 10000; i++)
+            {
+                lock (unconfirmed)
+                    unconfirmed.Add(model.NextPublishSeqNo);
+
+                model.BasicPublish("", "publisher_confirms", null, i.Bytes());
+            }
+        }
+
         private void WaitUntilAllAckOrNack()
         {
             Thread.Sleep(100);
@@ -49,17 +60,6 @@ namespace Tests.Integration
                         break;
 
                 Thread.Sleep(200);
-            }
-        }
-
-        private void Publisher(IModel model)
-        {
-            for (int i = 0; i < 10000; i++)
-            {
-                lock (unconfirmed)
-                    unconfirmed.Add(model.NextPublishSeqNo);
-
-                model.BasicPublish("", "publisher_confirms", null, i.Bytes());
             }
         }
 

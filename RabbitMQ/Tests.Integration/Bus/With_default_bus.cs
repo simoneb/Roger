@@ -5,9 +5,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus;
-using Rabbus.Reflection;
 using Rabbus.Resolvers;
-using Rabbus.Serialization;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -15,32 +13,17 @@ namespace Tests.Integration.Bus
     public abstract class With_default_bus : With_rabbitmq_broker
     {
         protected DefaultRabbitBus Bus;
-        private IConnection connection;
-        protected ManualRegistrationConsumerResolver ConsumerResolver;
-        private DefaultRoutingKeyResolver routingKeyResolver;
-        private DefaultTypeResolver typeResolver;
-        private ProtoBufNetSerializer serializer;
+        private ManualRegistrationConsumerResolver consumerResolver;
         protected IModel TestModel;
         private IConnection localConnection;
 
         [SetUp]
         public void InitializeBus()
         {
-            routingKeyResolver = new DefaultRoutingKeyResolver();
-            typeResolver = new DefaultTypeResolver();
-            serializer = new ProtoBufNetSerializer();
-
-            var consumerToMessageTypes = new DefaultSupportedMessageTypesResolver();
-            ConsumerResolver = new ManualRegistrationConsumerResolver(consumerToMessageTypes);
+            consumerResolver = new ManualRegistrationConsumerResolver(new DefaultSupportedMessageTypesResolver());
             Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Helpers.CreateConnection),
-                                       ConsumerResolver,
-                                       typeResolver, 
-                                       consumerToMessageTypes, 
-                                       new DefaultExchangeResolver(), 
-                                       routingKeyResolver, 
-                                       serializer, 
-                                       new DefaultReflection(), 
-                                       new DebugLog());
+                                       consumerResolver,
+                                       log: new DebugLog());
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -69,13 +52,15 @@ namespace Tests.Integration.Bus
         public void CloseConnection()
         {
             Bus.Dispose();
+
             try
             {
                 localConnection.Dispose();
             }
-            catch (IOException e)
+            catch (IOException exception)
             {
-                // happens sometimes, figure out why
+                // if the broker was restarted in tests this connections would be closed and
+                // closing it would throw IOException as the socket is closed
             }
         }
 
@@ -88,6 +73,11 @@ namespace Tests.Integration.Bus
         protected static void WaitForDelivery()
         {
             Thread.Sleep(500);
+        }
+
+        protected void Register(IConsumer consumer)
+        {
+            consumerResolver.Register(consumer);
         }
     }
 }

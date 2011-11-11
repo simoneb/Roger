@@ -1,4 +1,3 @@
-using System.Threading;
 using MbUnit.Framework;
 using Tests.Integration.Bus.SupportClasses;
 
@@ -10,8 +9,7 @@ namespace Tests.Integration.Bus
 
         protected override void BeforeBusInitialization()
         {
-            consumer = new MyConsumer();
-            ConsumerResolver.Register(consumer);
+            Register(consumer = new MyConsumer());
         }
 
         [Test]

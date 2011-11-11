@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Common;
@@ -173,11 +172,9 @@ namespace Tests.Integration
 
         private void Consumer(bool noAck)
         {
-            var connection = Helpers.CreateConnection();
-
-            try
+            using (var connection = Helpers.CreateConnection())
+            using (var model = connection.CreateModel())
             {
-                var model = connection.CreateModel();
                 m_queueName = model.QueueDeclare("", false, false, true, null);
 
                 var consumer = new QueueingBasicConsumer(model);
@@ -190,15 +187,6 @@ namespace Tests.Integration
 
                     OnReceived(model, _.DeliveryTag);
                 }
-            }
-            finally
-            {
-                try
-                {
-                    connection.Dispose();
-                }
-                catch (IOException)
-                {}
             }
         }
         
