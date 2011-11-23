@@ -30,7 +30,7 @@ namespace Rabbus
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRabbusLog log;
-        private readonly ThreadLocal<IModel> publishModelHolder;
+        private ThreadLocal<IModel> publishModelHolder;
         private readonly IReliableConnection connection;
         private readonly IGuidGenerator guidGenerator;
 
@@ -75,8 +75,6 @@ namespace Rabbus
 
             connection.ConnectionAttemptFailed += HandleConnectionAttemptFailed;
             connection.UnexpectedShutdown += HandleConnectionUnexpectedShutdown;
-
-            publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
         }
 
         private void HandleConnectionUnexpectedShutdown(ShutdownEventArgs obj)
@@ -115,6 +113,7 @@ namespace Rabbus
 
         private void ConnectionEstabilished()
         {
+            publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
             receivingModel = connection.CreateModel();
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
