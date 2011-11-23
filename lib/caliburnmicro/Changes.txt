@@ -1,0 +1,13 @@
+-Improvements to EventAggregator to improve testability and re-use apart from The full Caliburn.Micro framework.
+-Enabled basic child containers for the SimpleContainer.
+-Some improvements to the nuget install script.
+-Improvements and bug fixes for View/ViewModel name resolution.
+-Fixed some NRE's in the new UriBuilder. NO explicitly throws if it cannot locate the view.
+-Improved logging around searched for Views/ViewModels.
+-Fixed bugs with the WP7 version of Screen.OnViewReady. It now works consistently.
+-Improvements to PropertyChangedBase and BindableCollection to better support serialization.
+-Moved IsInDesign mode out of Bootstrapper and into the Execute class.
+-Added WP7 platform abstractions for vibration and sound effects, including enabling the window manager to play sounds when showing a custom modal dialog.
+-Fixed some bugs in the WindowManager related to bubbling actions.
+-Fixed some issues with the WPF navigation service.
+-Minor refactoring to enable the new "feature packages".

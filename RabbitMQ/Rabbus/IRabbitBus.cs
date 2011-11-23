@@ -16,6 +16,11 @@ namespace Rabbus
         TimeSpan ConnectionAttemptInterval { get; }
 
         /// <summary>
+        /// The local endpoint on which this instance of the bus is listening for incoming messages
+        /// </summary>
+        RabbusEndpoint LocalEndpoint { get; }
+
+        /// <summary>
         /// Initializes the bus
         /// </summary>
         void Initialize();
