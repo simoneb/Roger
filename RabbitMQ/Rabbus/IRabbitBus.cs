@@ -11,7 +11,7 @@ namespace Rabbus
         CurrentMessageInformation CurrentMessage { get; }
 
         /// <summary>
-        /// Returns the delay, in milliseconds, between connection retries when the connection shuts down
+        /// Returns the delay between connection retries when the either connection cannot be estabilished or it shuts down
         /// </summary>
         TimeSpan ConnectionAttemptInterval { get; }
 
@@ -21,9 +21,9 @@ namespace Rabbus
         RabbusEndpoint LocalEndpoint { get; }
 
         /// <summary>
-        /// Initializes the bus
+        /// Starts the bus
         /// </summary>
-        void Initialize();
+        void Start();
 
         /// <summary>
         /// Subscribes a consumer manually to the messages it is interested in
@@ -88,5 +88,15 @@ namespace Rabbus
         /// <param name="message"></param>
         /// <param name="publishFailureCallback"></param>
         void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailureCallback);
+
+        /// <summary>
+        /// Fired when the bus is started successfully
+        /// </summary>
+        event Action Started;
+
+        /// <summary>
+        /// Fired when the connection to the server is either unavailable or lost
+        /// </summary>
+        event Action ConnectionFailure;
     }
 }

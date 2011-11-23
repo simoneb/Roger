@@ -35,7 +35,7 @@ namespace Tests.Integration.Bus
 
             BeforeBusInitialization();
 
-            Bus.Initialize();
+            Bus.Start();
 
             AfterBusInitialization();
         }

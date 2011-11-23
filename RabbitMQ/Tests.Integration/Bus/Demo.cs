@@ -33,7 +33,7 @@ namespace Tests.Integration.Bus
             consumerResolver.Register(new HelloMessageConsumer());
 
             Bus = new DefaultRabbitBus(new DefaultConnectionFactory("localhost"), consumerResolver);
-            Bus.Initialize();
+            Bus.Start();
 
             Bus.Publish(new HelloMessage());
         }

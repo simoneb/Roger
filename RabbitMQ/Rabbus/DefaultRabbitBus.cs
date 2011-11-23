@@ -34,6 +34,9 @@ namespace Rabbus
         private readonly IReliableConnection connection;
         private readonly IGuidGenerator guidGenerator;
 
+        public event Action Started = delegate { };
+        public event Action ConnectionFailure = delegate { };
+
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
 
@@ -68,8 +71,22 @@ namespace Rabbus
             this.guidGenerator = guidGenerator.Or(Default.GuidGenerator);
 
             publishFailureHandler = new DefaultPublishFailureHandler(this.log);
-            connection = new ReliableConnection(connectionFactory, this.log, AfterConnectionEstabilished);
+            connection = new ReliableConnection(connectionFactory, this.log, ConnectionEstabilished);
+
+            connection.ConnectionAttemptFailed += HandleConnectionAttemptFailed;
+            connection.UnexpectedShutdown += HandleConnectionUnexpectedShutdown;
+
             publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
+        }
+
+        private void HandleConnectionUnexpectedShutdown(ShutdownEventArgs obj)
+        {
+            ConnectionFailure();
+        }
+
+        private void HandleConnectionAttemptFailed()
+        {
+            ConnectionFailure();            
         }
 
         private IModel CreatePublishModel()
@@ -84,22 +101,21 @@ namespace Rabbus
         private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)
         {
             // beware, this is called on the RabbitMQ client connection thread, therefore we 
-            // should use the model parameter rather than the ThreadLocal property
-
+            // should use the model parameter rather than the ThreadLocal property. Also we should not block
             log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
             publishFailureHandler.Handle(new PublishFailureReason(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
-        public void Initialize()
+        public void Start()
         {
-            log.Debug("Initializing bus");
+            log.Debug("Starting bus");
 
             connection.Connect();
         }
 
-        private void AfterConnectionEstabilished()
+        private void ConnectionEstabilished()
         {
-            CreateReceivingModel();
+            receivingModel = connection.CreateModel();
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
 
@@ -107,12 +123,9 @@ namespace Rabbus
 
             ConsumeAsynchronously(ResolveConsumers, consumer);
 
-            log.Debug("Bus initialization completed");
-        }
+            Started();
 
-        private void CreateReceivingModel()
-        {
-            receivingModel = connection.CreateModel();
+            log.Debug("Bus started");
         }
 
         private IModel PublishModel { get { return publishModelHolder.Value; } }

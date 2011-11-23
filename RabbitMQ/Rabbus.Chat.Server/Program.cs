@@ -24,7 +24,7 @@ namespace Rabbus.Chat.Server
 
             consumerResolver.Register(chat);
 
-            bus.Initialize();
+            bus.Start();
 
             Console.ReadLine();
 

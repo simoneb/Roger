@@ -52,7 +52,9 @@
     <Reference Include="Caliburn.Micro">
       <HintPath>..\..\lib\caliburnmicro\bin\WPF\Release\Caliburn.Micro.dll</HintPath>
     </Reference>
-    <Reference Include="RabbitMQ.Client, Version=2.6.1.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL" />
+    <Reference Include="RabbitMQ.Client">
+      <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

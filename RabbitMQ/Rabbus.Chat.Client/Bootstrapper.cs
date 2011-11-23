@@ -47,7 +47,7 @@ namespace Rabbus.Chat.Client
             }
 
             var bus = container.GetExportedValue<IRabbitBus>();
-            bus.Initialize();
+            bus.Start();
 
             base.OnStartup(sender, e);
         }
