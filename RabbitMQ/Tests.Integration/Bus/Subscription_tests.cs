@@ -16,7 +16,7 @@ namespace Tests.Integration.Bus
 
             WaitForDelivery();
 
-            Assert.AreEqual(1, consumer.Received.Value);
+            Assert.AreEqual(1, consumer.LastReceived.Value);
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Tests.Integration.Bus
 
             WaitForDelivery();
 
-            Assert.IsNull(consumer.Received);
+            Assert.IsNull(consumer.LastReceived);
         }
     }
 }

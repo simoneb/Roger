@@ -13,7 +13,7 @@ namespace Tests.Integration.Bus
 
             Bus.Consume(new MyMessage());
 
-            Assert.IsNotNull(consumer.Received);
+            Assert.IsNotNull(consumer.LastReceived);
         }
     }
 }

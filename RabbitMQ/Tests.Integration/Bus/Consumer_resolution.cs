@@ -19,7 +19,7 @@ namespace Tests.Integration.Bus
 
             WaitForDelivery();
 
-            Assert.IsNotNull(consumer.Received);
+            Assert.IsNotNull(consumer.LastReceived);
         }
     }
 }

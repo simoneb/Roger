@@ -24,7 +24,7 @@ namespace Tests.Integration.Bus
             Bus.Publish(new MyMessage());
             m_consumer.WaitForDelivery();
 
-            Assert.IsNotNull(m_consumer.Received);
+            Assert.IsNotNull(m_consumer.LastReceived);
         }
 
         [Test]
@@ -39,8 +39,8 @@ namespace Tests.Integration.Bus
             Bus.Publish(new MyMessage {Value = 2});
             m_consumer.WaitForDelivery();
 
-            Assert.IsNotNull(m_consumer.Received);
-            Assert.AreEqual(2, m_consumer.Received.Value);
+            Assert.IsNotNull(m_consumer.LastReceived);
+            Assert.AreEqual(2, m_consumer.LastReceived.Value);
         }
 
         private void RestartBrokerAndWait()

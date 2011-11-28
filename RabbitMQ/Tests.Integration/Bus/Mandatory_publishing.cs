@@ -50,7 +50,7 @@ namespace Tests.Integration.Bus
             if(handle.WaitOne(100))
                 Assert.Fail("Delivery failure callback wasn't expected to be called");
 
-            Assert.IsNotNull(consumer.Received);
+            Assert.IsNotNull(consumer.LastReceived);
         }
     }
 }

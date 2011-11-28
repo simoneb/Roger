@@ -59,7 +59,7 @@ namespace Tests.Integration.Bus
             }
             catch (IOException exception)
             {
-                // if the broker was restarted in tests this connections would be closed and
+                // if the broker was restarted in tests this connection would be closed and
                 // closing it would throw IOException as the socket is closed
             }
         }
