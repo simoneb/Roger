@@ -78,6 +78,7 @@
     <Compile Include="Bus\SupportClasses\MyResponse.cs" />
     <Compile Include="Bus\SupportClasses\MyResponseConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyResponseCurrentMessageConsumer.cs" />
+    <Compile Include="Bus\SupportClasses\MyThreadCheckingConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
