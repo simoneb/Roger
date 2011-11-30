@@ -287,10 +287,11 @@ namespace Rabbus
         {
             var properties = PublishModel.CreateBasicProperties();
 
+            properties.MessageId = guidGenerator.Next();
             properties.Type = typeResolver.Unresolve(messageType);
             properties.ReplyTo = LocalEndpoint.Queue;
-            properties.MessageId = guidGenerator.Next();
-
+            properties.ContentType = serializer.ContentType;
+            
             return properties;
         }
 

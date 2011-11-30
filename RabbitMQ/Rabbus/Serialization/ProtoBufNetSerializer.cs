@@ -4,6 +4,9 @@ using ProtoBuf;
 
 namespace Rabbus.Serialization
 {
+    /// <summary>
+    /// Serializer implementation using protobuf-net as the serialization mechanism
+    /// </summary>
     public class ProtoBufNetSerializer : IMessageSerializer
     {
         public object Deserialize(Type messageType, byte[] body)
@@ -19,6 +22,11 @@ namespace Rabbus.Serialization
                 Serializer.NonGeneric.Serialize(s, instance);
                 return s.ToArray();
             }
+        }
+
+        public string ContentType
+        {
+            get { return "application/x-protobuf"; }
         }
     }
 }

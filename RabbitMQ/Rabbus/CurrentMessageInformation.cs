@@ -3,6 +3,9 @@ using Rabbus.GuidGeneration;
 
 namespace Rabbus
 {
+    /// <summary>
+    /// Contains contextual information about the message currently being handled by the bus
+    /// </summary>
     public class CurrentMessageInformation
     {
         public RabbusGuid MessageId { get; set; }
