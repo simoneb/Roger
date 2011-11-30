@@ -1,5 +1,6 @@
 using MbUnit.Framework;
 using Rabbus.Resolvers;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {
@@ -9,7 +10,7 @@ namespace Tests.Unit
         [Test]
         public void Should_include_type_and_assembly_name_without_useless_stuff()
         {
-            Assert.AreEqual("Tests.Unit.MyMessage, Tests.Unit", new DefaultTypeResolver().Unresolve<MyMessage>());
+            Assert.AreEqual("Tests.Unit.SupportClasses.MyMessage, Tests.Unit", new DefaultTypeResolver().Unresolve<MyMessage>());
         }
     }
 }

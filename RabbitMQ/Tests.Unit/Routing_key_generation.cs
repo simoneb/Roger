@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using MbUnit.Framework;
 using Rabbus.Resolvers;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {
@@ -15,7 +16,7 @@ namespace Tests.Unit
         [Test]
         public void Normal_type()
         {
-            Assert.AreEqual("Tests.Unit.MyMessage", sut.Resolve(typeof(MyMessage)));
+            Assert.AreEqual("Tests.Unit.SupportClasses.MyMessage", sut.Resolve(typeof(MyMessage)));
         }
         
         [Test]

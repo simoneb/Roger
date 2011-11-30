@@ -2,6 +2,7 @@
 using MbUnit.Framework;
 using Rabbus.Reflection;
 using System.Linq;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {

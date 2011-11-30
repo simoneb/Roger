@@ -54,10 +54,10 @@
     <Compile Include="Exchange_resolution.cs" />
     <Compile Include="GenericsTest.cs" />
     <Compile Include="Message_type_serialization.cs" />
-    <Compile Include="MyMessage.cs" />
-    <Compile Include="MyThrowingConsumer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RabbusGuidTests.cs" />
+    <Compile Include="SupportClasses\MyMessage.cs" />
+    <Compile Include="SupportClasses\MyThrowingConsumer.cs" />
     <Compile Include="TimestampTest.cs" />
     <Compile Include="Routing_key_generation.cs" />
   </ItemGroup>

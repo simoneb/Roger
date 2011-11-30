@@ -3,6 +3,7 @@ using System.Reflection;
 using MbUnit.Framework;
 using ProtoBuf;
 using Rabbus;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {

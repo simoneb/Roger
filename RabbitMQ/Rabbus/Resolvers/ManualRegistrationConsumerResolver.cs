@@ -29,9 +29,9 @@ namespace Rabbus.Resolvers
             // nothing to do here
         }
 
-        public IEnumerable<Type> GetAllConsumersTypes()
+        public HashSet<Type> GetAllSupportedMessageTypes()
         {
-            return messageTypeToConsumers.Values.SelectMany(v => v.Select(c => c.GetType())).Distinct();
+            return new HashSet<Type>(messageTypeToConsumers.Keys);
         }
 
         public void Register(IConsumer consumer)

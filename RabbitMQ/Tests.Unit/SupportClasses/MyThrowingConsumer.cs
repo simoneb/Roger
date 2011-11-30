@@ -1,7 +1,7 @@
 using System;
 using Rabbus;
 
-namespace Tests.Unit
+namespace Tests.Unit.SupportClasses
 {
     public class MyThrowingConsumer : IConsumer<MyMessage>
     {

@@ -1,6 +1,6 @@
-﻿using ProtoBuf;
+using ProtoBuf;
 
-namespace Tests.Unit
+namespace Tests.Unit.SupportClasses
 {
     [ProtoContract]
     public class MyMessage

@@ -118,7 +118,7 @@ namespace Rabbus
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
 
-            var consumer = Subscribe(consumerResolver.GetAllConsumersTypes());
+            var consumer = Subscribe(consumerResolver.GetAllSupportedMessageTypes());
 
             ConsumeAsynchronously(ResolveConsumers, consumer);
 
@@ -129,20 +129,13 @@ namespace Rabbus
 
         private IModel PublishModel { get { return publishModelHolder.Value; } }
 
-        private QueueingBasicConsumer Subscribe(IEnumerable<Type> consumerTypes)
+        private QueueingBasicConsumer Subscribe(IEnumerable<Type> messageTypes)
         {
-            var allMessageTypes = GetDistinctMessageTypes(consumerTypes);
-
-            AddBindings(allMessageTypes);
+            AddBindings(messageTypes);
 
             var consumer = new QueueingBasicConsumer(receivingModel);
             receivingModel.BasicConsume(LocalEndpoint.Queue, false, consumer);
             return consumer;
-        }
-
-        private IEnumerable<Type> GetDistinctMessageTypes(IEnumerable<Type> consumerTypes)
-        {
-            return consumerTypes.SelectMany(GetSupportedMessageTypes).Distinct();
         }
 
         private void AddBindings(IEnumerable<Type> messageTypes)
@@ -265,11 +258,6 @@ namespace Rabbus
         private IEnumerable<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
             return supportedMessageTypesResolver.Get(consumer.GetType());
-        }
-
-        private IEnumerable<Type> GetSupportedMessageTypes(Type consumerType)
-        {
-            return supportedMessageTypesResolver.Get(consumerType);
         }
 
         public void Publish(object message)
