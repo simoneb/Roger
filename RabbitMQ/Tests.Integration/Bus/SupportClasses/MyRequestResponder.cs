@@ -15,7 +15,7 @@ namespace Tests.Integration.Bus.SupportClasses
         public void Consume(MyRequest message)
         {
             Received = message;
-            bus.Reply(new MyResponse());
+            bus.Reply(new MyReply());
         }
     }
 }

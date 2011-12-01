@@ -349,6 +349,12 @@ namespace Rabbus
                 throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
             }
 
+            if(!message.GetType().IsDefined(typeof(RabbusReplyAttribute), false))
+            {
+                log.Error("Reply method called with a reply message not decorated woth the right attribute");
+                throw new InvalidOperationException(ErrorMessages.ReplyMessageNotAReply);
+            }
+
             var properties = CreateProperties(message.GetType());
             properties.CorrelationId = CurrentMessage.CorrelationId.ToString();
 

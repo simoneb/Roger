@@ -3,20 +3,20 @@ using Rabbus;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class CatchingMyRequestResponder : IConsumer<MyRequest>
+    public class CatchingResponder<TRequest, TReply> : IConsumer<TRequest> where TRequest : new()
     {
         private readonly IRabbitBus bus;
 
-        public CatchingMyRequestResponder(IRabbitBus bus)
+        public CatchingResponder(IRabbitBus bus)
         {
             this.bus = bus;
         }
 
-        public void Consume(MyRequest message)
+        public void Consume(TRequest message)
         {
             try
             {
-                bus.Reply(new MyResponse());
+                bus.Reply(Activator.CreateInstance<TReply>());
             }
             catch (Exception e)
             {

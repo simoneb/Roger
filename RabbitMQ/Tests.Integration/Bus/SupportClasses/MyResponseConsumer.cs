@@ -2,11 +2,11 @@ using Rabbus;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class MyResponseConsumer : IConsumer<MyResponse>
+    public class MyResponseConsumer : IConsumer<MyReply>
     {
-        public MyResponse Received;
+        public MyReply Received;
 
-        public void Consume(MyResponse message)
+        public void Consume(MyReply message)
         {
             Received = message;
         }

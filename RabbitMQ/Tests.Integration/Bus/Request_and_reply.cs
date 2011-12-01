@@ -93,13 +93,13 @@ namespace Tests.Integration.Bus
         [Test]
         public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_message()
         {
-            Assert.Throws<InvalidOperationException>(() => Bus.Reply(new MyResponse()));
+            Assert.Throws<InvalidOperationException>(() => Bus.Reply(new MyReply()));
         }
 
         [Test]
         public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_request()
         {
-            var responder = new CatchingMyRequestResponder(Bus);
+            var responder = new CatchingResponder<MyRequest, MyReply>(Bus);
             Bus.AddInstanceSubscription(responder);
 
             Bus.Publish(new MyRequest());
@@ -108,6 +108,20 @@ namespace Tests.Integration.Bus
 
             Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
             Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);
+        }
+
+        [Test]
+        public void Reply_should_throw_if_message_is_not_decorated_with_the_correct_attribute()
+        {
+            var responder = new CatchingResponder<MyRequest, MyWrongReply>(Bus);
+            Bus.AddInstanceSubscription(responder);
+
+            Bus.Request(new MyRequest());
+
+            WaitForRoundtrip();
+
+            Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
+            Assert.AreEqual(ErrorMessages.ReplyMessageNotAReply, responder.Exception.Message);
         }
     }
 }

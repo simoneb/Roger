@@ -75,7 +75,7 @@
     <Compile Include="Bus\SupportClasses\MyMessage.cs" />
     <Compile Include="Bus\SupportClasses\MyRequest.cs" />
     <Compile Include="Bus\SupportClasses\MyRequestResponder.cs" />
-    <Compile Include="Bus\SupportClasses\MyResponse.cs" />
+    <Compile Include="Bus\SupportClasses\MyReply.cs" />
     <Compile Include="Bus\SupportClasses\MyResponseConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyResponseCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyThreadCheckingConsumer.cs" />
@@ -83,9 +83,6 @@
     <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
-    <Compile Include="FunctionalSpecs\FakeMessageStore.cs" />
-    <Compile Include="FunctionalSpecs\IMessageStore.cs" />
-    <Compile Include="FunctionalSpecs\IndexedEnumerator.cs" />
     <Compile Include="FunctionalSpecs\Shovel_link_goes_down.cs" />
     <Compile Include="FunctionalSpecs\Subscriber_on_secondary_node.cs" />
     <Compile Include="General_shoveling_tests.cs" />
@@ -95,7 +92,6 @@
     <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />
     <Compile Include="Utils\ICustomModel.cs" />
-    <Compile Include="Utils\MessageExtensions.cs" />
     <Compile Include="Utils\RabbitMQBroker.cs" />
     <Compile Include="Utils\TcpTrace.cs" />
     <Compile Include="Queues_test.cs" />

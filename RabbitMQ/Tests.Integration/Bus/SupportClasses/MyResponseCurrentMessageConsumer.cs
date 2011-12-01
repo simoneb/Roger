@@ -2,7 +2,7 @@ using Rabbus;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class MyResponseCurrentMessageConsumer : IConsumer<MyResponse>
+    public class MyResponseCurrentMessageConsumer : IConsumer<MyReply>
     {
         private readonly IRabbitBus bus;
         public CurrentMessageInformation CurrentMessage;
@@ -12,7 +12,7 @@ namespace Tests.Integration.Bus.SupportClasses
             this.bus = bus;
         }
 
-        public void Consume(MyResponse message)
+        public void Consume(MyReply message)
         {
             CurrentMessage = bus.CurrentMessage;
         }

@@ -37,6 +37,9 @@
     <Reference Include="MbUnit">
       <HintPath>..\..\tools\mbunit\MbUnit.dll</HintPath>
     </Reference>
+    <Reference Include="NSubstitute">
+      <HintPath>..\..\tools\nsubstitute\lib\NET40\NSubstitute.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\..\lib\protobuf-net\protobuf-net.dll</HintPath>
     </Reference>
