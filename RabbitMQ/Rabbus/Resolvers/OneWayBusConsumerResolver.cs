@@ -16,7 +16,7 @@ namespace Rabbus.Resolvers
         public void Release(IEnumerable<IConsumer> consumers)
         {}
 
-        public HashSet<Type> GetAllSupportedMessageTypes()
+        public ISet<Type> GetAllSupportedMessageTypes()
         {
             return new HashSet<Type>();
         }

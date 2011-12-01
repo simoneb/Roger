@@ -129,7 +129,7 @@ namespace Rabbus
 
         private IModel PublishModel { get { return publishModelHolder.Value; } }
 
-        private QueueingBasicConsumer Subscribe(IEnumerable<Type> messageTypes)
+        private QueueingBasicConsumer Subscribe(ISet<Type> messageTypes)
         {
             AddBindings(messageTypes);
 
@@ -138,7 +138,7 @@ namespace Rabbus
             return consumer;
         }
 
-        private void AddBindings(IEnumerable<Type> messageTypes)
+        private void AddBindings(ISet<Type> messageTypes)
         {
             // Here we allow eventual duplicate bindings if this method is called multiple times which result
             // in queues being bound to the same exchange with the same arguments
@@ -255,7 +255,7 @@ namespace Rabbus
             });
         }
 
-        private IEnumerable<Type> GetSupportedMessageTypes(IConsumer consumer)
+        private ISet<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
             return supportedMessageTypesResolver.Get(consumer.GetType());
         }

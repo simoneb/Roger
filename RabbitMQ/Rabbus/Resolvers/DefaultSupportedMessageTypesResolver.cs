@@ -6,12 +6,12 @@ namespace Rabbus.Resolvers
 {
     public class DefaultSupportedMessageTypesResolver : ISupportedMessageTypesResolver
     {
-        public IEnumerable<Type> Get(Type consumerType)
+        public ISet<Type> Get(Type consumerType)
         {
-            return from i in consumerType.GetInterfaces()
-                   where i.IsGenericType
-                   where typeof(IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
-                   select i.GetGenericArguments().Single();
+            return new HashSet<Type>(from i in consumerType.GetInterfaces()
+                                     where i.IsGenericType
+                                     where typeof (IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
+                                     select i.GetGenericArguments().Single());
         }
     }
 }

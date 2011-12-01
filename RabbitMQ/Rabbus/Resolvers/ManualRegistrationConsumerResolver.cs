@@ -29,7 +29,7 @@ namespace Rabbus.Resolvers
             // nothing to do here
         }
 
-        public HashSet<Type> GetAllSupportedMessageTypes()
+        public ISet<Type> GetAllSupportedMessageTypes()
         {
             return new HashSet<Type>(messageTypeToConsumers.Keys);
         }
