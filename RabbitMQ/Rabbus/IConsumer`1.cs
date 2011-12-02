@@ -5,12 +5,11 @@
         void Consume(T message);
     }
 
-    public abstract class Consumer<T> : IConsumer<T> where T : class
+    public abstract class Consumer<T> where T : class
     {
-        public abstract void Consume(T message);
-
-        public interface AndDerivedInSameAssembly : IConsumer<T>
+        public interface SubclassesInSameAssembly : IConsumer
         {
+            void Consume(T message);
         }
     }
 }

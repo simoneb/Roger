@@ -28,9 +28,14 @@ namespace Tests.Unit
             public void Consume(MyOtherMessage message) { }
         }
 
-        class BaseClassConsumer : Consumer<MyBaseMessage>.AndDerivedInSameAssembly
+        class BaseClassConsumer : Consumer<MyBaseMessage>.SubclassesInSameAssembly
         {
             public void Consume(MyBaseMessage message) { }
+        }
+
+        class ConsumerOfBaseWithAbstractDerived : Consumer<BaseMessageWithAbstractDerived>.SubclassesInSameAssembly
+        {
+            public void Consume(BaseMessageWithAbstractDerived message) {}
         }
 
         [SetUp]
@@ -62,6 +67,13 @@ namespace Tests.Unit
         public void Consumer_of_base_message_class()
         {
             Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyDerivedMessage), typeof(MyOtherDerivedMessage) }, sut.Resolve(typeof(BaseClassConsumer)));            
+        }
+
+        [Test]
+        public void Should_throw_for_consumer_of_base_class_which_has_another_abstract_in_the_hierarchy()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof(ConsumerOfBaseWithAbstractDerived)));
+            Assert.AreEqual(ErrorMessages.SubclassConsumerOfAbstractClass(typeof(ConsumerOfBaseWithAbstractDerived), typeof(AbstractDerived)), exception.Message);
         }
     }
 }

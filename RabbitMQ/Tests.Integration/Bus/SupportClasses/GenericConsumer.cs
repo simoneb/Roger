@@ -20,7 +20,7 @@ namespace Tests.Integration.Bus.SupportClasses
         }
     }
 
-    public class GenericConsumerOfDerivedClasses<T> : Consumer<T>.AndDerivedInSameAssembly where T : class
+    public class GenericConsumerOfDerivedClasses<T> : Consumer<T>.SubclassesInSameAssembly where T : class
     {
         public T LastReceived;
         private readonly AutoResetEvent delivered = new AutoResetEvent(false);
