@@ -8,7 +8,7 @@ namespace Tests.Integration.Bus
         [Test]
         public void Consume_message()
         {
-            var consumer = new MyConsumer();
+            var consumer = new GenericConsumer<MyMessage>();
             Bus.AddInstanceSubscription(consumer);
 
             Bus.Consume(new MyMessage());

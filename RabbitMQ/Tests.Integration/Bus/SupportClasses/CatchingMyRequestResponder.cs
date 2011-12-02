@@ -3,7 +3,7 @@ using Rabbus;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class CatchingResponder<TRequest, TReply> : IConsumer<TRequest> where TRequest : new()
+    public class CatchingResponder<TRequest, TReply> : IConsumer<TRequest> where TRequest : class
     {
         private readonly IRabbitBus bus;
 

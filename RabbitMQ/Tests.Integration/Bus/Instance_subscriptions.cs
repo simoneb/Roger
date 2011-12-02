@@ -3,12 +3,12 @@ using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
 {
-    public class Subscription_tests : With_default_bus
+    public class Instance_subscriptions : With_default_bus
     {
         [Test]
         public void Test_subscription()
         {
-            var consumer = new MyConsumer();
+            var consumer = new GenericConsumer<MyMessage>();
 
             Bus.AddInstanceSubscription(consumer);
 
@@ -22,7 +22,7 @@ namespace Tests.Integration.Bus
         [Test]
         public void Test_unsubscription()
         {
-            var consumer = new MyConsumer();
+            var consumer = new GenericConsumer<MyMessage>();
 
             var token = Bus.AddInstanceSubscription(consumer);
 

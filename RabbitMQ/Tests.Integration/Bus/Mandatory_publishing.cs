@@ -37,7 +37,7 @@ namespace Tests.Integration.Bus
         [Test]
         public void Should_work_when_message_deliverable()
         {
-            var consumer = new MyConsumer();
+            var consumer = new GenericConsumer<MyMessage>();
 
             Bus.AddInstanceSubscription(consumer);
 

@@ -36,7 +36,7 @@ namespace Rabbus.Resolvers
 
         public void Register(IConsumer consumer)
         {
-            foreach (var supportedMessageType in supportedMessageTypesResolver.Get(consumer.GetType()))
+            foreach (var supportedMessageType in supportedMessageTypesResolver.Resolve(consumer.GetType()))
             {
                 messageTypeToConsumers.AddOrUpdate(supportedMessageType,
                                                    new List<IConsumer> {consumer},

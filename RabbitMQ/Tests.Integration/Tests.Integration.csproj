@@ -60,18 +60,17 @@
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
     <Compile Include="Bus\Connection_shutdown_handling.cs" />
-    <Compile Include="Bus\Consumer_resolution.cs" />
+    <Compile Include="Bus\Publish_subscribe.cs" />
     <Compile Include="Bus\Consume_threading.cs" />
-    <Compile Include="Bus\Demo.cs" />
     <Compile Include="Bus\Mandatory_publishing.cs" />
     <Compile Include="Bus\Manual_consuming.cs" />
     <Compile Include="Bus\Request_and_reply.cs" />
-    <Compile Include="Bus\Send_tests.cs" />
-    <Compile Include="Bus\Subscription_tests.cs" />
+    <Compile Include="Bus\Send.cs" />
+    <Compile Include="Bus\Instance_subscriptions.cs" />
     <Compile Include="Bus\SupportClasses\CatchingMyRequestResponder.cs" />
     <Compile Include="Bus\SupportClasses\DebugLog.cs" />
     <Compile Include="Bus\SupportClasses\IdentityConnectionFactory.cs" />
-    <Compile Include="Bus\SupportClasses\MyConsumer.cs" />
+    <Compile Include="Bus\SupportClasses\GenericConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyMessage.cs" />
     <Compile Include="Bus\SupportClasses\MyRequest.cs" />
     <Compile Include="Bus\SupportClasses\MyRequestResponder.cs" />

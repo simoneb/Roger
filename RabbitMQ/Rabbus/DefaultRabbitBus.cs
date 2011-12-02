@@ -257,7 +257,7 @@ namespace Rabbus
 
         private ISet<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
-            return supportedMessageTypesResolver.Get(consumer.GetType());
+            return supportedMessageTypesResolver.Resolve(consumer.GetType());
         }
 
         public void Publish(object message)

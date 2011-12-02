@@ -13,6 +13,6 @@ namespace Rabbus.Resolvers
         /// </summary>
         /// <param name="consumerType">The type of the consumer</param>
         /// <returns>The supported message types</returns>
-        ISet<Type> Get(Type consumerType);
+        ISet<Type> Resolve(Type consumerType);
     }
 }

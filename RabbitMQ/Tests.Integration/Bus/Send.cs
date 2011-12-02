@@ -7,7 +7,7 @@ using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
 {
-    public class Send_tests : With_default_bus
+    public class Send : With_default_bus
     {
         protected override void BeforeBusInitialization()
         {

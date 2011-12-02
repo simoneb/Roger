@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Threading;
 using MbUnit.Framework;
 using Tests.Integration.Bus.SupportClasses;
@@ -8,11 +7,11 @@ namespace Tests.Integration.Bus
 {
     public class Connection_shutdown_handling : With_default_bus
     {
-        private MyConsumer m_consumer;
+        private GenericConsumer<MyMessage> m_consumer;
 
         protected override void BeforeBusInitialization()
         {
-            Register(m_consumer = new MyConsumer());
+            Register(m_consumer = new GenericConsumer<MyMessage>());
         }
 
         [Test]
