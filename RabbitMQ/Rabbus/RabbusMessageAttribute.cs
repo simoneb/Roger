@@ -9,7 +9,7 @@ namespace Rabbus
     /// Every message type should be decorated with this attribute specifying a valid 
     /// exchange name where the message will be published
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class RabbusMessageAttribute : Attribute
     {
         public RabbusMessageAttribute(string exchange)

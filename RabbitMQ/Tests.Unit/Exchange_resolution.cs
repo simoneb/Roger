@@ -1,6 +1,7 @@
 using System;
 using MbUnit.Framework;
 using Rabbus;
+using Rabbus.Errors;
 using Rabbus.Resolvers;
 
 namespace Tests.Unit
@@ -50,10 +51,22 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Sould_not_currently_support_attribute_decorating_base_message_class()
+        public void Should_support_attribute_decorating_base_message_class()
         {
-            Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof(InheritorOfDecoratedMessage)));            
+            Assert.AreEqual("whatever", sut.Resolve(typeof(InheritorOfDecoratedMessage)));            
         }
+
+        [Test]
+        public void Should_not_support_inheritors_decorated_whose_base_is_decorated()
+        {
+            var e = Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof (DecoratedWithMultipleAttributes)));
+            Assert.AreEqual(ErrorMessages.MultipleRabbusMessageAttributes(typeof(DecoratedWithMultipleAttributes)), e.Message);
+        }
+    }
+
+    [RabbusMessage("whatever")]
+    public class DecoratedInheritorOfDecoratedMessage : DecoratedMessageBase
+    {
     }
 
     public class InheritorOfDecoratedMessage : DecoratedMessageBase
