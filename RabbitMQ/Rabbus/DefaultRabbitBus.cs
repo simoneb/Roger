@@ -341,19 +341,9 @@ namespace Rabbus
 
         public void Reply(object message)
         {
-            if (CurrentMessage == null || 
-                CurrentMessage.Endpoint.IsEmpty() ||
-                CurrentMessage.CorrelationId.IsEmpty)
-            {
-                log.Error("Reply method called out of the context of a message handling request");
-                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
-            }
+            EnsureRequestContext();
 
-            if(!message.GetType().IsDefined(typeof(RabbusReplyAttribute), false))
-            {
-                log.Error("Reply method called with a reply message not decorated woth the right attribute");
-                throw new InvalidOperationException(ErrorMessages.ReplyMessageNotAReply);
-            }
+            ValidateReplyMessage(message);
 
             var properties = CreateProperties(message.GetType());
             properties.CorrelationId = CurrentMessage.CorrelationId.ToString();
@@ -365,13 +355,33 @@ namespace Rabbus
                                       serializer.Serialize(message));
         }
 
+        private void ValidateReplyMessage(object message)
+        {
+            if (!message.GetType().IsDefined(typeof (RabbusReplyAttribute), false))
+            {
+                log.Error("Reply method called with a reply message not decorated woth the right attribute");
+                throw new InvalidOperationException(ErrorMessages.ReplyMessageNotAReply);
+            }
+        }
+
+        private void EnsureRequestContext()
+        {
+            if (CurrentMessage == null ||
+                CurrentMessage.Endpoint.IsEmpty() ||
+                CurrentMessage.CorrelationId.IsEmpty)
+            {
+                log.Error("Reply method called out of the context of a message handling request");
+                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
+            }
+        }
+
         private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)
         {
             return Tuple.Create(instanceConsumers.Keys
                                     .Where(r => r.IsAlive)
                                     .Select(r => r.Target)
                                     .Cast<IConsumer>()
-                                    .Where(c => GetSupportedMessageTypes(c).Any(m => m == messageType)),
+                                    .Where(c => GetSupportedMessageTypes(c).Contains(messageType)),
                                 consumerResolver.Resolve(messageType));
         }
         
