@@ -2,7 +2,6 @@ using System.IO;
 using System.Reflection;
 using MbUnit.Framework;
 using ProtoBuf;
-using Rabbus;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
@@ -35,16 +34,6 @@ namespace Tests.Unit
 
                 Assert.IsInstanceOfType<MyMessage>(result);
             }
-        }
-    }
-
-    public class MyConsumer : IConsumer<MyMessage>
-    {
-        public bool Consumed;
-
-        public void Consume(MyMessage message)
-        {
-            Consumed = true;
         }
     }
 }

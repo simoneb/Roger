@@ -36,7 +36,7 @@ namespace Tests.Integration
 
             Start(Producer);
 
-            SpinWait.SpinUntil(ReceivedAllMessages, 100);
+            SpinWait.SpinUntil(ReceivedAllMessages, 500);
 
             Assert.AreElementsEqual(ExpectedMessages, m_received);
         }

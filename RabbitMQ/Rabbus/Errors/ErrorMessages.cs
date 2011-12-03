@@ -29,10 +29,15 @@ namespace Rabbus.Errors
 Use {2} to consume derived classes of base message class", consumerType.Name, messageType.Name, typeof(Consumer<>.SubclassesInSameAssembly));
         }
 
-        internal static string SubclassConsumerOfAbstractClass(Type consumerType, Type messageType)
+        internal static string SubclassConsumerOfAbstractClassInHierarchy(Type consumerType, Type messageType)
         {
             return string.Format("Consumer {0} consumes derived classes but there is class {1} in the inheritance chain which is still abstract", 
                                  consumerType.Name, messageType.Name);
+        }
+
+        internal static string SubclassConsumerOfNonAbstractClass(Type consumerType, Type messageType)
+        {
+            return string.Format("Message type {0} should be abstract for consumer {1} to consume its derived classes", messageType.Name, consumerType.Name);
         }
     }
 }

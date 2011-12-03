@@ -1,8 +1,8 @@
 using System;
 using MbUnit.Framework;
-using Rabbus;
 using Rabbus.Errors;
 using Rabbus.Resolvers;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {
@@ -62,74 +62,5 @@ namespace Tests.Unit
             var e = Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof (DecoratedWithMultipleAttributes)));
             Assert.AreEqual(ErrorMessages.MultipleRabbusMessageAttributes(typeof(DecoratedWithMultipleAttributes)), e.Message);
         }
-    }
-
-    [RabbusMessage("whatever")]
-    public class DecoratedInheritorOfDecoratedMessage : DecoratedMessageBase
-    {
-    }
-
-    public class InheritorOfDecoratedMessage : DecoratedMessageBase
-    {
-    }
-
-    [RabbusMessage("whatever")]
-    public class DecoratedMessageBase
-    {
-    }
-
-    [RabbusMessage("a")]
-    [RabbusMessageInheritor("b")]
-    public class DecoratedWithMultipleAttributes
-    {
-    }
-
-    public class RabbusMessageInheritorAttribute : RabbusMessageAttribute
-    {
-        public RabbusMessageInheritorAttribute(string exchange) : base(exchange)
-        {
-            
-        }
-    }
-
-    [SomeExchangeRabbusMessage]
-    public class DecoratedWithInheritedAttribute
-    {
-    }
-
-    public class SomeExchangeRabbusMessageAttribute : RabbusMessageAttribute
-    {
-        public SomeExchangeRabbusMessageAttribute() : base("SomeExchange")
-        {
-        }
-    }
-
-    [RabbusMessage("hi hi")]
-    public class DecoratedWithStringContainingBlankSpaces
-    {
-    }
-
-    [RabbusMessage(" ")]
-    public class DecoratedWithBlankSpaces
-    {
-    }
-
-    [RabbusMessage(null)]
-    public class DecoratedWithNullString
-    {
-    }
-
-    [RabbusMessage("")]
-    public class DecoratedWithEmptyString
-    {
-    }
-
-    [RabbusMessage("SomeExchange")]
-    public class SimplyDecorated
-    {
-    }
-
-    public class NonDecorated
-    {
     }
 }
