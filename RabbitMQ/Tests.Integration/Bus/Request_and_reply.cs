@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus.Errors;

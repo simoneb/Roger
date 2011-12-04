@@ -32,7 +32,7 @@ namespace Tests.Integration.Bus
             var consumer = new SendConsumer();
             Bus.AddInstanceSubscription(consumer);
 
-            PublishFailureReason error = null;
+            BasicReturn error = null;
             Bus.Send(new RabbusEndpoint("inexistent"), new SendMessage(), reason => error = reason);
 
             WaitForDelivery();
@@ -47,7 +47,7 @@ namespace Tests.Integration.Bus
             var consumer = new SendConsumer();
             Bus.AddInstanceSubscription(consumer);
 
-            var errors = new SynchronizedCollection<PublishFailureReason>();
+            var errors = new SynchronizedCollection<BasicReturn>();
 
             Bus.Send(new RabbusEndpoint("inexistent1"), new SendMessage(), errors.Add);
             Bus.Send(new RabbusEndpoint("inexistent2"), new SendMessage(), errors.Add);

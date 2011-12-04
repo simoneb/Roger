@@ -10,9 +10,9 @@ using RabbitMQ.Client.Events;
 using Rabbus.Errors;
 using Rabbus.GuidGeneration;
 using Rabbus.Logging;
-using Rabbus.PublishFailureHandling;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
+using Rabbus.Returns;
 using Rabbus.Serialization;
 using Rabbus.Utilities;
 
@@ -45,7 +45,7 @@ namespace Rabbus
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
         private bool disposed;
-        private readonly IPublishFailureHandler publishFailureHandler;
+        private readonly IBasicReturnHandler basicReturnHandler;
         private QueueingBasicConsumer queueConsumer;
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
@@ -69,7 +69,7 @@ namespace Rabbus
             this.log = log.Or(Default.Log);
             this.guidGenerator = guidGenerator.Or(Default.GuidGenerator);
 
-            publishFailureHandler = new DefaultPublishFailureHandler(this.log);
+            basicReturnHandler = new DefaultBasicReturnHandler(this.log);
             connection = new ReliableConnection(connectionFactory, this.log, ConnectionEstabilished);
 
             connection.ConnectionAttemptFailed += HandleConnectionAttemptFailed;
@@ -100,7 +100,7 @@ namespace Rabbus
             // beware, this is called on the RabbitMQ client connection thread, therefore we 
             // should use the model parameter rather than the ThreadLocal property. Also we should not block
             log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
-            publishFailureHandler.Handle(new PublishFailureReason(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
+            basicReturnHandler.Handle(new BasicReturn(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
         public void Start()
@@ -284,7 +284,7 @@ namespace Rabbus
             Request(message, Nop);
         }
 
-        public void Request(object message, Action<PublishFailureReason> requestFailure)
+        public void Request(object message, Action<BasicReturn> requestFailure)
         {
             var properties = CreateProperties(message.GetType());
             properties.CorrelationId = guidGenerator.Next();
@@ -299,14 +299,14 @@ namespace Rabbus
             Send(endpoint, message, Nop);
         }
 
-        public void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailureCallback)
+        public void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> publishFailureCallback)
         {
             var properties = CreateProperties(message.GetType());
 
             PublishMandatoryInternal(message, properties, publishFailureCallback, endpoint.Queue);
         }
 
-        public void PublishMandatory(object message, Action<PublishFailureReason> publishFailureCallback)
+        public void PublishMandatory(object message, Action<BasicReturn> publishFailureCallback)
         {
             var properties = CreateProperties(message.GetType());
 
@@ -315,17 +315,17 @@ namespace Rabbus
 
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
-                                              Action<PublishFailureReason> publishFailureCallback)
+                                              Action<BasicReturn> publishFailureCallback)
         {
             PublishMandatoryInternal(message, properties, publishFailureCallback, routingKeyResolver.Resolve(message.GetType()));
         }
 
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
-                                              Action<PublishFailureReason> publishFailureCallback,
+                                              Action<BasicReturn> publishFailureCallback,
                                               string routingKey)
         {
-            publishFailureHandler.Subscribe(new RabbusGuid(properties.MessageId), publishFailureCallback);
+            basicReturnHandler.Subscribe(new RabbusGuid(properties.MessageId), publishFailureCallback);
 
             PublishModel.BasicPublish(exchangeResolver.Resolve(message.GetType()),
                                       routingKey,

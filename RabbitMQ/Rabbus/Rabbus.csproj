@@ -45,18 +45,19 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consumer`1.cs" />
     <Compile Include="GuidGeneration\IGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RandomGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RabbusGuid.cs" />
     <Compile Include="IReliableConnection.cs" />
-    <Compile Include="PublishFailureHandling\DefaultPublishFailureHandler.cs" />
-    <Compile Include="PublishFailureHandling\IPublishFailureHandler.cs" />
+    <Compile Include="Returns\DefaultBasicReturnHandler.cs" />
+    <Compile Include="Returns\IBasicReturnHandler.cs" />
     <Compile Include="ReliableConnection.cs" />
     <Compile Include="CurrentMessageInformation.cs" />
     <Compile Include="DefaultRabbitBus.cs" />
     <Compile Include="DefaultConnectionFactory.cs" />
     <Compile Include="Errors\ErrorMessages.cs" />
-    <Compile Include="Errors\PublishFailureReason.cs" />
+    <Compile Include="Errors\BasicReturn.cs" />
     <Compile Include="Errors\ReplyFailureReason.cs" />
     <Compile Include="IConnectionFactory.cs" />
     <Compile Include="IConsumer`1.cs" />

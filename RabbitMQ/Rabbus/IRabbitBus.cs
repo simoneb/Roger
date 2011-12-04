@@ -45,7 +45,7 @@ namespace Rabbus
         /// </summary>
         /// <param name="message">The message to be published</param>
         /// <param name="publishFailureCallback">A callback invoked when the message cannot be routed to any subscriber</param>
-        void PublishMandatory(object message, Action<PublishFailureReason> publishFailureCallback);
+        void PublishMandatory(object message, Action<BasicReturn> publishFailureCallback);
 
         /// <summary>
         /// Sends a request by means of <paramref name="message"/>, expecting a reply,
@@ -60,7 +60,7 @@ namespace Rabbus
         /// </summary>
         /// <param name="message">The request message</param>
         /// <param name="requestFailure">A callback invoked when the message cannot be routed to any subscriber</param>
-        void Request(object message, Action<PublishFailureReason> requestFailure);
+        void Request(object message, Action<BasicReturn> requestFailure);
 
         /// <summary>
         /// Replies to a request sent by means of <see cref="Request(object)"/>
@@ -87,7 +87,7 @@ namespace Rabbus
         /// <param name="endpoint"></param>
         /// <param name="message"></param>
         /// <param name="publishFailureCallback"></param>
-        void Send(RabbusEndpoint endpoint, object message, Action<PublishFailureReason> publishFailureCallback);
+        void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> publishFailureCallback);
 
         /// <summary>
         /// Fired when the bus is started successfully

@@ -3,13 +3,13 @@ using Rabbus.GuidGeneration;
 
 namespace Rabbus.Errors
 {
-    public class PublishFailureReason
+    public class BasicReturn
     {
         public RabbusGuid MessageId { get; private set; }
         public ushort ReplyCode { get; private set; }
         public string ReplyText { get; private set; }
 
-        internal PublishFailureReason(RabbusGuid messageId, ushort replyCode, string replyText)
+        internal BasicReturn(RabbusGuid messageId, ushort replyCode, string replyText)
         {
             MessageId = messageId;
             ReplyCode = replyCode;
