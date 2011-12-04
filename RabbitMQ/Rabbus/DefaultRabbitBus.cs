@@ -20,8 +20,6 @@ namespace Rabbus
 {
     public class DefaultRabbitBus : IRabbitBus
     {
-        private delegate Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ConsumerResolver(Type messageType);
-
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly ITypeResolver typeResolver;
         private readonly IMessageSerializer serializer;
@@ -48,6 +46,7 @@ namespace Rabbus
         private IModel receivingModel;
         private bool disposed;
         private readonly IPublishFailureHandler publishFailureHandler;
+        private QueueingBasicConsumer queueConsumer;
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -118,9 +117,8 @@ namespace Rabbus
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
 
-            var consumer = Subscribe(consumerResolver.GetAllSupportedMessageTypes());
-
-            ConsumeAsynchronously(ResolveConsumers, consumer);
+            CreateConsumer();
+            ConsumeAsynchronously();
 
             Started();
 
@@ -129,16 +127,15 @@ namespace Rabbus
 
         private IModel PublishModel { get { return publishModelHolder.Value; } }
 
-        private QueueingBasicConsumer Subscribe(ISet<Type> messageTypes)
+        private void CreateConsumer()
         {
-            AddBindings(messageTypes);
+            CreateBindings(consumerResolver.GetAllSupportedMessageTypes());
 
-            var consumer = new QueueingBasicConsumer(receivingModel);
-            receivingModel.BasicConsume(LocalEndpoint.Queue, false, consumer);
-            return consumer;
+            queueConsumer = new QueueingBasicConsumer(receivingModel);
+            receivingModel.BasicConsume(LocalEndpoint.Queue, false, queueConsumer);
         }
 
-        private void AddBindings(ISet<Type> messageTypes)
+        private void CreateBindings(ISet<Type> messageTypes)
         {
             // Here we allow eventual duplicate bindings if this method is called multiple times which result
             // in queues being bound to the same exchange with the same arguments
@@ -164,40 +161,39 @@ namespace Rabbus
 
             foreach (var exchange in allExchanges)
             {
-                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalEndpoint, exchange, LocalEndpoint);
+                log.DebugFormat("Binding queue {0} to exchange {1} with quete name as routing key", LocalEndpoint, exchange);
 
                 receivingModel.QueueBind(LocalEndpoint.Queue, exchange, LocalEndpoint.Queue);
             }
         }
 
-        private void ConsumeAsynchronously(ConsumerResolver resolveConsumers, QueueingBasicConsumer queueConsumer)
+        private void ConsumeAsynchronously()
         {
-            Task.Factory.StartNew(() => ConsumeSynchronously(resolveConsumers, queueConsumer), TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(ConsumeSynchronously, TaskCreationOptions.LongRunning);
         }
 
-        private void ConsumeSynchronously(ConsumerResolver resolveConsumers, QueueingBasicConsumer consumer)
+        private void ConsumeSynchronously()
         {
-            foreach (var message in BlockingDequeue(consumer.Queue))
+            foreach (var message in BlockingDequeue(queueConsumer.Queue))
             {
-                SetCurrentMessageAndInvokeConsumers(resolveConsumers, message);
-                consumer.Model.BasicAck(message.DeliveryTag, false);
+                SetCurrentMessageAndInvokeConsumers(message);
+                queueConsumer.Model.BasicAck(message.DeliveryTag, false);
             }
         }
 
         private IEnumerable<CurrentMessageInformation> BlockingDequeue(IEnumerable queue)
         {
-            return from args in queue.OfType<BasicDeliverEventArgs>()
-                   let messageType = typeResolver.ResolveType(args.BasicProperties.Type)
-                   select CurrentMessageInformation(messageType, args);
+            return queue.OfType<BasicDeliverEventArgs>().Select(CreateMessage);
         }
 
-        private CurrentMessageInformation CurrentMessageInformation(Type messageType, BasicDeliverEventArgs args)
+        private CurrentMessageInformation CreateMessage(BasicDeliverEventArgs args)
         {
             var properties = args.BasicProperties;
+            var messageType = typeResolver.ResolveType(properties.Type);
 
             return new CurrentMessageInformation
                    {
-                       MessageId = string.IsNullOrWhiteSpace(properties.MessageId) ? RabbusGuid.Empty : new RabbusGuid(properties.MessageId),
+                       MessageId = new RabbusGuid(properties.MessageId),
                        MessageType = messageType,
                        Endpoint = new RabbusEndpoint(properties.ReplyTo),
                        CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? RabbusGuid.Empty : new RabbusGuid(properties.CorrelationId),
@@ -207,11 +203,11 @@ namespace Rabbus
                    };
         }
 
-        private void SetCurrentMessageAndInvokeConsumers(ConsumerResolver resolveConsumers, CurrentMessageInformation message)
+        private void SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)
         {
             _currentMessage = message;
 
-            var consumers = resolveConsumers(_currentMessage.MessageType);
+            var consumers = ResolveConsumers(_currentMessage.MessageType);
 
             var localInstanceConsumers = consumers.Item1.ToArray();
             var defaultConsumers = consumers.Item2.ToArray();
@@ -240,7 +236,7 @@ namespace Rabbus
             var consumerReference = new WeakReference(consumer);
             instanceConsumers.TryAdd(consumerReference, null);
 
-            AddBindings(GetSupportedMessageTypes(consumer));
+            CreateBindings(GetSupportedMessageTypes(consumer));
 
             // TODO: queue bindings are not removed, no problem unless we start adding too many instance subscriptions
             return RemoveInstanceConsumer(consumerReference);
@@ -285,7 +281,7 @@ namespace Rabbus
 
         public void Request(object message)
         {
-            Request(message, _ => {});
+            Request(message, Nop);
         }
 
         public void Request(object message, Action<PublishFailureReason> requestFailure)
@@ -377,17 +373,21 @@ namespace Rabbus
 
         private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)
         {
-            return Tuple.Create(instanceConsumers.Keys
-                                    .Where(r => r.IsAlive)
-                                    .Select(r => r.Target)
-                                    .Cast<IConsumer>()
-                                    .Where(c => GetSupportedMessageTypes(c).Contains(messageType)),
-                                consumerResolver.Resolve(messageType));
+            return Tuple.Create(InstanceConsumers(messageType), consumerResolver.Resolve(messageType));
         }
-        
+
+        private IEnumerable<IConsumer> InstanceConsumers(Type messageType)
+        {
+            return instanceConsumers.Keys
+                .Where(r => r.IsAlive)
+                .Select(r => r.Target)
+                .Cast<IConsumer>()
+                .Where(c => GetSupportedMessageTypes(c).Contains(messageType));
+        }
+
         public void Consume(object message)
         {
-            SetCurrentMessageAndInvokeConsumers(ResolveConsumers, new CurrentMessageInformation
+            SetCurrentMessageAndInvokeConsumers(new CurrentMessageInformation
             {
                 MessageId = guidGenerator.Next(),
                 Body = message,
