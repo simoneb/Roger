@@ -172,7 +172,7 @@ namespace Tests.Integration
 
         private void Consumer(bool noAck)
         {
-            using (var connection = Helpers.CreateConnection())
+            using (var connection = Helpers.CreateSafeShutdownConnection())
             using (var model = connection.CreateModel())
             {
                 m_queueName = model.QueueDeclare("", false, false, true, null);
@@ -192,7 +192,7 @@ namespace Tests.Integration
         
         private void Producer()
         {
-            using (var connection = Helpers.CreateConnection())
+            using (var connection = Helpers.CreateSafeShutdownConnection())
             using (var model = connection.CreateModel())
             {
                 for (int i = 0; i < NumberOfMessagesToProduce; i++)
