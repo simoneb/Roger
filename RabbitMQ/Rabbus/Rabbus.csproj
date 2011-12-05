@@ -45,14 +45,16 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connection\IReliableConnection.cs" />
+    <Compile Include="Connection\ReliableConnection.cs" />
     <Compile Include="Consumer`1.cs" />
     <Compile Include="GuidGeneration\IGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RandomGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RabbusGuid.cs" />
-    <Compile Include="IReliableConnection.cs" />
+    <Compile Include="Publishing\IPublisher.cs" />
+    <Compile Include="Publishing\QueueingPublisher.cs" />
     <Compile Include="Returns\DefaultBasicReturnHandler.cs" />
     <Compile Include="Returns\IBasicReturnHandler.cs" />
-    <Compile Include="ReliableConnection.cs" />
     <Compile Include="CurrentMessageInformation.cs" />
     <Compile Include="DefaultRabbitBus.cs" />
     <Compile Include="DefaultConnectionFactory.cs" />

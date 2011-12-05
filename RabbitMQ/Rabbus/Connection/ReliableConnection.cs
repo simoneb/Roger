@@ -4,13 +4,13 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using Rabbus.Logging;
 
-namespace Rabbus
+namespace Rabbus.Connection
 {
     internal class ReliableConnection : IReliableConnection
     {
         private readonly IConnectionFactory connectionFactory;
         private readonly IRabbusLog log;
-        private readonly Action onSuccessfulConnection;
+        public event Action ConnectionEstabilished = delegate {  };
         private IConnection connection;
         private bool disposed;
         private Timer initializationTimer;
@@ -21,11 +21,10 @@ namespace Rabbus
         public event Action GracefulShutdown = delegate { };
         public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
 
-        public ReliableConnection(IConnectionFactory connectionFactory, IRabbusLog log, Action onSuccessfulConnection)
+        public ReliableConnection(IConnectionFactory connectionFactory, IRabbusLog log)
         {
             this.connectionFactory = connectionFactory;
             this.log = log;
-            this.onSuccessfulConnection = onSuccessfulConnection;
         }
 
         public void Connect()
@@ -46,7 +45,7 @@ namespace Rabbus
 
             log.Debug("Connection created");
             connection.ConnectionShutdown += HandleConnectionShutdown;
-            onSuccessfulConnection();
+            ConnectionEstabilished();
         }
 
         private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)

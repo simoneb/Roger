@@ -1,7 +1,7 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus
+namespace Rabbus.Connection
 {
     internal interface IReliableConnection : IDisposable
     {
@@ -11,5 +11,6 @@ namespace Rabbus
         event Action ConnectionAttemptFailed;
         event Action<ShutdownEventArgs> UnexpectedShutdown;
         event Action GracefulShutdown;
+        event Action ConnectionEstabilished;
     }
 }
