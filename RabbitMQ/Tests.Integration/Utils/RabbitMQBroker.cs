@@ -61,7 +61,7 @@ namespace Tests.Integration.Utils
         {
             using (var process = Process.Start(new ProcessStartInfo(ControlExecutablePath, command)
                                                {
-                                                   WindowStyle = ProcessWindowStyle.Minimized
+                                                   WindowStyle = ProcessWindowStyle.Hidden
                                                }))
                 process.WaitForExit();
         }

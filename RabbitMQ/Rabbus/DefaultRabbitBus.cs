@@ -278,54 +278,45 @@ namespace Rabbus
             
             return properties;
         }
-
-        public void Request(object message)
-        {
-            Request(message, Nop);
-        }
-
-        public void Request(object message, Action<BasicReturn> requestFailure)
+        
+        public void Request(object message, Action<BasicReturn> basicReturnCallback = null)
         {
             var properties = CreateProperties(message.GetType());
             properties.CorrelationId = guidGenerator.Next();
 
-            PublishMandatoryInternal(message, properties, requestFailure);
+            PublishMandatoryInternal(message, properties, basicReturnCallback);
 
             log.DebugFormat("Issued request with message {0}", message.GetType());
         }
 
-        public void Send(RabbusEndpoint endpoint, object message)
-        {
-            Send(endpoint, message, Nop);
-        }
-
-        public void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> publishFailureCallback)
+        public void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null)
         {
             var properties = CreateProperties(message.GetType());
 
-            PublishMandatoryInternal(message, properties, publishFailureCallback, endpoint.Queue);
+            PublishMandatoryInternal(message, properties, basicReturnCallback, endpoint.Queue);
         }
 
-        public void PublishMandatory(object message, Action<BasicReturn> publishFailureCallback)
+        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null)
         {
             var properties = CreateProperties(message.GetType());
 
-            PublishMandatoryInternal(message, properties, publishFailureCallback);
+            PublishMandatoryInternal(message, properties, basicReturnCallback);
         }
 
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
-                                              Action<BasicReturn> publishFailureCallback)
+                                              Action<BasicReturn> basicReturnCallback)
         {
-            PublishMandatoryInternal(message, properties, publishFailureCallback, routingKeyResolver.Resolve(message.GetType()));
+            PublishMandatoryInternal(message, properties, basicReturnCallback, routingKeyResolver.Resolve(message.GetType()));
         }
 
         private void PublishMandatoryInternal(object message,
                                               IBasicProperties properties,
-                                              Action<BasicReturn> publishFailureCallback,
+                                              Action<BasicReturn> basicReturnCallback,
                                               string routingKey)
         {
-            basicReturnHandler.Subscribe(new RabbusGuid(properties.MessageId), publishFailureCallback);
+            if(basicReturnCallback != null)
+                basicReturnHandler.Subscribe(new RabbusGuid(properties.MessageId), basicReturnCallback);
 
             PublishModel.BasicPublish(exchangeResolver.Resolve(message.GetType()),
                                       routingKey,
@@ -394,9 +385,6 @@ namespace Rabbus
                 MessageType = message.GetType()
             });
         }
-
-        private static void Nop<T>(T input)
-        {}
 
         public void Dispose()
         {

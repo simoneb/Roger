@@ -6,7 +6,7 @@ namespace Tests.Integration.Utils
     public class TcpTrace
     {
         private static string _tcpTraceExecutablePath;
-        private Process m_process;
+        private Process process;
 
         public TcpTrace(string tcpTraceExecutablePath)
         {
@@ -25,21 +25,21 @@ namespace Tests.Integration.Utils
                 .Append(title)
                 .Append("\"");
 
-            m_process = StartProcess(args.ToString());
+            process = StartProcess(args.ToString());
         }
 
         private static Process StartProcess(string arguments)
         {
             return Process.Start(new ProcessStartInfo(_tcpTraceExecutablePath, arguments)
             {
-                WindowStyle = ProcessWindowStyle.Minimized
+                WindowStyle = ProcessWindowStyle.Hidden
             });
         }
 
         public void Stop()
         {
-            if (m_process != null) 
-                m_process.CloseMainWindow();
+            if (process != null) 
+                process.CloseMainWindow();
         }
 
         public static void StopAll()

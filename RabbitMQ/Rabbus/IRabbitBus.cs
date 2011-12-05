@@ -44,23 +44,17 @@ namespace Rabbus
         /// but fails if there are no subscribers to which the message can be routed
         /// </summary>
         /// <param name="message">The message to be published</param>
-        /// <param name="publishFailureCallback">A callback invoked when the message cannot be routed to any subscriber</param>
-        void PublishMandatory(object message, Action<BasicReturn> publishFailureCallback);
+        /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscriber</param>
+        void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null);
 
         /// <summary>
         /// Sends a request by means of <paramref name="message"/>, expecting a reply,
-        /// but fails if there are no subscribers to which the message can be routed
+        /// but fails by calling the optional <paramref name="basicReturnCallback"/> if 
+        /// there are no subscribers to which the message can be routed
         /// </summary>
         /// <param name="message">The request message</param>
-        void Request(object message);
-
-        /// <summary>
-        /// Sends a request by means of <paramref name="message"/>, expecting a reply,
-        /// but fails if there are no subscribers to which the message can be routed
-        /// </summary>
-        /// <param name="message">The request message</param>
-        /// <param name="requestFailure">A callback invoked when the message cannot be routed to any subscriber</param>
-        void Request(object message, Action<BasicReturn> requestFailure);
+        /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>
+        void Request(object message, Action<BasicReturn> basicReturnCallback = null);
 
         /// <summary>
         /// Replies to a request sent by means of <see cref="Request(object)"/>
@@ -75,19 +69,12 @@ namespace Rabbus
         void Consume(object message);
 
         /// <summary>
-        /// Sends a message to a specific endpoint
-        /// </summary>
-        /// <param name="endpoint">The destination endpoint</param>
-        /// <param name="message">The message</param>
-        void Send(RabbusEndpoint endpoint, object message);
-
-        /// <summary>
         /// Sends a message to a specific endpoint, communicating if there was a failure during publishing
         /// </summary>
-        /// <param name="endpoint"></param>
-        /// <param name="message"></param>
-        /// <param name="publishFailureCallback"></param>
-        void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> publishFailureCallback);
+        /// <param name="endpoint">The recipient endpoint of the message</param>
+        /// <param name="message">The message</param>
+        /// <param name="basicReturnCallback">A callback invoked if the message could not be routed to the endpoint</param>
+        void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null);
 
         /// <summary>
         /// Fired when the bus is started successfully
