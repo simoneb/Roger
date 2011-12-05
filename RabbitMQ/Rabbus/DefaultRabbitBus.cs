@@ -47,6 +47,7 @@ namespace Rabbus
         private bool disposed;
         private readonly IBasicReturnHandler basicReturnHandler;
         private QueueingBasicConsumer queueConsumer;
+        private readonly ConcurrentDictionary<IModel, SortedSet<ulong>> unconfirmedPublishes = new ConcurrentDictionary<IModel, SortedSet<ulong>>();
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -90,9 +91,25 @@ namespace Rabbus
         {
             var publishModel = connection.CreateModel();
 
+            //publishModel.BasicAcks += PublishModelOnBasicAcks;
             publishModel.BasicReturn += PublishModelOnBasicReturn;
+            //publishModel.ConfirmSelect();
 
             return publishModel;
+        }
+
+        private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)
+        {
+            if (args.Multiple)
+            {
+                log.DebugFormat("Broker confirmed all messages up to and including {0}", args.DeliveryTag);
+                ModelConfirms(model).RemoveWhere(confirm => confirm <= args.DeliveryTag);
+            }
+            else
+            {
+                log.DebugFormat("Broker confirmed message {0}", args.DeliveryTag);
+                ModelConfirms(model).Remove(args.DeliveryTag);
+            }
         }
 
         private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)
@@ -261,10 +278,17 @@ namespace Rabbus
             var messageType = message.GetType();
             var properties = CreateProperties(messageType);
 
+            //ModelConfirms(PublishModel).Add(PublishModel.NextPublishSeqNo);
+
             PublishModel.BasicPublish(exchangeResolver.Resolve(messageType),
                                       routingKeyResolver.Resolve(messageType),
                                       properties,
                                       serializer.Serialize(message));
+        }
+
+        private SortedSet<ulong> ModelConfirms(IModel model)
+        {
+            return unconfirmedPublishes.GetOrAdd(model, new SortedSet<ulong>());
         }
 
         private IBasicProperties CreateProperties(Type messageType)
