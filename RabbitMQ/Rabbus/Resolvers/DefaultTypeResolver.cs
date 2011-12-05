@@ -12,7 +12,7 @@ namespace Rabbus.Resolvers
         public string Unresolve(Type type)
         {
             var fullName = type.AssemblyQualifiedName;
-            return fullName.Substring(0, fullName.IndexOf(", Version="));
+            return fullName.Substring(0, fullName.IndexOf(", Version=", StringComparison.Ordinal));
         }
 
         public Type ResolveType(string typeName)

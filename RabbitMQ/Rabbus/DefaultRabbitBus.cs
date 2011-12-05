@@ -14,7 +14,6 @@ using Rabbus.Logging;
 using Rabbus.Publishing;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
-using Rabbus.Returns;
 using Rabbus.Serialization;
 using Rabbus.Utilities;
 
@@ -37,16 +36,15 @@ namespace Rabbus
         public event Action ConnectionFailure = delegate { };
 
         [ThreadStatic]
-        private static CurrentMessageInformation _currentMessage;
+        private static CurrentMessageInformation currentMessage;
 
-        public CurrentMessageInformation CurrentMessage { get { return _currentMessage; } }
+        public CurrentMessageInformation CurrentMessage { get { return currentMessage; } }
         public RabbusEndpoint LocalEndpoint { get; private set; }
         public TimeSpan ConnectionAttemptInterval { get { return connection.ConnectionAttemptInterval; } }
 
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
         private int disposed;
-        private readonly IBasicReturnHandler basicReturnHandler;
         private QueueingBasicConsumer queueConsumer;
         private readonly IPublisher publisher;
 
@@ -201,9 +199,9 @@ namespace Rabbus
 
         private void SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)
         {
-            _currentMessage = message;
+            currentMessage = message;
 
-            var consumers = ResolveConsumers(_currentMessage.MessageType);
+            var consumers = ResolveConsumers(currentMessage.MessageType);
 
             var localInstanceConsumers = consumers.Item1.ToArray();
             var defaultConsumers = consumers.Item2.ToArray();
@@ -211,7 +209,7 @@ namespace Rabbus
             log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             defaultConsumers.Length,
                             localInstanceConsumers.Length,
-                            _currentMessage.MessageType);
+                            currentMessage.MessageType);
 
             var allConsumers = localInstanceConsumers.Concat(defaultConsumers);
 
@@ -219,9 +217,9 @@ namespace Rabbus
             {
                 log.DebugFormat("Invoking Consume method on consumer {0} for message {1}",
                                 c.GetType(),
-                                _currentMessage.MessageType);
+                                currentMessage.MessageType);
 
-                reflection.InvokeConsume(c, _currentMessage.Body);
+                reflection.InvokeConsume(c, currentMessage.Body);
             }
 
             consumerResolver.Release(defaultConsumers);
@@ -274,7 +272,7 @@ namespace Rabbus
 
         public void Reply(object message)
         {
-            publisher.Reply(message, CurrentMessage);
+            publisher.Reply(message, currentMessage);
         }
 
         private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)

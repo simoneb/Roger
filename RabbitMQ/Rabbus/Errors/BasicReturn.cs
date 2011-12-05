@@ -1,5 +1,4 @@
-﻿using System;
-using Rabbus.GuidGeneration;
+﻿using Rabbus.GuidGeneration;
 
 namespace Rabbus.Errors
 {
