@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +29,6 @@ namespace Rabbus
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRabbusLog log;
-        private ThreadLocal<IModel> publishModelHolder;
         private readonly IReliableConnection connection;
         private readonly IGuidGenerator guidGenerator;
 
@@ -44,10 +44,14 @@ namespace Rabbus
 
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
+        private IModel publishModel;
         private bool disposed;
         private readonly IBasicReturnHandler basicReturnHandler;
         private QueueingBasicConsumer queueConsumer;
         private readonly ConcurrentDictionary<IModel, SortedSet<ulong>> unconfirmedPublishes = new ConcurrentDictionary<IModel, SortedSet<ulong>>();
+        private readonly BlockingCollection<Action<IModel>> publishingQueue = new BlockingCollection<Action<IModel>>();
+        private readonly ManualResetEvent publishingCompleted = new ManualResetEvent(false);
+        private readonly CancellationTokenSource publishCancellationSource = new CancellationTokenSource();
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -87,15 +91,13 @@ namespace Rabbus
             ConnectionFailure();            
         }
 
-        private IModel CreatePublishModel()
+        private void CreatePublishModel()
         {
-            var publishModel = connection.CreateModel();
+            publishModel = connection.CreateModel();
 
             //publishModel.BasicAcks += PublishModelOnBasicAcks;
             publishModel.BasicReturn += PublishModelOnBasicReturn;
             //publishModel.ConfirmSelect();
-
-            return publishModel;
         }
 
         private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)
@@ -125,11 +127,13 @@ namespace Rabbus
             log.Debug("Starting bus");
 
             connection.Connect();
+
+            StartPublishingLoop();
         }
 
         private void ConnectionEstabilished()
         {
-            publishModelHolder = new ThreadLocal<IModel>(CreatePublishModel);
+            CreatePublishModel();
             receivingModel = connection.CreateModel();
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
@@ -142,7 +146,24 @@ namespace Rabbus
             log.Debug("Bus started");
         }
 
-        private IModel PublishModel { get { return publishModelHolder.Value; } }
+        private void StartPublishingLoop()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                // catch ODE
+                foreach (var publish in publishingQueue.GetConsumingEnumerable(publishCancellationSource.Token))
+                {
+                    Debug.WriteLine("Publishing message");
+                    publish(publishModel);
+                }
+
+                Debug.WriteLine("Exited publishing loop");
+
+                publishingCompleted.Set();
+
+                Debug.WriteLine("Set publishing gate");
+            }, TaskCreationOptions.LongRunning);
+        }
 
         private void CreateConsumer()
         {
@@ -275,15 +296,36 @@ namespace Rabbus
 
         public void Publish(object message)
         {
-            var messageType = message.GetType();
-            var properties = CreateProperties(messageType);
+            EnqueueDefaultPublish(message);
+        }
 
-            //ModelConfirms(PublishModel).Add(PublishModel.NextPublishSeqNo);
+        private void EnqueueDefaultPublish(object message)
+        {
+            EnqueuePublish(model =>
+            {
+                var messageType1 = message.GetType();
+                var properties1 = CreateProperties(model, messageType1);
 
-            PublishModel.BasicPublish(exchangeResolver.Resolve(messageType),
-                                      routingKeyResolver.Resolve(messageType),
-                                      properties,
-                                      serializer.Serialize(message));
+                //ModelConfirms(PublishModel).Add(model.NextPublishSeqNo);
+
+                model.BasicPublish(exchangeResolver.Resolve(messageType1), routingKeyResolver.Resolve(messageType1), properties1, serializer.Serialize(message));
+            });
+        }
+
+        private void EnqueuePublish(Action<IModel> action)
+        {
+            try
+            {
+                publishingQueue.Add(action);
+            }
+            catch (ObjectDisposedException)
+            {
+                log.Error("Cound not enqueue message for publishing as publishing queue has been disposed of already");
+            }
+            catch (InvalidOperationException e)
+            {
+                log.ErrorFormat("Cound not enqueue message for publishing: {0}", e);
+            }
         }
 
         private SortedSet<ulong> ModelConfirms(IModel model)
@@ -291,9 +333,9 @@ namespace Rabbus
             return unconfirmedPublishes.GetOrAdd(model, new SortedSet<ulong>());
         }
 
-        private IBasicProperties CreateProperties(Type messageType)
+        private IBasicProperties CreateProperties(IModel model, Type messageType)
         {
-            var properties = PublishModel.CreateBasicProperties();
+            var properties = model.CreateBasicProperties();
 
             properties.MessageId = guidGenerator.Next();
             properties.Type = typeResolver.Unresolve(messageType);
@@ -305,36 +347,57 @@ namespace Rabbus
         
         public void Request(object message, Action<BasicReturn> basicReturnCallback = null)
         {
-            var properties = CreateProperties(message.GetType());
-            properties.CorrelationId = guidGenerator.Next();
+            EnqueueRequest(message, basicReturnCallback);
+        }
 
-            PublishMandatoryInternal(message, properties, basicReturnCallback);
+        private void EnqueueRequest(object message, Action<BasicReturn> basicReturnCallback)
+        {
+            EnqueuePublish(model =>
+            {
+                var properties = CreateProperties(model, message.GetType());
+                properties.CorrelationId = guidGenerator.Next();
 
-            log.DebugFormat("Issued request with message {0}", message.GetType());
+                PublishMandatoryInternal(model, message, properties, basicReturnCallback);
+
+                log.DebugFormat("Issued request with message {0}", message.GetType());
+            });
         }
 
         public void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null)
         {
-            var properties = CreateProperties(message.GetType());
+            EnqueueSend(endpoint, message, basicReturnCallback);
+        }
 
-            PublishMandatoryInternal(message, properties, basicReturnCallback, endpoint.Queue);
+        private void EnqueueSend(RabbusEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback)
+        {
+            EnqueuePublish(model =>
+            {
+                var properties = CreateProperties(model, message.GetType());
+
+                PublishMandatoryInternal(model, message, properties, basicReturnCallback, endpoint.Queue);
+            });
         }
 
         public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null)
         {
-            var properties = CreateProperties(message.GetType());
+            EnqueuePublish(model =>
+            {
+                var properties = CreateProperties(model, message.GetType());
 
-            PublishMandatoryInternal(message, properties, basicReturnCallback);
+                PublishMandatoryInternal(model, message, properties, basicReturnCallback);
+            });
         }
 
-        private void PublishMandatoryInternal(object message,
+        private void PublishMandatoryInternal(IModel model,
+                                              object message,
                                               IBasicProperties properties,
                                               Action<BasicReturn> basicReturnCallback)
         {
-            PublishMandatoryInternal(message, properties, basicReturnCallback, routingKeyResolver.Resolve(message.GetType()));
+            PublishMandatoryInternal(model, message, properties, basicReturnCallback, routingKeyResolver.Resolve(message.GetType()));
         }
 
-        private void PublishMandatoryInternal(object message,
+        private void PublishMandatoryInternal(IModel model,
+                                              object message,
                                               IBasicProperties properties,
                                               Action<BasicReturn> basicReturnCallback,
                                               string routingKey)
@@ -342,12 +405,12 @@ namespace Rabbus
             if(basicReturnCallback != null)
                 basicReturnHandler.Subscribe(new RabbusGuid(properties.MessageId), basicReturnCallback);
 
-            PublishModel.BasicPublish(exchangeResolver.Resolve(message.GetType()),
-                                      routingKey,
-                                      true,
-                                      false,
-                                      properties,
-                                      serializer.Serialize(message));
+            model.BasicPublish(exchangeResolver.Resolve(message.GetType()),
+                               routingKey,
+                               true,
+                               false,
+                               properties,
+                               serializer.Serialize(message));
         }
 
         public void Reply(object message)
@@ -356,14 +419,19 @@ namespace Rabbus
 
             ValidateReplyMessage(message);
 
-            var properties = CreateProperties(message.GetType());
-            properties.CorrelationId = CurrentMessage.CorrelationId.ToString();
+            var currentMessage = CurrentMessage;
 
-            // reply on the same exchange of the request message
-            PublishModel.BasicPublish(exchangeResolver.Resolve(CurrentMessage.MessageType),
-                                      CurrentMessage.Endpoint,
-                                      properties,
-                                      serializer.Serialize(message));
+            EnqueuePublish(model =>
+            {
+                var properties = CreateProperties(model, message.GetType());
+                properties.CorrelationId = currentMessage.CorrelationId.ToString();
+
+                // reply on the same exchange of the request message
+                model.BasicPublish(exchangeResolver.Resolve(currentMessage.MessageType),
+                                   currentMessage.Endpoint,
+                                   properties,
+                                   serializer.Serialize(message));
+            });
         }
 
         private void ValidateReplyMessage(object message)
@@ -414,6 +482,19 @@ namespace Rabbus
         {
             if (disposed) return;
             disposed = true;
+
+            publishingQueue.CompleteAdding();
+
+            Debug.WriteLine("Called CompleteAdding");
+
+            publishingCompleted.WaitOne();
+
+            Debug.WriteLine("WatedOne on publishing completed gate");
+
+            publishingQueue.Dispose();
+
+            Debug.WriteLine("Disposed publishing queue");
+            publishingCompleted.Dispose();
 
             log.Debug("Disposing bus");
             connection.Dispose();
