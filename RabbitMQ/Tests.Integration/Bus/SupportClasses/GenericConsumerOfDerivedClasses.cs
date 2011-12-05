@@ -3,7 +3,7 @@ using Rabbus;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class GenericConsumer<T> : IConsumer<T> where T : class
+    public class GenericConsumerOfDerivedClasses<T> : Consumer<T>.SubclassesInSameAssembly where T : class
     {
         public T LastReceived;
         private readonly AutoResetEvent delivered = new AutoResetEvent(false);

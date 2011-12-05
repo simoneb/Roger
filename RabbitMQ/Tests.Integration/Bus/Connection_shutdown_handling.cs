@@ -42,6 +42,21 @@ namespace Tests.Integration.Bus
             Assert.AreEqual(2, m_consumer.LastReceived.Value);
         }
 
+        [Test]
+        public void Should_be_able_to_publish_message_during_broker_failure_and_deliver_it_once_back_online()
+        {
+            SafelyShutDownBroker();
+
+            Bus.Publish(new MyMessage { Value = 1 });
+
+            RestartBrokerAndWait();
+
+            m_consumer.WaitForDelivery();
+
+            Assert.IsNotNull(m_consumer.LastReceived);
+            Assert.AreEqual(1, m_consumer.LastReceived.Value);
+        }
+
         private void RestartBrokerAndWait()
         {
             Broker.StartAppAndWait();

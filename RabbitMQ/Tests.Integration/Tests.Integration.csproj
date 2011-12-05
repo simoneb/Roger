@@ -69,6 +69,7 @@
     <Compile Include="Bus\Instance_subscriptions.cs" />
     <Compile Include="Bus\SupportClasses\CatchingMyRequestResponder.cs" />
     <Compile Include="Bus\SupportClasses\DebugLog.cs" />
+    <Compile Include="Bus\SupportClasses\GenericConsumerOfDerivedClasses.cs" />
     <Compile Include="Bus\SupportClasses\IdentityConnectionFactory.cs" />
     <Compile Include="Bus\SupportClasses\GenericConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyMessage.cs" />

@@ -44,13 +44,14 @@ namespace Rabbus
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private IModel receivingModel;
         private IModel publishModel;
-        private bool disposed;
+        private int disposed;
         private readonly IBasicReturnHandler basicReturnHandler;
         private QueueingBasicConsumer queueConsumer;
         private readonly ConcurrentDictionary<IModel, SortedSet<ulong>> unconfirmedPublishes = new ConcurrentDictionary<IModel, SortedSet<ulong>>();
         private readonly BlockingCollection<Action<IModel>> publishingQueue = new BlockingCollection<Action<IModel>>();
-        private readonly ManualResetEvent publishingCompleted = new ManualResetEvent(false);
         private readonly CancellationTokenSource publishCancellationSource = new CancellationTokenSource();
+        private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
+        private Task publishTask;
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
@@ -82,7 +83,14 @@ namespace Rabbus
 
         private void HandleConnectionUnexpectedShutdown(ShutdownEventArgs obj)
         {
+            log.Warn("Disabling publishing due to unexpected connection shutdown");
+            DisablePublishing();
             ConnectionFailure();
+        }
+
+        private void DisablePublishing()
+        {
+            publishEnabled.Reset();
         }
 
         private void HandleConnectionAttemptFailed()
@@ -133,6 +141,8 @@ namespace Rabbus
         private void ConnectionEstabilished()
         {
             CreatePublishModel();
+            EnablePublishing();
+
             receivingModel = connection.CreateModel();
 
             LocalEndpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
@@ -145,16 +155,40 @@ namespace Rabbus
             log.Debug("Bus started");
         }
 
+        private void EnablePublishing()
+        {
+            publishEnabled.Set();
+            log.Debug("Publishing is enabled");
+        }
+
         private void StartPublishingLoop()
         {
-            Task.Factory.StartNew(() =>
+            publishTask = Task.Factory.StartNew(() =>
             {
-                // catch ODE
-                foreach (var publish in publishingQueue.GetConsumingEnumerable(publishCancellationSource.Token))
-                    publish(publishModel);
-
-                publishingCompleted.Set();
-
+                try
+                {
+                    foreach (var publish in publishingQueue.GetConsumingEnumerable(publishCancellationSource.Token))
+                    {
+                        try
+                        {
+                            publishEnabled.Wait(publishCancellationSource.Token);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // operation canceled while waiting for publish to be enabled, just break out of the loop
+                            break;
+                        }
+                        publish(publishModel);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    // operation canceled while iterating over the queue, do nothing and let task complete
+                }
+                catch(ObjectDisposedException)
+                {
+                    log.Error("Publishing queue was disposed while iterating over it, this is not supposed to be happening");
+                }
             }, TaskCreationOptions.LongRunning);
         }
 
@@ -312,6 +346,7 @@ namespace Rabbus
         {
             try
             {
+                log.Debug("Enqueuing publish action");
                 publishingQueue.Add(action);
             }
             catch (ObjectDisposedException)
@@ -476,14 +511,16 @@ namespace Rabbus
 
         public void Dispose()
         {
-            if (disposed) return;
-            disposed = true;
+            if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1) 
+                return;
 
             publishingQueue.CompleteAdding();
-            publishingCompleted.WaitOne();
+            publishCancellationSource.Cancel();
+            publishTask.Wait();
 
             publishingQueue.Dispose();
-            publishingCompleted.Dispose();
+            publishCancellationSource.Dispose();
+            publishTask.Dispose();
 
             log.Debug("Disposing bus");
             connection.Dispose();

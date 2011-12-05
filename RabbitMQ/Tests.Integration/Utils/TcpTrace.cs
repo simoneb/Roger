@@ -39,7 +39,7 @@ namespace Tests.Integration.Utils
         public void Stop()
         {
             if (process != null) 
-                process.CloseMainWindow();
+                process.Kill();
         }
 
         public static void StopAll()
