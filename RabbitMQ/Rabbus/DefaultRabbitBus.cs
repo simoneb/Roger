@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,16 +151,10 @@ namespace Rabbus
             {
                 // catch ODE
                 foreach (var publish in publishingQueue.GetConsumingEnumerable(publishCancellationSource.Token))
-                {
-                    Debug.WriteLine("Publishing message");
                     publish(publishModel);
-                }
-
-                Debug.WriteLine("Exited publishing loop");
 
                 publishingCompleted.Set();
 
-                Debug.WriteLine("Set publishing gate");
             }, TaskCreationOptions.LongRunning);
         }
 
@@ -487,16 +480,9 @@ namespace Rabbus
             disposed = true;
 
             publishingQueue.CompleteAdding();
-
-            Debug.WriteLine("Called CompleteAdding");
-
             publishingCompleted.WaitOne();
 
-            Debug.WriteLine("WatedOne on publishing completed gate");
-
             publishingQueue.Dispose();
-
-            Debug.WriteLine("Disposed publishing queue");
             publishingCompleted.Dispose();
 
             log.Debug("Disposing bus");
