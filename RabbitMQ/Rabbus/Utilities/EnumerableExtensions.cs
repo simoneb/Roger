@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Rabbus.Utilities
 {
     internal static class EnumerableExtensions
     {
-        internal static IEnumerable<Type> ExceptReplies(this IEnumerable<Type> messageTypes)
+        internal static bool IsReply(this Type messageType)
         {
-            return messageTypes.Where(t => !t.IsDefined(typeof (RabbusReplyAttribute), false));
+            return messageType.IsDefined(typeof (RabbusReplyAttribute), false);
         }
     }
 }

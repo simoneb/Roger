@@ -8,5 +8,11 @@ namespace Rabbus
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class RabbusReplyAttribute : Attribute
     {
+        public Type RequestType { get; private set; }
+
+        public RabbusReplyAttribute(Type requestType)
+        {
+            RequestType = requestType;
+        }
     }
 }

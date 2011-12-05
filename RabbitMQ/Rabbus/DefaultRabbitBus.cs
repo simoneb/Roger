@@ -183,16 +183,19 @@ namespace Rabbus
 
             log.Debug("Performing pub/sub bindings");
 
-            foreach (var messageType in messageTypes.ExceptReplies())
+            foreach (var messageType in messageTypes)
             {
                 var exchange = exchangeResolver.Resolve(messageType);
+                allExchanges.Add(exchange);
+
+                if(messageType.IsReply())
+                    continue;
+
                 var routingKey = routingKeyResolver.Resolve(messageType);
 
                 log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", LocalEndpoint, exchange, routingKey);
 
                 receivingModel.QueueBind(LocalEndpoint.Queue, exchange, routingKey);
-
-                allExchanges.Add(exchange);
             }
 
             log.Debug("Performing private messages bindings");

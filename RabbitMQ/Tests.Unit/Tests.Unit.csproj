@@ -78,6 +78,8 @@
     <Compile Include="SupportClasses\MyMessage.cs" />
     <Compile Include="SupportClasses\ConcreteDerivedOfAbstractBase2.cs" />
     <Compile Include="SupportClasses\MyOtherMessage.cs" />
+    <Compile Include="SupportClasses\MyReply.cs" />
+    <Compile Include="SupportClasses\MyRequest.cs" />
     <Compile Include="SupportClasses\MyThrowingConsumer.cs" />
     <Compile Include="SupportClasses\ConcreteBase.cs" />
     <Compile Include="SupportClasses\ConcreteDerivedOfBaseOfAbstractDerived.cs" />

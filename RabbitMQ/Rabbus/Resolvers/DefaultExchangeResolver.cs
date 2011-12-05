@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Rabbus.Errors;
+using Rabbus.Utilities;
 
 namespace Rabbus.Resolvers
 {
@@ -27,6 +28,11 @@ namespace Rabbus.Resolvers
 
         private static string GetExchangeName(Type messageType)
         {
+            if (messageType.IsReply())
+                return GetExchangeName(messageType.GetCustomAttributes(typeof (RabbusReplyAttribute), false)
+                                                  .Cast<RabbusReplyAttribute>()
+                                                  .Single().RequestType);
+
             var attributes = messageType.GetCustomAttributes(typeof (RabbusMessageAttribute), true);
 
             if(attributes.Length == 0)

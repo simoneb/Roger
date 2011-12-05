@@ -30,6 +30,12 @@ namespace Tests.Unit
         }
 
         [Test]
+        public void Should_return_request_message_exchange_in_case_of_reply()
+        {
+            Assert.AreEqual("RequestExchange", sut.Resolve(typeof(MyReply)));
+        }
+
+        [Test]
         public void Should_not_support_invalid_exchange_names()
         {
             Assert.Throws<ArgumentException>(() => sut.Resolve(typeof(DecoratedWithEmptyString)));

@@ -4,7 +4,7 @@ using Rabbus;
 namespace Tests.Integration.Bus.SupportClasses
 {
     [ProtoContract]
-    [RabbusReply]
+    [RabbusReply(typeof(MyRequest))]
     public class MyReply
     {
     }
