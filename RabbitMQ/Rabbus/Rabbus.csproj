@@ -48,11 +48,13 @@
     <Compile Include="Connection\IReliableConnection.cs" />
     <Compile Include="Connection\ReliableConnection.cs" />
     <Compile Include="Consumer`1.cs" />
+    <Compile Include="Consuming\DefaultConsumingProcess.cs" />
+    <Compile Include="Consuming\IConsumingProcess.cs" />
     <Compile Include="GuidGeneration\IGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RandomGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RabbusGuid.cs" />
-    <Compile Include="Publishing\IPublisher.cs" />
-    <Compile Include="Publishing\QueueingPublisher.cs" />
+    <Compile Include="Publishing\IPublishingProcess.cs" />
+    <Compile Include="Publishing\QueueingPublishingProcess.cs" />
     <Compile Include="Returns\DefaultBasicReturnHandler.cs" />
     <Compile Include="Returns\IBasicReturnHandler.cs" />
     <Compile Include="CurrentMessageInformation.cs" />

@@ -15,7 +15,7 @@ using Rabbus.Serialization;
 
 namespace Rabbus.Publishing
 {
-    internal class QueueingPublisher : IPublisher
+    internal class QueueingPublishingProcess : IPublishingProcess
     {
         private readonly IReliableConnection connection;
         private readonly IBasicReturnHandler basicReturnHandler;
@@ -32,16 +32,16 @@ namespace Rabbus.Publishing
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
-        private readonly Func<RabbusEndpoint> localEndpoint;
+        private readonly Func<RabbusEndpoint> currentLocalEndpoint;
 
-        internal QueueingPublisher(IReliableConnection connection,
-                                   IRabbusLog log,
+        internal QueueingPublishingProcess(IReliableConnection connection,
                                    IGuidGenerator guidGenerator,
                                    IExchangeResolver exchangeResolver,
                                    IRoutingKeyResolver routingKeyResolver,
                                    IMessageSerializer serializer,
                                    ITypeResolver typeResolver,
-                                   Func<RabbusEndpoint> localEndpoint)
+                                   IRabbusLog log,
+                                   Func<RabbusEndpoint> currentLocalEndpoint)
         {
             this.connection = connection;
             this.log = log;
@@ -50,7 +50,7 @@ namespace Rabbus.Publishing
             this.routingKeyResolver = routingKeyResolver;
             this.serializer = serializer;
             this.typeResolver = typeResolver;
-            this.localEndpoint = localEndpoint;
+            this.currentLocalEndpoint = currentLocalEndpoint;
 
             basicReturnHandler = new DefaultBasicReturnHandler(this.log);
 
@@ -123,7 +123,7 @@ namespace Rabbus.Publishing
                             // operation canceled while waiting for publish to be enabled, just break out of the loop
                             break;
                         }
-                        publish(publishModel);
+                        publish(publishModel); // TODO: handle failure
                     }
                 }
                 catch (OperationCanceledException)
@@ -264,7 +264,7 @@ namespace Rabbus.Publishing
 
             properties.MessageId = guidGenerator.Next();
             properties.Type = typeResolver.Unresolve(messageType);
-            properties.ReplyTo = localEndpoint().Queue;
+            properties.ReplyTo = currentLocalEndpoint().Queue;
             properties.ContentType = serializer.ContentType;
 
             return properties;

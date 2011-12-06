@@ -3,6 +3,9 @@ using Rabbus.Errors;
 
 namespace Rabbus
 {
+    /// <summary>
+    /// Main entrypoint to the library
+    /// </summary>
     public interface IRabbitBus : IDisposable
     {
         /// <summary>
@@ -29,9 +32,9 @@ namespace Rabbus
         /// Subscribes a consumer manually to the messages it is interested in
         /// This is not usually necessary as consumer subscription is carried out automatically
         /// </summary>
-        /// <param name="consumer">The consumer instance</param>
+        /// <param name="instanceConsumer">The consumer instance</param>
         /// <returns>A subscription token which, when disposed, removes the subscription</returns>
-        IDisposable AddInstanceSubscription(IConsumer consumer);
+        IDisposable AddInstanceSubscription(IConsumer instanceConsumer);
 
         /// <summary>
         /// Publishes a message so that subscribers will receive it

@@ -3,7 +3,7 @@ using Rabbus.Errors;
 
 namespace Rabbus.Publishing
 {
-    internal interface IPublisher : IDisposable
+    internal interface IPublishingProcess : IDisposable
     {
         void Start();
         void Publish(object message);
