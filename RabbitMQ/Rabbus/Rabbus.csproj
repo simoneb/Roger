@@ -51,7 +51,7 @@
     <Compile Include="Consuming\DefaultConsumingProcess.cs" />
     <Compile Include="Consuming\IConsumingProcess.cs" />
     <Compile Include="Filters\DeduplicationFilter.cs" />
-    <Compile Include="Filters\OrderingFilter.cs" />
+    <Compile Include="Filters\ResequencingFilter.cs" />
     <Compile Include="GuidGeneration\IGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RandomGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RabbusGuid.cs" />

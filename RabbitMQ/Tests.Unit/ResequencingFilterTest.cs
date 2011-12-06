@@ -12,14 +12,14 @@ using System.Linq;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class OrderingFilterTest
+    public class ResequencingFilterTest
     {
-        private OrderingFilter sut;
+        private ResequencingFilter sut;
 
         [SetUp]
         public void Setup()
         {
-            sut = new OrderingFilter();
+            sut = new ResequencingFilter();
         }
 
         [Test]

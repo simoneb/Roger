@@ -22,7 +22,13 @@ namespace Rabbus.Utilities
         private static readonly Lazy<IRabbusLog> DefaultLog = new Lazy<IRabbusLog>(() => new NullLog());
         private static readonly Lazy<IGuidGenerator> DefaultGuidGenerator = new Lazy<IGuidGenerator>(() => new RandomGuidGenerator());
         private static readonly Lazy<ISequenceGenerator> DefaultSequenceGenerator = new Lazy<ISequenceGenerator>(() => new DefaultSequenceGenerator());
-        private static readonly Lazy<IEnumerable<IMessageFilter>> DefaultFilters = new Lazy<IEnumerable<IMessageFilter>>(() => new IMessageFilter[]{new DeduplicationFilter(TimeSpan.FromMinutes(2)), new OrderingFilter() });
+
+        private static readonly Lazy<IEnumerable<IMessageFilter>> DefaultFilters =
+            new Lazy<IEnumerable<IMessageFilter>>(() => new IMessageFilter[]
+            {
+                new DeduplicationFilter(TimeSpan.FromMinutes(2)),
+                new ResequencingFilter()
+            });
 
         public static IConsumerResolver ConsumerResolver { get { return DefaultConsumerResolver.Value; } }
         public static ITypeResolver TypeResolver { get { return DefaultTypeResolver.Value; } }

@@ -59,7 +59,7 @@
     <Compile Include="Exchange_resolution.cs" />
     <Compile Include="GenericsTest.cs" />
     <Compile Include="Message_type_serialization.cs" />
-    <Compile Include="OrderingFilterTest.cs" />
+    <Compile Include="ResequencingFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RabbusEndpointTest.cs" />
     <Compile Include="RabbusGuidTests.cs" />

@@ -14,7 +14,7 @@ namespace Tests.Integration.Bus
 
         protected override IEnumerable<IMessageFilter> MessageFilters
         {
-            get { yield return new OrderingFilter(); }
+            get { yield return new ResequencingFilter(); }
         }
 
         protected override ISequenceGenerator SequenceGenerator
