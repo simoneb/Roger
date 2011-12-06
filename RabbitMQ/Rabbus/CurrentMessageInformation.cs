@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Rabbus.GuidGeneration;
 
 namespace Rabbus
@@ -15,5 +16,6 @@ namespace Rabbus
         public Type MessageType { get; set; }
         public ulong DeliveryTag { get; set; }
         public string Exchange { get; set; }
+        public Hashtable Headers { get; set; }
     }
 }

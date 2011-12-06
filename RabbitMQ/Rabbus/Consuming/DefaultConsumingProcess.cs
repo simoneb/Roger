@@ -158,7 +158,8 @@ namespace Rabbus.Consuming
                 CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? RabbusGuid.Empty : new RabbusGuid(properties.CorrelationId),
                 DeliveryTag = args.DeliveryTag,
                 Exchange = args.Exchange,
-                Body = serializer.Deserialize(messageType, args.Body)
+                Body = serializer.Deserialize(messageType, args.Body),
+                Headers = (Hashtable)properties.Headers
             };
         }
 

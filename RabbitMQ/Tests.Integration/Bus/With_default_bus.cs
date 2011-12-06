@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -8,6 +7,8 @@ using RabbitMQ.Client;
 using Rabbus;
 using Rabbus.GuidGeneration;
 using Rabbus.Resolvers;
+using Rabbus.Sequencing;
+using Rabbus.Utilities;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -27,7 +28,8 @@ namespace Tests.Integration.Bus
                                        consumerResolver,
                                        log: new DebugLog(),
                                        guidGenerator: GuidGenerator,
-                                       messageFilters: MessageFilters);
+                                       messageFilters: MessageFilters,
+                                       sequenceGenerator: SequenceGenerator);
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -44,9 +46,10 @@ namespace Tests.Integration.Bus
             AfterBusInitialization();
         }
 
-        protected virtual IGuidGenerator GuidGenerator { get { return new RandomGuidGenerator();} }
+        protected virtual IGuidGenerator GuidGenerator { get { return Default.GuidGenerator;} }
 
         protected virtual IEnumerable<IMessageFilter> MessageFilters { get { yield break; } }
+        protected virtual ISequenceGenerator SequenceGenerator { get { return Default.SequenceGenerator; } }
 
         protected virtual void BeforeBusInitialization()
         {

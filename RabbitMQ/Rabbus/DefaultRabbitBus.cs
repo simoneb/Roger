@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using RabbitMQ.Client;
 using Rabbus.Connection;
@@ -11,6 +10,7 @@ using Rabbus.Logging;
 using Rabbus.Publishing;
 using Rabbus.Reflection;
 using Rabbus.Resolvers;
+using Rabbus.Sequencing;
 using Rabbus.Serialization;
 using Rabbus.Utilities;
 
@@ -34,6 +34,7 @@ namespace Rabbus
                                 IReflection reflection = null,
                                 IRabbusLog log = null,
                                 IGuidGenerator guidGenerator = null,
+                                ISequenceGenerator sequenceGenerator = null,
                                 IEnumerable<IMessageFilter> messageFilters = null)
         {
             consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
@@ -44,13 +45,15 @@ namespace Rabbus
             routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
             serializer = serializer.Or(Default.Serializer);
             guidGenerator = guidGenerator.Or(Default.GuidGenerator);
-            messageFilters = messageFilters.Or(Enumerable.Empty<IMessageFilter>());
+            sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
+            messageFilters = messageFilters.Or(Default.Filters);
             this.log = log.Or(Default.Log);
 
             connection = new ReliableConnection(connectionFactory, this.log);
 
             publishingProcess = new QueueingPublishingProcess(connection,
                                                               guidGenerator,
+                                                              sequenceGenerator,
                                                               exchangeResolver,
                                                               routingKeyResolver,
                                                               serializer,

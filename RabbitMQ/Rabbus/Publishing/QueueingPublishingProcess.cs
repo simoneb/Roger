@@ -1,6 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
@@ -11,6 +16,7 @@ using Rabbus.GuidGeneration;
 using Rabbus.Logging;
 using Rabbus.Resolvers;
 using Rabbus.Returns;
+using Rabbus.Sequencing;
 using Rabbus.Serialization;
 
 namespace Rabbus.Publishing
@@ -28,6 +34,7 @@ namespace Rabbus.Publishing
         private IModel publishModel;
         private readonly SortedSet<ulong> unconfirmedPublishes = new SortedSet<ulong>();
         private readonly IGuidGenerator guidGenerator;
+        private readonly ISequenceGenerator sequenceGenerator;
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly IMessageSerializer serializer;
@@ -35,17 +42,19 @@ namespace Rabbus.Publishing
         private readonly Func<RabbusEndpoint> currentLocalEndpoint;
 
         internal QueueingPublishingProcess(IReliableConnection connection,
-                                   IGuidGenerator guidGenerator,
-                                   IExchangeResolver exchangeResolver,
-                                   IRoutingKeyResolver routingKeyResolver,
-                                   IMessageSerializer serializer,
-                                   ITypeResolver typeResolver,
-                                   IRabbusLog log,
-                                   Func<RabbusEndpoint> currentLocalEndpoint)
+                                           IGuidGenerator guidGenerator,
+                                           ISequenceGenerator sequenceGenerator,
+                                           IExchangeResolver exchangeResolver,
+                                           IRoutingKeyResolver routingKeyResolver,
+                                           IMessageSerializer serializer,
+                                           ITypeResolver typeResolver,
+                                           IRabbusLog log,
+                                           Func<RabbusEndpoint> currentLocalEndpoint)
         {
             this.connection = connection;
             this.log = log;
             this.guidGenerator = guidGenerator;
+            this.sequenceGenerator = sequenceGenerator;
             this.exchangeResolver = exchangeResolver;
             this.routingKeyResolver = routingKeyResolver;
             this.serializer = serializer;
@@ -266,6 +275,11 @@ namespace Rabbus.Publishing
             properties.Type = typeResolver.Unresolve(messageType);
             properties.ReplyTo = currentLocalEndpoint().Queue;
             properties.ContentType = serializer.ContentType;
+
+            properties.Headers = new Hashtable
+            {
+                {Headers.Sequence, BitConverter.GetBytes(sequenceGenerator.Next())}
+            };
 
             return properties;
         }
