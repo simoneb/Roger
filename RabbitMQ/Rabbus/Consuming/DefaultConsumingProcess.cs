@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -35,6 +36,9 @@ namespace Rabbus.Consuming
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
 
+        private int disposed;
+        private Task consumingTask;
+
         public DefaultConsumingProcess(IReliableConnection connection,
                                        IGuidGenerator guidGenerator,
                                        IExchangeResolver exchangeResolver,
@@ -57,10 +61,10 @@ namespace Rabbus.Consuming
             this.guidGenerator = guidGenerator;
             this.supportedMessageTypesResolver = supportedMessageTypesResolver;
 
-            connection.ConnectionEstabilished += HandleConnectionEstabilished;
+            connection.ConnectionEstabilished += ConnectionEstabilished;
         }
 
-        private void HandleConnectionEstabilished()
+        private void ConnectionEstabilished()
         {
             receivingModel = connection.CreateModel();
 
@@ -119,7 +123,7 @@ namespace Rabbus.Consuming
 
         private void ConsumeAsynchronously()
         {
-            Task.Factory.StartNew(ConsumeSynchronously, TaskCreationOptions.LongRunning);
+            consumingTask = Task.Factory.StartNew(ConsumeSynchronously, TaskCreationOptions.LongRunning);
         }
 
         private void ConsumeSynchronously()
@@ -133,7 +137,7 @@ namespace Rabbus.Consuming
 
         private IEnumerable<CurrentMessageInformation> BlockingDequeue(IEnumerable queue)
         {
-            return queue.OfType<BasicDeliverEventArgs>().Select(CreateMessage);
+            return queue.Cast<BasicDeliverEventArgs>().Select(CreateMessage);
         }
 
         private CurrentMessageInformation CreateMessage(BasicDeliverEventArgs args)
@@ -233,6 +237,15 @@ namespace Rabbus.Consuming
         private ISet<Type> GetSupportedMessageTypes(IConsumer consumer)
         {
             return supportedMessageTypesResolver.Resolve(consumer.GetType());
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
+                return;
+
+            if (consumingTask != null)
+                consumingTask.Wait();
         }
     }
 }
