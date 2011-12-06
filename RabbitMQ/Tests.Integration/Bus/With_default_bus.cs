@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus;
+using Rabbus.GuidGeneration;
 using Rabbus.Resolvers;
 using Tests.Integration.Bus.SupportClasses;
 
@@ -23,7 +25,9 @@ namespace Tests.Integration.Bus
             consumerResolver = new ManualRegistrationConsumerResolver(new DefaultSupportedMessageTypesResolver());
             Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Helpers.CreateConnection),
                                        consumerResolver,
-                                       log: new DebugLog());
+                                       log: new DebugLog(),
+                                       guidGenerator: GuidGenerator,
+                                       messageFilters: MessageFilters);
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -39,6 +43,10 @@ namespace Tests.Integration.Bus
 
             AfterBusInitialization();
         }
+
+        protected virtual IGuidGenerator GuidGenerator { get { return new RandomGuidGenerator();} }
+
+        protected virtual IEnumerable<IMessageFilter> MessageFilters { get { yield break; } }
 
         protected virtual void BeforeBusInitialization()
         {

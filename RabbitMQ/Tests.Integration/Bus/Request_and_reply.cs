@@ -31,16 +31,16 @@ namespace Tests.Integration.Bus
         public void Should_reply_to_response_consumer()
         {
             var responder = new MyRequestResponder(Bus);
-            var responseConsumer = new MyResponseConsumer();
+            var responseConsumer = new GenericConsumer<MyReply>();
 
             Bus.AddInstanceSubscription(responder);
             Bus.AddInstanceSubscription(responseConsumer);
 
             Bus.Request(new MyRequest());
 
-            WaitForRoundtrip();
+            responseConsumer.WaitForDelivery();
 
-            Assert.IsNotNull(responseConsumer.Received);
+            Assert.IsNotNull(responseConsumer.LastReceived);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace Tests.Integration.Bus
         [Test]
         public void Should_not_require_exchange_to_be_defined_on_reply_message_type()
         {
-            var responseConsumer = new MyResponseConsumer();
+            var responseConsumer = new GenericConsumer<MyReply>();
 
             Bus.AddInstanceSubscription(responseConsumer);
         }
@@ -72,8 +72,8 @@ namespace Tests.Integration.Bus
         public void Should_throw_if_more_than_one_consumer_can_receive_the_reply()
         {
             var responder = new MyRequestResponder(Bus);
-            var responseConsumer1 = new MyResponseConsumer();
-            var responseConsumer2 = new MyResponseConsumer();
+            var responseConsumer1 = new GenericConsumer<MyReply>();
+            var responseConsumer2 = new GenericConsumer<MyReply>();
 
             Bus.AddInstanceSubscription(responder);
             Bus.AddInstanceSubscription(responseConsumer1);
@@ -84,8 +84,8 @@ namespace Tests.Integration.Bus
 
             WaitForRoundtrip();
 
-            Assert.IsNull(responseConsumer1.Received);
-            Assert.IsNull(responseConsumer2.Received);
+            Assert.IsNull(responseConsumer1.LastReceived);
+            Assert.IsNull(responseConsumer2.LastReceived);
             Assert.IsNotNull(error);
         }
 

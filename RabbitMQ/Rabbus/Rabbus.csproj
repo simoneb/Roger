@@ -50,9 +50,11 @@
     <Compile Include="Consumer`1.cs" />
     <Compile Include="Consuming\DefaultConsumingProcess.cs" />
     <Compile Include="Consuming\IConsumingProcess.cs" />
+    <Compile Include="Filters\DeduplicationFilter.cs" />
     <Compile Include="GuidGeneration\IGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RandomGuidGenerator.cs" />
     <Compile Include="GuidGeneration\RabbusGuid.cs" />
+    <Compile Include="IMessageFilter.cs" />
     <Compile Include="Publishing\IPublishingProcess.cs" />
     <Compile Include="Publishing\QueueingPublishingProcess.cs" />
     <Compile Include="Returns\DefaultBasicReturnHandler.cs" />
@@ -91,6 +93,8 @@
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
+    <Compile Include="Utilities\ConcurrentSelfExpiringCache.cs" />
+    <Compile Include="Utilities\SystemTime.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

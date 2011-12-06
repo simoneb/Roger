@@ -82,7 +82,7 @@ namespace Rabbus.Chat.Client
 
         public void Consume(ClientDisconnected message)
         {
-            Execute.OnUIThread(() => clients.Remove(clients.Single(c => c.Endpoint.Equals(message.Endpoint))));
+            Execute.OnUIThread(() => clients.Remove(clients.Single(c => c.Endpoint.Equals(bus.CurrentMessage.Endpoint))));
         }
 
         protected override void  OnViewLoaded(object view)

@@ -31,6 +31,7 @@ namespace Rabbus.Consuming
         private readonly IReflection reflection;
         private readonly IGuidGenerator guidGenerator;
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
+        private readonly IEnumerable<IMessageFilter> messageFilters;
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
 
         [ThreadStatic]
@@ -48,6 +49,7 @@ namespace Rabbus.Consuming
                                        IConsumerResolver consumerResolver,
                                        IReflection reflection,
                                        ISupportedMessageTypesResolver supportedMessageTypesResolver,
+                                       IEnumerable<IMessageFilter> messageFilters,
                                        IRabbusLog log)
         {
             this.connection = connection;
@@ -60,6 +62,7 @@ namespace Rabbus.Consuming
             this.reflection = reflection;
             this.guidGenerator = guidGenerator;
             this.supportedMessageTypesResolver = supportedMessageTypesResolver;
+            this.messageFilters = messageFilters;
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
         }
@@ -128,7 +131,9 @@ namespace Rabbus.Consuming
 
         private void ConsumeSynchronously()
         {
-            foreach (var message in BlockingDequeue(queueConsumer.Queue))
+            var toConsume = messageFilters.Aggregate(BlockingDequeue(queueConsumer.Queue), (current, filter) => filter.Filter(current));
+
+            foreach (var message in toConsume)
             {
                 SetCurrentMessageAndInvokeConsumers(message);
                 queueConsumer.Model.BasicAck(message.DeliveryTag, false);

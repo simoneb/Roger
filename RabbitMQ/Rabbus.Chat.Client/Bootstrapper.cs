@@ -57,7 +57,7 @@ namespace Rabbus.Chat.Client
             base.OnExit(sender, e);
 
             var bus = container.GetExportedValue<IRabbitBus>();
-            bus.Publish(new ClientDisconnected { Endpoint = bus.LocalEndpoint });
+            bus.Publish(new ClientDisconnected());
 
             bus.Dispose();
         }

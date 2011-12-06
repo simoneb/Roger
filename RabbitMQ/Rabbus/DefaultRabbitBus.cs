@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using RabbitMQ.Client;
 using Rabbus.Connection;
@@ -17,7 +19,7 @@ namespace Rabbus
     public class DefaultRabbitBus : IRabbitBus
     {
         private readonly IReliableConnection connection;
-        private readonly IConsumingProcess consumer;
+        private readonly IConsumingProcess consumingProcess;
         private readonly IRabbusLog log;
         private readonly IPublishingProcess publishingProcess;
         private int disposed;
@@ -31,7 +33,8 @@ namespace Rabbus
                                 IMessageSerializer serializer = null,
                                 IReflection reflection = null,
                                 IRabbusLog log = null,
-                                IGuidGenerator guidGenerator = null)
+                                IGuidGenerator guidGenerator = null,
+                                IEnumerable<IMessageFilter> messageFilters = null)
         {
             consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
             typeResolver = typeResolver.Or(Default.TypeResolver);
@@ -41,29 +44,31 @@ namespace Rabbus
             routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
             serializer = serializer.Or(Default.Serializer);
             guidGenerator = guidGenerator.Or(Default.GuidGenerator);
+            messageFilters = messageFilters.Or(Enumerable.Empty<IMessageFilter>());
             this.log = log.Or(Default.Log);
 
             connection = new ReliableConnection(connectionFactory, this.log);
 
             publishingProcess = new QueueingPublishingProcess(connection,
-                                              guidGenerator,
-                                              exchangeResolver,
-                                              routingKeyResolver,
-                                              serializer,
-                                              typeResolver,
-                                              this.log,
-                                              () => LocalEndpoint);
+                                                              guidGenerator,
+                                                              exchangeResolver,
+                                                              routingKeyResolver,
+                                                              serializer,
+                                                              typeResolver,
+                                                              this.log,
+                                                              () => LocalEndpoint);
 
-            consumer = new DefaultConsumingProcess(connection,
-                                           guidGenerator,
-                                           exchangeResolver,
-                                           routingKeyResolver,
-                                           serializer,
-                                           typeResolver,
-                                           consumerResolver,
-                                           reflection,
-                                           supportedMessageTypesResolver,
-                                           this.log);
+            consumingProcess = new DefaultConsumingProcess(connection,
+                                                           guidGenerator,
+                                                           exchangeResolver,
+                                                           routingKeyResolver,
+                                                           serializer,
+                                                           typeResolver,
+                                                           consumerResolver,
+                                                           reflection,
+                                                           supportedMessageTypesResolver,
+                                                           messageFilters,
+                                                           this.log);
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
@@ -75,12 +80,12 @@ namespace Rabbus
 
         public CurrentMessageInformation CurrentMessage
         {
-            get { return consumer.CurrentMessage; }
+            get { return consumingProcess.CurrentMessage; }
         }
 
         public RabbusEndpoint LocalEndpoint
         {
-            get { return consumer.Endpoint; }
+            get { return consumingProcess.Endpoint; }
         }
 
         public TimeSpan ConnectionAttemptInterval
@@ -98,7 +103,7 @@ namespace Rabbus
 
         public IDisposable AddInstanceSubscription(IConsumer instanceConsumer)
         {
-            return consumer.AddInstanceSubscription(instanceConsumer);
+            return consumingProcess.AddInstanceSubscription(instanceConsumer);
         }
 
         public void Publish(object message)
@@ -128,7 +133,7 @@ namespace Rabbus
 
         public void Consume(object message)
         {
-            consumer.Consume(message);
+            consumingProcess.Consume(message);
         }
 
         private void ConnectionEstabilished()
@@ -152,10 +157,13 @@ namespace Rabbus
             if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
                 return;
 
+            log.Debug("Disposing bus");
+
             publishingProcess.Dispose();
 
-            log.Debug("Disposing bus");
+            // TODO: beware that currently here order is important as consumer won't stop unless connection is closed
             connection.Dispose();
+            consumingProcess.Dispose();
         }
     }
 }
