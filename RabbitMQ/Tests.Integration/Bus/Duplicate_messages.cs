@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MbUnit.Framework;
 using Rabbus;
-using Rabbus.Filters;
-using Rabbus.GuidGeneration;
+using Rabbus.Internal.Impl;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -16,12 +15,12 @@ namespace Tests.Integration.Bus
             get { yield return new DeduplicationFilter(TimeSpan.FromSeconds(10)); }
         }
 
-        protected override IGuidGenerator GuidGenerator
+        protected override IIdGenerator IdGenerator
         {
-            get { return new FakeGuidGenerator(); }
+            get { return new FakeIdGenerator(); }
         }
 
-        private class FakeGuidGenerator : IGuidGenerator
+        private class FakeIdGenerator : IIdGenerator
         {
             private RabbusGuid? guid;
 

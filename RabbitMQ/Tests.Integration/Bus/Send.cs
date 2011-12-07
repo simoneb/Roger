@@ -2,7 +2,6 @@
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus;
-using Rabbus.Errors;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus

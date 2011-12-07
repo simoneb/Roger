@@ -2,8 +2,8 @@
 using MbUnit.Framework;
 using NSubstitute;
 using Rabbus;
-using Rabbus.Reflection;
 using System.Linq;
+using Rabbus.Internal.Impl;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit

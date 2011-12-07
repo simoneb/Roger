@@ -2,16 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using RabbitMQ.Client;
-using Rabbus.Connection;
-using Rabbus.Consuming;
-using Rabbus.Errors;
-using Rabbus.GuidGeneration;
-using Rabbus.Logging;
-using Rabbus.Publishing;
-using Rabbus.Reflection;
-using Rabbus.Resolvers;
-using Rabbus.Sequencing;
-using Rabbus.Serialization;
+using Rabbus.Internal;
+using Rabbus.Internal.Impl;
 using Rabbus.Utilities;
 
 namespace Rabbus
@@ -26,25 +18,21 @@ namespace Rabbus
 
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
-                                ITypeResolver typeResolver = null,
                                 ISupportedMessageTypesResolver supportedMessageTypesResolver = null,
                                 IExchangeResolver exchangeResolver = null,
                                 IRoutingKeyResolver routingKeyResolver = null,
                                 IMessageSerializer serializer = null,
-                                IReflection reflection = null,
                                 IRabbusLog log = null,
-                                IGuidGenerator guidGenerator = null,
+                                IIdGenerator idGenerator = null,
                                 ISequenceGenerator sequenceGenerator = null,
                                 IEnumerable<IMessageFilter> messageFilters = null)
         {
             consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
-            typeResolver = typeResolver.Or(Default.TypeResolver);
             supportedMessageTypesResolver = supportedMessageTypesResolver.Or(Default.SupportedMessageTypesResolver);
             exchangeResolver = exchangeResolver.Or(Default.ExchangeResolver);
-            reflection = reflection.Or(Default.Reflection);
             routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
             serializer = serializer.Or(Default.Serializer);
-            guidGenerator = guidGenerator.Or(Default.GuidGenerator);
+            idGenerator = idGenerator.Or(Default.IdGenerator);
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
             messageFilters = messageFilters.Or(Default.Filters);
             this.log = log.Or(Default.Log);
@@ -52,23 +40,23 @@ namespace Rabbus
             connection = new ReliableConnection(connectionFactory, this.log);
 
             publishingProcess = new QueueingPublishingProcess(connection,
-                                                              guidGenerator,
+                                                              idGenerator,
                                                               sequenceGenerator,
                                                               exchangeResolver,
                                                               routingKeyResolver,
                                                               serializer,
-                                                              typeResolver,
+                                                              Default.TypeResolver,
                                                               this.log,
                                                               () => LocalEndpoint);
 
             consumingProcess = new DefaultConsumingProcess(connection,
-                                                           guidGenerator,
+                                                           idGenerator,
                                                            exchangeResolver,
                                                            routingKeyResolver,
                                                            serializer,
-                                                           typeResolver,
+                                                           Default.TypeResolver, 
                                                            consumerResolver,
-                                                           reflection,
+                                                           Default.Reflection, 
                                                            supportedMessageTypesResolver,
                                                            messageFilters,
                                                            this.log);

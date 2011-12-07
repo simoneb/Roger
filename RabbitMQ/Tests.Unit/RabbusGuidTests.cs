@@ -1,6 +1,6 @@
 ﻿using System;
 using MbUnit.Framework;
-using Rabbus.GuidGeneration;
+using Rabbus;
 
 namespace Tests.Unit
 {

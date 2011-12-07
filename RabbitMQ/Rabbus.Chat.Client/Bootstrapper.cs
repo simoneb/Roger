@@ -6,7 +6,6 @@ using System.Linq;
 using Caliburn.Micro;
 using RabbitMQ.Client;
 using Rabbus.Chat.Messages;
-using Rabbus.Resolvers;
 
 namespace Rabbus.Chat.Client
 {

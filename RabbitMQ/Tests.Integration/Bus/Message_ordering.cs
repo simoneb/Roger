@@ -2,8 +2,7 @@
 using System.Linq;
 using MbUnit.Framework;
 using Rabbus;
-using Rabbus.Filters;
-using Rabbus.Sequencing;
+using Rabbus.Internal.Impl;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus

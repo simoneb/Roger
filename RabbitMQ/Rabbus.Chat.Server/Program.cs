@@ -1,6 +1,5 @@
 ﻿using System;
 using RabbitMQ.Client;
-using Rabbus.Resolvers;
 
 namespace Rabbus.Chat.Server
 {

@@ -5,9 +5,6 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Rabbus;
-using Rabbus.GuidGeneration;
-using Rabbus.Resolvers;
-using Rabbus.Sequencing;
 using Rabbus.Utilities;
 using Tests.Integration.Bus.SupportClasses;
 
@@ -27,7 +24,7 @@ namespace Tests.Integration.Bus
             Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Helpers.CreateConnection),
                                        consumerResolver,
                                        log: new DebugLog(),
-                                       guidGenerator: GuidGenerator,
+                                       idGenerator: IdGenerator,
                                        messageFilters: MessageFilters,
                                        sequenceGenerator: SequenceGenerator);
 
@@ -46,7 +43,7 @@ namespace Tests.Integration.Bus
             AfterBusInitialization();
         }
 
-        protected virtual IGuidGenerator GuidGenerator { get { return Default.GuidGenerator;} }
+        protected virtual IIdGenerator IdGenerator { get { return Default.IdGenerator;} }
 
         protected virtual IEnumerable<IMessageFilter> MessageFilters { get { yield break; } }
         protected virtual ISequenceGenerator SequenceGenerator { get { return Default.SequenceGenerator; } }

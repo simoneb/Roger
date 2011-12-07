@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using MbUnit.Framework;
 using RabbitMQ.Util;
 using Rabbus;
-using Rabbus.Filters;
 using System.Linq;
+using Rabbus.Internal;
+using Rabbus.Internal.Impl;
 
 namespace Tests.Unit
 {

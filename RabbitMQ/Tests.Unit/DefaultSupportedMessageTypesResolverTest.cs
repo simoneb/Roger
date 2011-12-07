@@ -1,8 +1,7 @@
 ﻿using System;
 using MbUnit.Framework;
 using Rabbus;
-using Rabbus.Errors;
-using Rabbus.Resolvers;
+using Rabbus.Internal;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit

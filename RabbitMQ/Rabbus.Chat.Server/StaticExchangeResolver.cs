@@ -1,5 +1,4 @@
 using System;
-using Rabbus.Resolvers;
 
 namespace Rabbus.Chat.Server
 {

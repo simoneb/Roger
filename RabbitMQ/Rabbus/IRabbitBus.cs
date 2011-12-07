@@ -1,5 +1,4 @@
 ﻿using System;
-using Rabbus.Errors;
 
 namespace Rabbus
 {

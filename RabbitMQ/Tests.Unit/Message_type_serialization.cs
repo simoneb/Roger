@@ -1,5 +1,5 @@
 using MbUnit.Framework;
-using Rabbus.Resolvers;
+using Rabbus.Internal.Impl;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
