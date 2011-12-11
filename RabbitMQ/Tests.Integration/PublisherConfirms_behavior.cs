@@ -10,17 +10,15 @@ namespace Tests.Integration
     public class Publisher_confirms_behavior : With_rabbitmq_broker
     {
         private SortedSet<ulong> unconfirmed;
-        private List<ulong > lost;
 
         [SetUp]
         public void Setup()
         {
             unconfirmed = new SortedSet<ulong>();
-            lost = new List<ulong>();
         }
 
         [Test]
-        public void Simple_confirms()
+        public void Broker_should_confirm_all_messages()
         {
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
@@ -32,10 +30,22 @@ namespace Tests.Integration
 
                 Start(() => Publisher(model));
 
-                WaitUntilAllAckOrNack();
+                WaitForConfirms();
             }
 
-            Assert.AreEqual(0, lost.Count);
+            Assert.AreEqual(0, unconfirmed.Count);
+        }
+
+        [Test]
+        public void The_first_delivery_tag_of_a_channel_should_be_1()
+        {
+            using (var connection = Helpers.CreateConnection())
+            using (var model = connection.CreateModel())
+            {
+                model.ConfirmSelect();
+
+                Assert.AreEqual(1ul, model.NextPublishSeqNo);
+            }
         }
 
         private void Publisher(IModel model)
@@ -49,8 +59,9 @@ namespace Tests.Integration
             }
         }
 
-        private void WaitUntilAllAckOrNack()
+        private void WaitForConfirms()
         {
+            // wait for publisher to start publishing
             Thread.Sleep(100);
 
             while (true)
@@ -65,18 +76,26 @@ namespace Tests.Integration
 
         private void ModelOnBasicNacks(IModel model, BasicNackEventArgs args)
         {
-            // beware that nack may be for multiple messages
-            lock (unconfirmed)
-                unconfirmed.Remove(args.DeliveryTag);
-
-            lost.Add(args.DeliveryTag);
+            MarkAsConfirmed(args.DeliveryTag, args.Multiple);
         }
 
         private void ModelOnBasicAcks(IModel model, BasicAckEventArgs args)
         {
-            // beware that ack may be for multiple messages
-            lock (unconfirmed)
-                unconfirmed.Remove(args.DeliveryTag);
+            MarkAsConfirmed(args.DeliveryTag, args.Multiple);
+        }
+
+        private void MarkAsConfirmed(ulong deliveryTag, bool multiple)
+        {
+            if (multiple)
+            {
+                lock (unconfirmed)
+                    unconfirmed.RemoveWhere(tag => tag <= deliveryTag);
+            }
+            else
+            {
+                lock (unconfirmed)
+                    unconfirmed.Remove(deliveryTag);
+            }
         }
     }
 }
