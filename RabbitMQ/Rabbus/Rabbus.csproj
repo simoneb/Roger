@@ -46,6 +46,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicReturn.cs" />
+    <Compile Include="Internal\IDeliveryCommand.cs" />
+    <Compile Include="Internal\IDeliveryCommandFactory.cs" />
+    <Compile Include="Internal\Impl\AbstractDeliveryCommandFactory.cs" />
+    <Compile Include="Internal\Impl\MandatoryCommand.cs" />
+    <Compile Include="Internal\Impl\PublishCommand.cs" />
+    <Compile Include="Internal\Impl\PublishCommandFactory.cs" />
+    <Compile Include="Internal\Impl\PublishMandatoryCommand.cs" />
+    <Compile Include="Internal\Impl\PublishMandatoryCommandFactory.cs" />
+    <Compile Include="Internal\Impl\ReplyCommand.cs" />
+    <Compile Include="Internal\Impl\ReplyCommandFactory.cs" />
+    <Compile Include="Internal\Impl\RequestCommand.cs" />
+    <Compile Include="Internal\Impl\RequestCommandFactory.cs" />
+    <Compile Include="Internal\Impl\SendCommand.cs" />
+    <Compile Include="Internal\Impl\SendCommandFactory.cs" />
+    <Compile Include="Internal\Impl\UnconfirmedCommandFactoryFactory.cs" />
     <Compile Include="Internal\IReliableConnection.cs" />
     <Compile Include="Internal\Impl\ReliableConnection.cs" />
     <Compile Include="Consumer`1.cs" />
@@ -55,6 +70,7 @@
     <Compile Include="Internal\Impl\ResequencingFilter.cs" />
     <Compile Include="IIdGenerator.cs" />
     <Compile Include="Internal\Impl\RandomIdGenerator.cs" />
+    <Compile Include="Internal\IUnconfirmedCommandFactory.cs" />
     <Compile Include="RabbusGuid.cs" />
     <Compile Include="Internal\Headers.cs" />
     <Compile Include="IMessageFilter.cs" />

@@ -62,7 +62,8 @@ namespace Rabbus
         /// Replies to a request sent by means of <see cref="Request(object)"/>
         /// </summary>
         /// <param name="message">The response message</param>
-        void Reply(object message);
+        /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>
+        void Reply(object message, Action<BasicReturn> basicReturnCallback = null);
 
         /// <summary>
         /// Manually shove a message into the bus and let consumers consume it

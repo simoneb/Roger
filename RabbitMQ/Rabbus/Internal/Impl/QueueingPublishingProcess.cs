@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Linq;
 
 namespace Rabbus.Internal.Impl
 {
@@ -16,11 +16,12 @@ namespace Rabbus.Internal.Impl
         private readonly IRabbusLog log;
         private int disposed;
         private Task publishTask;
-        private readonly BlockingCollection<Action<IModel>> publishingQueue = new BlockingCollection<Action<IModel>>();
-        private readonly CancellationTokenSource publishCancellationSource = new CancellationTokenSource();
+        //private readonly BlockingCollection<Func<IModel, Action<IModel, RabbusEndpoint>>> publishingQueue = new BlockingCollection<Func<IModel, Action<IModel, RabbusEndpoint>>>();
+        private readonly BlockingCollection<IDeliveryCommandFactory> publishingQueue = new BlockingCollection<IDeliveryCommandFactory>();
+        private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
         private IModel publishModel;
-        private readonly SortedSet<ulong> unconfirmedPublishes = new SortedSet<ulong>();
+        private readonly ConcurrentDictionary<ulong, IUnconfirmedCommandFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedCommandFactory>();
         private readonly IIdGenerator idGenerator;
         private readonly ISequenceGenerator sequenceGenerator;
         private readonly IExchangeResolver exchangeResolver;
@@ -28,6 +29,7 @@ namespace Rabbus.Internal.Impl
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
         private readonly Func<RabbusEndpoint> currentLocalEndpoint;
+        private readonly TimeSpan republishUnconfirmedMessagesThreshold;
 
         internal QueueingPublishingProcess(IReliableConnection connection,
                                            IIdGenerator idGenerator,
@@ -37,7 +39,8 @@ namespace Rabbus.Internal.Impl
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
                                            IRabbusLog log,
-                                           Func<RabbusEndpoint> currentLocalEndpoint)
+                                           Func<RabbusEndpoint> currentLocalEndpoint,
+                                           TimeSpan republishUnconfirmedMessagesThreshold)
         {
             this.connection = connection;
             this.log = log;
@@ -48,6 +51,7 @@ namespace Rabbus.Internal.Impl
             this.serializer = serializer;
             this.typeResolver = typeResolver;
             this.currentLocalEndpoint = currentLocalEndpoint;
+            this.republishUnconfirmedMessagesThreshold = republishUnconfirmedMessagesThreshold;
 
             basicReturnHandler = new DefaultBasicReturnHandler(this.log);
 
@@ -67,33 +71,45 @@ namespace Rabbus.Internal.Impl
             EnablePublishing();
         }
 
+        private void CreatePublishModel()
+        {
+            publishModel = connection.CreateModel();
+
+            publishModel.BasicAcks += PublishModelOnBasicAcks;
+            publishModel.BasicNacks += PublishModelOnBasicNacks;
+            publishModel.BasicReturn += PublishModelOnBasicReturn;
+            publishModel.ConfirmSelect();
+        }
+
         private void EnablePublishing()
         {
             publishEnabled.Set();
             log.Debug("Publishing is enabled");
         }
 
-        private void CreatePublishModel()
-        {
-            publishModel = connection.CreateModel();
-
-            //publishModel.BasicAcks += PublishModelOnBasicAcks;
-            publishModel.BasicReturn += PublishModelOnBasicReturn;
-            //publishModel.ConfirmSelect();
-        }
-
         private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)
         {
+            IUnconfirmedCommandFactory _;
+
             if (args.Multiple)
             {
                 log.DebugFormat("Broker confirmed all messages up to and including {0}", args.DeliveryTag);
-                unconfirmedPublishes.RemoveWhere(tag => tag <= args.DeliveryTag);
+
+                var toRemove = unconfirmedCommands.Keys.Where(tag => tag <= args.DeliveryTag).ToArray();
+
+                foreach (var tag in toRemove)
+                    unconfirmedCommands.TryRemove(tag, out _);
             }
             else
             {
                 log.DebugFormat("Broker confirmed message {0}", args.DeliveryTag);
-                unconfirmedPublishes.Remove(args.DeliveryTag);
+                unconfirmedCommands.TryRemove(args.DeliveryTag, out _);
             }
+        }
+
+        private void PublishModelOnBasicNacks(IModel model, BasicNackEventArgs args)
+        {
+            
         }
 
         private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)
@@ -109,18 +125,27 @@ namespace Rabbus.Internal.Impl
             {
                 try
                 {
-                    foreach (var publish in publishingQueue.GetConsumingEnumerable(publishCancellationSource.Token))
+                    foreach (var factory in publishingQueue.GetConsumingEnumerable(tokenSource.Token))
                     {
                         try
                         {
-                            publishEnabled.Wait(publishCancellationSource.Token);
+                            publishEnabled.Wait(tokenSource.Token);
                         }
                         catch (OperationCanceledException)
                         {
                             // operation canceled while waiting for publish to be enabled, just break out of the loop
                             break;
                         }
-                        publish(publishModel); // TODO: handle failure
+                        
+                        var command = factory.Create(publishModel,
+                                                     idGenerator,
+                                                     typeResolver,
+                                                     serializer,
+                                                     sequenceGenerator);
+
+                        unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactoryFactory(command, republishUnconfirmedMessagesThreshold));
+
+                        command.Execute(publishModel, currentLocalEndpoint(), basicReturnHandler); // TODO: handle failure
                     }
                 }
                 catch (OperationCanceledException)
@@ -134,12 +159,12 @@ namespace Rabbus.Internal.Impl
             }, TaskCreationOptions.LongRunning);
         }
 
-        private void Enqueue(Action<IModel> publishAction)
+        private void Enqueue(IDeliveryCommandFactory factory)
         {
             try
             {
                 log.Debug("Enqueuing publish action");
-                publishingQueue.Add(publishAction);
+                publishingQueue.Add(factory);
             }
             catch (ObjectDisposedException)
             {
@@ -153,58 +178,59 @@ namespace Rabbus.Internal.Impl
 
         public void Publish(object message)
         {
-            Enqueue(model =>
-            {
-                var messageType = message.GetType();
-                var properties = CreateProperties(model, messageType);
+            var messageType = message.GetType();
 
-                model.BasicPublish(ExchangeFor(messageType), RoutingKeyFor(messageType), properties, Serialize(message));
-            });
+            var factory = new PublishCommandFactory(messageType,
+                                                    ExchangeFor(messageType),
+                                                    RoutingKeyFor(messageType),
+                                                    Serialize(message));
+
+            Enqueue(factory);
         }
 
         public void Request(object message, Action<BasicReturn> basicReturnCallback)
         {
-            Enqueue(model =>
-            {
-                var properties = CreateProperties(model, message.GetType());
-                properties.CorrelationId = idGenerator.Next();
+            var messageType = message.GetType();
 
-                PublishMandatoryInternal(model, message, properties, basicReturnCallback);
-            });
+            Enqueue(new RequestCommandFactory(messageType,
+                                              ExchangeFor(messageType),
+                                              RoutingKeyFor(messageType),
+                                              Serialize(message), 
+                                              basicReturnCallback));
         }
 
         public void Send(RabbusEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback)
         {
-            Enqueue(model =>
-            {
-                var properties = CreateProperties(model, message.GetType());
+            var messageType = message.GetType();
 
-                PublishMandatoryInternal(model, message, properties, basicReturnCallback, recipient.Queue);
-            });
+            Enqueue(new SendCommandFactory(messageType,
+                                           ExchangeFor(messageType),
+                                           recipient,
+                                           Serialize(message),
+                                           basicReturnCallback));
         }
 
         public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback)
         {
-            Enqueue(model =>
-            {
-                var properties = CreateProperties(model, message.GetType());
+            var messageType = message.GetType();
 
-                PublishMandatoryInternal(model, message, properties, basicReturnCallback);
-            });
+            Enqueue(new PublishMandatoryCommandFactory(messageType,
+                                                       ExchangeFor(messageType),
+                                                       RoutingKeyFor(messageType),
+                                                       Serialize(message),
+                                                       basicReturnCallback));
         }
 
-        public void Reply(object message, CurrentMessageInformation currentMessage)
+        public void Reply(object message, CurrentMessageInformation currentMessage, Action<BasicReturn> basicReturnCallback)
         {
             EnsureRequestContext(currentMessage);
             ValidateReplyMessage(message);
 
-            Enqueue(model =>
-            {
-                var properties = CreateProperties(model, message.GetType());
-                properties.CorrelationId = currentMessage.CorrelationId;
-
-                model.BasicPublish(ExchangeFor(currentMessage.MessageType), currentMessage.Endpoint, properties, Serialize(message));
-            });
+            Enqueue(new ReplyCommandFactory(message.GetType(),
+                                            ExchangeFor(currentMessage.MessageType),
+                                            currentMessage,
+                                            Serialize(message),
+                                            basicReturnCallback));
         }
 
         private void EnsureRequestContext(CurrentMessageInformation currentMessage)
@@ -227,18 +253,7 @@ namespace Rabbus.Internal.Impl
             }
         }
 
-        private void PublishMandatoryInternal(IModel model, object message, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
-        {
-            PublishMandatoryInternal(model, message, properties, basicReturnCallback, RoutingKeyFor(message.GetType()));
-        }
-
-        private void PublishMandatoryInternal(IModel model, object message, IBasicProperties properties, Action<BasicReturn> basicReturnCallback, string routingKey)
-        {
-            if (basicReturnCallback != null)
-                basicReturnHandler.Subscribe(new RabbusGuid(properties.MessageId), basicReturnCallback);
-
-            model.BasicPublish(ExchangeFor(message.GetType()), routingKey, true, false, properties, Serialize(message));
-        }
+       
 
         private string ExchangeFor(Type messageType)
         {
@@ -255,35 +270,30 @@ namespace Rabbus.Internal.Impl
             return serializer.Serialize(message);
         }
 
-        private IBasicProperties CreateProperties(IModel model, Type messageType)
-        {
-            var properties = model.CreateBasicProperties();
-
-            properties.MessageId = idGenerator.Next();
-            properties.Type = typeResolver.Unresolve(messageType);
-            properties.ReplyTo = currentLocalEndpoint().Queue;
-            properties.ContentType = serializer.ContentType;
-
-            properties.Headers = new Hashtable
-            {
-                {Headers.Sequence, BitConverter.GetBytes(sequenceGenerator.Next())}
-            };
-
-            return properties;
-        }
-
         public void Dispose()
         {
             if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
                 return;
 
             publishingQueue.CompleteAdding();
-            publishCancellationSource.Cancel();
+            tokenSource.Cancel();
             publishTask.Wait();
 
             publishingQueue.Dispose();
-            publishCancellationSource.Dispose();
+            tokenSource.Dispose();
             publishTask.Dispose();
+        }
+
+        internal void ProcessUnconfirmed()
+        {
+            var toProcess = unconfirmedCommands.Where(p => p.Value.CanExecute);
+
+            foreach (var tp in toProcess)
+            {
+                IUnconfirmedCommandFactory publish;
+                unconfirmedCommands.TryRemove(tp.Key, out publish);
+                Enqueue(publish);         
+            }
         }
     }
 }

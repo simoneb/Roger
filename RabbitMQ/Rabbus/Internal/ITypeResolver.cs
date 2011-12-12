@@ -2,7 +2,10 @@
 
 namespace Rabbus.Internal
 {
-    internal interface ITypeResolver
+    /// <summary>
+    /// Generates representations of <see cref="Type"/> instances suitable for serialization
+    /// </summary>
+    public interface ITypeResolver
     {
         /// <summary>
         /// Provides the string representation of a type string representation
@@ -23,6 +26,6 @@ namespace Rabbus.Internal
         /// </summary>
         /// <param name="typeName">The string representation of the type</param>
         /// <returns>The type corresponding to the string representation</returns>
-        Type ResolveType(string typeName);
+        Type Resolve(string typeName);
     }
 }

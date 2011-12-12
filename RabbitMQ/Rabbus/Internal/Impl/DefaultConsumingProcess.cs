@@ -142,7 +142,7 @@ namespace Rabbus.Internal.Impl
         private CurrentMessageInformation CreateMessage(BasicDeliverEventArgs args)
         {
             var properties = args.BasicProperties;
-            var messageType = typeResolver.ResolveType(properties.Type);
+            var messageType = typeResolver.Resolve(properties.Type);
 
             return new CurrentMessageInformation
             {

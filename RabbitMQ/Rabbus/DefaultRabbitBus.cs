@@ -47,7 +47,8 @@ namespace Rabbus
                                                               serializer,
                                                               Default.TypeResolver,
                                                               this.log,
-                                                              () => LocalEndpoint);
+                                                              () => LocalEndpoint,
+                                                              TimeSpan.FromSeconds(10));
 
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,
@@ -117,9 +118,9 @@ namespace Rabbus
             publishingProcess.PublishMandatory(message, basicReturnCallback);
         }
 
-        public void Reply(object message)
+        public void Reply(object message, Action<BasicReturn> basicReturnCallback = null)
         {
-            publishingProcess.Reply(message, CurrentMessage);
+            publishingProcess.Reply(message, CurrentMessage, basicReturnCallback);
         }
 
         public void Consume(object message)

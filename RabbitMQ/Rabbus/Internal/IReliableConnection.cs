@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace Rabbus.Internal
 {
-    internal interface IReliableConnection : IDisposable
+    public interface IReliableConnection : IDisposable
     {
         TimeSpan ConnectionAttemptInterval { get; }
         void Connect();
