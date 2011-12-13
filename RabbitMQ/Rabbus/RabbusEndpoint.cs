@@ -12,9 +12,9 @@ namespace Rabbus
 
         public readonly string Queue;
 
-        public bool IsEmpty()
+        public bool IsEmpty
         {
-            return string.IsNullOrWhiteSpace(Queue);
+            get { return string.IsNullOrWhiteSpace(Queue); }
         }
 
         public static implicit operator string(RabbusEndpoint endpoint)

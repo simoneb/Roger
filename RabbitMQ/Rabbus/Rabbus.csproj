@@ -60,7 +60,7 @@
     <Compile Include="Internal\Impl\RequestCommandFactory.cs" />
     <Compile Include="Internal\Impl\SendCommand.cs" />
     <Compile Include="Internal\Impl\SendCommandFactory.cs" />
-    <Compile Include="Internal\Impl\UnconfirmedCommandFactoryFactory.cs" />
+    <Compile Include="Internal\Impl\UnconfirmedCommandFactory.cs" />
     <Compile Include="Internal\IReliableConnection.cs" />
     <Compile Include="Internal\Impl\ReliableConnection.cs" />
     <Compile Include="Consumer`1.cs" />

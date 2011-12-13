@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +15,6 @@ namespace Rabbus.Internal.Impl
         private readonly IRabbusLog log;
         private int disposed;
         private Task publishTask;
-        //private readonly BlockingCollection<Func<IModel, Action<IModel, RabbusEndpoint>>> publishingQueue = new BlockingCollection<Func<IModel, Action<IModel, RabbusEndpoint>>>();
         private readonly BlockingCollection<IDeliveryCommandFactory> publishingQueue = new BlockingCollection<IDeliveryCommandFactory>();
         private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
@@ -143,7 +141,7 @@ namespace Rabbus.Internal.Impl
                                                      serializer,
                                                      sequenceGenerator);
 
-                        unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactoryFactory(command, republishUnconfirmedMessagesThreshold));
+                        unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, republishUnconfirmedMessagesThreshold));
 
                         command.Execute(publishModel, currentLocalEndpoint(), basicReturnHandler); // TODO: handle failure
                     }
@@ -180,12 +178,10 @@ namespace Rabbus.Internal.Impl
         {
             var messageType = message.GetType();
 
-            var factory = new PublishCommandFactory(messageType,
-                                                    ExchangeFor(messageType),
-                                                    RoutingKeyFor(messageType),
-                                                    Serialize(message));
-
-            Enqueue(factory);
+            Enqueue(new PublishCommandFactory(messageType,
+                                              Exchange(messageType),
+                                              RoutingKey(messageType),
+                                              Serialize(message)));
         }
 
         public void Request(object message, Action<BasicReturn> basicReturnCallback)
@@ -193,8 +189,8 @@ namespace Rabbus.Internal.Impl
             var messageType = message.GetType();
 
             Enqueue(new RequestCommandFactory(messageType,
-                                              ExchangeFor(messageType),
-                                              RoutingKeyFor(messageType),
+                                              Exchange(messageType),
+                                              RoutingKey(messageType),
                                               Serialize(message), 
                                               basicReturnCallback));
         }
@@ -204,7 +200,7 @@ namespace Rabbus.Internal.Impl
             var messageType = message.GetType();
 
             Enqueue(new SendCommandFactory(messageType,
-                                           ExchangeFor(messageType),
+                                           Exchange(messageType),
                                            recipient,
                                            Serialize(message),
                                            basicReturnCallback));
@@ -215,8 +211,8 @@ namespace Rabbus.Internal.Impl
             var messageType = message.GetType();
 
             Enqueue(new PublishMandatoryCommandFactory(messageType,
-                                                       ExchangeFor(messageType),
-                                                       RoutingKeyFor(messageType),
+                                                       Exchange(messageType),
+                                                       RoutingKey(messageType),
                                                        Serialize(message),
                                                        basicReturnCallback));
         }
@@ -227,7 +223,7 @@ namespace Rabbus.Internal.Impl
             ValidateReplyMessage(message);
 
             Enqueue(new ReplyCommandFactory(message.GetType(),
-                                            ExchangeFor(currentMessage.MessageType),
+                                            Exchange(currentMessage.MessageType),
                                             currentMessage,
                                             Serialize(message),
                                             basicReturnCallback));
@@ -236,7 +232,7 @@ namespace Rabbus.Internal.Impl
         private void EnsureRequestContext(CurrentMessageInformation currentMessage)
         {
             if (currentMessage == null ||
-                currentMessage.Endpoint.IsEmpty() ||
+                currentMessage.Endpoint.IsEmpty ||
                 currentMessage.CorrelationId.IsEmpty)
             {
                 log.Error("Reply method called out of the context of a message handling request");
@@ -253,14 +249,12 @@ namespace Rabbus.Internal.Impl
             }
         }
 
-       
-
-        private string ExchangeFor(Type messageType)
+        private string Exchange(Type messageType)
         {
             return exchangeResolver.Resolve(messageType);
         }
 
-        private string RoutingKeyFor(Type messageType)
+        private string RoutingKey(Type messageType)
         {
             return routingKeyResolver.Resolve(messageType);
         }

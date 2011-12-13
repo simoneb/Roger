@@ -4,13 +4,13 @@ using Rabbus.Utilities;
 
 namespace Rabbus.Internal.Impl
 {
-    internal class UnconfirmedCommandFactoryFactory : IUnconfirmedCommandFactory
+    internal class UnconfirmedCommandFactory : IUnconfirmedCommandFactory
     {
         private readonly IDeliveryCommand inner;
         private readonly TimeSpan republishUnconfirmedMessagesThreshold;
         private readonly DateTimeOffset created;
 
-        public UnconfirmedCommandFactoryFactory(IDeliveryCommand inner, TimeSpan republishUnconfirmedMessagesThreshold)
+        public UnconfirmedCommandFactory(IDeliveryCommand inner, TimeSpan republishUnconfirmedMessagesThreshold)
         {
             created = SystemTime.Now;
             this.inner = inner;

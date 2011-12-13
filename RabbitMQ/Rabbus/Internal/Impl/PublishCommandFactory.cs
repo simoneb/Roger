@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace Rabbus.Internal.Impl
 {
-    internal class PublishCommandFactory : AbstractDeliveryCommandFactory, IDeliveryCommandFactory
+    internal class PublishCommandFactory : AbstractDeliveryCommandFactory
     {
         private readonly string exchange;
         private readonly string routingKey;
