@@ -8,6 +8,9 @@ using Rabbus.Utilities;
 
 namespace Rabbus
 {
+    /// <summary>
+    /// Main entry point of the library
+    /// </summary>
     public class DefaultRabbitBus : IRabbitBus
     {
         private readonly IReliableConnection connection;
@@ -16,6 +19,20 @@ namespace Rabbus
         private readonly IPublishingProcess publishingProcess;
         private int disposed;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionFactory"></param>
+        /// <param name="consumerResolver"></param>
+        /// <param name="supportedMessageTypesResolver"></param>
+        /// <param name="exchangeResolver"></param>
+        /// <param name="routingKeyResolver"></param>
+        /// <param name="serializer"></param>
+        /// <param name="log"></param>
+        /// <param name="idGenerator"></param>
+        /// <param name="sequenceGenerator"></param>
+        /// <param name="messageFilters"></param>
+        /// <param name="noLocal">Configuress whether messages published by the bus should be received by consumers active on the same instance of the bus</param>
         public DefaultRabbitBus(IConnectionFactory connectionFactory,
                                 IConsumerResolver consumerResolver = null,
                                 ISupportedMessageTypesResolver supportedMessageTypesResolver = null,
@@ -25,7 +42,8 @@ namespace Rabbus
                                 IRabbusLog log = null,
                                 IIdGenerator idGenerator = null,
                                 ISequenceGenerator sequenceGenerator = null,
-                                IEnumerable<IMessageFilter> messageFilters = null)
+                                IEnumerable<IMessageFilter> messageFilters = null,
+                                bool noLocal = false)
         {
             consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
             supportedMessageTypesResolver = supportedMessageTypesResolver.Or(Default.SupportedMessageTypesResolver);
@@ -34,7 +52,7 @@ namespace Rabbus
             serializer = serializer.Or(Default.Serializer);
             idGenerator = idGenerator.Or(Default.IdGenerator);
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
-            messageFilters = messageFilters.Or(Default.Filters);
+            messageFilters = messageFilters.Or(Default.Filters).ConcatIf(noLocal, new NoLocalFilter(() => LocalEndpoint));
             this.log = log.Or(Default.Log);
 
             connection = new ReliableConnection(connectionFactory, this.log);

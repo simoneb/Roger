@@ -50,6 +50,7 @@
     <Compile Include="Internal\IDeliveryCommandFactory.cs" />
     <Compile Include="Internal\Impl\AbstractDeliveryCommandFactory.cs" />
     <Compile Include="Internal\Impl\MandatoryCommand.cs" />
+    <Compile Include="Internal\Impl\NoLocalFilter.cs" />
     <Compile Include="Internal\Impl\PublishCommand.cs" />
     <Compile Include="Internal\Impl\PublishCommandFactory.cs" />
     <Compile Include="Internal\Impl\PublishMandatoryCommand.cs" />
@@ -111,7 +112,7 @@
     <Compile Include="Internal\Impl\ProtoBufNetSerializer.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
-    <Compile Include="Utilities\EnumerableExtensions.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\ICache.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
     <Compile Include="Utilities\ConcurrentSelfExpiringCache.cs" />
