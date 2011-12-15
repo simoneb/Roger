@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using RabbitMQ.Client;
 
 namespace Rabbus.Internal.Impl
 {
@@ -10,7 +11,7 @@ namespace Rabbus.Internal.Impl
         private readonly ConcurrentDictionary<RabbusEndpoint, uint> nextSequence = new ConcurrentDictionary<RabbusEndpoint, uint>();
         private readonly ConcurrentDictionary<RabbusEndpoint, SortedDictionary<uint, CurrentMessageInformation>> pending = new ConcurrentDictionary<RabbusEndpoint, SortedDictionary<uint, CurrentMessageInformation>>();
 
-        public IEnumerable<CurrentMessageInformation> Filter(IEnumerable<CurrentMessageInformation> input)
+        public IEnumerable<CurrentMessageInformation> Filter(IEnumerable<CurrentMessageInformation> input, IModel model)
         {
             foreach (var element in input)
             {

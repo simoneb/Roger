@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MbUnit.Framework;
+using NSubstitute;
+using RabbitMQ.Client;
 using RabbitMQ.Util;
 using Rabbus;
 using System.Linq;
@@ -26,7 +28,7 @@ namespace Tests.Unit
         [Test]
         public void Should_return_ordered_messages_when_already_ordered()
         {
-            Assert.AreEqual(new uint[]{1,2,3}, Bodies(sut.Filter(Messages(1, 2, 3))));
+            Assert.AreEqual(new uint[]{1,2,3}, Bodies(sut.Filter(Messages(1, 2, 3), Substitute.For<IModel>())));
         }
 
         [Test]
@@ -38,7 +40,7 @@ namespace Tests.Unit
 
             Task.Factory.StartNew(() =>
             {
-                foreach (var m in sut.Filter(sharedQueue.Cast<CurrentMessageInformation>()))
+                foreach (var m in sut.Filter(sharedQueue.Cast<CurrentMessageInformation>(), Substitute.For<IModel>()))
                 {
                     result.Add(m);
                     handle.Set();
@@ -65,19 +67,20 @@ namespace Tests.Unit
         [Test]
         public void Should_return_message_with_random_sequence_if_first_time_seen()
         {
-            Assert.AreEqual(new uint[] { 100 }, Bodies(sut.Filter(Messages(100))));
+            Assert.AreEqual(new uint[] { 100 }, Bodies(sut.Filter(Messages(100), Substitute.For<IModel>())));
         }
 
         [Test]
         public void Should_ignore_messages_with_lower_sequence_as_they_should_have_already_been_processed()
         {
-            Assert.AreEqual(new uint[] { 4, 5, 6 }, Bodies(sut.Filter(Messages(4, 5, 6, 3))));            
+            Assert.AreEqual(new uint[] { 4, 5, 6 }, Bodies(sut.Filter(Messages(4, 5, 6, 3), Substitute.For<IModel>())));            
         }
 
         [Test]
         public void Should_handle_sequences_using_publisher_endpoint_as_discriminator()
         {
-            Assert.AreEqual(new uint[] { 1, 1 }, Bodies(sut.Filter(new[]{Message(1, "queue1"), Message(1, "queue2")})));            
+            Assert.AreEqual(new uint[] { 1, 1 }, Bodies(sut.Filter(new[]{Message(1, "queue1"), Message(1, "queue2")},
+                                                                   Substitute.For<IModel>())));            
         }
 
         private static uint[] Bodies(IEnumerable<CurrentMessageInformation> filter)

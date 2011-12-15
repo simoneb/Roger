@@ -125,9 +125,9 @@ namespace Rabbus.Internal.Impl
 
         private void ConsumeSynchronously()
         {
-            var toConsume = messageFilters.Aggregate(BlockingDequeue(queueConsumer.Queue), (current, filter) => filter.Filter(current));
+            var messages = messageFilters.Aggregate(BlockingDequeue(queueConsumer.Queue), (current, filter) => filter.Filter(current, queueConsumer.Model));
 
-            foreach (var message in toConsume)
+            foreach (var message in messages)
             {
                 SetCurrentMessageAndInvokeConsumers(message);
                 queueConsumer.Model.BasicAck(message.DeliveryTag, false);

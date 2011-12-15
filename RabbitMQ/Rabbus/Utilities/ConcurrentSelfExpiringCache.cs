@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Rabbus.Utilities
 {
-    internal class ConcurrentSelfExpiringCache<T>
+    internal class ConcurrentSelfExpiringCache<T> : ICache<T>
     {
         private class ExpiryDescriptor
         {
@@ -37,12 +37,12 @@ namespace Rabbus.Utilities
 
             cache.AddOrUpdate(key, k => { created = true; return new ExpiryDescriptor(expiry); }, (k, _) => new ExpiryDescriptor(expiry));
 
-            Cleanup();
+            CleanupExpiredEntries();
 
             return created;
         }
 
-        private void Cleanup()
+        private void CleanupExpiredEntries()
         {
             var toRemove = cache.Where(c => c.Value.Expired).Select(p => p.Key).ToArray();
 

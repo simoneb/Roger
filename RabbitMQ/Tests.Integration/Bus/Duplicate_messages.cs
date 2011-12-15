@@ -17,10 +17,10 @@ namespace Tests.Integration.Bus
 
         protected override IIdGenerator IdGenerator
         {
-            get { return new FakeIdGenerator(); }
+            get { return new StaticIdGenerator(); }
         }
 
-        private class FakeIdGenerator : IIdGenerator
+        private class StaticIdGenerator : IIdGenerator
         {
             private RabbusGuid? guid;
 
