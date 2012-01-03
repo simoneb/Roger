@@ -73,9 +73,9 @@
       <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Shoveling\Shoveling.csproj">
+    <ProjectReference Include="..\Federation\Federation.csproj">
       <Project>{03F4533A-B8B4-4729-BA99-1B8F2A1ACF5D}</Project>
-      <Name>Shoveling</Name>
+      <Name>Federation</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tutorial1\Tutorial1.csproj">
       <Project>{94C74F05-EE98-4E6C-A896-872032527332}</Project>
