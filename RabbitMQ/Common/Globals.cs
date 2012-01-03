@@ -2,13 +2,14 @@
 {
     public static class Globals
     {
-        public const string HostName = "localhost";
-        public const int Port = 5672;
-        public const string VirtualHost = "/";
-        public const int ShovelPort = 5673;
-        public const int SecondaryPort = 5674;
-        public const string ShovelingExchangeName = "ShovelingExchange";
+        public const string MainHostName = "localhost";
+        public const int MainConnectionPort = 5672;
+        public const string MainVirtualHost = "/";
+        public const string SecondaryHostName = MainHostName;
+        public const int SecondaryConnectionPort = 5674;
         public const string SecondaryVirtualHost = "secondary";
-        public const string SecondaryHostName = HostName;
+
+        public const int FederationConnectionPort = 5673;
+        public const string FederationExchangeName = "FederationExchange";
     }
 }

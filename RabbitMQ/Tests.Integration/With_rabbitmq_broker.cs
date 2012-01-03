@@ -1,8 +1,6 @@
 using System;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Common;
 using MbUnit.Framework;
 using Resbit;
 using Tests.Integration.Utils;
@@ -13,20 +11,7 @@ namespace Tests.Integration
     public class With_rabbitmq_broker
     {
         protected static RabbitMQBroker Broker { get { return Bootstrap.Broker;  } }
-        protected static readonly ResbitClient RestClient = new ResbitClient(Globals.HostName, "guest", "guest");
-
-        [FixtureSetUp]
-        public void Check_broker_running()
-        {
-            try
-            {
-                Assert.IsNotNull(RestClient.Overview(), "Broker does not appear to be running");
-            }
-            catch (WebException e)
-            {
-                Assert.Fail("Broker does not appear to be running: {0}", e);
-            }
-        }
+        protected static ResbitClient RestClient { get { return Bootstrap.ResbitClient; } }
 
         protected Tuple<Task<TResult>, CancellationTokenSource> Start<TResult>(Func<TResult> function)
         {

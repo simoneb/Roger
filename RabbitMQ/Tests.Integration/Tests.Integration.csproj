@@ -85,9 +85,9 @@
     <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
-    <Compile Include="FunctionalSpecs\Shovel_link_goes_down.cs" />
+    <Compile Include="FunctionalSpecs\Federation_link_goes_down.cs" />
     <Compile Include="FunctionalSpecs\Subscriber_on_secondary_node.cs" />
-    <Compile Include="General_shoveling_tests.cs" />
+    <Compile Include="General_federation_tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirms_behavior.cs" />
     <Compile Include="QueueingBasicConsumer_behavior.cs" />
@@ -109,7 +109,7 @@
     <Compile Include="When_dequeuing_manually.cs" />
     <Compile Include="When_iterating_queue.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
-    <Compile Include="With_shovel.cs" />
+    <Compile Include="With_federation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

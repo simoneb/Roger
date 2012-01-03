@@ -16,7 +16,7 @@ namespace Runner
 
         static void Main(string[] args)
         {
-            Run<Shoveling.Runner>(args);
+            Run<Federation.Runner>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider

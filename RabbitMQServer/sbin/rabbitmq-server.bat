@@ -26,7 +26,6 @@ setlocal enabledelayedexpansion
 if exist "!TDP0!..\config\startup-config.bat" (
     CALL "!TDP0!..\config\startup-config.bat"
 )
-
 if "!RABBITMQ_BASE!"=="" (
     set RABBITMQ_BASE=!APPDATA!\RabbitMQ
 )
@@ -61,30 +60,19 @@ if not exist "!ERLANG_HOME!\bin\erl.exe" (
     exit /B
 )
 
-set RABBITMQ_BASE_UNIX=!RABBITMQ_BASE:\=/!
-
 if "!RABBITMQ_MNESIA_BASE!"=="" (
-    set RABBITMQ_MNESIA_BASE=!RABBITMQ_BASE_UNIX!/db
+    set RABBITMQ_MNESIA_BASE=!RABBITMQ_BASE!/db
 )
 if "!RABBITMQ_LOG_BASE!"=="" (
-    set RABBITMQ_LOG_BASE=!RABBITMQ_BASE_UNIX!/log
+    set RABBITMQ_LOG_BASE=!RABBITMQ_BASE!/log
 )
 
 
 rem We save the previous logs in their respective backup
 rem Log management (rotation, filtering based of size...) is left as an exercice for the user.
 
-set BACKUP_EXTENSION=.1
-
 set LOGS=!RABBITMQ_LOG_BASE!\!RABBITMQ_NODENAME!.log
 set SASL_LOGS=!RABBITMQ_LOG_BASE!\!RABBITMQ_NODENAME!-sasl.log
-
-if exist "!LOGS!" (
-    type "!LOGS!" >> "!LOGS!!BACKUP_EXTENSION!"
-)
-if exist "!SASL_LOGS!" (
-    type "!SASL_LOGS!" >> "!SASL_LOGS!!BACKUP_EXTENSION!"
-)
 
 rem End of log management
 
@@ -97,6 +85,10 @@ if "!RABBITMQ_PLUGINS_EXPAND_DIR!"=="" (
     set RABBITMQ_PLUGINS_EXPAND_DIR=!RABBITMQ_MNESIA_BASE!/!RABBITMQ_NODENAME!-plugins-expand
 )
 
+if "!RABBITMQ_ENABLED_PLUGINS_FILE!"=="" (
+    set RABBITMQ_ENABLED_PLUGINS_FILE=!RABBITMQ_BASE!\enabled_plugins
+)
+
 set RABBITMQ_PLUGINS_DIR=!TDP0!..\plugins
 set RABBITMQ_EBIN_ROOT=!TDP0!..\ebin
 
@@ -105,7 +97,8 @@ set RABBITMQ_EBIN_ROOT=!TDP0!..\ebin
 -noinput -hidden ^
 -s rabbit_prelaunch ^
 -sname rabbitmqprelaunch!RANDOM! ^
--extra "!RABBITMQ_PLUGINS_DIR:\=/!" ^
+-extra "!RABBITMQ_ENABLED_PLUGINS_FILE:\=/!" ^
+       "!RABBITMQ_PLUGINS_DIR:\=/!" ^
        "!RABBITMQ_PLUGINS_EXPAND_DIR:\=/!" ^
        "!RABBITMQ_NODENAME!"
 
@@ -139,20 +132,20 @@ if not "!RABBITMQ_NODE_IP_ADDRESS!"=="" (
 -boot "!RABBITMQ_BOOT_FILE!" ^
 !RABBITMQ_CONFIG_ARG! ^
 -sname !RABBITMQ_NODENAME! ^
--s rabbit ^
 +W w ^
 +A30 ^
 +P 1048576 ^
 -kernel inet_default_connect_options "[{nodelay, true}]" ^
 !RABBITMQ_LISTEN_ARG! ^
--kernel error_logger {file,\""!LOGS:\=/!"\"} ^
 !RABBITMQ_SERVER_ERL_ARGS! ^
 -sasl errlog_type error ^
--sasl sasl_error_logger {file,\""!SASL_LOGS:\=/!"\"} ^
+-sasl sasl_error_logger false ^
+-rabbit error_logger {file,\""!LOGS:\=/!"\"} ^
+-rabbit sasl_error_logger {file,\""!SASL_LOGS:\=/!"\"} ^
 -os_mon start_cpu_sup true ^
 -os_mon start_disksup false ^
 -os_mon start_memsup false ^
--mnesia dir \""!RABBITMQ_MNESIA_DIR!"\" ^
+-mnesia dir \""!RABBITMQ_MNESIA_DIR:\=/!"\" ^
 !RABBITMQ_SERVER_START_ARGS! ^
 !STAR!
 

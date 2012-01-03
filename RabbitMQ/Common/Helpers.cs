@@ -12,9 +12,9 @@ namespace Common
         {
             return new ConnectionFactory
             {
-                HostName = Globals.HostName,
-                Port = Globals.Port,
-                VirtualHost = Globals.VirtualHost
+                HostName = Globals.MainHostName,
+                Port = Globals.MainConnectionPort,
+                VirtualHost = Globals.MainVirtualHost
             }.CreateConnection();
         }
 
@@ -23,7 +23,7 @@ namespace Common
             return new ConnectionFactory
             {
                 HostName = Globals.SecondaryHostName,
-                Port = Globals.SecondaryPort,
+                Port = Globals.SecondaryConnectionPort,
                 VirtualHost = Globals.SecondaryVirtualHost
             }.CreateConnection();
         }
@@ -31,6 +31,11 @@ namespace Common
         public static IConnection CreateSafeShutdownConnection()
         {
             return new SafeShutdownConnection(CreateConnection());
+        }
+
+        public static IConnection CreateSafeShutdownSecondaryConnection()
+        {
+            return new SafeShutdownConnection(CreateSecondaryConnection());
         }
 
         private class SafeShutdownConnection : IConnection

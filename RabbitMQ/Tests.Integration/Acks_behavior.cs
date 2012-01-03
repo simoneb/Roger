@@ -139,7 +139,7 @@ namespace Tests.Integration
         }
 
         [Test]
-        public void Nack_with_multiple_and_requeue()
+        public void Nack_with_multiple_and_requeue_requeues_nacked_messages_in_the_order_they_were_published()
         {
             NumberOfExpectedMessages = 15;
 
@@ -162,7 +162,7 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 2000);
 
-            Assert.AreElementsEqual(ExpectedMessages.Concat(new[] { 4, 3, 2, 1, 0 }), m_received);
+            Assert.AreElementsEqual(ExpectedMessages.Concat(new[] { 0, 1, 2, 3, 4 }), m_received);
         }
 
         private bool ReceivedAllMessages()

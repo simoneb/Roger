@@ -13,7 +13,7 @@ namespace Tests.Integration.WCF
         {
             var host = new ServiceHost(typeof(Logger), new Uri("soap.amqp:///"));
 
-            var binding = new RabbitMQBinding(Globals.HostName, Globals.Port){OneWayOnly = true};
+            var binding = new RabbitMQBinding(Globals.MainHostName, Globals.MainConnectionPort){OneWayOnly = true};
 
             host.AddServiceEndpoint(typeof(ILogger), binding, "Log");
 
@@ -35,7 +35,7 @@ namespace Tests.Integration.WCF
         {
             var host = new ServiceHost(typeof(Calculator), new Uri("soap.amqp:///"));
 
-            var binding = new RabbitMQBinding(Globals.HostName, Globals.Port);
+            var binding = new RabbitMQBinding(Globals.MainHostName, Globals.MainConnectionPort);
 
             host.AddServiceEndpoint(typeof(ICalculator), binding, "Calculator");
 
@@ -53,7 +53,7 @@ namespace Tests.Integration.WCF
         {
             var host = new ServiceHost(typeof(OrderService), new Uri("soap.amqp:///"));
 
-            var binding = new RabbitMQBinding(Globals.HostName, Globals.Port);
+            var binding = new RabbitMQBinding(Globals.MainHostName, Globals.MainConnectionPort);
 
             host.AddServiceEndpoint(typeof(IOrderService), binding, "OrderService");
 

@@ -13,8 +13,8 @@ Description
    scalable implementation of an AMQP broker.
 
    Running rabbitmq-service allows the RabbitMQ broker to be run as a service
-   on NT/2000/2003/XP/Vista® environments. The RabbitMQ broker service can
-   be started and stopped using the Windows® services applet.
+   on NT/2000/2003/XP/Vista® environments. The RabbitMQ broker service can be
+   started and stopped using the Windows® services applet.
 
    By default the service will run in the authentication context of the local
    system account. It is therefore necessary to synchronise Erlang cookies
@@ -31,7 +31,8 @@ Commands
 
            Install the service. The service will not be started. Subsequent
            invocations will update the service parameters if relevant
-           environment variables were modified.
+           environment variables were modified or if the active plugins were
+           changed.
 
    remove
 

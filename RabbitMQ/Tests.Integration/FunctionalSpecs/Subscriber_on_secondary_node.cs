@@ -5,18 +5,18 @@ using RabbitMQ.Client.MessagePatterns;
 
 namespace Tests.Integration.FunctionalSpecs
 {
-    public class Subscriber_on_secondary_node : With_shovel
+    public class Subscriber_on_secondary_node : With_federation
     {
-        private ManualResetEvent m_consumerReady;
+        private ManualResetEvent consumerReady;
 
         [SetUp]
         public void Setup()
         {
-            m_consumerReady = new ManualResetEvent(false);
+            consumerReady = new ManualResetEvent(false);
         }
 
         [Test]
-        public void Should_receive_messages_published_on_main_node_after_subscription()
+        public void Should_receive_messages_published_on_main_node_after_consumer_subscription()
         {
             var consumer = Start<int>(OneConsumer);
 
@@ -30,10 +30,10 @@ namespace Tests.Integration.FunctionalSpecs
             using (var connection = Helpers.CreateConnection())
             using (var model = connection.CreateModel())
             {
-                m_consumerReady.WaitOne();
+                consumerReady.WaitOne();
 
                 int counter = 0;
-                model.BasicPublish(Globals.ShovelingExchangeName, "", null, (++counter).Bytes());
+                model.BasicPublish(Globals.FederationExchangeName, "", null, (++counter).Bytes());
             }
         }
 
@@ -43,10 +43,10 @@ namespace Tests.Integration.FunctionalSpecs
             using (var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare();
-                model.QueueBind(queue, Globals.ShovelingExchangeName, "#");
+                model.QueueBind(queue, Globals.FederationExchangeName, "#");
                 var subscription = new Subscription(model, queue, true);
 
-                m_consumerReady.Set();
+                consumerReady.Set();
 
                 return subscription.Next().Body.Integer();
             }
