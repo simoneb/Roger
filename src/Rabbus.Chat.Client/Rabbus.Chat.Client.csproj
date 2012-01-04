@@ -128,9 +128,9 @@
       <Project>{568C8C5A-45C4-47E5-8E03-7A0954564216}</Project>
       <Name>Rabbus.Chat.Messages</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Rabbus\Rabbus.csproj">
+    <ProjectReference Include="..\Roger\Roger.csproj">
       <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
-      <Name>Rabbus</Name>
+      <Name>Roger</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

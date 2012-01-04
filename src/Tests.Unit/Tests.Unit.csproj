@@ -101,9 +101,9 @@
       <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Rabbus\Rabbus.csproj">
+    <ProjectReference Include="..\Roger\Roger.csproj">
       <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
-      <Name>Rabbus</Name>
+      <Name>Roger</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

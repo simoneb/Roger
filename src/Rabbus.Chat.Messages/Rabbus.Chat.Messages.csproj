@@ -45,12 +45,6 @@
     <Compile Include="InstantMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rabbus\Rabbus.csproj">
-      <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
-      <Name>Rabbus</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

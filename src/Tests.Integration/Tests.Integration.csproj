@@ -116,13 +116,13 @@
       <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Rabbus\Rabbus.csproj">
-      <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
-      <Name>Rabbus</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Resbit\Resbit.csproj">
       <Project>{18FAF2EE-9442-4FE8-8723-D5A17C7E02B1}</Project>
       <Name>Resbit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Roger\Roger.csproj">
+      <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
+      <Name>Roger</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
