@@ -1,0 +1,7 @@
+bin/
+obj/
+_ReSharper.*/
+*.user
+**/data/db/
+**/data/log/
+startup-config.bat
