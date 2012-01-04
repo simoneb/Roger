@@ -2,6 +2,7 @@ bin/
 obj/
 _ReSharper.*/
 *.user
+*.suo
 **/data/db/
 **/data/log/
 startup-config.bat
