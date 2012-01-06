@@ -1,7 +1,7 @@
 ﻿using System;
 using MbUnit.Framework;
-using Rabbus;
-using Rabbus.Internal;
+using Roger;
+using Roger.Internal;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit

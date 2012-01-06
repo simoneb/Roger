@@ -1,6 +1,6 @@
 namespace Tests.Unit.SupportClasses
 {
-    [SomeExchangeRabbusMessage]
+    [SomeExchangeRogerMessage]
     public class DecoratedWithInheritedAttribute
     {
     }

@@ -1,4 +1,4 @@
-namespace Rabbus.Utilities
+namespace Roger.Utilities
 {
     public interface ICache<T>
     {

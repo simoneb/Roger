@@ -1,10 +1,10 @@
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class RandomIdGenerator : IIdGenerator
     {
-        public RabbusGuid Next()
+        public RogerGuid Next()
         {
-            return RabbusGuid.NewGuid();
+            return RogerGuid.NewGuid();
         }
     }
 }

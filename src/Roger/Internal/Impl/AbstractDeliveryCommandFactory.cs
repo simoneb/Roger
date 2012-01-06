@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal abstract class AbstractDeliveryCommandFactory : IDeliveryCommandFactory
     {
@@ -13,7 +13,7 @@ namespace Rabbus.Internal.Impl
             this.messageType = messageType;
         }
 
-        protected Func<RabbusEndpoint, IBasicProperties> CreateProperties(IModel model,
+        protected Func<RogerEndpoint, IBasicProperties> CreateProperties(IModel model,
                                                                           IIdGenerator idGenerator,
                                                                           ITypeResolver typeResolver,
                                                                           IMessageSerializer serializer,

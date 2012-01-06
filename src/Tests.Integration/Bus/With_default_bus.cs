@@ -4,15 +4,14 @@ using System.Threading;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
-using Rabbus;
-using Rabbus.Utilities;
+using Roger;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
 {
     public abstract class With_default_bus : With_rabbitmq_broker
     {
-        protected DefaultRabbitBus Bus;
+        protected DefaultRogerBus Bus;
         private ManualRegistrationConsumerResolver consumerResolver;
         protected IModel TestModel;
         private IConnection localConnection;
@@ -21,7 +20,7 @@ namespace Tests.Integration.Bus
         public void InitializeBus()
         {
             consumerResolver = new ManualRegistrationConsumerResolver(new DefaultSupportedMessageTypesResolver());
-            Bus = new DefaultRabbitBus(new IdentityConnectionFactory(Helpers.CreateConnection),
+            Bus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateConnection),
                                        consumerResolver,
                                        log: new DebugLog(),
                                        idGenerator: IdGenerator,
@@ -65,7 +64,7 @@ namespace Tests.Integration.Bus
             {
                 localConnection.Dispose();
             }
-            catch (IOException exception)
+            catch (IOException)
             {
                 // if the broker was restarted in tests this connection would be closed and
                 // closing it would throw IOException as the socket is closed

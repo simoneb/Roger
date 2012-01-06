@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus
+namespace Roger
 {
     /// <summary>
     /// Implementors should provide an exchange name given the type of the message

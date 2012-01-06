@@ -1,6 +1,6 @@
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
-    internal class NullLog : IRabbusLog
+    internal class NullLog : IRogerLog
     {
         public void Debug(string message)
         {

@@ -1,6 +1,6 @@
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal
+namespace Roger.Internal
 {
     internal interface IDeliveryCommandFactory
     {

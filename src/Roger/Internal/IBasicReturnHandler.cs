@@ -1,10 +1,10 @@
 using System;
 
-namespace Rabbus.Internal
+namespace Roger.Internal
 {
     internal interface IBasicReturnHandler
     {
         void Handle(BasicReturn basicReturn);
-        void Subscribe(RabbusGuid messageId, Action<BasicReturn> callback);
+        void Subscribe(RogerGuid messageId, Action<BasicReturn> callback);
     }
 }

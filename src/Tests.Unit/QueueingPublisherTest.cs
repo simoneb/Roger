@@ -4,9 +4,9 @@ using MbUnit.Framework;
 using NSubstitute;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Rabbus;
-using Rabbus.Internal;
-using Rabbus.Internal.Impl;
+using Roger;
+using Roger.Internal;
+using Roger.Internal.Impl;
 
 namespace Tests.Unit
 {
@@ -30,8 +30,8 @@ namespace Tests.Unit
                                                 Substitute.For<IExchangeResolver>(),
                                                 Substitute.For<IRoutingKeyResolver>(),
                                                 Substitute.For<IMessageSerializer>(),
-                                                Substitute.For<ITypeResolver>(), Substitute.For<IRabbusLog>(),
-                                                Substitute.For<Func<RabbusEndpoint>>(), 
+                                                Substitute.For<ITypeResolver>(), Substitute.For<IRogerLog>(),
+                                                Substitute.For<Func<RogerEndpoint>>(), 
                                                 TimeSpan.Zero);
             sut.Start();
         }

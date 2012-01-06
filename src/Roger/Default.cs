@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Rabbus.Internal;
-using Rabbus.Internal.Impl;
+using Roger.Internal;
+using Roger.Internal.Impl;
 
-namespace Rabbus
+namespace Roger
 {
     internal static class Default
     {
@@ -14,7 +14,7 @@ namespace Rabbus
         private static readonly Lazy<IReflection> DefaultReflection = new Lazy<IReflection>(() => new DefaultReflection());
         private static readonly Lazy<IRoutingKeyResolver> DefaultRoutingKeyResolver = new Lazy<IRoutingKeyResolver>(() => new DefaultRoutingKeyResolver());
         private static readonly Lazy<IMessageSerializer> DefaultSerializer = new Lazy<IMessageSerializer>(() => new ProtoBufNetSerializer());
-        private static readonly Lazy<IRabbusLog> DefaultLog = new Lazy<IRabbusLog>(() => new NullLog());
+        private static readonly Lazy<IRogerLog> DefaultLog = new Lazy<IRogerLog>(() => new NullLog());
         private static readonly Lazy<IIdGenerator> DefaultGuidGenerator = new Lazy<IIdGenerator>(() => new RandomIdGenerator());
         private static readonly Lazy<ISequenceGenerator> DefaultSequenceGenerator = new Lazy<ISequenceGenerator>(() => new ThreadSafeIncrementalSequenceGenerator());
 
@@ -32,7 +32,7 @@ namespace Rabbus
         public static IReflection Reflection { get { return DefaultReflection.Value; } }
         public static IRoutingKeyResolver RoutingKeyResolver { get { return DefaultRoutingKeyResolver.Value; } }
         public static IMessageSerializer Serializer { get { return DefaultSerializer.Value; } }
-        public static IRabbusLog Log { get { return DefaultLog.Value; } }
+        public static IRogerLog Log { get { return DefaultLog.Value; } }
         public static IIdGenerator IdGenerator { get { return DefaultGuidGenerator.Value; } }
         public static IEnumerable<IMessageFilter> Filters { get { return DefaultFilters.Value; } }
         public static ISequenceGenerator SequenceGenerator { get { return DefaultSequenceGenerator.Value; } }

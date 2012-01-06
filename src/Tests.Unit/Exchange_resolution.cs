@@ -1,7 +1,7 @@
 using System;
 using MbUnit.Framework;
-using Rabbus.Internal;
-using Rabbus.Internal.Impl;
+using Roger.Internal;
+using Roger.Internal.Impl;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
@@ -66,7 +66,7 @@ namespace Tests.Unit
         public void Should_not_support_inheritors_decorated_whose_base_is_decorated()
         {
             var e = Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof (DecoratedWithMultipleAttributes)));
-            Assert.AreEqual(ErrorMessages.MultipleRabbusMessageAttributes(typeof(DecoratedWithMultipleAttributes)), e.Message);
+            Assert.AreEqual(ErrorMessages.MultipleMessageAttributes(typeof(DecoratedWithMultipleAttributes)), e.Message);
         }
     }
 }

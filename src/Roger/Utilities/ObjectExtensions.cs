@@ -1,4 +1,4 @@
-﻿namespace Rabbus.Utilities
+﻿namespace Roger.Utilities
 {
     internal static class ObjectExtensions
     {

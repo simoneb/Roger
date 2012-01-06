@@ -1,9 +1,9 @@
 using ProtoBuf;
-using Rabbus;
+using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    [RabbusMessage("RequestExchange")]
+    [RogerMessage("RequestExchange")]
     [ProtoContract]
     public class MyRequest
     {

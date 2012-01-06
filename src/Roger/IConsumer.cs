@@ -1,4 +1,4 @@
-﻿namespace Rabbus
+﻿namespace Roger
 {
     /// <summary>
     /// Marker interface

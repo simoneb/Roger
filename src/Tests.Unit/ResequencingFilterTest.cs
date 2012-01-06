@@ -7,10 +7,10 @@ using MbUnit.Framework;
 using NSubstitute;
 using RabbitMQ.Client;
 using RabbitMQ.Util;
-using Rabbus;
 using System.Linq;
-using Rabbus.Internal;
-using Rabbus.Internal.Impl;
+using Roger;
+using Roger.Internal;
+using Roger.Internal.Impl;
 
 namespace Tests.Unit
 {
@@ -99,7 +99,7 @@ namespace Tests.Unit
             {
                 Headers = new Hashtable {{Headers.Sequence, BitConverter.GetBytes(sequenceAndBody)}},
                 Body = sequenceAndBody,
-                Endpoint = new RabbusEndpoint(endpoint ?? "someQueue")
+                Endpoint = new RogerEndpoint(endpoint ?? "someQueue")
             };
         }
     }

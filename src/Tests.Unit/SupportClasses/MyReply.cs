@@ -1,8 +1,8 @@
-using Rabbus;
+using Roger;
 
 namespace Tests.Unit.SupportClasses
 {
-    [RabbusReply(typeof(MyRequest))]
+    [RogerReply(typeof(MyRequest))]
     public class MyReply
     {
         

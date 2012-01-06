@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using MbUnit.Framework;
 using RabbitMQ.Client;
-using Rabbus;
+using Roger;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -32,7 +32,7 @@ namespace Tests.Integration.Bus
             Bus.AddInstanceSubscription(consumer);
 
             BasicReturn error = null;
-            Bus.Send(new RabbusEndpoint("inexistent"), new SendMessage(), reason => error = reason);
+            Bus.Send(new RogerEndpoint("inexistent"), new SendMessage(), reason => error = reason);
 
             WaitForDelivery();
 
@@ -48,8 +48,8 @@ namespace Tests.Integration.Bus
 
             var errors = new SynchronizedCollection<BasicReturn>();
 
-            Bus.Send(new RabbusEndpoint("inexistent1"), new SendMessage(), errors.Add);
-            Bus.Send(new RabbusEndpoint("inexistent2"), new SendMessage(), errors.Add);
+            Bus.Send(new RogerEndpoint("inexistent1"), new SendMessage(), errors.Add);
+            Bus.Send(new RogerEndpoint("inexistent2"), new SendMessage(), errors.Add);
 
             WaitForDelivery();
 

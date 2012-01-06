@@ -1,5 +1,5 @@
 using System.Threading;
-using Rabbus;
+using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {

@@ -3,12 +3,12 @@ using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class ReliableConnection : IReliableConnection
     {
         private readonly IConnectionFactory connectionFactory;
-        private readonly IRabbusLog log;
+        private readonly IRogerLog log;
         public event Action ConnectionEstabilished = delegate {  };
         private IConnection connection;
         private bool disposed;
@@ -20,7 +20,7 @@ namespace Rabbus.Internal.Impl
         public event Action GracefulShutdown = delegate { };
         public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
 
-        public ReliableConnection(IConnectionFactory connectionFactory, IRabbusLog log)
+        public ReliableConnection(IConnectionFactory connectionFactory, IRogerLog log)
         {
             this.connectionFactory = connectionFactory;
             this.log = log;

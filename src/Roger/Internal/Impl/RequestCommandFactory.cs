@@ -1,7 +1,7 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class RequestCommandFactory : AbstractDeliveryCommandFactory
     {

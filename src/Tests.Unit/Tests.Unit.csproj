@@ -63,8 +63,8 @@
     <Compile Include="QueueingPublisherTest.cs" />
     <Compile Include="ResequencingFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RabbusEndpointTest.cs" />
-    <Compile Include="RabbusGuidTests.cs" />
+    <Compile Include="RogerEndpointTest.cs" />
+    <Compile Include="RogerGuidTests.cs" />
     <Compile Include="SupportClasses\AbstractDerived.cs" />
     <Compile Include="SupportClasses\BaseOfAbstractDerived.cs" />
     <Compile Include="SupportClasses\AbstractBase.cs" />
@@ -90,9 +90,9 @@
     <Compile Include="SupportClasses\ConcreteDerivedOfBaseOfAbstractDerived.cs" />
     <Compile Include="SupportClasses\ConcreteDerivedOfConcreteBase.cs" />
     <Compile Include="SupportClasses\NonDecorated.cs" />
-    <Compile Include="SupportClasses\RabbusMessageInheritorAttribute.cs" />
+    <Compile Include="SupportClasses\RogerMessageInheritorAttribute.cs" />
     <Compile Include="SupportClasses\SimplyDecorated.cs" />
-    <Compile Include="SupportClasses\SomeExchangeRabbusMessageAttribute.cs" />
+    <Compile Include="SupportClasses\SomeExchangeRogerMessageAttribute.cs" />
     <Compile Include="TimestampTest.cs" />
     <Compile Include="Routing_key_generation.cs" />
   </ItemGroup>

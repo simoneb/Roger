@@ -1,8 +1,8 @@
-using Rabbus;
+using Roger;
 
 namespace Tests.Unit.SupportClasses
 {
-    [RabbusMessage("hi hi")]
+    [RogerMessage("hi hi")]
     public class DecoratedWithStringContainingBlankSpaces
     {
     }

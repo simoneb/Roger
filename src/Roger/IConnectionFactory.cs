@@ -1,6 +1,6 @@
 using RabbitMQ.Client;
 
-namespace Rabbus
+namespace Roger
 {
     public interface IConnectionFactory
     {

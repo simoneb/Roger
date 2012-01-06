@@ -1,17 +1,17 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class SendCommand : MandatoryCommand
     {
         private readonly string exchange;
-        private readonly RabbusEndpoint recipient;
+        private readonly RogerEndpoint recipient;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
-        private readonly Func<RabbusEndpoint, IBasicProperties> properties;
+        private readonly Func<RogerEndpoint, IBasicProperties> properties;
 
-        public SendCommand(string exchange, RabbusEndpoint recipient, byte[] body, Action<BasicReturn> basicReturnCallback, Func<RabbusEndpoint, IBasicProperties> properties)
+        public SendCommand(string exchange, RogerEndpoint recipient, byte[] body, Action<BasicReturn> basicReturnCallback, Func<RogerEndpoint, IBasicProperties> properties)
         {
             this.exchange = exchange;
             this.recipient = recipient;
@@ -20,7 +20,7 @@ namespace Rabbus.Internal.Impl
             this.properties = properties;
         }
 
-        public override void Execute(IModel model, RabbusEndpoint endpoint, IBasicReturnHandler basicReturnHandler)
+        public override void Execute(IModel model, RogerEndpoint endpoint, IBasicReturnHandler basicReturnHandler)
         {
             PublishMandatory(model, properties(endpoint), basicReturnCallback, recipient, exchange, body, basicReturnHandler);
         }

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Threading;
-using Rabbus;
+using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {

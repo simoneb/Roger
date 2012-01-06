@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class DefaultTypeResolver : ITypeResolver
     {

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class NoLocalFilter : IMessageFilter
     {
-        private readonly Func<RabbusEndpoint> endpoint;
+        private readonly Func<RogerEndpoint> endpoint;
 
-        public NoLocalFilter(Func<RabbusEndpoint> endpoint)
+        public NoLocalFilter(Func<RogerEndpoint> endpoint)
         {
             this.endpoint = endpoint;
         }

@@ -1,8 +1,8 @@
-using Rabbus;
+using Roger;
 
 namespace Tests.Unit.SupportClasses
 {
-    [RabbusMessage(null)]
+    [RogerMessage(null)]
     public class DecoratedWithNullString
     {
     }

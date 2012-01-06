@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus
+namespace Roger
 {
     /// <summary>
     /// Main entrypoint to the library
@@ -20,7 +20,7 @@ namespace Rabbus
         /// <summary>
         /// The local endpoint on which this instance of the bus is listening for incoming messages
         /// </summary>
-        RabbusEndpoint LocalEndpoint { get; }
+        RogerEndpoint LocalEndpoint { get; }
 
         /// <summary>
         /// Starts the bus
@@ -77,7 +77,7 @@ namespace Rabbus
         /// <param name="endpoint">The recipient endpoint of the message</param>
         /// <param name="message">The message</param>
         /// <param name="basicReturnCallback">A callback invoked if the message could not be routed to the endpoint</param>
-        void Send(RabbusEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null);
+        void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null);
 
         /// <summary>
         /// Fired when the bus is started successfully

@@ -1,8 +1,8 @@
-﻿using Rabbus;
+﻿using Roger;
 
 namespace Tests.Unit.SupportClasses
 {
-    [RabbusMessage("RequestExchange")]
+    [RogerMessage("RequestExchange")]
     public class MyRequest
     {
          

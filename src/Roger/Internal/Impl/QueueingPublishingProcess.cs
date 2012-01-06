@@ -6,13 +6,13 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Linq;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class QueueingPublishingProcess : IPublishingProcess
     {
         private readonly IReliableConnection connection;
         private readonly IBasicReturnHandler basicReturnHandler;
-        private readonly IRabbusLog log;
+        private readonly IRogerLog log;
         private int disposed;
         private Task publishTask;
         private readonly BlockingCollection<IDeliveryCommandFactory> publishingQueue = new BlockingCollection<IDeliveryCommandFactory>();
@@ -26,7 +26,7 @@ namespace Rabbus.Internal.Impl
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
-        private readonly Func<RabbusEndpoint> currentLocalEndpoint;
+        private readonly Func<RogerEndpoint> currentLocalEndpoint;
         private readonly TimeSpan republishUnconfirmedMessagesThreshold;
 
         internal QueueingPublishingProcess(IReliableConnection connection,
@@ -36,8 +36,8 @@ namespace Rabbus.Internal.Impl
                                            IRoutingKeyResolver routingKeyResolver,
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
-                                           IRabbusLog log,
-                                           Func<RabbusEndpoint> currentLocalEndpoint,
+                                           IRogerLog log,
+                                           Func<RogerEndpoint> currentLocalEndpoint,
                                            TimeSpan republishUnconfirmedMessagesThreshold)
         {
             this.connection = connection;
@@ -114,7 +114,7 @@ namespace Rabbus.Internal.Impl
         {
             // beware, this is called on the RabbitMQ client connection thread, we should not block
             log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
-            basicReturnHandler.Handle(new BasicReturn(new RabbusGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
+            basicReturnHandler.Handle(new BasicReturn(new RogerGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
         public void Start()
@@ -195,7 +195,7 @@ namespace Rabbus.Internal.Impl
                                               basicReturnCallback));
         }
 
-        public void Send(RabbusEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback)
+        public void Send(RogerEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback)
         {
             var messageType = message.GetType();
 
@@ -242,7 +242,7 @@ namespace Rabbus.Internal.Impl
 
         private void ValidateReplyMessage(object message)
         {
-            if (!message.GetType().IsDefined(typeof(RabbusReplyAttribute), false))
+            if (!message.GetType().IsDefined(typeof(RogerReplyAttribute), false))
             {
                 log.Error("Reply method called with a reply message not decorated woth the right attribute");
                 throw new InvalidOperationException(ErrorMessages.ReplyMessageNotAReply);

@@ -2,7 +2,7 @@
 using System.IO;
 using ProtoBuf;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     /// <summary>
     /// Serializer implementation using protobuf-net as the serialization mechanism

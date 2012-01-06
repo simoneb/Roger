@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class ResequencingFilter : IMessageFilter
     {
-        private readonly ConcurrentDictionary<RabbusEndpoint, uint> nextSequence = new ConcurrentDictionary<RabbusEndpoint, uint>();
-        private readonly ConcurrentDictionary<RabbusEndpoint, SortedDictionary<uint, CurrentMessageInformation>> pending = new ConcurrentDictionary<RabbusEndpoint, SortedDictionary<uint, CurrentMessageInformation>>();
+        private readonly ConcurrentDictionary<RogerEndpoint, uint> nextSequence = new ConcurrentDictionary<RogerEndpoint, uint>();
+        private readonly ConcurrentDictionary<RogerEndpoint, SortedDictionary<uint, CurrentMessageInformation>> pending = new ConcurrentDictionary<RogerEndpoint, SortedDictionary<uint, CurrentMessageInformation>>();
 
         public IEnumerable<CurrentMessageInformation> Filter(IEnumerable<CurrentMessageInformation> input, IModel model)
         {
@@ -33,7 +33,7 @@ namespace Rabbus.Internal.Impl
             }
         }
 
-        private IEnumerable<CurrentMessageInformation> ProcessPending(uint currentSequence, RabbusEndpoint endpoint)
+        private IEnumerable<CurrentMessageInformation> ProcessPending(uint currentSequence, RogerEndpoint endpoint)
         {
             var currentPending = pending.GetOrAdd(endpoint, SortedDictionary).Where(s => s.Key > currentSequence).ToArray();
 

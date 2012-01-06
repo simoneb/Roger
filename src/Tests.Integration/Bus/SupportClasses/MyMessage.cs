@@ -1,10 +1,10 @@
 using ProtoBuf;
-using Rabbus;
+using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
     [ProtoContract]
-    [RabbusMessage("TestExchange")]
+    [RogerMessage("TestExchange")]
     public class MyMessage
     {
         [ProtoMember(1)]
@@ -13,7 +13,7 @@ namespace Tests.Integration.Bus.SupportClasses
 
     [ProtoContract]
     [ProtoInclude(10, typeof(MyDerivedMessage))]
-    [RabbusMessage("TestExchange")]
+    [RogerMessage("TestExchange")]
     public abstract class MyBaseMessage
     {
         [ProtoMember(1)]

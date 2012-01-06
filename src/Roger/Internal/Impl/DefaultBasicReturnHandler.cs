@@ -2,21 +2,21 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class DefaultBasicReturnHandler : IBasicReturnHandler
     {
-        private readonly IRabbusLog log;
+        private readonly IRogerLog log;
 
-        private readonly ConcurrentDictionary<RabbusGuid, Func<BasicReturn, bool>> callbacks =
-            new ConcurrentDictionary<RabbusGuid, Func<BasicReturn, bool>>();
+        private readonly ConcurrentDictionary<RogerGuid, Func<BasicReturn, bool>> callbacks =
+            new ConcurrentDictionary<RogerGuid, Func<BasicReturn, bool>>();
 
-        public DefaultBasicReturnHandler(IRabbusLog log)
+        public DefaultBasicReturnHandler(IRogerLog log)
         {
             this.log = log;
         }
 
-        public void Subscribe(RabbusGuid messageId, Action<BasicReturn> callback)
+        public void Subscribe(RogerGuid messageId, Action<BasicReturn> callback)
         {
             callbacks.TryAdd(messageId, WrapCallback(new WeakReference(callback), messageId));
         }
@@ -34,7 +34,7 @@ namespace Rabbus.Internal.Impl
             }
         }
 
-        private Func<BasicReturn, bool> WrapCallback(WeakReference callback, RabbusGuid messageId)
+        private Func<BasicReturn, bool> WrapCallback(WeakReference callback, RogerGuid messageId)
         {
             return @return =>
             {

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using RabbitMQ.Client;
-using Rabbus.Utilities;
+using Roger.Utilities;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class DeduplicationFilter : IMessageFilter
     {
-        private readonly ICache<RabbusGuid> cache;
+        private readonly ICache<RogerGuid> cache;
 
-        public DeduplicationFilter(ICache<RabbusGuid> cache)
+        public DeduplicationFilter(ICache<RogerGuid> cache)
         {
             this.cache = cache;
         }
 
         public DeduplicationFilter(TimeSpan expiry)
         {
-            cache = new ConcurrentSelfExpiringCache<RabbusGuid>(expiry);
+            cache = new ConcurrentSelfExpiringCache<RogerGuid>(expiry);
         }
 
         public IEnumerable<CurrentMessageInformation> Filter(IEnumerable<CurrentMessageInformation> input, IModel model)

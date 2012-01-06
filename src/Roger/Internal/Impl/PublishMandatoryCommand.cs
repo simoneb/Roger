@@ -1,7 +1,7 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class PublishMandatoryCommand : MandatoryCommand
     {
@@ -9,9 +9,9 @@ namespace Rabbus.Internal.Impl
         private readonly string routingKey;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
-        private readonly Func<RabbusEndpoint, IBasicProperties> properties;
+        private readonly Func<RogerEndpoint, IBasicProperties> properties;
 
-        public PublishMandatoryCommand(string exchange, string routingKey, byte[] body, Action<BasicReturn> basicReturnCallback, Func<RabbusEndpoint, IBasicProperties> properties)
+        public PublishMandatoryCommand(string exchange, string routingKey, byte[] body, Action<BasicReturn> basicReturnCallback, Func<RogerEndpoint, IBasicProperties> properties)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;
@@ -20,7 +20,7 @@ namespace Rabbus.Internal.Impl
             this.properties = properties;
         }
 
-        public override void Execute(IModel model, RabbusEndpoint endpoint, IBasicReturnHandler basicReturnHandler)
+        public override void Execute(IModel model, RogerEndpoint endpoint, IBasicReturnHandler basicReturnHandler)
         {
             PublishMandatory(model, properties(endpoint), basicReturnCallback, routingKey, exchange, body, basicReturnHandler);
         }

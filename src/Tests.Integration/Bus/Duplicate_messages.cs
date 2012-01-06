@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MbUnit.Framework;
-using Rabbus;
-using Rabbus.Internal.Impl;
+using Roger;
+using Roger.Internal.Impl;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -22,11 +22,11 @@ namespace Tests.Integration.Bus
 
         private class StaticIdGenerator : IIdGenerator
         {
-            private RabbusGuid? guid;
+            private RogerGuid? guid;
 
-            public RabbusGuid Next()
+            public RogerGuid Next()
             {
-                return (RabbusGuid) (guid ?? (guid = RabbusGuid.NewGuid()));
+                return (RogerGuid) (guid ?? (guid = RogerGuid.NewGuid()));
             }
         }
 

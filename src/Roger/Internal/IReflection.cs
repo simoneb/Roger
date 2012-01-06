@@ -1,4 +1,4 @@
-﻿namespace Rabbus.Internal
+﻿namespace Roger.Internal
 {
     internal interface IReflection
     {

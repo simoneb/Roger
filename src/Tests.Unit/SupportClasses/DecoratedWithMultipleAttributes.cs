@@ -1,9 +1,9 @@
-using Rabbus;
+using Roger;
 
 namespace Tests.Unit.SupportClasses
 {
-    [RabbusMessage("a")]
-    [RabbusMessageInheritor("b")]
+    [RogerMessage("a")]
+    [RogerMessageInheritor("b")]
     public class DecoratedWithMultipleAttributes
     {
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Rabbus
+namespace Roger
 {
     /// <summary>
     /// Defines the mapping between a consumer type and the messages it can consume

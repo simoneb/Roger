@@ -1,5 +1,5 @@
 using MbUnit.Framework;
-using Rabbus.Internal.Impl;
+using Roger.Internal.Impl;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit

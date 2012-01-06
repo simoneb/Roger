@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbus.Internal
+namespace Roger.Internal
 {
     /// <summary>
     /// Generates representations of <see cref="Type"/> instances suitable for serialization

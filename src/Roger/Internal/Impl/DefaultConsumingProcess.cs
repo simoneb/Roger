@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Rabbus.Utilities;
+using Roger.Utilities;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class DefaultConsumingProcess : IConsumingProcess
     {
@@ -17,7 +17,7 @@ namespace Rabbus.Internal.Impl
         private IModel receivingModel;
         private QueueingBasicConsumer queueConsumer;
         private readonly IConsumerResolver consumerResolver;
-        private readonly IRabbusLog log;
+        private readonly IRogerLog log;
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly ITypeResolver typeResolver;
@@ -44,7 +44,7 @@ namespace Rabbus.Internal.Impl
                                        IReflection reflection,
                                        ISupportedMessageTypesResolver supportedMessageTypesResolver,
                                        IEnumerable<IMessageFilter> messageFilters,
-                                       IRabbusLog log)
+                                       IRogerLog log)
         {
             this.connection = connection;
             this.consumerResolver = consumerResolver;
@@ -65,7 +65,7 @@ namespace Rabbus.Internal.Impl
         {
             receivingModel = connection.CreateModel();
 
-            Endpoint = new RabbusEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
+            Endpoint = new RogerEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
 
             CreateConsumer();
             ConsumeAsynchronously();
@@ -79,7 +79,7 @@ namespace Rabbus.Internal.Impl
             receivingModel.BasicConsume(Endpoint.Queue, false, queueConsumer);
         }
 
-        public RabbusEndpoint Endpoint { get; private set; }
+        public RogerEndpoint Endpoint { get; private set; }
 
 // ReSharper disable ParameterTypeCanBeEnumerable.Local
         private void CreateBindings(ISet<Type> messageTypes)
@@ -146,10 +146,10 @@ namespace Rabbus.Internal.Impl
 
             return new CurrentMessageInformation
             {
-                MessageId = new RabbusGuid(properties.MessageId),
+                MessageId = new RogerGuid(properties.MessageId),
                 MessageType = messageType,
-                Endpoint = new RabbusEndpoint(properties.ReplyTo),
-                CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? RabbusGuid.Empty : new RabbusGuid(properties.CorrelationId),
+                Endpoint = new RogerEndpoint(properties.ReplyTo),
+                CorrelationId = string.IsNullOrWhiteSpace(properties.CorrelationId) ? RogerGuid.Empty : new RogerGuid(properties.CorrelationId),
                 DeliveryTag = args.DeliveryTag,
                 Exchange = args.Exchange,
                 Body = serializer.Deserialize(messageType, args.Body),

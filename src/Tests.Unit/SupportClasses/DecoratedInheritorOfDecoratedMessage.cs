@@ -1,8 +1,8 @@
-using Rabbus;
+using Roger;
 
 namespace Tests.Unit.SupportClasses
 {
-    [RabbusMessage("whatever")]
+    [RogerMessage("whatever")]
     public class DecoratedInheritorOfDecoratedMessage : DecoratedMessageBase
     {
     }

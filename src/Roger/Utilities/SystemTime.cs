@@ -1,6 +1,6 @@
 using System;
 
-namespace Rabbus.Utilities
+namespace Roger.Utilities
 {
     internal static class SystemTime
     {

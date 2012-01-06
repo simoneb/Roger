@@ -1,7 +1,7 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus
+namespace Roger
 {
     public class DefaultConnectionFactory : IConnectionFactory
     {

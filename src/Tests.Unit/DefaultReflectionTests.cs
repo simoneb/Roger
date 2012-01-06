@@ -1,9 +1,9 @@
 ﻿using System;
 using MbUnit.Framework;
 using NSubstitute;
-using Rabbus;
 using System.Linq;
-using Rabbus.Internal.Impl;
+using Roger;
+using Roger.Internal.Impl;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit

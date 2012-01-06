@@ -1,8 +1,8 @@
 using System;
 using RabbitMQ.Client;
-using Rabbus.Utilities;
+using Roger.Utilities;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class UnconfirmedCommandFactory : IUnconfirmedCommandFactory
     {

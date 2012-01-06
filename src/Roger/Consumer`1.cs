@@ -1,4 +1,4 @@
-namespace Rabbus
+namespace Roger
 {
     public abstract class Consumer<T> where T : class
     {

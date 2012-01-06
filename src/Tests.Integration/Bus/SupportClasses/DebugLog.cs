@@ -1,8 +1,8 @@
-using Rabbus;
+using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class DebugLog : IRabbusLog
+    public class DebugLog : IRogerLog
     {
         public void Debug(string message)
         {

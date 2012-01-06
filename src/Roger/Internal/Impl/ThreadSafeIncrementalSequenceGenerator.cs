@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class ThreadSafeIncrementalSequenceGenerator : ISequenceGenerator
     {

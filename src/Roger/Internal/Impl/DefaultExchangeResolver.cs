@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using Rabbus.Utilities;
+using Roger.Utilities;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     /// <summary>
     /// Default implementation of the <see cref="IExchangeResolver"/> interface.
     /// </summary>
     /// <remarks>
-    /// Supports exchanges defined using the <see cref="RabbusMessageAttribute"/> and inherited classes,
+    /// Supports exchanges defined using the <see cref="RogerMessageAttribute"/> and inherited classes,
     /// and propagates them along the inheritance chain. 
     /// Multiple attributes along the inheritance chain are not supported, even if they specify the same exchange.
     /// </remarks>
@@ -28,19 +28,19 @@ namespace Rabbus.Internal.Impl
         private static string GetExchangeName(Type messageType)
         {
             if (messageType.IsReply())
-                return GetExchangeName(messageType.GetCustomAttributes(typeof (RabbusReplyAttribute), false)
-                                                  .Cast<RabbusReplyAttribute>()
+                return GetExchangeName(messageType.GetCustomAttributes(typeof (RogerReplyAttribute), false)
+                                                  .Cast<RogerReplyAttribute>()
                                                   .Single().RequestType);
 
-            var attributes = messageType.GetCustomAttributes(typeof (RabbusMessageAttribute), true);
+            var attributes = messageType.GetCustomAttributes(typeof (RogerMessageAttribute), true);
 
             if(attributes.Length == 0)
-                throw new InvalidOperationException(ErrorMessages.NoRabbusMessageAttribute(messageType));
+                throw new InvalidOperationException(ErrorMessages.NoMessageAttribute(messageType));
 
             if(attributes.Length > 1)
-                throw new InvalidOperationException(ErrorMessages.MultipleRabbusMessageAttributes(messageType));
+                throw new InvalidOperationException(ErrorMessages.MultipleMessageAttributes(messageType));
 
-            return ((RabbusMessageAttribute)attributes.Single()).Exchange;
+            return ((RogerMessageAttribute)attributes.Single()).Exchange;
         }
 
         private static void EnsureCorrectExchangeName(string exchange)

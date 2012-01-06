@@ -1,16 +1,16 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class SendCommandFactory : AbstractDeliveryCommandFactory
     {
         private readonly string exchange;
-        private readonly RabbusEndpoint recipient;
+        private readonly RogerEndpoint recipient;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
 
-        public SendCommandFactory(Type messageType, string exchange, RabbusEndpoint recipient, byte[] body, Action<BasicReturn> basicReturnCallback) : base(messageType)
+        public SendCommandFactory(Type messageType, string exchange, RogerEndpoint recipient, byte[] body, Action<BasicReturn> basicReturnCallback) : base(messageType)
         {
             this.exchange = exchange;
             this.recipient = recipient;

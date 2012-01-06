@@ -7,7 +7,7 @@ namespace Tests.Integration
     public class With_federation : With_rabbitmq_broker
     {
         [FixtureSetUp]
-        public void Setup()
+        public void FixtureSetup()
         {
             // leave some time to TcpTrace to reestabilish the connection to the server
             Thread.Sleep(2000);

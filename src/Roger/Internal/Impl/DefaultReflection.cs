@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Rabbus.Internal.Impl
+namespace Roger.Internal.Impl
 {
     internal class DefaultReflection : IReflection
     {

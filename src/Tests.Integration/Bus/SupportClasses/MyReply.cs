@@ -1,16 +1,16 @@
 using ProtoBuf;
-using Rabbus;
+using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
     [ProtoContract]
-    [RabbusReply(typeof(MyRequest))]
+    [RogerReply(typeof(MyRequest))]
     public class MyReply
     {
     }
 
     [ProtoContract]
-    [RabbusMessage("whatever")]
+    [RogerMessage("whatever")]
     public class MyWrongReply
     {
     }

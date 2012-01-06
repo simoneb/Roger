@@ -1,7 +1,7 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Rabbus.Internal
+namespace Roger.Internal
 {
     public interface IReliableConnection : IDisposable
     {

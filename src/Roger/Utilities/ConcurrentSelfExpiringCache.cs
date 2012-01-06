@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace Rabbus.Utilities
+namespace Roger.Utilities
 {
     internal class ConcurrentSelfExpiringCache<T> : ICache<T>
     {

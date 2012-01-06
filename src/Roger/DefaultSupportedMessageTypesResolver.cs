@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rabbus.Internal;
+using Roger.Internal;
 
-namespace Rabbus
+namespace Roger
 {
     public class DefaultSupportedMessageTypesResolver : ISupportedMessageTypesResolver
     {
