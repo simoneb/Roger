@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Roger;
 
@@ -15,6 +16,11 @@ namespace Tests.Integration.Bus.SupportClasses
         }
 
         public bool WaitForDelivery(int timeout = 1000)
+        {
+            return delivered.WaitOne(timeout);
+        }
+
+        public bool WaitForDelivery(TimeSpan timeout)
         {
             return delivered.WaitOne(timeout);
         }

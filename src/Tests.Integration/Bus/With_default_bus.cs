@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace Tests.Integration.Bus
             Bus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateConnection),
                                        consumerContainer,
                                        idGenerator: IdGenerator,
-                                       sequenceGenerator: SequenceGenerator, messageFilters: MessageFilters, log: new DebugLog());
+                                       sequenceGenerator: SequenceGenerator, messageFilters: MessageFilters, log: RunningOnTeamCity ? (IRogerLog)new StandardOutLog() : new DebugLog());
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -38,6 +39,11 @@ namespace Tests.Integration.Bus
             Bus.Start();
 
             AfterBusInitialization();
+        }
+
+        protected bool RunningOnTeamCity
+        {
+            get { return Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != null; }
         }
 
         protected virtual IIdGenerator IdGenerator { get { return Default.IdGenerator;} }

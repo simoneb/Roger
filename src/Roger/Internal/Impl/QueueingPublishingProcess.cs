@@ -90,7 +90,7 @@ namespace Roger.Internal.Impl
 
             if (args.Multiple)
             {
-                log.DebugFormat("Broker confirmed all messages up to and including {0}", args.DeliveryTag);
+                log.DebugFormat("Broker confirmed all deliveries up to and including {0}", args.DeliveryTag);
 
                 var toRemove = unconfirmedCommands.Keys.Where(tag => tag <= args.DeliveryTag).ToArray();
 
@@ -99,9 +99,11 @@ namespace Roger.Internal.Impl
             }
             else
             {
-                log.DebugFormat("Broker confirmed message {0}", args.DeliveryTag);
+                log.DebugFormat("Broker confirmed delivery {0}", args.DeliveryTag);
                 unconfirmedCommands.TryRemove(args.DeliveryTag, out _);
             }
+
+            log.DebugFormat("Deliveries yet to be confirmed: {0}", unconfirmedCommands.Count);
         }
 
         private void PublishModelOnBasicNacks(IModel model, BasicNackEventArgs args)
@@ -142,6 +144,7 @@ namespace Roger.Internal.Impl
 
                         unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, republishUnconfirmedMessagesThreshold));
 
+                        log.Debug("Executing publish action");
                         command.Execute(publishModel, currentLocalEndpoint(), basicReturnHandler); // TODO: handle failure
                     }
                 }

@@ -18,7 +18,7 @@ namespace Tests.Integration.Bus
         public void Should_handle_exception_gracefully_and_retry_connection()
         {
             SafelyShutDownBroker();
-            RestartBrokerAndWait();
+            RestartBrokerAndWaitForConnectionRecovery();
 
             Bus.Publish(new MyMessage());
             consumer.WaitForDelivery();
@@ -33,7 +33,7 @@ namespace Tests.Integration.Bus
             consumer.WaitForDelivery();
 
             SafelyShutDownBroker();
-            RestartBrokerAndWait();
+            RestartBrokerAndWaitForConnectionRecovery();
 
             Bus.Publish(new MyMessage {Value = 2});
             consumer.WaitForDelivery();
@@ -43,13 +43,13 @@ namespace Tests.Integration.Bus
         }
 
         [Test]
-        public void Should_be_able_to_publish_message_during_broker_failure_and_deliver_it_once_back_online()
+        public void Should_be_able_to_publish_message_during_broker_failure_and_perform_publish_once_back_online()
         {
             SafelyShutDownBroker();
 
             Bus.Publish(new MyMessage { Value = 1 });
 
-            RestartBrokerAndWait();
+            RestartBrokerAndWaitForConnectionRecovery();
 
             consumer.WaitForDelivery();
 
@@ -57,7 +57,7 @@ namespace Tests.Integration.Bus
             Assert.AreEqual(1, consumer.LastReceived.Value);
         }
 
-        private void RestartBrokerAndWait()
+        private void RestartBrokerAndWaitForConnectionRecovery()
         {
             Broker.StartBrokerApplication();
             Thread.Sleep(Bus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1));
