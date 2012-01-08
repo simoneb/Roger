@@ -41,6 +41,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roger.Chat.Messages", "Roge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roger.Chat.Server", "Roger.Chat.Server\Roger.Chat.Server.csproj", "{2D0071C9-9D71-4C1A-9841-9FD99436F01B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roger.MEF", "Roger.MEF\Roger.MEF.csproj", "{DD76D805-CBC9-40CA-B000-F05D87A3FC81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roger.Windsor", "Roger.Windsor\Roger.Windsor.csproj", "{9E1D695F-2509-4A20-9968-2AF9CF0D85B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +123,14 @@ Global
 		{2D0071C9-9D71-4C1A-9841-9FD99436F01B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D0071C9-9D71-4C1A-9841-9FD99436F01B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D0071C9-9D71-4C1A-9841-9FD99436F01B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD76D805-CBC9-40CA-B000-F05D87A3FC81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD76D805-CBC9-40CA-B000-F05D87A3FC81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD76D805-CBC9-40CA-B000-F05D87A3FC81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD76D805-CBC9-40CA-B000-F05D87A3FC81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E1D695F-2509-4A20-9968-2AF9CF0D85B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E1D695F-2509-4A20-9968-2AF9CF0D85B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E1D695F-2509-4A20-9968-2AF9CF0D85B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E1D695F-2509-4A20-9968-2AF9CF0D85B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

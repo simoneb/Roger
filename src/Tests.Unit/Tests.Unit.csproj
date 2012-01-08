@@ -48,8 +48,8 @@
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -59,6 +59,7 @@
     <Compile Include="DefaultSupportedMessageTypesResolverTest.cs" />
     <Compile Include="Exchange_resolution.cs" />
     <Compile Include="GenericsTest.cs" />
+    <Compile Include="MEF\MEFConsumerContainerTests.cs" />
     <Compile Include="Message_type_serialization.cs" />
     <Compile Include="QueueingPublisherTest.cs" />
     <Compile Include="ResequencingFilterTest.cs" />
@@ -90,9 +91,9 @@
     <Compile Include="Routing_key_generation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
-      <Name>Common</Name>
+    <ProjectReference Include="..\Roger.MEF\Roger.MEF.csproj">
+      <Project>{DD76D805-CBC9-40CA-B000-F05D87A3FC81}</Project>
+      <Name>Roger.MEF</Name>
     </ProjectReference>
     <ProjectReference Include="..\Roger\Roger.csproj">
       <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
