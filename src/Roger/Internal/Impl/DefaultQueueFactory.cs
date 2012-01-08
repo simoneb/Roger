@@ -10,7 +10,7 @@ namespace Roger.Internal.Impl
         private readonly bool autoDelete;
         private readonly IDictionary arguments;
 
-        public DefaultQueueFactory(bool durable = false, bool exclusive = true, bool autoDelete = false, IDictionary arguments = null)
+        public DefaultQueueFactory(bool durable = true, bool exclusive = false, bool autoDelete = false, IDictionary arguments = null)
         {
             this.durable = durable;
             this.exclusive = exclusive;

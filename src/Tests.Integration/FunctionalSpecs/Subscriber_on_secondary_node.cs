@@ -39,7 +39,7 @@ namespace Tests.Integration.FunctionalSpecs
 
         private int OneConsumer()
         {
-            using (var connection = Helpers.CreateSecondaryConnection())
+            using (var connection = Helpers.CreateSecondaryConnectionToSecondaryVirtualHost())
             using (var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare();

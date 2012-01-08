@@ -20,7 +20,7 @@ namespace Tests.Integration
         [Test]
         public void Messages_should_go_from_source_to_destination()
         {
-            var consumer = Task.Factory.StartNew(() => SubscribeAndReceiveOnce(Helpers.CreateSecondaryConnection()));
+            var consumer = Task.Factory.StartNew(() => SubscribeAndReceiveOnce(Helpers.CreateSecondaryConnectionToSecondaryVirtualHost()));
 
             Task.Factory.StartNew(() => PublishOnce(Helpers.CreateConnection()));
 
@@ -37,7 +37,7 @@ namespace Tests.Integration
 
             Task.Factory.StartNew(() => SubscribeAndReceiveOnce(Helpers.CreateConnection()));
 
-            Task.Factory.StartNew(() => PublishOnce(Helpers.CreateSecondaryConnection()));
+            Task.Factory.StartNew(() => PublishOnce(Helpers.CreateSecondaryConnectionToSecondaryVirtualHost()));
 
             handle.WaitOne(2000);
         }

@@ -22,9 +22,11 @@ namespace Tests.Integration.Bus
         {
             consumerContainer = new SimpleConsumerContainer();
             Bus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateConnection),
-                                       consumerContainer,
-                                       idGenerator: IdGenerator,
-                                       sequenceGenerator: SequenceGenerator, messageFilters: MessageFilters, log: RunningOnTeamCity ? (IRogerLog)new StandardOutLog() : new DebugLog());
+                                      consumerContainer,
+                                      idGenerator: IdGenerator,
+                                      sequenceGenerator: SequenceGenerator,
+                                      messageFilters: MessageFilters,
+                                      log: Log);
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -41,7 +43,12 @@ namespace Tests.Integration.Bus
             AfterBusInitialization();
         }
 
-        protected bool RunningOnTeamCity
+        protected IRogerLog Log
+        {
+            get { return RunningOnTeamCity ? (IRogerLog) new StandardOutLog() : new DebugLog(); }
+        }
+
+        private bool RunningOnTeamCity
         {
             get { return Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != null; }
         }

@@ -9,7 +9,7 @@ namespace Federation
     {
         protected override IConnection CreateConnection()
         {
-            return Helpers.CreateSecondaryConnection();
+            return Helpers.CreateSecondaryConnectionToSecondaryVirtualHost();
         }
     }
 }

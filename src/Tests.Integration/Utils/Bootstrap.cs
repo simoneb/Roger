@@ -12,21 +12,21 @@ namespace Tests.Integration.Utils
     [AssemblyFixture]
     public class Bootstrap
     {
-        private TcpTrace secondaryClientEndpoint;
+        private static TcpTrace secondaryClientEndpoint;
         private const string All = ".*";
         public static RabbitBrokerAdmin Broker { get; private set; }
-        public static TcpTrace FederationLinkTcpProxy { get; private set; }
+        private static TcpTrace federationLinkTcpProxy;
         public static bool RunEmbeddedBroker { get { return bool.Parse(ConfigurationManager.AppSettings["RunEmbeddedBroker"]); } }
         public static ResbitClient ResbitClient { get; private set; }
 
         [FixtureSetUp]
         public void TestFixtureSetup()
         {
-            FederationLinkTcpProxy = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
+            federationLinkTcpProxy = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
             StartFederationLink();
 
             secondaryClientEndpoint = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
-            secondaryClientEndpoint.Start(Globals.SecondaryConnectionPort, Globals.MainHostName, Globals.MainConnectionPort, "Secondary client link");
+            StartSecondaryConnectionLink();
 
             Environment.SetEnvironmentVariable("RABBITMQ_SERVER", @"..\..\..\..\RabbitMQServer");
             Broker = new RabbitBrokerAdmin("rabbit@LOCALHOST"){StartupTimeout = 10000};
@@ -57,7 +57,7 @@ namespace Tests.Integration.Utils
                                       false,
                                       new Hashtable { { "type", "topic" }, { "upstream-set", "SecondaryUpstream" } });
 
-            using (var connection = Helpers.CreateSafeShutdownSecondaryConnection())
+            using (var connection = Helpers.CreateSafeShutdownSecondaryConnectionToSecondaryVirtualHost())
             using (var model = connection.CreateModel())
                 model.ExchangeDeclare(Globals.FederationExchangeName,
                                       "x-federation",
@@ -74,7 +74,22 @@ namespace Tests.Integration.Utils
 
         public static void StartFederationLink()
         {
-            FederationLinkTcpProxy.Start(Globals.FederationConnectionPort, Globals.MainHostName, Globals.MainConnectionPort, "Federation");
+            federationLinkTcpProxy.Start(Globals.FederationConnectionPort, Globals.MainHostName, Globals.MainConnectionPort, "Federation");
+        }
+
+        public static void StopFederationLink()
+        {
+            federationLinkTcpProxy.Stop();
+        }
+
+        public static void StartSecondaryConnectionLink()
+        {
+            secondaryClientEndpoint.Start(Globals.SecondaryConnectionPort, Globals.MainHostName, Globals.MainConnectionPort, "Secondary client link");
+        }
+
+        public static void StopSecondaryConnectionLink()
+        {
+            secondaryClientEndpoint.Stop();
         }
 
         private static void StartBroker()
@@ -94,11 +109,6 @@ namespace Tests.Integration.Utils
             secondaryClientEndpoint.Stop();
 
             TcpTrace.StopAll(); // safety net
-        }
-
-        public static void StopFederationLink()
-        {
-            FederationLinkTcpProxy.Stop();
         }
 
         private static void StopBroker()

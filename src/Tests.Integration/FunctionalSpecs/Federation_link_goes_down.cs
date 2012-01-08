@@ -80,7 +80,7 @@ namespace Tests.Integration.FunctionalSpecs
 
         private void Consumer()
         {
-            using(var connection = Helpers.CreateSecondaryConnection())
+            using(var connection = Helpers.CreateSecondaryConnectionToSecondaryVirtualHost())
             using(var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare("", false, true, true, null);

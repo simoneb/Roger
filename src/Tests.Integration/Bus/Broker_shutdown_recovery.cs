@@ -5,7 +5,7 @@ using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
 {
-    public class Connection_shutdown_handling : With_default_bus
+    public class Broker_shutdown_recovery : With_default_bus
     {
         private GenericConsumer<MyMessage> consumer;
 

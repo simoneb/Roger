@@ -62,7 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
-    <Compile Include="Bus\Connection_shutdown_handling.cs" />
+    <Compile Include="Bus\Broker_shutdown_recovery.cs" />
+    <Compile Include="Bus\Connection_shutdown_on_consumer_side.cs" />
     <Compile Include="Bus\Duplicate_messages.cs" />
     <Compile Include="Bus\Message_ordering.cs" />
     <Compile Include="Bus\Publish_subscribe.cs" />

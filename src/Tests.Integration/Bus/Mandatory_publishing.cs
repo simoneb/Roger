@@ -13,7 +13,7 @@ namespace Tests.Integration.Bus
 
             Bus.PublishMandatory(new MyMessage {Value = 1}, reason => handle.Set());
 
-            if(!handle.WaitOne(100))
+            if(!handle.WaitOne(1000))
                 Assert.Fail("Delivery failure callback was not called");
         }
 
@@ -28,7 +28,7 @@ namespace Tests.Integration.Bus
             Bus.PublishMandatory(new MyMessage {Value = 1}, reason => { first++; handle.Signal(); });
             Bus.PublishMandatory(new MyMessage {Value = 1}, reason => { second++; handle.Signal(); });
 
-            WaitForDelivery();
+            handle.Wait(2000);
 
             Assert.AreEqual(1, first);
             Assert.AreEqual(1, second);
@@ -47,7 +47,7 @@ namespace Tests.Integration.Bus
 
             Bus.PublishMandatory(new MyMessage {Value = 1}, reason => handle.Set());
 
-            if(handle.WaitOne(100))
+            if(handle.WaitOne(1000))
                 Assert.Fail("Delivery failure callback wasn't expected to be called");
 
             Assert.IsNotNull(consumer.LastReceived);

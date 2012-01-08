@@ -66,7 +66,12 @@ namespace Roger.Internal.Impl
         {
             receivingModel = connection.CreateModel();
 
-            Endpoint = new RogerEndpoint(queueFactory.Create(receivingModel));
+            if(Endpoint.IsEmpty)
+            {
+                Endpoint = new RogerEndpoint(queueFactory.Create(receivingModel));
+                CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
+                log.DebugFormat("Created and bound queue {0}", Endpoint);
+            }
 
             CreateConsumer();
             ConsumeAsynchronously();
@@ -74,8 +79,6 @@ namespace Roger.Internal.Impl
 
         private void CreateConsumer()
         {
-            CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
-
             queueConsumer = new QueueingBasicConsumer(receivingModel);
             receivingModel.BasicConsume(Endpoint.Queue, false, queueConsumer);
         }
