@@ -249,7 +249,10 @@ namespace Roger.Internal.Impl
                 return;
 
             if(receivingModel != null)
+            {
+                receivingModel.QueueDelete(Endpoint);
                 receivingModel.Dispose();
+            }
 
             if (consumingTask != null)
                 consumingTask.Wait(100);

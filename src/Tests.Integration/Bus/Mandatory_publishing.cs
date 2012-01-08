@@ -13,7 +13,7 @@ namespace Tests.Integration.Bus
 
             Bus.PublishMandatory(new MyMessage {Value = 1}, reason => handle.Set());
 
-            if(!handle.WaitOne(1000))
+            if(!handle.WaitOne(100))
                 Assert.Fail("Delivery failure callback was not called");
         }
 
@@ -22,16 +22,17 @@ namespace Tests.Integration.Bus
         {
             var handle = new CountdownEvent(2);
 
-            int first = 0;
-            int second = 0;
+            var first = false;
+            var second = false;
 
-            Bus.PublishMandatory(new MyMessage {Value = 1}, reason => { first++; handle.Signal(); });
-            Bus.PublishMandatory(new MyMessage {Value = 1}, reason => { second++; handle.Signal(); });
+            Bus.PublishMandatory(new MyMessage {Value = 1}, reason => { first = true; handle.Signal(); });
+            Bus.PublishMandatory(new MyMessage {Value = 2}, reason => { second = true; handle.Signal(); });
 
-            handle.Wait(2000);
+            if(!handle.Wait(100))
+                Assert.Fail("Delivery failure callbacks were not called");
 
-            Assert.AreEqual(1, first);
-            Assert.AreEqual(1, second);
+            Assert.IsTrue(first);
+            Assert.IsTrue(second);
         }
 
         [Test]

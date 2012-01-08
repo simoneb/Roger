@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="ConcurrentSelfExpiringCacheTest.cs" />
     <Compile Include="DeduplicationFilterTest.cs" />
+    <Compile Include="DefaultConsumingProcessTest.cs" />
     <Compile Include="DefaultReflectionTests.cs" />
     <Compile Include="DefaultSupportedMessageTypesResolverTest.cs" />
     <Compile Include="Exchange_resolution.cs" />

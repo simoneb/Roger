@@ -29,7 +29,8 @@ namespace Tests.Unit
                                                 Substitute.For<ISequenceGenerator>(),
                                                 Substitute.For<IExchangeResolver>(),
                                                 Substitute.For<IMessageSerializer>(),
-                                                Substitute.For<ITypeResolver>(), Substitute.For<IRogerLog>(),
+                                                Substitute.For<ITypeResolver>(), 
+                                                Substitute.For<IRogerLog>(),
                                                 Substitute.For<Func<RogerEndpoint>>(), 
                                                 TimeSpan.Zero);
             sut.Start();
