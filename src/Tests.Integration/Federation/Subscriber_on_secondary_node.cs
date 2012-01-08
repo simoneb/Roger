@@ -3,7 +3,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client.MessagePatterns;
 
-namespace Tests.Integration.FunctionalSpecs
+namespace Tests.Integration.Federation
 {
     public class Subscriber_on_secondary_node : With_federation
     {

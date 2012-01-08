@@ -22,16 +22,5 @@ namespace Roger.Internal
         {
             return string.Format("Value {0} is not a valid exchange name", name);
         }
-
-        internal static string SubclassConsumerOfAbstractClassInHierarchy(Type consumerType, Type messageType)
-        {
-            return string.Format("Consumer {0} consumes derived classes but there is class {1} in the inheritance chain which is still abstract", 
-                                 consumerType.Name, messageType.Name);
-        }
-
-        internal static string SubclassConsumerOfNonAbstractClass(Type consumerType, Type messageType)
-        {
-            return string.Format("Message type {0} should be abstract for consumer {1} to consume its derived classes", messageType.Name, consumerType.Name);
-        }
     }
 }

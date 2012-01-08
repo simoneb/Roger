@@ -89,9 +89,9 @@
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
     <Compile Include="Bus\SupportClasses\StandardOutLog.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
-    <Compile Include="FunctionalSpecs\Federation_link_goes_down.cs" />
-    <Compile Include="FunctionalSpecs\Subscriber_on_secondary_node.cs" />
-    <Compile Include="General_federation_tests.cs" />
+    <Compile Include="Federation\Federation_link_goes_down.cs" />
+    <Compile Include="Federation\Subscriber_on_secondary_node.cs" />
+    <Compile Include="Federation\General_federation_tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirms_behavior.cs" />
     <Compile Include="QueueingBasicConsumer_behavior.cs" />

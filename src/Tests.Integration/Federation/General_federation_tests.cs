@@ -5,7 +5,7 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Tests.Integration
+namespace Tests.Integration.Federation
 {
     public class General_federation_tests : With_federation
     {

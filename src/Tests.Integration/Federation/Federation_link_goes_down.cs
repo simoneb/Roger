@@ -7,7 +7,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Linq;
 
-namespace Tests.Integration.FunctionalSpecs
+namespace Tests.Integration.Federation
 {
     public class Federation_link_goes_down : With_federation
     {
