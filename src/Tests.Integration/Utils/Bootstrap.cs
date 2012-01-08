@@ -86,6 +86,8 @@ namespace Tests.Integration.Utils
         [FixtureTearDown]
         public void TestFixtureTeardown()
         {
+            Broker.StopBrokerApplication();
+            Broker.ResetNode();
             StopBroker();
 
             StopFederationLink();
