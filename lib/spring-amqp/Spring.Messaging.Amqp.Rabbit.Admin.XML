@@ -1,0 +1,1036 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Spring.Messaging.Amqp.Rabbit.Admin</name>
+    </assembly>
+    <members>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations">
+            <summary>
+            Performs administration tasks for RabbitMQ broker administration.   
+            </summary>
+            <remarks>
+            Goal is to support full CRUD of Exchanges, Queues, Bindings, User, VHosts, etc.
+            </remarks>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.GetQueues">
+            <summary>
+            Gets the queues.
+            </summary>
+            <returns>A list of queues.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.GetQueues(System.String)">
+            <summary>
+            Gets the queues.
+            </summary>
+            <param name="virtualHost">The virtual host.</param>
+            <returns>A list of queues.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.AddUser(System.String,System.String)">
+            <summary>
+            Adds the user.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="password">The password.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.DeleteUser(System.String)">
+            <summary>
+            Deletes the user.
+            </summary>
+            <param name="username">The username.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ChangeUserPassword(System.String,System.String)">
+            <summary>
+            Changes the user password.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="newPassword">The new password.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ListUsers">
+            <summary>
+            Lists the users.
+            </summary>
+            <returns>A list of users.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.AddVhost(System.String)">
+            <summary>
+            Adds the vhost.
+            </summary>
+            <param name="vhostPath">The vhost path.</param>
+            <returns>The value.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.DeleteVhost(System.String)">
+            <summary>
+            Deletes the vhost.
+            </summary>
+            <param name="vhostPath">The vhost path.</param>
+            <returns>The value.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.SetPermissions(System.String,System.String,System.String,System.String)">
+            <summary>
+            Sets the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="configure">The configure.</param>
+            <param name="read">The read.</param>
+            <param name="write">The write.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.SetPermissions(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Sets the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="configure">The configure.</param>
+            <param name="read">The read.</param>
+            <param name="write">The write.</param>
+            <param name="vhostPath">The vhost path.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ClearPermissions(System.String)">
+            <summary>
+            Clears the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ClearPermissions(System.String,System.String)">
+            <summary>
+            Clears the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="vhostPath">The vhost path.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ListPermissions">
+            <summary>
+            Lists the permissions.
+            </summary>
+            <returns>A list of permissions.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ListPermissions(System.String)">
+            <summary>
+            Lists the permissions.
+            </summary>
+            <param name="vhostPath">The vhost path.</param>
+            <returns>A list of permissions.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ListUserPermissions(System.String)">
+            <summary>
+            Lists the user permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <returns>A list of user permissions.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.StartBrokerApplication">
+            <summary>
+            Starts the broker application.
+            </summary>
+            Starts the RabbitMQ application on an already running node. This command is typically run after performing other
+            management actions that required the RabbitMQ application to be stopped, e.g. reset.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.StopBrokerApplication">
+            <summary>
+            Stops the broker application.
+            </summary>
+            Stops the RabbitMQ application, leaving the Erlang node running.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.StartNode">
+            <summary>
+            Starts the node.
+            </summary>
+            Starts the Erlang node where RabbitMQ is running by shelling out to the directory specified by RABBITMQ_HOME and
+            executing the standard named start script. It spawns the shell command execution into its own thread.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.StopNode">
+            <summary>
+            Stops the node.
+            </summary>
+            Stops the halts the Erlang node on which RabbitMQ is running. To restart the node you will need to execute the
+            start script from a command line or via other means.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ResetNode">
+            <summary>
+            Resets the node.
+            Removes the node from any cluster it belongs to, removes all data from the management database, such as
+            configured users and vhosts, and deletes all persistent messages.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.ForceResetNode">
+            <summary>
+            Forces the reset node.
+            </summary>
+            The forceResetNode command differs from {@link #resetNode} in that it resets the node unconditionally, regardless
+            of the current management database state and cluster configuration. It should only be used as a last resort if
+            the database or cluster configuration has been corrupted.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.IRabbitBrokerOperations.GetStatus">
+            <summary>
+            Gets the status.
+            </summary>
+            <returns>The status of the node.</returns>
+            Returns the status of the node.
+            @return status of the node.
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo">
+            <summary>
+            This class represents a Queue that is configured on the RabbitMQ broker
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Transactions">
+            <summary>
+            Gets or sets the transactions.
+            </summary>
+            <value>The transactions.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.AcksUncommitted">
+            <summary>
+            Gets or sets the acks uncommitted.
+            </summary>
+            <value>The acks uncommitted.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Consumers">
+            <summary>
+            Gets or sets the consumers.
+            </summary>
+            <value>The consumers.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Pid">
+            <summary>
+            Gets or sets the pid.
+            </summary>
+            <value>The pid.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Durable">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo"/> is durable.
+            </summary>
+            <value><c>true</c> if durable; otherwise, <c>false</c>.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Messages">
+            <summary>
+            Gets or sets the messages.
+            </summary>
+            <value>The messages.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Memory">
+            <summary>
+            Gets or sets the memory.
+            </summary>
+            <value>The memory.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.AutoDelete">
+            <summary>
+            Gets or sets a value indicating whether [auto delete].
+            </summary>
+            <value><c>true</c> if [auto delete]; otherwise, <c>false</c>.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.MessagesReady">
+            <summary>
+            Gets or sets the messages ready.
+            </summary>
+            <value>The messages ready.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Arguments">
+            <summary>
+            Gets or sets the arguments.
+            </summary>
+            <value>The arguments.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.MessagesUnacknowledged">
+            <summary>
+            Gets or sets the messages unacknowledged.
+            </summary>
+            <value>The messages unacknowledged.</value>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfo.MessageUncommitted">
+            <summary>
+            Gets or sets the message uncommitted.
+            </summary>
+            <value>The message uncommitted.</value>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitAdminAuthException">
+            <summary>
+            A rabbit admin auth exception.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitAdminAuthException.#ctor(System.String,Erlang.NET.OtpAuthException)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitAdminAuthException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="cause">The cause.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin">
+            <summary>
+            Rabbit broker administration implementation
+            </summary>
+            <author>Mark Pollack</author>
+            <author>Dave Syer</author>
+            <author>Helena Edelson</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.DEFAULT_VHOST">
+            <summary>
+            The default vhost.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.DEFAULT_NODE_NAME">
+            <summary>
+            The default node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.DEFAULT_PORT">
+            <summary>
+            The default port.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.DEFAULT_ENCODING">
+            <summary>
+            The default encoding.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.erlangTemplate">
+            <summary>
+            The erlang template.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.encoding">
+            <summary>
+            The encoding.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.timeout">
+            <summary>
+            The timeout.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.nodeName">
+            <summary>
+            The node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.cookie">
+            <summary>
+            The cookie.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.port">
+            <summary>
+            The port.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.rabbitLogBaseDirectory">
+            <summary>
+            The rabbit log base directory.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.rabbitMnesiaBaseDirectory">
+            <summary>
+            The rabbit mnesia base directory.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.moduleAdapter">
+            <summary>
+            The module adapter.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.GetDefaultNodeName">
+            <summary>
+            Gets the default name of the node.
+            </summary>
+            <returns>The default node name.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
+            Create an instance by supplying the erlang node name (e.g. "rabbit@myserver"), or simply the hostname (if the
+            alive name is "rabbit").
+            </summary>
+            <param name="nodeName">The node name or hostname to use.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
+            Create an instance by supplying the erlang node name and cookie (unique string).
+            </summary>
+            <param name="nodeName">The node name or hostname to use.</param>
+            <param name="cookie">The cookie value to use.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
+            Create an instance by supplying the erlang node name and port number. Use this on a UN*X system if you want to
+            run the broker as a user without root privileges, supplying values that do not clash with the default broker
+            (usually "rabbit@&lt;servername&gt;" and 5672). If, as well as managing an existing broker, you need to start the
+            broker process, you will also need to set {@link #setRabbitLogBaseDirectory(String) RABBITMQ_LOG_BASE} and
+            {@link #setRabbitMnesiaBaseDirectory(String) RABBITMQ_MNESIA_BASE} to point to writable directories).
+            </summary>
+            <param name="nodeName">The node name or hostname to use.</param>
+            <param name="port">The port number (overriding the default which is 5672.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor(System.String,System.Int32,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
+            Create an instance by supplying the erlang node name, port number and cookie (unique string). If the node name
+            does not contain an 
+            <code>@</code>
+             character, it will be prepended with an alivename 
+            <code>rabbit@</code>
+            (interpreting the supplied value as just the hostname).
+            </summary>
+            <param name="nodeName">The node name or hostname to use.</param>
+            <param name="port">The port number (overriding the default which is 5672.</param>
+            <param name="cookie">The cookie value to use.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.GetQueues">
+            <summary>
+            Gets the queues.
+            </summary>
+            <returns>A list of queues.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.GetQueues(System.String)">
+            <summary>
+            Gets the queues.
+            </summary>
+            <param name="virtualHost">The virtual host.</param>
+            <returns>A list of queues.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.AddUser(System.String,System.String)">
+            <summary>
+            Adds the user.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="password">The password.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.DeleteUser(System.String)">
+            <summary>
+            Deletes the user.
+            </summary>
+            <param name="username">The username.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ChangeUserPassword(System.String,System.String)">
+            <summary>
+            Changes the user password.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="newPassword">The new password.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ListUsers">
+            <summary>
+            Lists the users.
+            </summary>
+            <returns>A list of users.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.AddVhost(System.String)">
+            <summary>
+            Adds the vhost.
+            </summary>
+            <param name="vhostPath">The vhost path.</param>
+            <returns>The value.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.DeleteVhost(System.String)">
+            <summary>
+            Deletes the vhost.
+            </summary>
+            <param name="vhostPath">The vhost path.</param>
+            <returns>The value.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.SetPermissions(System.String,System.String,System.String,System.String)">
+            <summary>
+            Sets the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="configure">The configure.</param>
+            <param name="read">The read.</param>
+            <param name="write">The write.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.SetPermissions(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Sets the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="configure">The configure.</param>
+            <param name="read">The read.</param>
+            <param name="write">The write.</param>
+            <param name="vhostPath">The vhost path.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ClearPermissions(System.String)">
+            <summary>
+            Clears the permissions.
+            </summary>
+            <param name="username">The username.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ClearPermissions(System.String,System.String)">
+            <summary>
+            Clears the permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="vhostPath">The vhost path.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ListPermissions">
+            <summary>
+            Lists the permissions.
+            </summary>
+            <returns>A list of permissions.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ListPermissions(System.String)">
+            <summary>
+            Lists the permissions.
+            </summary>
+            <param name="vhostPath">The vhost path.</param>
+            <returns>A list of permissions.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ListUserPermissions(System.String)">
+            <summary>
+            Lists the user permissions.
+            </summary>
+            <param name="username">The username.</param>
+            <returns>A list of user permissions.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.StartBrokerApplication">
+            <summary>
+            Starts the broker application.
+            </summary>
+            Starts the RabbitMQ application on an already running node. This command is typically run after performing other
+            management actions that required the RabbitMQ application to be stopped, e.g. reset.
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.StopBrokerApplication">
+            <summary>
+            Stops the broker application.
+            </summary>
+            Stops the RabbitMQ application, leaving the Erlang node running.
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.StartNode">
+            <summary>
+            Starts the Erlang node where RabbitMQ is running by shelling out to the directory specified by RABBITMQ_HOME and
+            executing the standard named start script. It spawns the shell command execution into its own thread.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.WaitForReadyState">
+            <summary>
+            Waits the state of for ready.
+            </summary>
+            <returns>The value.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.WaitForUnreadyState">
+            <summary>
+            Waits the state of for unready.
+            </summary>
+            <returns>The value.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.WaitForStoppedState">
+            <summary>
+            Waits the state of for stopped.
+            </summary>
+            <returns>The value.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.WaitForState(System.Func{Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus,System.Boolean},System.String)">
+            <summary>
+            Waits for state.
+            </summary>
+            <param name="callable">The callable.</param>
+            <param name="state">The state.</param>
+            <returns>The value.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.FindDirectoryName(System.String,System.String)">
+            <summary>
+            Finds the name of the directory.
+            </summary>
+            <param name="parent">The parent.</param>
+            <param name="child">The child.</param>
+            <returns></returns>
+            Find a directory whose name starts with a substring in a given parent directory. If there is none return null,
+            otherwise sort the results and return the best match (an exact match if there is one or the last one in a lexical
+            sort).
+            @param parent
+            @param child
+            @return the full name of a directory
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.AddEnvironment(System.Collections.Specialized.StringDictionary,System.String)">
+            <summary>
+            Adds the environment.
+            </summary>
+            <param name="env">The env.</param>
+            <param name="key">The key.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.StopNode">
+            <summary>
+            Stops the node.
+            </summary>
+            Stops the halts the Erlang node on which RabbitMQ is running. To restart the node you will need to execute the
+            start script from a command line or via other means.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ResetNode">
+            <summary>
+            Resets the node.
+            Removes the node from any cluster it belongs to, removes all data from the management database, such as
+            configured users and vhosts, and deletes all persistent messages.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ForceResetNode">
+            <summary>
+            Forces the reset node.
+            </summary>
+            The forceResetNode command differs from {@link #resetNode} in that it resets the node unconditionally, regardless
+            of the current management database state and cluster configuration. It should only be used as a last resort if
+            the database or cluster configuration has been corrupted.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.InitializeDefaultErlangTemplate">
+            <summary>
+            Initializes the default erlang template.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.CreateErlangTemplate(Spring.Erlang.Connection.IConnectionFactory)">
+            <summary>
+            Creates the erlang template.
+            </summary>
+            <param name="otpConnectionFactory">The otp connection factory.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ExecuteAndConvertRpc``1(System.String,System.String,System.Object[])">
+            <summary>
+            Convenience method for lazy initialization of the {@link ErlangTemplate} and associated trimmings. All RPC calls should go through this method.
+            </summary>
+            <typeparam name="T">The type of result.</typeparam>
+            <param name="module">The module to address remotely.</param>
+            <param name="function">The function to call.</param>
+            <param name="args">The arguments to pass.</param>
+            <returns>The result from the remote erl process converted to the correct type</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.GetBytes(System.String)">
+            <summary>
+            Gets the bytes.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>The byte representation of the string.</returns>
+            Safely convert a string to its bytes using the encoding provided.
+            @see #setEncoding(String)
+            @param string the value to convert
+            @return the bytes from the string using the encoding provided
+            @throws IllegalStateException if the encoding is ont supported
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.RabbitLogBaseDirectory">
+            <summary>
+            Sets the rabbit log base directory.
+            <value>The rabbit log base directory.</value>
+            The location of 
+            <code>RABBITMQ_LOG_BASE</code>
+             to override the system default (which may be owned by another
+            user). Only needed for launching the broker process. Can also be set as a system property.
+            @param rabbitLogBaseDirectory the rabbit log base directory to set
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.RabbitMnesiaBaseDirectory">
+            <summary>
+            Sets the rabbit mnesia base directory.
+            <value>The rabbit mnesia base directory.</value>
+            The location of 
+            <code>RABBITMQ_MNESIA_BASE</code>
+             to override the system default (which may be owned by another
+            user). Only needed for launching the broker process. Can also be set as a system property.
+            @param rabbitMnesiaBaseDirectory the rabbit Mnesia base directory to set
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.Encoding" -->
+        <!-- Badly formed XML comment ignored for member "P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.StartupTimeout" -->
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.ModuleAdapter">
+            <summary>
+            Sets the module adapter.
+            <value>The module adapter.</value>
+            Allows users to adapt Erlang RPC
+            <code>(module, function)</code>
+            pairs to older, or different, versions of the
+            broker than the current target. The map is from String to String in the form
+            <code>input_module%input_function -&gt; output_module%output_function</code>
+            (using a
+            <code>%</code>
+            separator).
+            @param moduleAdapter the module adapter to set
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter">
+            <summary>
+            Converter that understands the responses from the rabbit control module and related functionality. 
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.logger">
+            <summary>
+            The logger
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.converterMap">
+            <summary>
+            The converter map.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.moduleAdapter">
+            <summary>
+            The module adapter.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.#ctor(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter"/> class.
+            </summary>
+            <param name="moduleAdapter">The module adapter.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.FromErlangRpc(System.String,System.String,Erlang.NET.OtpErlangObject)">
+            <summary>
+            The return value from executing the Erlang RPC.
+            </summary>
+            <param name="module">The module to call</param>
+            <param name="function">The function to invoke</param>
+            <param name="erlangObject">The erlang object that is passed in as a parameter</param>
+            <returns>The converted .NET object return value from the RPC call.</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.GetConverter(System.String,System.String)">
+            <summary>
+            Gets the converter.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <returns>The converter.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.InitializeConverterMap">
+            <summary>
+            Initializes the converter map.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.RegisterConverter(System.String,System.String,Spring.Erlang.Support.Converter.IErlangConverter)">
+            <summary>
+            Registers the converter.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="listUsersConverter">The list users converter.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitControlErlangConverter.GenerateKey(System.String,System.String)">
+            <summary>
+            Generates the key.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <returns>The key.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.ListUsersConverter">
+            <summary>
+            List users converter.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.ListUsersConverter.FromErlang(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Convert from an Erlang data type to a .NET data type.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The converted .NET object</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.ListUsersConverter.ExtractString(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Extracts the string.
+            </summary>
+            <param name="obj">The obj.</param>
+            <returns>The string.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatusConverter">
+            <summary>
+            A status converter.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatusConverter.FromErlang(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Convert from an Erlang data type to a .NET data type.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The converted .NET object</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatusConverter.ExtractApplications(System.Collections.Generic.IList{Spring.Erlang.Core.Application},Erlang.NET.OtpErlangList)">
+            <summary>
+            Extracts the applications.
+            </summary>
+            <param name="applications">The applications.</param>
+            <param name="appList">The app list.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitMnesiaStatusConverter">
+            <summary>
+            A status converter.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitMnesiaStatusConverter.FromErlang(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Convert from an Erlang data type to a .NET data type.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The converted .NET object</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitMnesiaStatusConverter.ExtractNodes(System.Collections.Generic.IList{Spring.Erlang.Core.Node},Erlang.NET.OtpErlangList)">
+            <summary>
+            Extracts the nodes.
+            </summary>
+            <param name="nodes">The nodes.</param>
+            <param name="nodesList">The nodes list.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField">
+            <summary>
+            Queue info field enumeraton.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.transactions">
+            <summary>
+            Transactions value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.acks_uncommitted">
+            <summary>
+            Acks Uncommitted value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.consumers">
+            <summary>
+            Consumers value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.pid">
+            <summary>
+            Pid value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.durable">
+            <summary>
+            Durable value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.messages">
+            <summary>
+            Messages value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.memory">
+            <summary>
+            Memory value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.auto_delete">
+            <summary>
+            Auto delete value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.messages_ready">
+            <summary>
+            Messages ready value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.arguments">
+            <summary>
+            Arguments value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.name">
+            <summary>
+            Name value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.messages_unacknowledged">
+            <summary>
+            Messages unacknowledged value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.messages_uncommitted">
+            <summary>
+            Messages uncommitted value
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoField.NOVALUE">
+            <summary>
+            No value
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoAllConverter">
+            <summary>
+            A queue info all converter.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoAllConverter.ToQueueInfoField(System.String)">
+            <summary>
+            Toes the queue info field.
+            </summary>
+            <param name="str">The string.</param>
+            <returns>The queue info field value.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoAllConverter.ExtractAtomBoolean(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Extracts the atom boolean.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>The atom boolean.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.QueueInfoAllConverter.ExtractNameValueFromTuple(Erlang.NET.OtpErlangTuple)">
+            <summary>
+            Extracts the name value from tuple.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>The name value.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus">
+            <summary>
+             The status object returned from querying the broker
+            </summary>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.runningApplications">
+            <summary>
+            The running applications.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.nodes">
+            <summary>
+            The nodes.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.runningNodes">
+            <summary>
+            The running nodes.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.#ctor(System.Collections.Generic.IList{Spring.Erlang.Core.Application},System.Collections.Generic.IList{Spring.Erlang.Core.Node},System.Collections.Generic.IList{Spring.Erlang.Core.Node})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus"/> class.
+            </summary>
+            <param name="runningApplications">The running applications.</param>
+            <param name="nodes">The nodes.</param>
+            <param name="runningNodes">The running nodes.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.IsAlive">
+            <summary>
+            Gets a value indicating whether this instance is alive.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.IsRunning">
+            <summary>
+            Gets a value indicating whether this instance is running.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.IsReady">
+            <summary>
+            Gets a value indicating whether this instance is ready.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.RunningApplications">
+            <summary>
+            Gets the running applications.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.Nodes">
+            <summary>
+            Gets the nodes.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Admin.RabbitStatus.RunningNodes">
+            <summary>
+            Gets the running nodes.
+            </summary>
+            <remarks></remarks>
+        </member>
+    </members>
+</doc>

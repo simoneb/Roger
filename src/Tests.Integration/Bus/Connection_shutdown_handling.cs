@@ -59,14 +59,14 @@ namespace Tests.Integration.Bus
 
         private void RestartBrokerAndWait()
         {
-            Broker.StartAppAndWait();
+            Broker.StartBrokerApplication();
             Thread.Sleep(Bus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1));
         }
 
         private static void SafelyShutDownBroker()
         {
             Thread.Sleep(1000);
-            Broker.StopApp();
+            Broker.StopBrokerApplication();
             Thread.Sleep(1000);
         }
     }

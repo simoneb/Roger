@@ -1,0 +1,917 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Spring.Erlang</name>
+    </assembly>
+    <members>
+        <member name="T:Spring.Erlang.Connection.ConnectionFactoryUtils">
+            <summary>
+            Connection factory utilities.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Erlang.Connection.ConnectionFactoryUtils.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Connection.ConnectionFactoryUtils.ReleaseConnection(Spring.Erlang.Connection.IConnection,Spring.Erlang.Connection.IConnectionFactory)">
+            <summary>
+            Releases the connection.
+            </summary>
+            <param name="con">The con.</param>
+            <param name="cf">The cf.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Connection.ConnectionParameters">
+            <summary>
+            Encapsulate properties to create a OtpConnection
+            </summary>
+            <remarks></remarks>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="F:Spring.Erlang.Connection.ConnectionParameters.otpSelf">
+            <summary>
+            The otp self.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.ConnectionParameters.otpPeer">
+            <summary>
+            The otp peer.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Connection.ConnectionParameters.#ctor(Erlang.NET.OtpSelf,Erlang.NET.OtpPeer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.ConnectionParameters"/> class.
+            </summary>
+            <param name="otpSelf">The otp self.</param>
+            <param name="otpPeer">The otp peer.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.ConnectionParameters.GetOtpSelf">
+            <summary>
+            Gets the otp self.
+            </summary>
+            <returns>The otp self.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.ConnectionParameters.GetOtpPeer">
+            <summary>
+            Gets the otp peer.
+            </summary>
+            <returns>The otp peer.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Connection.DefaultConnection">
+            <summary>
+            Basic implementation of {@link ConnectionProxy} that delegates to an underlying OtpConnection.
+            </summary>
+            <remarks></remarks>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="T:Spring.Erlang.Connection.IConnectionProxy">
+            <summary>
+            Subinterface of {@link IConnection} to be implemented by Connection proxies.
+            Allows access to the underlying target Connection.
+            </summary>
+            <remarks></remarks>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="T:Spring.Erlang.Connection.IConnection">
+            <summary>
+            A simple interface that is used to wrap access to the OtpConnection class in order to support
+            caching of OptConnections via method interception.
+            Note:  The surface area of the API is all that is required to implement administrative functionality
+            for the Spring AMQP admin project.  To access the underlying OtpConnection, use the method GetTargetConnection
+            on the interface ConnectionProxy that is implemented by DefaultConnection.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.IConnection.Close">
+            <summary>
+            Closes this instance.
+            </summary>
+            <remarks>Close the connection to the remote node.</remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.IConnection.SendRPC(System.String,System.String,Erlang.NET.OtpErlangList)">
+            <summary>
+            Sends the RPC.
+            </summary>
+            <param name="mod">The mod.</param>
+            <param name="fun">The fun.</param>
+            <param name="args">The args.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.IConnection.ReceiveRPC">
+            <summary>
+            Receives the RPC.
+            </summary>
+            <returns>The second element of the tuple if the received message is a two-tuple, otherwise null. No further error checking is performed.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.IConnectionProxy.GetTargetConnection">
+            <summary>
+            Gets the target connection.
+            </summary>
+            <returns>The connection.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Erlang.Connection.DefaultConnection.otpConnection">
+            <summary>
+            The connection.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Connection.DefaultConnection.#ctor(Erlang.NET.OtpConnection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.DefaultConnection"/> class.
+            </summary>
+            <param name="otpConnection">The otp connection.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.DefaultConnection.Close">
+            <summary>
+            Closes this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.DefaultConnection.SendRPC(System.String,System.String,Erlang.NET.OtpErlangList)">
+            <summary>
+            Sends the RPC.
+            </summary>
+            <param name="mod">The mod.</param>
+            <param name="fun">The fun.</param>
+            <param name="args">The args.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.DefaultConnection.ReceiveRPC">
+            <summary>
+            Receives the RPC.
+            </summary>
+            <returns>The second element of the tuple if the received message is a two-tuple, otherwise null. No further error checking is performed.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.DefaultConnection.GetTargetConnection">
+            <summary>
+            Gets the target connection.
+            </summary>
+            <returns>The connection.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Connection.IConnectionFactory">
+            <summary>
+            An interface based ConnectionFactory for creating <see cref="T:Erlang.NET.OtpConnection"/>s.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.IConnectionFactory.CreateConnection">
+            <summary>
+            Creates the connection.
+            </summary>
+            <returns>The connection.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Connection.SimpleConnectionFactory">
+            <summary>
+             
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.uniqueSelfNodeName">
+            <summary>
+            The unique self node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.selfNodeName">
+            <summary>
+            The self node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.peerNodeName">
+            <summary>
+            The peer node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.cookie">
+            <summary>
+            The cookie.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.otpSelf">
+            <summary>
+            The otp self.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SimpleConnectionFactory.otpPeer">
+            <summary>
+            The otp peer.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SimpleConnectionFactory.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.SimpleConnectionFactory"/> class.
+            </summary>
+            <param name="selfNodeName">Name of the self node.</param>
+            <param name="peerNodeName">Name of the peer node.</param>
+            <param name="cookie">The cookie.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SimpleConnectionFactory.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.SimpleConnectionFactory"/> class.
+            </summary>
+            <param name="selfNodeName">Name of the self node.</param>
+            <param name="peerNodeName">Name of the peer node.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SimpleConnectionFactory.CreateConnection">
+            <summary>
+            Creates the connection.
+            </summary>
+            <returns>The connection.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SimpleConnectionFactory.AfterPropertiesSet">
+            <summary>
+            Afters the properties set.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Connection.SimpleConnectionFactory.UniqueSelfNodeName">
+            <summary>
+            Gets or sets a value indicating whether [unique self node name].
+            </summary>
+            <value><c>true</c> if [unique self node name]; otherwise, <c>false</c>.</value>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Connection.SingleConnectionFactory">
+            <summary>
+            A single connection factory.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.uniqueSelfNodeName">
+            <summary>
+            The unique self node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.selfNodeName">
+            <summary>
+            The self node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.cookie">
+            <summary>
+            The cookie.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.peerNodeName">
+            <summary>
+            The peer node name.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.otpSelf">
+            <summary>
+            The otp self.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.otpPeer">
+            <summary>
+            The otp peer.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.targetConnection">
+            <summary>
+            Raw JInterface Connection
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.connection">
+            <summary>
+            Proxy Connection.
+            </summary> 
+        </member>
+        <member name="F:Spring.Erlang.Connection.SingleConnectionFactory.connectionMonitor">
+            <summary>
+            Synchronization monitor for the shared Connection.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.SingleConnectionFactory"/> class.
+            </summary>
+            <param name="selfNodeName">Name of the self node.</param>
+            <param name="cookie">The cookie.</param>
+            <param name="peerNodeName">Name of the peer node.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.SingleConnectionFactory"/> class.
+            </summary>
+            <param name="selfNodeName">Name of the self node.</param>
+            <param name="peerNodeName">Name of the peer node.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.CreateConnection">
+            <summary>
+            Creates the connection.
+            </summary>
+            <returns>The connection.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.InitConnection">
+            <summary>
+            Inits the connection.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.ResetConnection">
+            <summary>
+            Resets the connection.
+            </summary>
+            Reset the underlying shared Connection, to be reinitialized on next access.
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.CloseConnection(Spring.Erlang.Connection.IConnection)">
+            <summary>
+            Closes the connection.
+            </summary>
+            <param name="connection">The connection.</param>
+            Close the given Connection.
+            @param connection
+            the Connection to close
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.DoCreateConnection">
+            <summary>
+            Does the create connection.
+            </summary>
+            <returns>The connection.</returns>
+            Create a JInterface Connection via this class's ConnectionFactory.
+            @return the new Otp Connection
+            @throws OtpAuthException
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.PrepareConnection(Spring.Erlang.Connection.IConnection)">
+            <summary>
+            Prepares the connection.
+            </summary>
+            <param name="con">The con.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.GetSharedConnectionProxy(Spring.Erlang.Connection.IConnection)">
+            <summary>
+            Gets the shared connection proxy.
+            </summary>
+            <param name="target">The target.</param>
+            <returns>The connection proxy.</returns>
+            Wrap the given OtpConnection with a proxy that delegates every method
+            call to it but suppresses close calls. This is useful for allowing
+            application code to handle a special framework Connection just like an
+            ordinary Connection from a Rabbit ConnectionFactory.
+            @param target
+            the original Connection to wrap
+            @return the wrapped Connection
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.AfterPropertiesSet">
+            <summary>
+            Afters the properties set.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SingleConnectionFactory.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="P:Spring.Erlang.Connection.SingleConnectionFactory.UniqueSelfNodeName">
+            <summary>
+            Gets or sets a value indicating whether [unique self node name].
+            </summary>
+            <value><c>true</c> if [unique self node name]; otherwise, <c>false</c>.</value>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Connection.SharedConnectionInvocationHandler">
+            <summary>
+            A shared connection invocation handler.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Erlang.Connection.SharedConnectionInvocationHandler.target">
+            <summary>
+            The target.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SharedConnectionInvocationHandler.#ctor(Spring.Erlang.Connection.IConnection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Connection.SharedConnectionInvocationHandler"/> class.
+            </summary>
+            <param name="target">The target.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Connection.SharedConnectionInvocationHandler.Invoke(AopAlliance.Intercept.IMethodInvocation)">
+            <summary>
+            Invokes the specified mi.
+            </summary>
+            <param name="mi">The mi.</param>
+            <returns>The object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.ErlangErrorRpcException">
+            <summary>
+            Exception thrown when an 'error' is received from an Erlang RPC call. 
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="T:Spring.Erlang.Core.Application">
+            <summary>
+            Describes an Erlang application.  Only three fields are supported as that is the level
+            of information that rabbitmq returns when performing a status request.
+            </summary>
+            <remarks>
+            See http://www.erlang.org/doc/man/app.html for full details
+            </remarks>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Erlang.Core.Application.description">
+            <summary>
+            The description.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Core.Application.id">
+            <summary>
+            The id.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Core.Application.version">
+            <summary>
+            The version.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Core.Application.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Core.Application"/> class.
+            </summary>
+            <param name="description">The description.</param>
+            <param name="id">The id.</param>
+            <param name="version">The version.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.Application.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Core.Application.Description">
+            <summary>
+            Gets the description.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Core.Application.Id">
+            <summary>
+            Gets the id.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Core.Application.Version">
+            <summary>
+            Gets the version.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Core.ConnectionCallbackDelegate`1">
+            <summary>
+            Execute any number of operations against the supplied OTP connection, possibly returning a result.
+            </summary>
+            <typeparam name="T">Type T.</typeparam>
+            <param name="channel">The channel.</param>
+            <returns>Object of Type T.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.OtpIOException">
+            <summary>
+            RuntimeException wrapper for an {@link IOException} which
+            can be commonly thrown from OTP operations.
+            </summary>
+            <remarks></remarks>
+            <author>Mark Pollack</author>
+            <author>Mark Fisher</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="M:Spring.Erlang.OtpIOException.#ctor(System.IO.IOException)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.OtpIOException"/> class.
+            </summary>
+            <param name="cause">The cause.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.OtpIOException.#ctor(System.String,System.IO.IOException)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.OtpIOException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="cause">The cause.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Support.ErlangAccessor">
+            <summary>
+            An erlang accessor.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Erlang.Support.ErlangAccessor.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Erlang.Support.ErlangAccessor.connectionFactory">
+            <summary>
+            The connection factory.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Support.ErlangAccessor.AfterPropertiesSet">
+            <summary>
+            Afters the properties set.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Support.ErlangAccessor.CreateConnection">
+            <summary>
+            Creates the connection.
+            </summary>
+            <returns>The connection.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Support.ErlangAccessor.ConnectionFactory">
+            <summary>
+            Gets or sets the connection factory.
+            </summary>
+            <value>The connection factory.</value>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Core.ErlangTemplate">
+            <summary>
+            An Erlang Template.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="T:Spring.Erlang.Core.IErlangOperations">
+            <summary>
+            An erlang operations interface.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Erlang.Core.IErlangOperations.Execute``1(Spring.Erlang.Core.ConnectionCallbackDelegate{``0})">
+            <summary>
+            Executes the specified action.
+            </summary>
+            <typeparam name="T">Type T.</typeparam>
+            <param name="action">The action.</param>
+            <returns>An object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.IErlangOperations.ExecuteErlangRpc(System.String,System.String,Erlang.NET.OtpErlangList)">
+            <summary>
+            Executes the erlang RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>An object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.IErlangOperations.ExecuteErlangRpc(System.String,System.String,Erlang.NET.OtpErlangObject[])">
+            <summary>
+            Executes the erlang RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>An object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.IErlangOperations.ExecuteRpc(System.String,System.String,System.Object[])">
+            <summary>
+            Executes the RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>An object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.IErlangOperations.ExecuteAndConvertRpc(System.String,System.String,Spring.Erlang.Support.Converter.IErlangConverter,System.Object[])">
+            <summary>
+            Executes the and convert RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="converterToUse">The converter to use.</param>
+            <param name="args">The args.</param>
+            <returns>An object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.IErlangOperations.ExecuteAndConvertRpc(System.String,System.String,System.Object[])">
+            <summary>
+            Executes the and convert RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>An object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Erlang.Core.ErlangTemplate.erlangConverter">
+            <summary>
+            The erlang converter.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.#ctor(Spring.Erlang.Connection.IConnectionFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Core.ErlangTemplate"/> class.
+            </summary>
+            <param name="connectionFactory">The connection factory.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.ExecuteErlangRpc(System.String,System.String,Erlang.NET.OtpErlangList)">
+            <summary>
+            Executes the erlang RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>The OtpErlangObject.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.HandleResponseError(System.String,System.String,Erlang.NET.OtpErlangObject)">
+            <summary>
+            Handles the response error.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="result">The result.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.ExecuteErlangRpc(System.String,System.String,Erlang.NET.OtpErlangObject[])">
+            <summary>
+            Executes the erlang RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>The OtpErlangObject.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.ExecuteRpc(System.String,System.String,System.Object[])">
+            <summary>
+            Executes the RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>The OtpErlangObject.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.ExecuteAndConvertRpc(System.String,System.String,Spring.Erlang.Support.Converter.IErlangConverter,System.Object[])">
+            <summary>
+            Executes the and convert RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="converterToUse">The converter to use.</param>
+            <param name="args">The args.</param>
+            <returns>The OtpErlangObject.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.ExecuteAndConvertRpc(System.String,System.String,System.Object[])">
+            <summary>
+            Executes the and convert RPC.
+            </summary>
+            <param name="module">The module.</param>
+            <param name="function">The function.</param>
+            <param name="args">The args.</param>
+            <returns>The object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.Execute``1(Spring.Erlang.Core.ConnectionCallbackDelegate{``0})">
+            <summary>
+            Executes the specified action.
+            </summary>
+            <typeparam name="T">Type T.</typeparam>
+            <param name="action">The action.</param>
+            <returns>Object of Type T.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.ErlangTemplate.ConvertOtpAccessException(System.Exception)">
+            <summary>
+            Converts the otp access exception.
+            </summary>
+            <param name="ex">The ex.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Core.ErlangTemplate.ErlangConverter">
+            <summary>
+            Gets or sets the erlang converter.
+            </summary>
+            <value>The erlang converter.</value>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Core.Node">
+            <summary>
+            Simple description class for an Erlang node. 
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Erlang.Core.Node.name">
+            <summary>
+            The name.
+            </summary>
+        </member>
+        <member name="M:Spring.Erlang.Core.Node.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Core.Node"/> class.
+            </summary>
+            <param name="name">The name.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Core.Node.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Erlang.Core.Node.Name">
+            <summary>
+            Gets the name.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.ErlangBadRpcException">
+            <summary>
+            Exception thrown when an 'badrpc' is received from an Erlang RPC call. 
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="T:Spring.Erlang.Support.Converter.ErlangConversionException">
+            <summary>
+            An Erlang conversion exception.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.ErlangConversionException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Object"/> class.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.ErlangConversionException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Erlang.Support.Converter.ErlangConversionException"/> class.
+            </summary>
+            <param name="msg">The MSG.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Support.Converter.IErlangConverter">
+            <summary>
+            Converter between .NET and Erlang Types.  Additional support for converting results from RPC calls.  
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.IErlangConverter.ToErlang(System.Object)">
+            <summary>
+            Convert a .NET object to a Erlang data type.
+            </summary>
+            <param name="objectToConvert">The object to convert.</param>
+            <returns>the Erlang data type</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.IErlangConverter.FromErlang(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Convert from an Erlang data type to a .NET data type.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The converted .NET object</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.IErlangConverter.FromErlangRpc(System.String,System.String,Erlang.NET.OtpErlangObject)">
+            <summary>
+            The return value from executing the Erlang RPC.
+            </summary>
+            <param name="module">The module to call</param>
+            <param name="function">The function to invoke</param>
+            <param name="erlangObject">The erlang object that is passed in as a parameter</param>
+            <returns>The converted .NET object return value from the RPC call.</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception> 
+        </member>
+        <member name="T:Spring.Erlang.Support.Converter.SimpleErlangConverter">
+            <summary>
+            Converter that supports the basic types. 
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.FromErlang(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Convert from an Erlang data type to a .NET data type.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The converted .NET object</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.FromErlangRpc(System.String,System.String,Erlang.NET.OtpErlangObject)">
+            <summary>
+            The return value from executing the Erlang RPC.
+            </summary>
+            <param name="module">The module to call</param>
+            <param name="function">The function to invoke</param>
+            <param name="erlangObject">The erlang object that is passed in as a parameter</param>
+            <returns>The converted .NET object return value from the RPC call.</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception> 
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.ToErlang(System.Object)">
+            <summary>
+            Convert a .NET object to a Erlang data type.
+            </summary>
+            <param name="objectToConvert">The object to convert.</param>
+            <returns>the Erlang data type</returns>
+            <exception cref="T:Spring.Erlang.Support.Converter.ErlangConversionException">in case of conversion failures</exception>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.ConvertBasicTypeToErlang(System.Object)">
+            <summary>
+            Converts the basic type to erlang.
+            </summary>
+            <param name="obj">The obj.</param>
+            <returns>The object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.ConvertErlangToBasicType(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Converts the type of the erlang to basic.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The object.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.ExtractBoolean(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Extracts the boolean.
+            </summary>
+            <param name="erlangObject">The erlang object.</param>
+            <returns>The boolean.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Support.Converter.SimpleErlangConverter.ExtractLong(Erlang.NET.OtpErlangObject)">
+            <summary>
+            Extracts the long.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>The long.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.Support.ErlangUtils">
+            <summary>
+            Erlang Utilities.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Erlang.Support.ErlangUtils.ReleaseConnection(Erlang.NET.OtpConnection)">
+            <summary>
+            Releases the connection.
+            </summary>
+            <param name="con">The con.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Erlang.Support.ErlangUtils.ConvertOtpAccessException(System.Exception)">
+            <summary>
+            Converts the otp access exception.
+            </summary>
+            <param name="ex">The ex.</param>
+            <returns>The exception.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Erlang.UncategorizedOtpException">
+            <summary>
+            A "catch-all" exception type within the OtpErlangException hierarchy
+            when no more specific cause is known.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+    </members>
+</doc>

@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Configuration;
 using System.Net;
+using System.Text.RegularExpressions;
 using Common;
 using MbUnit.Framework;
 using Resbit;
+using Spring.Messaging.Amqp.Rabbit.Admin;
 
 namespace Tests.Integration.Utils
 {
@@ -11,7 +14,8 @@ namespace Tests.Integration.Utils
     public class Bootstrap
     {
         private TcpTrace secondaryClientEndpoint;
-        public static RabbitMQBroker Broker { get; private set; }
+        private static readonly string All = ".*";
+        public static RabbitBrokerAdmin Broker { get; private set; }
         public static TcpTrace FederationLinkTcpProxy { get; private set; }
         public static bool RunEmbeddedBroker { get { return bool.Parse(ConfigurationManager.AppSettings["RunEmbeddedBroker"]); } }
         public static ResbitClient ResbitClient { get; private set; }
@@ -25,14 +29,15 @@ namespace Tests.Integration.Utils
             secondaryClientEndpoint = new TcpTrace(@"..\..\..\..\tools\tcpTrace\tcpTrace.exe");
             secondaryClientEndpoint.Start(Globals.SecondaryConnectionPort, Globals.MainHostName, Globals.MainConnectionPort, "Secondary client link");
 
-            Broker = new RabbitMQBroker(@"..\..\..\..\RabbitMQServer");
+            Environment.SetEnvironmentVariable("RABBITMQ_SERVER", @"..\..\..\..\RabbitMQServer");
+            Broker = new RabbitBrokerAdmin("rabbit@LOCALHOST"){StartupTimeout = 10000};
             ResbitClient = new ResbitClient(Globals.MainHostName, "guest", "guest");
 
             StartBroker();
 
-            Broker.StopApp();
-            Broker.Reset();
-            Broker.StartAppAndWait();
+            Broker.StopBrokerApplication();
+            Broker.ResetNode();
+            Broker.StartBrokerApplication();
 
             try
             {
@@ -64,8 +69,8 @@ namespace Tests.Integration.Utils
 
         private static void SetupSecondaryVirtualHost()
         {
-            Broker.AddVHost("secondary");
-            Broker.AddPermissions("secondary", "guest");
+            Broker.AddVhost("secondary");
+            Broker.SetPermissions("guest", All, All, All, "secondary");
         }
 
         public static void StartFederationLink()
@@ -76,7 +81,7 @@ namespace Tests.Integration.Utils
         private static void StartBroker()
         {
             if (RunEmbeddedBroker)
-                Broker.StartAndWait();
+                Broker.StartBrokerApplication();
         }
 
         [FixtureTearDown]
@@ -98,7 +103,7 @@ namespace Tests.Integration.Utils
         private static void StopBroker()
         {
             if (RunEmbeddedBroker)
-                Broker.Stop();
+                Broker.StopNode();
         }
     }
 }

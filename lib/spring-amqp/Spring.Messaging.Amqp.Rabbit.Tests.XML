@@ -1,0 +1,2897 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Spring.Messaging.Amqp.Rabbit.Tests</name>
+    </assembly>
+    <members>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.AdminParserTests">
+            <summary>
+            AdminParser Tests
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.ConnectionFactoryParserTests">
+            <summary>
+            ConnectionFactoryParser Tests
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.ExchangeParserIntegrationTests">
+            <summary>
+            ExchangeParserIntegration Tests
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Config.ExchangeParserIntegrationTests.brokerIsRunning">
+            <summary>
+            Determines if the broker is running.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.ExchangeParserTests">
+            <summary>
+            ExchangeParser Tests
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.ListenerContainerParserTests">
+            <summary>
+            ListenerContainerParser Tests
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.ListenerContainerPlaceholderParserTests">
+            <summary>
+            ListenerContainerPlaceholderParser Tests
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.ListenerContainerPlaceholderParserTests.Setup">
+            <summary>
+            Setups this instance.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.QueueParserIntegrationTests">
+            <summary>
+            Queue parser integration tests.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest">
+            <summary>
+            A base class for integration tests, to ensure that the broker is started, and that it is shut down after the test is done.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.brokerIsRunning">
+            <summary>
+            Determines if the broker is running.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.FixtureSetUp">
+            <summary>
+            Ensures that RabbitMQ is running.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.FixtureTearDown">
+            <summary>
+            Fixtures the tear down.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.AbstractRabbitIntegrationTest.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.QueueParserIntegrationTests.Setup">
+            <summary>
+            Setups this instance.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.QueueParserPlaceholderTests">
+            <summary>
+            QueueParserPlaceholder Tests
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.QueueParserTests">
+            <summary>
+            QueueParser Tests
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.QueueParserTests.Setup">
+            <summary>
+            Setups this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.QueueParserPlaceholderTests.Setup">
+            <summary>
+            Setups this instance.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.RabbitNamespaceHandlerTests">
+            <summary>
+            RabbitNamespaceHandler Tests
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.RabbitNamespaceHandlerTests.Setup">
+            <summary>
+            Setups this instance.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.TemplateParserTests">
+            <summary>
+            TemplateParser Tests
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.TemplateParserTests.Setup">
+            <summary>
+            Setups this instance.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.TestAdvice">
+            <summary>
+            Test Advice
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.TestAdvice.Before(System.Reflection.MethodInfo,System.Object[],System.Object)">
+            <summary>
+            Befores the specified method.
+            </summary>
+            <param name="method">The method.</param>
+            <param name="args">The args.</param>
+            <param name="target">The target.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Config.TestObject">
+            <summary>
+            Test Object
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Config.TestObject.Handle(System.String)">
+            <summary>
+            Handles the specified string.
+            </summary>
+            <param name="s">The string.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.AbstractConnectionFactoryTests">
+            <summary>
+            Abstract connection factory tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.AbstractConnectionFactoryTests.CreateConnectionFactory(RabbitMQ.Client.ConnectionFactory)">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <param name="mockConnectionFactory">The mock connection factory.</param>
+            <returns>The connection factory.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.AbstractConnectionFactoryTests.TestWithListener">
+            <summary>
+            Tests the with listener.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.AbstractConnectionFactoryTests.TestWithListenerRegisteredAfterOpen">
+            <summary>
+            Tests the with listener registered after open.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.AbstractConnectionFactoryTests.TestCloseInvalidConnection">
+            <summary>
+            Tests the close invalid connection.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.AbstractConnectionFactoryTests.TestDestroyBeforeUsed">
+            <summary>
+            Tests the destroy before used.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests">
+            <summary>
+            Caching connection factory integration tests.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.connectionFactory">
+            <summary>
+            The connection factory.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.brokerAdmin">
+            <summary>
+            The broker admin.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.SetUp">
+            <summary>
+            Sets up.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.TearDown">
+            <summary>
+            Tears down.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.TestSendAndReceiveFromVolatileQueue">
+            <summary>
+            Tests the send and receive from volatile queue.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.TestReceiveFromNonExistentVirtualHost">
+            <summary>
+            Tests the receive from non existent virtual host.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.TestSendAndReceiveFromVolatileQueueAfterImplicitRemoval">
+            <summary>
+            Tests the send and receive from volatile queue after implicit removal.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryIntegrationTests.TestMixTransactionalAndNonTransactional">
+            <summary>
+            Tests the mix transactional and non transactional.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests">
+            <summary>
+            Tests for the caching connection factory.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.CreateConnectionFactory(RabbitMQ.Client.ConnectionFactory)">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <param name="connectionFactory">The connection factory.</param>
+            <returns>The created connection factory.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestWithConnectionFactoryDefaults">
+            <summary>
+            Tests the with connection factory defaults.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestWithConnectionFactoryCacheSize">
+            <summary>
+            Tests the size of the connection factory cache.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestCacheSizeExceeded">
+            <summary>
+            Tests the cache size exceeded.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestCacheSizeExceededAfterClose">
+            <summary>
+            Tests the cache size exceeded after close.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestTransactionalAndNonTransactionalChannelsSegregated">
+            <summary>
+            Tests the transactional and non transactional channels segregated.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestWithConnectionFactoryDestroy">
+            <summary>
+            Tests the with connection factory destroy.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.CachingConnectionFactoryTests.TestWithListener">
+            <summary>
+            Tests the with listener.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy">
+            <summary>
+            A shared connection proxy.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.target">
+            <summary>
+            The target connection.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.outer">
+            <summary>
+            The outer single connection factory.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.#ctor(Spring.Messaging.Amqp.Rabbit.Connection.IConnection,Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy"/> class.
+            </summary>
+            <param name="target">The target.</param>
+            <param name="outer">The outer.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.CreateChannel(System.Boolean)">
+            <summary>
+            Create a new channel, using an internally allocated channel number.
+            </summary>
+            <param name="transactional">Transactional true if the channel should support transactions.</param>
+            <returns>A new channel descriptor, or null if none is available.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.Close">
+            <summary>
+            Close this connection and all its channels with the {@link com.rabbitmq.client.AMQP#REPLY_SUCCESS} close code and message 'OK'.
+            Waits for all the close operations to complete.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.Dispose">
+            <summary>
+            Disposes this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.IsOpen">
+            <summary>
+            Flag to indicate the status of the connection.
+            </summary>
+            <returns>True if the connection is open</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.GetTargetConnection">
+            <summary>
+            Return the target Channel of this proxy. This will typically be the native provider IConnection
+            </summary>
+            <returns>The underlying connection (never null).</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>.</param>
+            <returns><c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SharedConnectionProxy.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory">
+            <summary>
+            A single connection factory.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.connection">
+            <summary>
+            The connection proxy.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.connectionMonitor">
+            <summary>
+            A synchronization monitor.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory"/> class.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory"/> class.
+            </summary>
+            <param name="port">The port.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory"/> class.
+            </summary>
+            <param name="hostname">The hostname.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory"/> class.
+            </summary>
+            <param name="hostname">The hostname.</param>
+            <param name="port">The port.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.#ctor(RabbitMQ.Client.ConnectionFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory"/> class.
+            </summary>
+            <param name="rabbitConnectionFactory">The rabbit connection factory.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.AddConnectionListener(Spring.Messaging.Amqp.Rabbit.Connection.IConnectionListener)">
+            <summary>
+            Add a connection listener.
+            </summary>
+            <param name="listener">The listener.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.CreateConnection">
+            <summary>
+            Create a connection.
+            </summary>
+            <returns>The connection.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.Dispose">
+            <summary>
+            Close the underlying shared connection.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.DoCreateConnection">
+            <summary>
+            Does the create connection.
+            </summary>
+            <returns>The connection.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactory.ConnectionListeners">
+            <summary>
+            Sets the connection listeners.
+            </summary>
+            <value>The connection listeners.</value>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactoryTests">
+            <summary>
+            Tests for the single connection factory.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Connection.SingleConnectionFactoryTests.CreateConnectionFactory(RabbitMQ.Client.ConnectionFactory)">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <param name="connectionFactory">The connection factory.</param>
+            <returns>The created connection factory.</returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.Producer">
+            <summary>
+            A producer.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.Producer.Main(System.String[])">
+            <summary>
+            Mains the specified args.
+            </summary>
+            <param name="args">The args.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.Producer.SendMessages(Spring.Messaging.Amqp.Rabbit.Core.RabbitTemplate,System.String,System.String,System.Int32)">
+            <summary>
+            Sends the messages.
+            </summary>
+            <param name="template">The template.</param>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="numMessages">The num messages.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.QueueUtils">
+            <summary>
+            Queue Utilities
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.QueueUtils.DeclareTestQueue(Spring.Messaging.Amqp.Rabbit.Core.RabbitTemplate,System.String)">
+            <summary>
+            Declares the test queue.
+            </summary>
+            <param name="template">The template.</param>
+            <param name="routingKey">The routing key.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests">
+            <summary>
+            Rabbit admin integration tests.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.connectionFactory">
+            <summary>
+            The connection factory.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.context">
+            <summary>
+            The context.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.rabbitAdmin">
+            <summary>
+            The rabbit admin field.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests"/> class. 
+            Initializes a new instance of the <see cref="T:System.Object"/> class.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.Init">
+            <summary>
+            Inits this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.Close">
+            <summary>
+            Closes this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.TestStartupWithLazyDeclaration">
+            <summary>
+            Tests the startup with lazy declaration.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.TestDoubleDeclarationOfExclusiveQueue">
+            <summary>
+            Tests the double declaration of exclusive queue.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.TestDoubleDeclarationOfAutodeleteQueue">
+            <summary>
+            Tests the double declaration of autodelete queue.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.TestStartupWithAutodelete">
+            <summary>
+            Tests the startup with autodelete.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.TestStartupWithNonDurable">
+            <summary>
+            Tests the startup with non durable.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminIntegrationTests.QueueExists(RabbitMQ.Client.IConnection,Spring.Messaging.Amqp.Core.Queue)">
+            <summary>
+            Queues the exists.
+            </summary>
+            <param name="connection">The connection.</param>
+            <param name="queue">The queue.</param>
+            <returns></returns>
+            Use native Rabbit API to test queue, bypassing all the connection and channel caching and callbacks in Spring
+            AMQP.
+            @param connection the raw connection to use
+            @param queue the Queue to test
+            @return true if the queue exists
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminTests">
+            <summary>
+            Rabbit admin tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminTests.TestSettingOfNullRabbitTemplate">
+            <summary>
+            Tests the setting of null rabbit template.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminTests.TestNoFailOnStartupWithMissingBroker">
+            <summary>
+            Tests the no fail on startup with missing broker.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitAdminTests.TestFailOnFirstUseWithMissingBroker">
+            <summary>
+            Tests the fail on first use with missing broker.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests">
+            <summary>
+            Rabbit Binding Integration Tests
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.queue">
+            <summary>
+            The queue.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.connectionFactory">
+            <summary>
+            The connection factory.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.template">
+            <summary>
+            The rabbit template.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests"/> class.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.SetUp">
+            <summary>
+            Sets up.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.TestSendAndReceiveWithTopicSingleCallback">
+            <summary>
+            Tests the send and receive with topic single callback.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.TestSendAndReceiveWithNonDefaultExchange">
+            <summary>
+            Tests the send and receive with non default exchange.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.TestSendAndReceiveWithTopicConsumeInBackground">
+            <summary>
+            Tests the send and receive with topic consume in background.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.TestSendAndReceiveWithTopicTwoCallbacks">
+            <summary>
+            Tests the send and receive with topic two callbacks.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.TestSendAndReceiveWithFanout">
+            <summary>
+            Tests the send and receive with fanout.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.CreateConsumer(Spring.Messaging.Amqp.Rabbit.Core.RabbitAccessor)">
+            <summary>
+            Creates the consumer.
+            </summary>
+            <param name="accessor">The accessor.</param>
+            <returns>The consumer.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitBindingIntegrationTests.GetResult(Spring.Messaging.Amqp.Rabbit.Listener.BlockingQueueConsumer)">
+            <summary>
+            Gets the result.
+            </summary>
+            <param name="consumer">The consumer.</param>
+            <returns>The result.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests">
+            <summary>
+            Rabbit template integration tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.ROUTE">
+            <summary>
+            The test route.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.template">
+            <summary>
+            The rabbit template.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.Create">
+            <summary>
+            Creates this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendToNonExistentAndThenReceive">
+            <summary>
+            Tests the send to non existent and then receive.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendAndReceiveWithPostProcessor">
+            <summary>
+            Tests the send and receive with post processor.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendAndReceive">
+            <summary>
+            Tests the send and receive.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendAndReceiveTransacted">
+            <summary>
+            Tests the send and receive transacted.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendAndReceiveTransactedWithUncachedConnection">
+            <summary>
+            Tests the send and receive transacted with uncached connection.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendAndReceiveTransactedWithImplicitRollback">
+            <summary>
+            Tests the send and receive transacted with implicit rollback.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendAndReceiveInCallback">
+            <summary>
+            Tests the send and receive in callback.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestReceiveInExternalTransaction">
+            <summary>
+            Tests the receive in external transaction.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestReceiveInExternalTransactionAutoAck">
+            <summary>
+            Tests the receive in external transaction auto ack.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestReceiveInExternalTransactionWithRollback">
+            <summary>
+            Tests the receive in external transaction with rollback.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestReceiveInExternalTransactionWithNoRollback">
+            <summary>
+            Tests the receive in external transaction with no rollback.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendInExternalTransaction">
+            <summary>
+            Tests the send in external transaction.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestSendInExternalTransactionWithRollback">
+            <summary>
+            Tests the send in external transaction with rollback.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestAtomicSendAndReceive">
+            <summary>
+            Tests the atomic send and receive.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestAtomicSendAndReceiveWithRoutingKey">
+            <summary>
+            Tests the atomic send and receive with routing key.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestAtomicSendAndReceiveWithExchangeAndRoutingKey">
+            <summary>
+            Tests the atomic send and receive with exchange and routing key.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestAtomicSendAndReceiveWithConversion">
+            <summary>
+            Tests the atomic send and receive with conversion.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestAtomicSendAndReceiveWithConversionUsingRoutingKey">
+            <summary>
+            Tests the atomic send and receive with conversion using routing key.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplateIntegrationTests.TestAtomicSendAndReceiveWithConversionUsingExchangeAndRoutingKey">
+            <summary>
+            Tests the atomic send and receive with conversion using exchange and routing key.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.PlannedException">
+            <summary>
+            A planned exception.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.PlannedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.PlannedException"/> class. 
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionManager">
+            <summary>
+            A test transaction manager.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionManager.DoBegin(System.Object,Spring.Transaction.ITransactionDefinition)">
+            <summary>
+            Begin a new transaction with the given transaction definition.
+            </summary>
+            <param name="transaction">Transaction object returned by
+            <see cref="M:Spring.Transaction.Support.AbstractPlatformTransactionManager.DoGetTransaction"/>.</param>
+            <param name="definition"><see cref="T:Spring.Transaction.ITransactionDefinition"/> instance, describing
+            propagation behavior, isolation level, timeout etc.</param>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of creation or system errors.
+              </exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionManager.DoCommit(Spring.Transaction.Support.DefaultTransactionStatus)">
+            <summary>
+            Perform an actual commit on the given transaction.
+            </summary>
+            <param name="status">The status representation of the transaction.</param>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of system errors.
+              </exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionManager.DoGetTransaction">
+            <summary>
+            Return the current transaction object.
+            </summary>
+            <returns>The current transaction object.</returns>
+            <exception cref="T:Spring.Transaction.CannotCreateTransactionException">
+            If transaction support is not available.
+              </exception>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of lookup or system errors.
+              </exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionManager.DoRollback(Spring.Transaction.Support.DefaultTransactionStatus)">
+            <summary>
+            Perform an actual rollback on the given transaction.
+            </summary>
+            <param name="status">The status representation of the transaction.</param>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of system errors.
+              </exception>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionCallback`1">
+            <summary>
+            Test transaction callback.
+            </summary>
+            <typeparam name="T">Type T.</typeparam>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestTransactionCallback`1.DoInTransaction(Spring.Transaction.ITransactionStatus)">
+            <summary>
+            Gets called by TransactionTemplate.Execute within a 
+                        transaction context.
+            </summary>
+            <param name="status">The associated transaction status.</param>
+            <returns>
+            A result object or <c>null</c>.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests">
+            <summary>
+            Rabbit template performance integration tests.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.ROUTE">
+            <summary>
+            The route.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.template">
+            <summary>
+            The template.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.brokerIsRunning">
+            <summary>
+            The broker is running.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.connectionFactory">
+            <summary>
+            The connection factory.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.DeclareQueue">
+            <summary>
+            Declares the queue.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.CleanUp">
+            <summary>
+            Cleans up.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.TestSendAndReceive">
+            <summary>
+            Tests the send and receive.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.RabbitTemplatePerformanceIntegrationTests.TestSendAndReceiveTransacted">
+            <summary>
+            Tests the send and receive transacted.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests">
+            <summary>
+            Rabbit gateway support tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestRabbitGatewaySupportWithConnectionFactory">
+            <summary>
+            Tests the rabbit gateway support with connection factory.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestRabbitGatewaySupportWithJmsTemplate">
+            <summary>
+            Tests the rabbit gateway support with JMS template.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestGateway">
+            <summary>
+            A stup test gateway.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestGateway.testList">
+            <summary>
+            The test list.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestGateway.#ctor(System.Collections.Generic.List{System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestGateway"/> class.
+            </summary>
+            <param name="testList">The test list.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Core.Support.RabbitGatewaySupportTests.TestGateway.InitGateway">
+            <summary>
+            Subclasses can override this for custom initialization behavior.
+            Gets called after population of this instance's properties.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestConstants">
+            <summary>
+            Test constants. 
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestConstants.EXCHANGE_NAME">
+            <summary>
+            Exchange Name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestConstants.QUEUE_NAME">
+            <summary>
+            Queue Name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestConstants.ROUTING_KEY">
+            <summary>
+            Routing Key.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Core.TestConstants.NUM_MESSAGES">
+            <summary>
+            Number of Messages.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ActiveObjectCounterTests">
+            <summary>
+            Active object counter tests.
+            </summary>
+            @author Dave Syer
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ActiveObjectCounterTests.counter">
+            <summary>
+            The counter.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ActiveObjectCounterTests.SetUp">
+            <summary>
+            Sets up.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ActiveObjectCounterTests.TestActiveCount">
+            <summary>
+            Tests the active count.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ActiveObjectCounterTests.TestWaitForLocks">
+            <summary>
+            Tests the wait for locks.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ActiveObjectCounterTests.TestTimeoutWaitForLocks">
+            <summary>
+            Tests the timeout wait for locks.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.MessageListenerAdapterTests.TestDefaultListenerMethod">
+            <summary>
+            Tests the default listener method.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.MessageListenerAdapterTests.TestExplicitListenerMethod">
+            <summary>
+            Tests the explicit listener method.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.MessageListenerAdapterTests.TestProxyListener">
+            <summary>
+            Tests the proxy listener.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.MessageListenerAdapterTests.TestJdkProxyListener">
+            <summary>
+            Tests the JDK proxy listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.HandlerDelegate">
+            <summary>
+            A handler delegate.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.HandlerDelegate.service">
+            <summary>
+            The service.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.HandlerDelegate.#ctor(Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.HandlerDelegate"/> class.
+            </summary>
+            <param name="service">The service.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.HandlerDelegate.HandleMessage(System.String)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="input">The input.</param>
+            <returns>The handled message.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.IService">
+            <summary>
+            An IService inteface.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.IService.Handle(System.String)">
+            <summary>
+            Handles the specified input.
+            </summary>
+            <param name="input">The input.</param>
+            <returns>The handled input.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService">
+            <summary>
+            A simple service.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService.called">
+            <summary>
+            Whether this has been called.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService"/> class. 
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService.Handle(System.String)">
+            <summary>
+            Handles the specified input.
+            </summary>
+            <param name="input">The input.</param>
+            <returns>The handled input.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.SimpleService.NotDefinedOnInterface(System.String)">
+            <summary>
+            Nots the defined on interface.
+            </summary>
+            <param name="input">The input.</param>
+            <returns>Whether the input is defined on the interface.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.MockMessageListenerAdapter">
+            <summary>
+            A mock message listener adapter.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Adapter.MockMessageListenerAdapter.HandleListenerException(System.Exception)">
+            <summary>
+            Handle the given exception that arose during listener execution.
+            The default implementation logs the exception at error level.
+            <para>This method only applies when used with <see cref="T:Spring.Messaging.Amqp.Core.IMessageListener"/>.
+            In case of the Spring <see cref="T:Spring.Messaging.Amqp.Rabbit.Core.IChannelAwareMessageListener"/> mechanism,
+            exceptions get handled by the caller instead.
+            </para>
+            </summary>
+            <param name="ex">The exception to handle.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests">
+            <summary>
+            Message listener broker interruption integration tests.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.queue">
+            <summary>
+            The queue. Ensure it is durable or it won't survive the broker restart.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.concurrentConsumers">
+            <summary>
+            Concurrent consumers.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.messageCount">
+            <summary>
+            The message count.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.txSize">
+            <summary>
+            The transaction size.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.transactional">
+            <summary>
+            The transactional flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.acknowledgeMode">
+            <summary>
+            The acknowledge mode.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.container">
+            <summary>
+            The container.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests"/> class. 
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.CreateConnectionFactory">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.Clear">
+            <summary>
+            Clears this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.TestListenerRecoversFromDeadBroker">
+            <summary>
+            Tests the listener recovers from dead broker.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerBrokerInterruptionIntegrationTests.CreateContainer(System.String,System.Object,Spring.Messaging.Amqp.Rabbit.Connection.IConnectionFactory)">
+            <summary>
+            Creates the container.
+            </summary>
+            <param name="queueName">Name of the queue.</param>
+            <param name="listener">The listener.</param>
+            <param name="connectionFactory">The connection factory.</param>
+            <returns>The container.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.VanillaListener">
+            <summary>
+            A vanilla message listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.VanillaListener.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.VanillaListener.latch">
+            <summary>
+            The latch.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.VanillaListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.VanillaListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.VanillaListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests">
+            <summary>
+            Message listener container error handler integration tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.SetUp">
+            <summary>
+            Sets up.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.TestErrorHandlerInvokeExceptionFromPoco">
+            <summary>
+            Tests the error handler invoke exception from poco.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.TestErrorHandlerInvokeRuntimeExceptionFromPoco">
+            <summary>
+            Tests the error handler invoke runtime exception from poco.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.TestErrorHandlerListenerExecutionFailedExceptionFromListener">
+            <summary>
+            Tests the error handler listener execution failed exception from listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.TestErrorHandlerRegularRuntimeExceptionFromListener">
+            <summary>
+            Tests the error handler regular runtime exception from listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.TestErrorHandlerInvokeExceptionFromChannelAwareListener">
+            <summary>
+            Tests the error handler invoke exception from channel aware listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.TestErrorHandlerInvokeRuntimeExceptionFromChannelAwareListener">
+            <summary>
+            Tests the error handler invoke runtime exception from channel aware listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.DoTest(System.Int32,Spring.Util.IErrorHandler,System.Threading.CountdownEvent,System.Object)">
+            <summary>
+            Does the test.
+            </summary>
+            <param name="messageCount">The message count.</param>
+            <param name="errorHandler">The error handler.</param>
+            <param name="latch">The latch.</param>
+            <param name="listener">The listener.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerErrorHandlerIntegrationTests.CreateTemplate(System.Int32)">
+            <summary>
+            Creates the template.
+            </summary>
+            <param name="concurrentConsumers">The concurrent consumers.</param>
+            <returns>The template.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.PocoThrowingExceptionListener">
+            <summary>
+            A POCO throwing exception listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.PocoThrowingExceptionListener.#ctor(System.Threading.CountdownEvent,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.PocoThrowingExceptionListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="exception">The exception.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.PocoThrowingExceptionListener.HandleMessage(System.String)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionListener">
+            <summary>
+            A throwing exception listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionListener.#ctor(System.Threading.CountdownEvent,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="exception">The exception.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionListener.OnMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Called when a Message is received.
+            </summary>
+            <param name="message">The message.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionChannelAwareListener">
+            <summary>
+            A throwing exception channel aware listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionChannelAwareListener.#ctor(System.Threading.CountdownEvent,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionChannelAwareListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="exception">The exception.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ThrowingExceptionChannelAwareListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.queue">
+            <summary>
+            The queue.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.TestTransactionalLowLevel">
+            <summary>
+            Tests the transactional low level.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.TestTransactionalHighLevel">
+            <summary>
+            Tests the transactional high level.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.TestTransactionalLowLevelWithPrefetch">
+            <summary>
+            Tests the transactional low level with prefetch.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.TestTransactionalHighLevelWithPrefetch">
+            <summary>
+            Tests the transactional high level with prefetch.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.TestNonTransactionalLowLevel">
+            <summary>
+            Tests the non transactional low level.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.TestNonTransactionalHighLevel">
+            <summary>
+            Tests the non transactional high level.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.DoTest(Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.MessageCount,Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerLifecycleIntegrationTests.Concurrency,Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode)">
+            <summary>
+            Does the test.
+            </summary>
+            <param name="level">The level.</param>
+            <param name="concurrency">The concurrency.</param>
+            <param name="transactionMode">The transaction mode.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.LifecyclePocoListener">
+            <summary>
+            A lifecycle Poco Listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.LifecyclePocoListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.LifecyclePocoListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.LifecyclePocoListener.Reset(System.Threading.CountdownEvent)">
+            <summary>
+            Resets the specified latch.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.LifecyclePocoListener.HandleMessage(System.String)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Listener.LifecyclePocoListener.Count">
+            <summary>
+            Gets the count.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils">
+            <summary>
+            Transaction Mode Utilities
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.IsTransactional(Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode)">
+            <summary>
+            Determines whether the specified mode is transactional.
+            </summary>
+            <param name="mode">The mode.</param>
+            <returns><c>true</c> if the specified mode is transactional; otherwise, <c>false</c>.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.AcknowledgeMode(Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode)">
+            <summary>
+            Acknowledges the mode.
+            </summary>
+            <param name="mode">The mode.</param>
+            <returns>The acknowledge mode.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.Prefetch(Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode)">
+            <summary>
+            Prefetches the specified mode.
+            </summary>
+            <param name="mode">The mode.</param>
+            <returns>The prefetch size.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TxSize(Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode)">
+            <summary>
+            Txes the size.
+            </summary>
+            <param name="mode">The mode.</param>
+            <returns>The transaction size.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode">
+            <summary>
+            Transaction Mode.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode.ON">
+            <summary>
+            On
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode.OFF">
+            <summary>
+            Off
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TransactionModeUtils.TransactionMode.PREFETCH">
+            <summary>
+            Prefetch
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.SetUp">
+            <summary>
+            Sets up.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.TestMultipleQueues">
+            <summary>
+            Tests the multiple queues.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.TestMultipleQueueNames">
+            <summary>
+            Tests the multiple queue names.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.TestMultipleQueuesWithConcurrentConsumers">
+            <summary>
+            Tests the multiple queues with concurrent consumers.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.TestMultipleQueueNamesWithConcurrentConsumers">
+            <summary>
+            Tests the multiple queue names with concurrent consumers.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerMultipleQueueIntegrationTests.DoTest(System.Int32,Spring.Messaging.Amqp.Rabbit.Tests.Listener.IContainerConfigurer)">
+            <summary>
+            Does the test.
+            </summary>
+            <param name="concurrentConsumers">The concurrent consumers.</param>
+            <param name="configurer">The configurer.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IContainerConfigurer">
+            <summary>
+            A container configurer interface.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IContainerConfigurer.Configure(Spring.Messaging.Amqp.Rabbit.Listener.SimpleMessageListenerContainer)">
+            <summary>
+            Configures the specified container.
+            </summary>
+            <param name="container">The container.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MultiplePocoListener">
+            <summary>
+            A multiple poco listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MultiplePocoListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MultiplePocoListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MultiplePocoListener.HandleMessage(System.Int32)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MultiplePocoListener.Count">
+            <summary>
+            Gets the count.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerRetryIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerRetryIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerRetryIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerRetryIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerContainerRetryIntegrationTests.CreateTemplate(System.Int32)">
+            <summary>
+            Creates the template.
+            </summary>
+            <param name="concurrentConsumers">The concurrent consumers.</param>
+            <returns>The template.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.RetryPocoListener">
+            <summary>
+            A retry poco listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.RetryPocoListener.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.RetryPocoListener"/> class.
+            </summary>
+            <param name="failFrequency">The fail frequency.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.RetryPocoListener.HandleMessage(System.Int32)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Listener.RetryPocoListener.Count">
+            <summary>
+            Gets the count.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.CreateConnectionFactory">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.Clear">
+            <summary>
+            Clears this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.TestListenerWithManualAckNonTransactional">
+            <summary>
+            Tests the listener with manual ack non transactional.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.TestListenerWithManualAckTransactional">
+            <summary>
+            Tests the listener with manual ack transactional.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerManualAckIntegrationTests.CreateContainer(System.Object)">
+            <summary>
+            Creates the container.
+            </summary>
+            <param name="listener">The listener.</param>
+            <returns>The container.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestListener">
+            <summary>
+            A test listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestListener.HandleMessage(System.String)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests">
+            <summary>
+            Message listener recovery caching connection integration tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.CreateConnectionFactory">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <returns>The connection factory.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.Clear">
+            <summary>
+            Clears this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.GetTimeout">
+            <summary>
+            Gets the timeout.
+            </summary>
+            <returns>The timeout.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoveryCachingConnectionIntegrationTests.CreateContainer(System.String,System.Object,Spring.Messaging.Amqp.Rabbit.Connection.IConnectionFactory)">
+            <summary>
+            Creates the container.
+            </summary>
+            <param name="queueName">Name of the queue.</param>
+            <param name="listener">The listener.</param>
+            <param name="connectionFactory">The connection factory.</param>
+            <returns>The container.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ManualAckListener">
+            <summary>
+            A manual ack listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ManualAckListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ManualAckListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ManualAckListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelSenderListener">
+            <summary>
+            A channel sender listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelSenderListener.#ctor(System.String,System.Threading.CountdownEvent,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelSenderListener"/> class.
+            </summary>
+            <param name="queueName">Name of the queue.</param>
+            <param name="latch">The latch.</param>
+            <param name="fail">if set to <c>true</c> [fail].</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelSenderListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.AbortChannelListener">
+            <summary>
+            An abort channel listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.AbortChannelListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.AbortChannelListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.AbortChannelListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.CloseConnectionListener">
+            <summary>
+            A close connection listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.CloseConnectionListener.#ctor(Spring.Messaging.Amqp.Rabbit.Connection.IConnectionProxy,System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.CloseConnectionListener"/> class.
+            </summary>
+            <param name="connection">The connection.</param>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.CloseConnectionListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoverySingleConnectionIntegrationTests">
+            <summary>
+            Message listener recovery single connection integration tests.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerRecoverySingleConnectionIntegrationTests.CreateConnectionFactory">
+            <summary>
+            Creates the connection factory.
+            </summary>
+            <returns>The connection factory.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerTxSizeIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerTxSizeIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerTxSizeIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerTxSizeIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TxTestListener">
+            <summary>
+            A Tx Test Listener
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TxTestListener.#ctor(System.Threading.CountdownEvent,System.Boolean,Spring.Messaging.Amqp.Rabbit.Tests.Listener.MessageListenerTxSizeIntegrationTests)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TxTestListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="fail">if set to <c>true</c> [fail].</param>
+            <param name="outer">The outer.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TxTestListener.HandleMessage(System.String)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TxTestListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests">
+            <summary>
+            Simple message listener container integration tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.DeclareQueue">
+            <summary>
+            Declares the queue.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.Clear">
+            <summary>
+            Clears this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.TestPocoListenerSunnyDay">
+            <summary>
+            Tests the poco listener sunny day.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.TestListenerSunnyDay">
+            <summary>
+            Tests the listener sunny day.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.TestChannelAwareListenerSunnyDay">
+            <summary>
+            Tests the channel aware listener sunny day.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.TestPocoListenerWithException">
+            <summary>
+            Tests the poco listener with exception.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.TestListenerWithException">
+            <summary>
+            Tests the listener with exception.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.TestChannelAwareListenerWithException">
+            <summary>
+            Tests the channel aware listener with exception.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.DoSunnyDayTest(System.Threading.CountdownEvent,System.Object)">
+            <summary>
+            Does the sunny day test.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="listener">The listener.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.DoListenerWithExceptionTest(System.Threading.CountdownEvent,System.Object)">
+            <summary>
+            Does the listener with exception test.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="listener">The listener.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerIntegrationTests.CreateContainer(System.Object)">
+            <summary>
+            Creates the container.
+            </summary>
+            <param name="listener">The listener.</param>
+            <returns>The container.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimplePocoListener">
+            <summary>
+            A Poco Listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimplePocoListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimplePocoListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimplePocoListener.#ctor(System.Threading.CountdownEvent,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimplePocoListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="fail">if set to <c>true</c> [fail].</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimplePocoListener.HandleMessage(System.String)">
+            <summary>
+            Handles the message.
+            </summary>
+            <param name="value">The value.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Listener">
+            <summary>
+            A listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Listener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Listener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Listener.#ctor(System.Threading.CountdownEvent,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Listener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="fail">if set to <c>true</c> [fail].</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.Listener.OnMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Called when a Message is received.
+            </summary>
+            <param name="message">The message.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelAwareListener">
+            <summary>
+            A channel aware listener.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelAwareListener.#ctor(System.Threading.CountdownEvent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelAwareListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelAwareListener.#ctor(System.Threading.CountdownEvent,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelAwareListener"/> class.
+            </summary>
+            <param name="latch">The latch.</param>
+            <param name="fail">if set to <c>true</c> [fail].</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.ChannelAwareListener.OnMessage(Spring.Messaging.Amqp.Core.Message,RabbitMQ.Client.IModel)">
+            <summary>
+            Called when [message].
+            </summary>
+            <param name="message">The message.</param>
+            <param name="channel">The channel.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IntegrationTestTransactionManager">
+            <summary>
+            Integration test transaction manager.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IntegrationTestTransactionManager.DoBegin(System.Object,Spring.Transaction.ITransactionDefinition)">
+            <summary>
+            Begin a new transaction with the given transaction definition.
+            </summary>
+            <param name="transaction">Transaction object returned by
+            <see cref="M:Spring.Transaction.Support.AbstractPlatformTransactionManager.DoGetTransaction"/>.</param>
+            <param name="definition"><see cref="T:Spring.Transaction.ITransactionDefinition"/> instance, describing
+            propagation behavior, isolation level, timeout etc.</param>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of creation or system errors.
+            </exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IntegrationTestTransactionManager.DoCommit(Spring.Transaction.Support.DefaultTransactionStatus)">
+            <summary>
+            Perform an actual commit on the given transaction.
+            </summary>
+            <param name="status">The status representation of the transaction.</param>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of system errors.
+            </exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IntegrationTestTransactionManager.DoGetTransaction">
+            <summary>
+            Return the current transaction object.
+            </summary>
+            <returns>The current transaction object.</returns>
+            <exception cref="T:Spring.Transaction.CannotCreateTransactionException">
+            If transaction support is not available.
+            </exception>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of lookup or system errors.
+              </exception>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.IntegrationTestTransactionManager.DoRollback(Spring.Transaction.Support.DefaultTransactionStatus)">
+            <summary>
+            Perform an actual rollback on the given transaction.
+            </summary>
+            <param name="status">The status representation of the transaction.</param>
+            <exception cref="T:Spring.Transaction.TransactionException">
+            In the case of system errors.
+            </exception>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerSunnyDayTest">
+            <summary>
+            SimpleMessageListenerContainerSunnyDayTest Tests
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerSunnyDayTest.CreateContainer(System.Object,Spring.Messaging.Amqp.Rabbit.Core.RabbitTemplate,System.String,System.Int32,System.Int32,System.Boolean,Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode,System.Boolean)">
+            <summary>
+            Creates the container.
+            </summary>
+            <param name="listener">The listener.</param>
+            <returns>The container.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerTests">
+            <summary>
+            Simple message listener container tests.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerTests.TestInconsistentTransactionConfiguration">
+            <summary>
+            Tests the inconsistent transaction configuration.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerTests.TestInconsistentAcknowledgeConfiguration">
+            <summary>
+            Tests the inconsistent acknowledge configuration.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerTests.TestDefaultConsumerCount">
+            <summary>
+            Tests the default consumer count.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.SimpleMessageListenerContainerTests.TestLazyConsumerCount">
+            <summary>
+            Tests the lazy consumer count.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestTransactionManager">
+            <summary>
+            A test transaction manager.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestTransactionManager.DoBegin(System.Object,Spring.Transaction.ITransactionDefinition)">
+            <summary>
+            Begin a new transaction with the given transaction definition.
+            </summary>
+            <param name="transaction">Transaction object returned by
+            <see cref="M:Spring.Transaction.Support.AbstractPlatformTransactionManager.DoGetTransaction"/>.</param>
+            <param name="definition"><see cref="T:Spring.Transaction.ITransactionDefinition"/> instance, describing
+            propagation behavior, isolation level, timeout etc.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestTransactionManager.DoCommit(Spring.Transaction.Support.DefaultTransactionStatus)">
+            <summary>
+            Perform an actual commit on the given transaction.
+            </summary>
+            <param name="status">The status representation of the transaction.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestTransactionManager.DoGetTransaction">
+            <summary>
+            Return the current transaction object.
+            </summary>
+            <returns>The current transaction object.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.TestTransactionManager.DoRollback(Spring.Transaction.Support.DefaultTransactionStatus)">
+            <summary>
+            Perform an actual rollback on the given transaction.
+            </summary>
+            <param name="status">The status representation of the transaction.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests">
+            <summary>
+            Used to verify raw Rabbit .NET Client behaviour for corner cases.
+            </summary>
+            @author Dave Syer
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.Init">
+            <summary>
+            Inits this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.Clear">
+            <summary>
+            Clears this instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.TestOnePublishUnackedRequeued">
+            <summary>
+            Tests the one publish unacked requeued.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Listener.UnackedRawIntegrationTests.TestFourPublishUnackedRequeued">
+            <summary>
+            Tests the four publish unacked requeued.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Support.MoqExtensions">
+            <summary>
+            Moq Extension methods.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Support.MoqExtensions.ReturnsInOrder``2(Moq.Language.Flow.ISetup{``0,``1},System.Object[])">
+            <summary>
+            Returnses the in order.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="setup">The setup.</param>
+            <param name="results">The results.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerPanic">
+            <summary>
+            A broker panic rule.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerPanic.Apply">
+            <summary>
+            Applies this instance.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerPanic.BrokerAdmin">
+            <summary>
+            Sets the broker admin.
+            </summary>
+            <value>The broker admin.</value>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.DEFAULT_QUEUE_NAME">
+            <summary>
+            The default queue name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.brokerOffline">
+            <summary>
+            The broker offline flag. Static so that we only test once on failure.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.assumeOnline">
+            <summary>
+            The assume online flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.purge">
+            <summary>
+            The purge flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.queues">
+            <summary>
+            The queues.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.DEFAULT_PORT">
+            <summary>
+            The default port.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.port">
+            <summary>
+            The port.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.hostName">
+            <summary>
+            The host name.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.IsRunningWithEmptyQueues(System.String[])">
+            <summary>
+            Determines whether [is running with empty queues] [the specified names].
+            </summary>
+            <param name="names">The names.</param>
+            Ensure the broker is running and has an empty queue with the specified name in the default exchange.
+            @return a new rule that assumes an existing running broker
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.IsRunningWithEmptyQueues(Spring.Messaging.Amqp.Core.Queue[])">
+            <summary>
+            Determines whether [is running with empty queues] [the specified queues].
+            </summary>
+            <param name="queues">The queues.</param>
+            Ensure the broker is running and has an empty queue (which can be addressed via the default exchange).
+            @return a new rule that assumes an existing running broker
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.IsRunning">
+            <summary>
+            Determines whether this instance is running.
+            </summary>
+            @return a new rule that assumes an existing running broker
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.IsNotRunning">
+            <summary>
+            Determines whether [is not running].
+            </summary>
+            @return a new rule that assumes there is no existing broker
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.#ctor(System.Boolean,System.Boolean,Spring.Messaging.Amqp.Core.Queue[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning"/> class. 
+            Prevents a default instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning"/> class from being created.
+            </summary>
+            <param name="assumeOnline">
+            if set to <c>true</c> [assume online].
+            </param>
+            <param name="purge">
+            if set to <c>true</c> [purge].
+            </param>
+            <param name="queues">
+            The queues.
+            </param>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.#ctor(System.Boolean,Spring.Messaging.Amqp.Core.Queue[])">
+            <summary>
+            Prevents a default instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning"/> class from being created.
+            </summary>
+            <param name="assumeOnline">if set to <c>true</c> [assume online].</param>
+            <param name="queues">The queues.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.#ctor(System.Boolean)">
+            <summary>
+            Prevents a default instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning"/> class from being created.
+            </summary>
+            <param name="assumeOnline">if set to <c>true</c> [assume online].</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.Apply">
+            <summary>
+            Applies this instance.
+            </summary>
+            <returns>Something here.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.IsDefaultQueue(System.String)">
+            <summary>
+            Determines whether [is default queue] [the specified queue].
+            </summary>
+            <param name="queue">The queue.</param>
+            <returns><c>true</c> if [is default queue] [the specified queue]; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.Port">
+            <summary>
+            Sets a value indicating whether this <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning"/> is port.
+            </summary>
+            <value><c>true</c> if port; otherwise, <c>false</c>.</value>
+            @param port the port to set
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerRunning.HostName">
+            <summary>
+            Sets the name of the host.
+            </summary>
+            <value>The name of the host.</value>
+            @param hostName the hostName to set
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils">
+            <summary>
+            Global convenience class for all integration tests, carrying constants and other utilities for broker set up.
+            </summary>
+            <author>Dave Syer</author>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.DEFAULT_PORT">
+            <summary>
+            The default port.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.TRACER_PORT">
+            <summary>
+            The tracer port.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.ADMIN_NODE_NAME">
+            <summary>
+            The admin node name.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetAdminNodeName">
+            <summary>
+            Gets the name of the admin node.
+            </summary>
+            <returns>The admin node name.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetPort">
+            <summary>
+            Gets the port.
+            </summary>
+            <returns></returns>
+            The port that the broker is listening on (e.g. as input for a {@link ConnectionFactory}).
+            @return a port number
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetTracerPort">
+            <summary>
+            Gets the tracer port.
+            </summary>
+            <returns></returns>
+            The port that the tracer is listening on (e.g. as input for a {@link ConnectionFactory}).
+            @return a port number
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetAdminPort">
+            <summary>
+            Gets the admin port.
+            </summary>
+            <returns></returns>
+            An alternative port number than can safely be used to stop and start a broker, even when one is already running
+            on the standard port as a privileged user. Useful for tests involving {@link RabbitBrokerAdmin} on UN*X.
+            @return a port number
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetRabbitBrokerAdmin">
+            <summary>
+            Gets the rabbit broker admin.
+            </summary>
+            <returns></returns>
+            Convenience factory for a {@link RabbitBrokerAdmin} instance that will usually start and stop cleanly on all
+            systems.
+            @return a {@link RabbitBrokerAdmin} instance
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetRabbitBrokerAdmin(System.String)">
+            <summary>
+            Gets the rabbit broker admin.
+            </summary>
+            <param name="nodeName">Name of the node.</param>
+            <returns></returns>
+            Convenience factory for a {@link RabbitBrokerAdmin} instance that will usually start and stop cleanly on all
+            systems.
+            @param nodeName the name of the node
+            @return a {@link RabbitBrokerAdmin} instance
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.BrokerTestUtils.GetRabbitBrokerAdmin(System.String,System.Int32)">
+            <summary>
+            Gets the rabbit broker admin.
+            </summary>
+            <param name="nodeName">Name of the node.</param>
+            <param name="port">The port.</param>
+            <returns></returns>
+            Convenience factory for a {@link RabbitBrokerAdmin} instance that will usually start and stop cleanly on all
+            systems.
+            @param nodeName the name of the node
+            @param port the port to listen on
+            @return a {@link RabbitBrokerAdmin} instance
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable">
+            <summary>
+            Determines if the environment is available.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.DEFAULT_ENVIRONMENT_KEY">
+            <summary>
+            The default environment key.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.key">
+            <summary>
+            The key.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable"/> class.
+            </summary>
+            <param name="key">The key.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable"/> class. 
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.Apply">
+            <summary>
+            Applies this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Test.EnvironmentAvailable.IsActive">
+            <summary>
+            Determines whether this instance is active.
+            </summary>
+            <returns><c>true</c> if this instance is active; otherwise, <c>false</c>.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.TestCategory">
+            <summary>
+            Test Categories
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.TestCategory.Integration">
+            <summary>
+            Integration Test
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.TestCategory.LifecycleIntegration">
+            <summary>
+            Lifecycle Integration Test
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Test.TestCategory.Unit">
+            <summary>
+            Unit Test
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Test.XmlObjectFactoryExtensions">
+            <summary>
+            XmlObjectFactory Extensions
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests">
+            <summary>
+            Rabbit Transaction Manager Integration Tests.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.ROUTE">
+            <summary>
+            The route.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.template">
+            <summary>
+            The template.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.transactionTemplate">
+            <summary>
+            The transaction template.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.BeforeFixtureSetUp">
+            <summary>
+            Code to execute before fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.BeforeFixtureTearDown">
+            <summary>
+            Code to execute before fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.AfterFixtureSetUp">
+            <summary>
+            Code to execute after fixture setup.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.AfterFixtureTearDown">
+            <summary>
+            Code to execute after fixture teardown.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests"/> class. 
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.Init">
+            <summary>
+            Inits this instance.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.TestSendAndReceiveInTransaction">
+            <summary>
+            Tests the send and receive in transaction.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.TestReceiveInTransaction">
+            <summary>
+            Tests the receive in transaction.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.TestReceiveInTransactionWithRollback">
+            <summary>
+            Tests the receive in transaction with rollback.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.TestSendInTransaction">
+            <summary>
+            Tests the send in transaction.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.RabbitTransactionManagerIntegrationTests.TestSendInTransactionWithRollback">
+            <summary>
+            Tests the send in transaction with rollback.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.PlannedException">
+            <summary>
+            A planned exception.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.PlannedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Tests.Transaction.PlannedException"/> class. 
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+    </members>
+</doc>

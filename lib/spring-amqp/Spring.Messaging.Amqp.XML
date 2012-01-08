@@ -1,0 +1,2408 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Spring.Messaging.Amqp</name>
+    </assembly>
+    <members>
+        <member name="T:Spring.Messaging.Amqp.AmqpConnectException">
+            <summary>
+            SystemException wrapper for an {@link ConnectException} which can be commonly thrown from AMQP operations if the remote process dies or there is a network issue.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.AmqpException">
+            <summary>
+            Base SystemException for errors that occur when executing AMQP operations.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpException"/> class.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpException"/> class.
+            </summary>
+            <param name="cause">
+            The cause.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpException"/> class.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <param name="cause">
+            The cause.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpConnectException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpConnectException"/> class.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <param name="cause">
+            The cause.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.AmqpIllegalStateException">
+            <summary>
+            An AMQP Illegal State Exception.
+            </summary>
+            Equivalent of an IllegalStateException but within the AmqpException hierarchy.
+            @author Mark Pollack
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpIllegalStateException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpIllegalStateException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpIllegalStateException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="cause">The cause.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.AmqpIOException">
+            <summary>
+            SystemException wrapper for an {@link IOException} which can be commonly thrown from AMQP operations.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpIOException.#ctor(System.String,System.IO.IOException)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpIOException"/> class.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <param name="cause">
+            The cause.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.AmqpUnsupportedEncodingException">
+            <summary>
+            SystemException for unsupported encoding in an AMQP operation. 
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.AmqpUnsupportedEncodingException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpUnsupportedEncodingException"/> class.
+            </summary>
+            <param name="cause">
+            The cause.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.AbstractExchange">
+            <summary>
+            Common properties that describe all exchange types.  
+            Subclasses of this class are typically used with administrative operations that declare an exchange.
+            </summary>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.IExchange">
+            <summary>
+            Common properties that describe all exchange types.  
+            </summary>
+            <remarks>
+            Implementations of this interface are typically used with administrative 
+            operations that declare an exchange.
+            </remarks>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.IExchange.Name">
+            <summary>
+            Gets Name.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.IExchange.ExchangeType">
+            <summary>
+            Gets ExchangeType.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.IExchange.Durable">
+            <summary>
+            Gets a value indicating whether Durable.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.IExchange.AutoDelete">
+            <summary>
+            Gets a value indicating whether AutoDelete.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.IExchange.Arguments">
+            <summary>
+            Gets Arguments.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AbstractExchange.name">
+            <summary>
+            The name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AbstractExchange.durable">
+            <summary>
+            The durable flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AbstractExchange.autoDelete">
+            <summary>
+            The auto delete flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AbstractExchange.arguments">
+            <summary>
+            The arguments.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AbstractExchange.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.AbstractExchange"/> class, given a name.
+            </summary>
+            <param name="name">The name of the exchange.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AbstractExchange.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.AbstractExchange"/> class, given a name, durability flag, auto-delete flag.
+            </summary>
+            <param name="name">
+            The name of the exchange.
+            </param>
+            <param name="durable">
+            The durable flag. <c>true</c> if we are declaring a durable exchange (the exchange will survive a server restart).
+            </param>
+            <param name="autoDelete">
+            The auto delete flag. True if the server should delete the exchange when it is no longer in use.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AbstractExchange.#ctor(System.String,System.Boolean,System.Boolean,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.AbstractExchange"/> class, given a name, durability flag, and auto-delete flag. 
+            </summary>
+            <param name="name">The name of the exchange.</param>
+            <param name="durable">if set to <c>true</c>, 
+            if we are declaring a durable exchange (the exchange will survive a server restart)</param>
+            <param name="autoDelete">if set to <c>true</c>
+            the server should delete the exchange when it is no longer in use</param>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.AbstractExchange.Durable">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:Spring.Messaging.Amqp.Core.AbstractExchange"/> is durable.
+            </summary>
+            <value><c>true</c> if describing a durable exchange (the exchange will survive a server restart), 
+            otherwise <c>false</c>.</value>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.AbstractExchange.AutoDelete">
+            <summary>
+            Gets or sets a value indicating the auto-delete lifecycle of this exchange.
+            </summary>
+            <value><c>true</c> if if the server should delete the exchange when it is no longer in use; otherwise, <c>false</c>.</value>
+            <remarks>
+            An non-auto-deleted exchange lasts until the server is shut down.
+            </remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.AbstractExchange.Arguments">
+            <summary>
+            Gets or sets the collection of arbitrary arguments to use when declaring an exchange.
+            </summary>
+            <value>The arguments.</value>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils">
+            <summary>
+            Acknowledge Mode Utilities
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.TransactionAllowed(Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode)">
+            <summary>
+            Determine if the acknowledge mode is transaction allowed.
+            </summary>
+            <param name="mode">
+            The mode.
+            </param>
+            <returns>
+            True if transaction allowed, else false.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.IsAutoAck(Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode)">
+            <summary>
+            Determine if the acknowledge mode is auto ack.
+            </summary>
+            <param name="mode">
+            The mode.
+            </param>
+            <returns>
+            True if auto ack, else false.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.IsManual(Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode)">
+            <summary>
+            Determine if the acknowledge mode is manual.
+            </summary>
+            <param name="mode">
+            The mode.
+            </param>
+            <returns>
+            True if manual, else false.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode">
+            <summary>
+            Enumeration of Acknowledge Modes
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode.NONE">
+            <summary>
+             NONE AcknowledgeMode
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode.MANUAL">
+            <summary>
+            NONE Acnowledge Mode
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.AcknowledgeModeUtils.AcknowledgeMode.AUTO">
+            <summary>
+            MANUAL Acnowledge Mode
+            </summary>, 
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.Address">
+            <summary>
+            Represents an address for publication of an AMQP message. The AMQP 0-8 and
+            0-9 specifications have an unstructured string that is used as a "reply to"
+            address. There are however conventions in use and this class makes it easier
+            to follow these conventions.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Address.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Address"/> class from an unstructured string
+            </summary>
+            <param name="address">The unstructured address.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Address.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Address"/> class given the exchange type,
+             exchange name and routing key. This will set the exchange type, name and the routing key explicitly.
+            </summary>
+            <param name="exchangeType">Type of the exchange.</param>
+            <param name="exchangeName">Name of the exchange.</param>
+            <param name="routingKey">The routing key.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.AnonymousQueue">
+            <summary>
+            An anonymous queue.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.Queue">
+            <summary>
+            Simple container collecting information to describe a queue.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Queue.name">
+            <summary>
+            The name of the queue.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Queue.durable">
+            <summary>
+            The durable flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Queue.exclusive">
+            <summary>
+            The exclusive flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Queue.autoDelete">
+            <summary>
+            The auto delete flag.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Queue.arguments">
+            <summary>
+            The arguments.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Queue.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Queue"/> class. The queue is durable, non-exclusive and non auto-delete.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Queue.#ctor(System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Queue"/> class, given a name and durability flag. The queue is non-exclusive and non auto-delete.
+            </summary>
+            <param name="name">
+            The name of the queue.
+            </param>
+            <param name="durable">
+            The durable. True if we are declaring a durable queue (the queue will survive a server restart).
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Queue.#ctor(System.String,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Queue"/> class, given a name, durability, exclusive and auto-delete flags.
+            </summary>
+            <param name="name">
+            The name of the queue.
+            </param>
+            <param name="durable">
+            The durable. True if we are declaring a durable queue (the queue will survive a server restart).
+            </param>
+            <param name="exclusive">
+            The exclusive. True if we are declaring an exclusive queue (the queue will only be used by the declarer's connection).
+            </param>
+            <param name="autoDelete">
+            The auto delete. True if the server should delete the queue when it is no longer in use.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Queue.#ctor(System.String,System.Boolean,System.Boolean,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Queue"/> class, given a name, durability flag, and auto-delete flag, and arguments.
+            </summary>
+            <param name="name">
+            The name of the queue.
+            </param>
+            <param name="durable">
+            The durable. True if we are declaring a durable queue (the queue will survive a server restart).
+            </param>
+            <param name="exclusive">
+            The exclusive. True if we are declaring an exclusive queue (the queue will only be used by the declarer's connection).
+            </param>
+            <param name="autoDelete">
+            The auto delete. True if the server should delete the queue when it is no longer in use.
+            </param>
+            <param name="arguments">
+            The arguments used to declare the queue.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Queue.ToString">
+            <summary>
+            A String representation of the Queue.
+            </summary>
+            <returns>
+            String description of the queue.
+            </returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Queue.Name">
+            <summary>
+            Gets Name.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Queue.Durable">
+            <summary>
+            Gets a value indicating whether Durable. A durable queue will survive a server restart.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Queue.Exclusive">
+            <summary>
+            Gets a value indicating whether Exclusive. True if the server should only send messages to the declarer's connection.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Queue.AutoDelete">
+            <summary>
+            Gets a value indicating whether AutoDelete. True if the server should delete the queue when it is no longer in use 
+            (the last consumer is cancelled). A queue that never has any consumers will not be deleted automatically.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Queue.Arguments">
+            <summary>
+            Gets Arguments.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AnonymousQueue.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.AnonymousQueue"/> class.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.AnonymousQueue.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.AnonymousQueue"/> class.
+            </summary>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.Binding">
+            <summary>
+            Simple container collecting information to describe a queue binding. Takes Queue and Exchange
+            class as arguments to facilitate wiring using [Definition] based configuration.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.destination">
+            <summary>
+            The queue.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.exchange">
+            <summary>
+            The exchange.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.routingKey">
+            <summary>
+            The routing key.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.arguments">
+            <summary>
+            The arguments.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.destinationType">
+            <summary>
+            The destination type.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Binding.#ctor(System.String,Spring.Messaging.Amqp.Core.Binding.DestinationType,System.String,System.String,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Binding"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="destinationType">
+            The destination type.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <param name="routingKey">
+            The routing key.
+            </param>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Binding.IsDestinationQueue">
+            <summary>
+            Is the destination a Queue (as compared to an Exchange as specified by the DestinationType enumeration)
+            </summary>
+            <returns>true if the destination is a Queue, false otherwise</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Binding.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String"/> that represents this instance.</returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Binding.Destination">
+            <summary>
+            Gets the destination.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Binding.Exchange">
+            <summary>
+            Gets Exchange.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Binding.RoutingKey">
+            <summary>
+            Gets RoutingKey.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Binding.Arguments">
+            <summary>
+            Gets Arguments.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Binding.BindingDestinationType">
+            <summary>
+            Gets DestinationType.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.Binding.DestinationType">
+            <summary>
+            Binding destination types.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.DestinationType.Queue">
+            <summary>
+            Queue destination type.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.Binding.DestinationType.Exchange">
+            <summary>
+            Exchange destination type.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder">
+            <summary>
+            The binding builder.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.Bind(Spring.Messaging.Amqp.Core.Queue)">
+            <summary>
+            The bind.
+            </summary>
+            <param name="queue">
+            The queue.
+            </param>
+            <returns>
+            The destination configurer.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.Bind(Spring.Messaging.Amqp.Core.IExchange)">
+            <summary>
+            The bind.
+            </summary>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <returns>
+            The destination configurer.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.CreateMapForKeys(System.String[])">
+            <summary>
+            The create map for keys.
+            </summary>
+            <param name="keys">
+            The keys.
+            </param>
+            <returns>
+            The map.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.AbstractRoutingKeyConfigurer`1">
+            <summary>
+            The abstract routing key configurer.
+            </summary>
+            <typeparam name="T">
+            An exchange.
+            </typeparam>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.AbstractRoutingKeyConfigurer`1.destination">
+            <summary>
+              The destination.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.AbstractRoutingKeyConfigurer`1.exchange">
+            <summary>
+              The exchange.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.AbstractRoutingKeyConfigurer`1.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.AbstractRoutingKeyConfigurer`1"/> class. 
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.AbstractRoutingKeyConfigurer`1"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer">
+            <summary>
+            The destination configurer.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.name">
+            <summary>
+              The name.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.type">
+            <summary>
+              The destination type.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.#ctor(System.String,Spring.Messaging.Amqp.Core.Binding.DestinationType)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="type">
+            The type.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.To(Spring.Messaging.Amqp.Core.FanoutExchange)">
+            <summary>
+            The to.
+            </summary>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.To(Spring.Messaging.Amqp.Core.HeadersExchange)">
+            <summary>
+            The to.
+            </summary>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <returns>
+            The headers exchange map configurer.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.To(Spring.Messaging.Amqp.Core.DirectExchange)">
+            <summary>
+            The to.
+            </summary>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <returns>
+            The direct exchange routing key configurer.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.To(Spring.Messaging.Amqp.Core.TopicExchange)">
+            <summary>
+            The to.
+            </summary>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <returns>
+            The topic exchange routing key configurer.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.To(Spring.Messaging.Amqp.Core.IExchange)">
+            <summary>
+            The to.
+            </summary>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <returns>
+            The generic exchange routing key configurer.
+            </returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.Name">
+            <summary>
+             Gets the Name.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer.Type">
+            <summary>
+            Gets the Destination Type.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.DirectExchangeRoutingKeyConfigurer">
+            <summary>
+            The direct exchange routing key configurer.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DirectExchangeRoutingKeyConfigurer.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.DirectExchange)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.DirectExchangeRoutingKeyConfigurer"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DirectExchangeRoutingKeyConfigurer.With(System.String)">
+            <summary>
+            The with.
+            </summary>
+            <param name="routingKey">
+            The routing key.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DirectExchangeRoutingKeyConfigurer.With(System.Enum)">
+            <summary>
+            The with.
+            </summary>
+            <param name="routingKeyEnum">
+            The routing key enumeration.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.DirectExchangeRoutingKeyConfigurer.WithQueueName">
+            <summary>
+            The with queue name.
+            </summary>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer">
+            <summary>
+            The generic arguments configurer.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer.configurer">
+            <summary>
+              The configurer.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer.routingKey">
+            <summary>
+              The routing key.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.GenericExchangeRoutingKeyConfigurer,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer"/> class.
+            </summary>
+            <param name="configurer">
+            The configurer.
+            </param>
+            <param name="routingKey">
+            The routing key.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer.And(System.Collections.IDictionary)">
+            <summary>
+            The and.
+            </summary>
+            <param name="map">
+            The map.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.GenericArgumentsConfigurer.Noargs">
+            <summary>
+            The noargs.
+            </summary>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.GenericExchangeRoutingKeyConfigurer">
+            <summary>
+            The generic exchange routing key configurer.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.GenericExchangeRoutingKeyConfigurer.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.IExchange)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.GenericExchangeRoutingKeyConfigurer"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.GenericExchangeRoutingKeyConfigurer.With(System.String)">
+            <summary>
+            The with.
+            </summary>
+            <param name="routingKey">
+            The routing key.
+            </param>
+            <returns>
+            The generic arguments configurer.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.GenericExchangeRoutingKeyConfigurer.With(System.Enum)">
+            <summary>
+            The with.
+            </summary>
+            <param name="routingKeyEnum">
+            The routing Key Enum.
+            </param>
+            <returns>
+            The generic arguments configurer.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer">
+            <summary>
+            The headers exchange map configurer.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.destination">
+            <summary>
+              The destination.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.exchange">
+            <summary>
+              The exchange.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.HeadersExchange)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.Where(System.String)">
+            <summary>
+            The where.
+            </summary>
+            <param name="key">
+            The key.
+            </param>
+            <returns>
+            The headers exchange map binding creator.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.WhereAny(System.String[])">
+            <summary>
+            The where any.
+            </summary>
+            <param name="headerKeys">
+            The header keys
+            </param>
+            <returns>
+            The headers exchange map binding creator.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.WhereAny(System.Collections.IDictionary)">
+            <summary>
+            The where any.
+            </summary>
+            <param name="headerValues">
+            The header values.
+            </param>
+            <returns>
+            The headers exchange map binding creator.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.WhereAll(System.String[])">
+            <summary>
+            The where all.
+            </summary>
+            <param name="headerKeys">
+            The header keys.
+            </param>
+            <returns>
+            The headers exchange map binding creator.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.WhereAll(System.Collections.IDictionary)">
+            <summary>
+            The where all.
+            </summary>
+            <param name="headerValues">
+            The header values.
+            </param>
+            <returns>
+            The headers exchange map binding creator.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator">
+            <summary>
+            The headers exchange keys binding creator.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator.destination">
+            <summary>
+              The destination.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator.exchange">
+            <summary>
+              The exchange.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator.headerMap">
+            <summary>
+              The header map.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.HeadersExchange,System.String[],System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <param name="headerKeys">
+            The header keys.
+            </param>
+            <param name="matchAll">
+            The match all.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeKeysBindingCreator.Exist">
+            <summary>
+            The exist.
+            </summary>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator">
+            <summary>
+            The headers exchange map binding creator.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator.destination">
+            <summary>
+              The destination.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator.exchange">
+            <summary>
+              The exchange.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator.headerMap">
+            <summary>
+              The header map.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.HeadersExchange,System.Collections.IDictionary,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator"/> class.
+            </summary>
+            <param name="destination">
+            The Destination.
+            </param>
+            <param name="exchange">
+            The Exchange.
+            </param>
+            <param name="headerMap">
+            The header map.
+            </param>
+            <param name="matchAll">
+            The match all.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeMapBindingCreator.Match">
+            <summary>
+            The match.
+            </summary>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator">
+            <summary>
+            The headers exchange single value binding creator.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator.destination">
+            <summary>
+              The destination.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator.exchange">
+            <summary>
+              The exchange.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator.key">
+            <summary>
+              The key.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.HeadersExchange,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+            <param name="key">
+            The key.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator.Exists">
+            <summary>
+            The exists.
+            </summary>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.HeadersExchangeMapConfigurer.HeadersExchangeSingleValueBindingCreator.Matches(System.Object)">
+            <summary>
+            The matches.
+            </summary>
+            <param name="value">
+            The value.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.BindingBuilder.TopicExchangeRoutingKeyConfigurer">
+            <summary>
+            The topic exchange routing key configurer.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.TopicExchangeRoutingKeyConfigurer.#ctor(Spring.Messaging.Amqp.Core.BindingBuilder.DestinationConfigurer,Spring.Messaging.Amqp.Core.TopicExchange)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.BindingBuilder.TopicExchangeRoutingKeyConfigurer"/> class.
+            </summary>
+            <param name="destination">
+            The destination.
+            </param>
+            <param name="exchange">
+            The exchange.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.TopicExchangeRoutingKeyConfigurer.With(System.String)">
+            <summary>
+            The with.
+            </summary>
+            <param name="routingKey">
+            The routing key.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.BindingBuilder.TopicExchangeRoutingKeyConfigurer.With(System.Enum)">
+            <summary>
+            The with.
+            </summary>
+            <param name="routingKeyEnum">
+            The routing key.
+            </param>
+            <returns>
+            The binding.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.ContentType">
+            <summary>
+            A simple class to hold content type values.
+            </summary>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.CustomExchange">
+            <summary>
+            Simple container collecting information to describe a custom exchange. Custom exchange types are allowed by the AMQP
+            specification, and their names should start with "x-" (but this is not enforced here). Used in conjunction with
+            administrative operations.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.CustomExchange.type">
+            <summary>
+            The type.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.CustomExchange.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.CustomExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="type">
+            The type.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.CustomExchange.#ctor(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.CustomExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="type">
+            The type.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.CustomExchange.#ctor(System.String,System.String,System.Boolean,System.Boolean,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.CustomExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="type">
+            The type.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.CustomExchange.ExchangeType">
+            <summary>
+            Gets ExchangeType.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.DirectExchange">
+            <summary>
+            Simple container collecting information to describe a direct exchange.
+            </summary>
+            <remarks>
+            Used in conjunction with administrative operations.
+            </remarks>
+            <author>Mark Pollack</author>
+            <see cref="T:Spring.Messaging.Amqp.Core.IAmqpAdmin"/>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.DirectExchange.DEFAULT">
+            <summary>
+            The default direct exchange.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.DirectExchange.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.DirectExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.DirectExchange.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.DirectExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.DirectExchange.#ctor(System.String,System.Boolean,System.Boolean,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.DirectExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.ExchangeTypes">
+            <summary>
+            Constants representing exchange types.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.ExchangeTypes.Direct">
+            <summary>
+            Direct Exchange Type
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.ExchangeTypes.Topic">
+            <summary>
+            Topic Exchange Type
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.ExchangeTypes.Fanout">
+            <summary>
+            Fanout Exchange Type
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.ExchangeTypes.Headers">
+            <summary>
+            Headers Exchange Type
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.ExchangeTypes.System">
+            <summary>
+            System Exchange Type
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.FanoutExchange">
+            <summary>
+            Simple container collecting information to describe a fanout exchange.
+            </summary>
+            <remarks>
+            Used in conjunction with administrative operations.
+            </remarks>
+            <author>Mark Pollack</author>
+            <see cref="T:Spring.Messaging.Amqp.Core.IAmqpAdmin"/>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.FanoutExchange.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.FanoutExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.FanoutExchange.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.FanoutExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.FanoutExchange.#ctor(System.String,System.Boolean,System.Boolean,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.FanoutExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.FanoutExchange.ExchangeType">
+            <summary>
+            Gets ExchangeType.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.HeadersExchange">
+            <summary>
+            A headers exchange.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.HeadersExchange.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.HeadersExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.HeadersExchange.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.HeadersExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.HeadersExchange.#ctor(System.String,System.Boolean,System.Boolean,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.HeadersExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.HeadersExchange.ExchangeType">
+            <summary>
+            Gets ExchangeType.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.IAmqpAdmin">
+            <summary>
+            Specifies a basic set of portable AMQP administrative operations for AMQP > 0.8
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeclareExchange(Spring.Messaging.Amqp.Core.IExchange)">
+            <summary>
+            Declares the exchange.
+            </summary>
+            <param name="exchange">The exchange.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeleteExchange(System.String)">
+            <summary>
+            Deletes the exchange.
+            </summary>
+            <remarks>
+            Look at implementation specific subclass for implementation specific behavior, for example
+            for RabbitMQ this will delete the exchange without regard for whether it is in use or not.
+            </remarks>
+            <param name="exchangeName">Name of the exchange.</param>
+            <returns>true if the exchange existed and was deleted</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeclareQueue">
+            <summary>
+            Declares a queue whose name is automatically named by the server.  It is created with
+            exclusive = true, autoDelete=true, and durable = false.
+            </summary>
+            <returns>The queue.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeclareQueue(Spring.Messaging.Amqp.Core.Queue)">
+            <summary>
+            Declares the given queue.
+            </summary>
+            <param name="queue">The queue to declare.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeleteQueue(System.String)">
+            <summary>
+            Deletes the queue, without regard for whether it is in use or has messages on it 
+            </summary>
+            <param name="queueName">Name of the queue.</param>
+            <returns>true if the queue existed and was deleted.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeleteQueue(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Deletes the queue.
+            </summary>
+            <param name="queueName">Name of the queue.</param>
+            <param name="unused">if set to <c>true</c> the queue should be deleted only if not in use.</param>
+            <param name="empty">if set to <c>true</c> the queue should be deleted only if empty.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.PurgeQueue(System.String,System.Boolean)">
+            <summary>
+            Purges the queue.
+            </summary>
+            <param name="queueName">Name of the queue.</param>
+            <param name="noWait">if set to <c>true</c> [no wait].</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.DeclareBinding(Spring.Messaging.Amqp.Core.Binding)">
+            <summary>
+            Declare a binding of a queue to an exchange.
+            </summary>
+            <param name="binding">Binding to declare.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpAdmin.RemoveBinding(Spring.Messaging.Amqp.Core.Binding)">
+            <summary>
+            Remove a binding of a queue to an exchange. Note unbindQueue/removeBinding was not introduced until 0.9 of the
+            specification.
+            </summary>
+            <param name="binding">Binding to remove.</param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.IAmqpTemplate">
+            <summary>
+            Specifies a basic set of AMQP operations
+            </summary>
+            <remarks>
+            Provides synchronous send an receive methods.  The ConvertAndSend and ReceiveAndConvert
+            methods allow let you send and receive POCO objects.  Implementations are expected to
+            delegate to an instance of <see cref="T:Spring.Messaging.Amqp.Support.Converter.IMessageConverter"/> to perform
+            conversion to and from AMQP byte[] payload type.
+            </remarks>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.Send(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Send a message to a default exchange with a default routing key.
+            </summary>
+            <param name="message">The message to send.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.Send(System.String,Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Send a message to a default exchange with a specific routing key.
+            </summary>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.Send(System.String,System.String,Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Send a message to a specific exchange with a specific routing key.
+            </summary>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertAndSend(System.Object)">
+            <summary>
+            Convert a .NET object to an Amqp <see cref="T:Spring.Messaging.Amqp.Core.Message"/> and send it to a default exchange with a default routing key.
+            </summary>
+            <param name="message">The message to send.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertAndSend(System.String,System.Object)">
+            <summary>
+            Convert a .NET object to an Amqp <see cref="T:Spring.Messaging.Amqp.Core.Message"/> and send it to a default exchange with a specified routing key.
+            </summary>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertAndSend(System.String,System.String,System.Object)">
+            <summary>
+            Convert a .NET object to an Amqp <see cref="T:Spring.Messaging.Amqp.Core.Message"/> and send it to a specified exchange with a specified routing key.
+            </summary>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertAndSend(System.Object,System.Func{Spring.Messaging.Amqp.Core.Message,Spring.Messaging.Amqp.Core.Message})">
+            <summary>
+            Convert a .NET object to an Amqp <see cref="T:Spring.Messaging.Amqp.Core.Message"/> and send it to a default exchange with a default routing key.
+            </summary>
+            <param name="message">The message to send.</param>
+            <param name="messagePostProcessor">The message post processor.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertAndSend(System.String,System.Object,System.Func{Spring.Messaging.Amqp.Core.Message,Spring.Messaging.Amqp.Core.Message})">
+            <summary>
+            Convert a .NET object to an Amqp <see cref="T:Spring.Messaging.Amqp.Core.Message"/> and send it to a default exchange with a specified routing key.
+            </summary>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <param name="messagePostProcessor">The message post processor.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertAndSend(System.String,System.String,System.Object,System.Func{Spring.Messaging.Amqp.Core.Message,Spring.Messaging.Amqp.Core.Message})">
+            <summary>
+            Convert a .NET object to an Amqp <see cref="T:Spring.Messaging.Amqp.Core.Message"/> and send it to a specified exchange with a specified routing key.
+            </summary>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <param name="messagePostProcessor">The message post processor.</param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.Receive">
+            <summary>
+            Receive a message if there is one from a default queue. Returns immediately, possibly with a null value.
+            </summary>
+            <returns>A message or null if there is none waiting.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.Receive(System.String)">
+            <summary>
+            Receive a message if there is one from a specific queue. Returns immediately, possibly with a null value.
+            </summary>
+            <param name="queueName">The queue name.</param>
+            <returns>A message or null if there is none waiting.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ReceiveAndConvert">
+            <summary>
+            Receive a message if there is one from a default queue and convert it to a .NET object. Returns immediately,
+            possibly with a null value.
+            </summary>
+            <returns>A message or null if there is none waiting.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ReceiveAndConvert(System.String)">
+            <summary>
+            Receive a message if there is one from a specified queue and convert it to a .NET object. Returns immediately,
+            possibly with a null value.
+            </summary>
+            <param name="queueName">The name of the queue to poll.</param>
+            <returns>The message.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.SendAndReceive(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Basic RPC pattern. Send a message to a default exchange with a default routing key and attempt to receive a
+            response. Implementations will normally set the reply-to header to an exclusive queue and wait up for some time
+            limited by a timeout.
+            </summary>
+            <param name="message">The message to send.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.SendAndReceive(System.String,Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Basic RPC pattern. Send a message to a default exchange with a specified routing key and attempt to receive a
+            response. Implementations will normally set the reply-to header to an exclusive queue and wait up for some time
+            limited by a timeout.
+            </summary>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.SendAndReceive(System.String,System.String,Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Basic RPC pattern. Send a message to a specified exchange with a specified routing key and attempt to receive a
+            response. Implementations will normally set the reply-to header to an exclusive queue and wait up for some time
+            limited by a timeout.
+            </summary>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertSendAndReceive(System.Object)">
+            <summary>
+            Basic RPC pattern with conversion. Send a .NET object converted to a message to a default exchange with a default
+            routing key and attempt to receive a response, converting that to a .NET object. Implementations will normally
+            set the reply-to header to an exclusive queue and wait up for some time limited by a timeout.
+            </summary>
+            <param name="message">The message to send.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertSendAndReceive(System.String,System.Object)">
+            <summary>
+            Basic RPC pattern with conversion. Send a .NET object converted to a message to a default exchange with a specified
+            routing key and attempt to receive a response, converting that to a .NET object. Implementations will normally
+            set the reply-to header to an exclusive queue and wait up for some time limited by a timeout.
+            </summary>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertSendAndReceive(System.String,System.String,System.Object)">
+            <summary>
+            Basic RPC pattern with conversion. Send a .NET object converted to a message to a specified exchange with a specified
+            routing key and attempt to receive a response, converting that to a .NET object. Implementations will normally
+            set the reply-to header to an exclusive queue and wait up for some time limited by a timeout.
+            </summary>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertSendAndReceive(System.Object,System.Func{Spring.Messaging.Amqp.Core.Message,Spring.Messaging.Amqp.Core.Message})">
+            <summary>
+            Basic RPC pattern with conversion. Send a .NET object converted to a message to a default exchange with a default
+            routing key and attempt to receive a response, converting that to a .NET object. Implementations will normally
+            set the reply-to header to an exclusive queue and wait up for some time limited by a timeout.
+            </summary>
+            <param name="message">The message to send.</param>
+            <param name="messagePostProcessor">The message post processor.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertSendAndReceive(System.String,System.Object,System.Func{Spring.Messaging.Amqp.Core.Message,Spring.Messaging.Amqp.Core.Message})">
+            <summary>
+            Basic RPC pattern with conversion. Send a .NET object converted to a message to a default exchange with a specified
+            routing key and attempt to receive a response, converting that to a .NET object. Implementations will normally
+            set the reply-to header to an exclusive queue and wait up for some time limited by a timeout.
+            </summary>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <param name="messagePostProcessor">The message post processor.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IAmqpTemplate.ConvertSendAndReceive(System.String,System.String,System.Object,System.Func{Spring.Messaging.Amqp.Core.Message,Spring.Messaging.Amqp.Core.Message})">
+            <summary>
+            Basic RPC pattern with conversion. Send a .NET object converted to a message to a specified exchange with a specified
+            routing key and attempt to receive a response, converting that to a .NET object. Implementations will normally
+            set the reply-to header to an exclusive queue and wait up for some time limited by a timeout.
+            </summary>
+            <param name="exchange">The exchange.</param>
+            <param name="routingKey">The routing key.</param>
+            <param name="message">The message to send.</param>
+            <param name="messagePostProcessor">The message post processor.</param>
+            <returns>The response if there is one.</returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.IMessageCreator">
+            <summary>
+            Interface for Message creation.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IMessageCreator.CreateMessage">
+            <summary>
+            Create a Message.
+            </summary>
+            <returns>
+            The Message.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.IMessageListener">
+            <summary>
+            Interface for Message listening.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.IMessageListener.OnMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Called when a Message is received.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.Message">
+            <summary>
+            The 0-8 and 0-9-1 AMQP specifications do not define an Message class or interface. Instead, when performing an operation such as 
+            basicPublish the content is passed as a byte-array argument and additional properties are passed in as separate arguments. 
+            Spring AMQP defines a Message class as part of a more general AMQP domain model representation. 
+            The purpose of the Message class is to simply encapsulate the body and properties within a single 
+            instance so that the rest of the AMQP API can in turn be simpler.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Message.#ctor(System.Byte[],Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.Message"/> class. 
+            </summary>
+            <param name="body">
+            The body.
+            </param>
+            <param name="messageProperties">
+            The message Properties.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Message.ToString">
+            <summary>
+            Format the message as a string.
+            </summary>
+            <returns>
+            The string representation of the message.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.Message.GetBodyContentAsString">
+            <summary>
+            Format the body content as a string.
+            </summary>
+            <returns>
+            The string representation of the body content.
+            </returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Message.Body">
+            <summary>
+            Gets Body.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.Message.MessageProperties">
+            <summary>
+            Gets MessageProperties.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.MessageDeliveryMode">
+            <summary>
+            Enumeration for the Message Delivery Mode.  The None value is set in case the properties of the message 
+            do not contain any delivery mode value.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.MessageDeliveryMode.None">
+            <summary>
+            None
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.MessageDeliveryMode.NON_PERSISTENT">
+            <summary>
+            Non-Persistent
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Core.MessageDeliveryMode.PERSISTENT">
+            <summary>
+            Persistent
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.MessageProperties">
+            <summary>
+            Message Properties for an AMQP message.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.Headers">
+            <summary>
+            Gets Headers.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.Timestamp">
+            <summary>
+            Gets or sets Timestamp.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.MessageId">
+            <summary>
+            Gets or sets MessageId.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.UserId">
+            <summary>
+            Gets or sets UserId.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.AppId">
+            <summary>
+            Gets or sets AppId.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ClusterId">
+            <summary>
+            Gets or sets ClusterId.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.Type">
+            <summary>
+            Gets or sets Type.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.CorrelationId">
+            <summary>
+            Gets or sets CorrelationId.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ReplyTo">
+            <summary>
+            Gets or sets the reply to.
+            </summary>
+            <value>The reply to.</value>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ReplyToAddress">
+            <summary>
+            Gets or sets reply to address.
+            </summary>
+            <value>The reply to address.</value>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ContentType">
+            <summary>
+            Gets or sets ContentType.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ContentEncoding">
+            <summary>
+            Gets or sets ContentEncoding.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ContentLength">
+            <summary>
+            Gets or sets ContentLength.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.DeliveryMode">
+            <summary>
+            Gets or sets DeliveryMode.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.Expiration">
+            <summary>
+            Gets or sets Expiration.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.Priority">
+            <summary>
+            Gets or sets Priority.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ReceivedExchange">
+            <summary>
+            Gets or sets ReceivedExchange.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.ReceivedRoutingKey">
+            <summary>
+            Gets or sets ReceivedRoutingKey.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.Redelivered">
+            <summary>
+            Gets or sets a value indicating whether Redelivered.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.DeliveryTag">
+            <summary>
+            Gets or sets DeliveryTag.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.MessageProperties.MessageCount">
+            <summary>
+            Gets or sets MessageCount.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.TopicExchange">
+            <summary>
+            Simple container collecting information to describe a topic exchange.
+            </summary>
+            <remarks>
+            Used in conjunction with administrative operations.
+            </remarks>
+            <author>Mark Pollack</author>
+            <author>Joe Fitzgerald</author>
+            <see cref="T:Spring.Messaging.Amqp.Core.IAmqpAdmin"/>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.TopicExchange.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.TopicExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.TopicExchange.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.TopicExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.TopicExchange.#ctor(System.String,System.Boolean,System.Boolean,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Core.TopicExchange"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="durable">
+            The durable.
+            </param>
+            <param name="autoDelete">
+            The auto delete.
+            </param>
+            <param name="arguments">
+            The arguments.
+            </param>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Core.TopicExchange.ExchangeType">
+            <summary>
+            Gets ExchangeType.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.ImmediateAcknowledgeAmqpException">
+            <summary>
+            An immediate acknowledge AMQP Exception.
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.ImmediateAcknowledgeAmqpException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.AmqpException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.ImmediateAcknowledgeAmqpException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.ImmediateAcknowledgeAmqpException"/> class.
+            </summary>
+            <param name="cause">The cause.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.ImmediateAcknowledgeAmqpException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.ImmediateAcknowledgeAmqpException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="cause">The cause.</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.AbstractMessageConverter">
+            <summary>
+            Convenient base class for IMessageConverter implementations.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.IMessageConverter">
+            <summary>
+            Interface for message conversion.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.IMessageConverter.ToMessage(System.Object,Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Convert a .NET object to an AMQP Message.
+            </summary>
+            <param name="obj">
+            The object to convert.
+            </param>
+            <param name="messageProperties">
+            The message properties.
+            </param>
+            <returns>
+            The AMQP Message.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.IMessageConverter.FromMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Convert from an AMQP Message to a .NET object.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <returns>
+            The .NET object.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.AbstractMessageConverter.ToMessage(System.Object,Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Create a message from the object with properties.
+            </summary>
+            <param name="obj">
+            The obj.
+            </param>
+            <param name="messageProperties">
+            The message properties.
+            </param>
+            <returns>
+            The Message.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.AbstractMessageConverter.FromMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Create an object from the message.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <returns>
+            The object.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.AbstractMessageConverter.CreateMessage(System.Object,Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Crate a message from the payload object and message properties provided. The message id will be added to the
+            properties if necessary later.
+            </summary>
+            <param name="obj">
+            The obj.
+            </param>
+            <param name="messageProperties">
+            The message properties.
+            </param>
+            <returns>
+            The Message.
+            </returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.AbstractMessageConverter.CreateMessageIds">
+            <summary>
+            Gets or sets a value indicating whether new messages should have unique identifiers added to their properties before sending. Default is false.
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.ITypeMapper">
+            <summary>
+            Provides a layer of indirection when adding the 'type' of the object as a message property.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.ITypeMapper.FromType(System.Type,Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Convert from Type to string
+            </summary>
+            <param name="typeOfObjectToConvert">
+            The type of object to convert.
+            </param>
+            <returns>
+            The string.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.ITypeMapper.ToType(Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Convert from string to Type.
+            </summary>
+            <param name="typeId">
+            The type id.
+            </param>
+            <returns>
+            The type.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter">
+            <summary>
+            A Json Message Converter.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.Logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.DEFAULT_CHARSET">
+            <summary>
+            The default charset.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.defaultCharset">
+            <summary>
+            The default charset.
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.jsonSerializer">
+            <summary>
+            The JSON Serializer
+            </summary>
+        </member>
+        <member name="F:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.typeMapper">
+            <summary>
+            The ITypeMapper instance.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.FromMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Convert from a Message to an object.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <returns>
+            The object.
+            </returns>
+            <exception cref="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException">
+            </exception>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.ConvertBytesToObject(System.Byte[],System.String,System.Type)">
+            <summary>
+            Converts the bytes to object.
+            </summary>
+            <param name="body">The body.</param>
+            <param name="encoding">The encoding.</param>
+            <param name="targetType">Type of the target.</param>
+            <returns>The requested object.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.CreateMessage(System.Object,Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Overridden implementation of CreateMessage, to cater for Json serialization.
+            </summary>
+            <param name="obj">
+            The obj.
+            </param>
+            <param name="messageProperties">
+            The message properties.
+            </param>
+            <returns>
+            The Message.
+            </returns>
+            <exception cref="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException">
+            </exception>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.DefaultCharset">
+            <summary>
+            Sets the default charset.
+            </summary>
+            <value>The default charset.</value>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.TypeMapper">
+            <summary>
+            Sets TypeMapper.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.JsonMessageConverter.JsonSerializer">
+            <summary>
+            Sets the json serializer.
+            </summary>
+            <value>The json serializer.</value>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException">
+            <summary>
+            A message conversion exception.
+            </summary>
+            <author>Mark Pollack</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.MessageConversionException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException"/> class. 
+            Creates a new instance of the IMessageConverterException class. with the specified message.
+            </summary>
+            <param name="message">
+            A message about the exception.
+            </param>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.MessageConversionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException"/> class. 
+            Creates a new instance of the IMessageConverterException class with the specified message
+            and root cause.
+            </summary>
+            <param name="message">
+            A message about the exception.
+            </param>
+            <param name="rootCause">
+            The root exception that is being wrapped.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.UncategorizedAmqpException">
+            <summary>
+            A "catch-all" exception type within the AmqpException hierarchy when no more specific cause is known.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.UncategorizedAmqpException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.UncategorizedAmqpException"/> class.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <param name="cause">
+            The cause.
+            </param>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Core.SerializationUtils">
+            <summary>
+            Utilities for serialization and deserialization.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.SerializeObject(System.Object)">
+            <summary>
+            Convert an object to a byte array.
+            </summary>
+            <param name="obj">
+            The obj.
+            </param>
+            <returns>
+            The byte array.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.DeserializeObject(System.Byte[])">
+            <summary>
+            Convert a byte array to an object.
+            </summary>
+            <param name="bytes">
+            The bytes.
+            </param>
+            <returns>
+            The object.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.SerializeString(System.String,System.String)">
+            <summary>
+            Convert a string to a byte array.
+            </summary>
+            <param name="str">
+            The str.
+            </param>
+            <param name="encodingString">
+            The encoding string.
+            </param>
+            <returns>
+            The byte array.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.ToByteArrayWithEncoding(System.String,System.String)">
+            <summary>
+            Extension method to convert a string to a byte array with encoding.
+            </summary>
+            <param name="str">The string.</param>
+            <param name="encodingString">The encoding string.</param>
+            <returns>The byte array.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.DeserializeString(System.Byte[],System.String)">
+            <summary>
+            Convert a byte array to a string.
+            </summary>
+            <param name="bytes">
+            The bytes.
+            </param>
+            <param name="encodingString">
+            The encoding string.
+            </param>
+            <returns>
+            The string.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.ToStringWithEncoding(System.Byte[],System.String)">
+            <summary>
+            Extension method to convert a byte array to a string with encoding.
+            </summary>
+            <param name="bytes">The bytes.</param>
+            <param name="encodingString">The encoding string.</param>
+            <returns>The string.</returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.SerializeJson(System.Object,System.String)">
+            <summary>
+            Serialize an object as Json.
+            </summary>
+            <param name="obj">
+            The obj.
+            </param>
+            <param name="encodingString">
+            The encoding string.
+            </param>
+            <returns>
+            A byte array of the object's Json representation
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.DeserializeJsonAsObject(System.Byte[],System.String,System.Type)">
+            <summary>
+            Deserialize an object from Json
+            </summary>
+            <param name="bytes">
+            The bytes.
+            </param>
+            <param name="encodingString">
+            The encoding string.
+            </param>
+            <param name="targetType">
+            The target type.
+            </param>
+            <returns>
+            An object.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Core.SerializationUtils.DeserializeJsonAsString(System.Byte[],System.String)">
+            <summary>
+            Deserialize an object from Json and return the string representation of that object.
+            </summary>
+            <param name="bytes">
+            The bytes.
+            </param>
+            <param name="encodingString">
+            The encoding string.
+            </param>
+            <returns>
+            A string representation of a Json object.
+            </returns>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.SimpleMessageConverter">
+            <summary>
+            Implementation of MessageConverter that can work with Strings, Serializable instances,
+            or byte arrays. The ToMessage method simply checks the type of the provided instance while 
+            the FromMessage method relies upon the content-type of the provided Message.
+            </summary>
+            <author>Joe Fitzgerald</author>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.SimpleMessageConverter.FromMessage(Spring.Messaging.Amqp.Core.Message)">
+            <summary>
+            Converts from a AMQP Message to an Object.
+            </summary>
+            <param name="message">
+            The message.
+            </param>
+            <returns>
+            The object.
+            </returns>
+            <exception cref="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException">
+            </exception>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.SimpleMessageConverter.CreateMessage(System.Object,Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Creates an AMQP Message from the provided Object.
+            </summary>
+            <param name="obj">
+            The obj.
+            </param>
+            <param name="messageProperties">
+            The message properties.
+            </param>
+            <returns>
+            The message.
+            </returns>
+            <exception cref="T:Spring.Messaging.Amqp.Support.Converter.MessageConversionException">
+            </exception>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.SimpleMessageConverter.CodebaseUrl">
+            <summary>
+            Gets or sets the codebase URL to download classes from if not found locally. Can consists of multiple URLs, separated by
+            spaces.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.SimpleMessageConverter.DefaultCharset">
+            <summary>
+            Gets or sets the default charset to use when converting to or from text-based
+            Message body content. If not specified, the charset will be "UTF-8".
+            </summary>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper">
+            <summary>
+            A type mapper implementaiton.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.FromType(System.Type)">
+            <summary>
+            Convert from Type to string.
+            </summary>
+            <param name="typeOfObjectToConvert">
+            The type of object to convert.
+            </param>
+            <returns>
+            The string.
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.ToType(System.String)">
+            <summary>
+            Convert a string type identifier to a Type.
+            </summary>
+            <param name="typeId">
+            The type id.
+            </param>
+            <returns>
+            The Type
+            </returns>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.AfterPropertiesSet">
+            <summary>
+            Performs validation actions after properties are set.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.ValidateIdTypeMapping">
+            <summary>
+            Validates Id Type Mapping.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.ToType(Spring.Messaging.Amqp.Core.MessageProperties)">
+            <summary>
+            Convert from string to Type.
+            </summary>
+            <param name="properties">
+            The message properties.
+            </param>
+            <returns>
+            The type.
+            </returns>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.DefaultDictionaryType">
+            <summary>
+            Sets the default type of the dictionary.
+            </summary>
+            <value>The default type of the dictionary.</value>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.TypeIdFieldName">
+            <summary>
+            Gets the name of the type id field.
+            </summary>
+        </member>
+        <member name="P:Spring.Messaging.Amqp.Support.Converter.DefaultTypeMapper.IdTypeMapping">
+            <summary>
+            Sets the id type mapping.
+            </summary>
+            <value>The id type mapping.</value>
+        </member>
+        <member name="T:Spring.Messaging.Amqp.Support.Converter.TypeExtensions">
+            <summary>
+            Extensions to assist with populating IdTypeMapping via CodeConfig.
+            </summary>
+        </member>
+        <member name="M:Spring.Messaging.Amqp.Support.Converter.TypeExtensions.ToTypeName(System.Type)">
+            <summary>
+            Toes the name of the type.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>String representation of the type (Assembly.Namespace.Type, Assembly) for use with TypeResolutionUtils.ResolveType(string typeName).</returns>
+        </member>
+    </members>
+</doc>

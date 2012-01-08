@@ -47,6 +47,9 @@
     <Reference Include="RabbitMQ.ServiceModel">
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.ServiceModel.dll</HintPath>
     </Reference>
+    <Reference Include="Spring.Messaging.Amqp.Rabbit.Admin">
+      <HintPath>..\..\lib\spring-amqp\Spring.Messaging.Amqp.Rabbit.Admin.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -93,7 +96,6 @@
     <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />
     <Compile Include="Utils\ICustomModel.cs" />
-    <Compile Include="Utils\RabbitMQBroker.cs" />
     <Compile Include="Utils\TcpTrace.cs" />
     <Compile Include="Queues_test.cs" />
     <Compile Include="WCF\Calculator.cs" />
