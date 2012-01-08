@@ -46,9 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicReturn.cs" />
+    <Compile Include="Internal\IBindingKeyResolver.cs" />
     <Compile Include="Internal\IDeliveryCommand.cs" />
     <Compile Include="Internal\IDeliveryCommandFactory.cs" />
     <Compile Include="Internal\Impl\AbstractDeliveryCommandFactory.cs" />
+    <Compile Include="Internal\Impl\DefaultBindingKeyResolver.cs" />
+    <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
+    <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\Impl\MandatoryCommand.cs" />
     <Compile Include="Internal\Impl\NoLocalFilter.cs" />
     <Compile Include="Internal\Impl\PublishCommand.cs" />
@@ -62,15 +66,17 @@
     <Compile Include="Internal\Impl\SendCommand.cs" />
     <Compile Include="Internal\Impl\SendCommandFactory.cs" />
     <Compile Include="Internal\Impl\UnconfirmedCommandFactory.cs" />
+    <Compile Include="Internal\IQueueFactory.cs" />
     <Compile Include="Internal\IReliableConnection.cs" />
     <Compile Include="Internal\Impl\ReliableConnection.cs" />
-    <Compile Include="Consumer`1.cs" />
     <Compile Include="Internal\Impl\DefaultConsumingProcess.cs" />
     <Compile Include="Internal\IConsumingProcess.cs" />
     <Compile Include="Internal\Impl\DeduplicationFilter.cs" />
     <Compile Include="Internal\Impl\ResequencingFilter.cs" />
     <Compile Include="IIdGenerator.cs" />
     <Compile Include="Internal\Impl\RandomIdGenerator.cs" />
+    <Compile Include="Internal\IRoutingKeyResolver.cs" />
+    <Compile Include="Internal\ISupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\IUnconfirmedCommandFactory.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />
@@ -97,15 +103,12 @@
     <Compile Include="Internal\IReflection.cs" />
     <Compile Include="Internal\Impl\DefaultExchangeResolver.cs" />
     <Compile Include="Internal\Impl\DefaultRoutingKeyResolver.cs" />
-    <Compile Include="DefaultSupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\Impl\DefaultTypeResolver.cs" />
-    <Compile Include="IConsumerResolver.cs" />
+    <Compile Include="IConsumerContainer.cs" />
     <Compile Include="IExchangeResolver.cs" />
-    <Compile Include="IRoutingKeyResolver.cs" />
-    <Compile Include="ISupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\ITypeResolver.cs" />
-    <Compile Include="ManualRegistrationConsumerResolver.cs" />
-    <Compile Include="OneWayBusConsumerResolver.cs" />
+    <Compile Include="SimpleConsumerContainer.cs" />
+    <Compile Include="EmptyConsumerContainer.cs" />
     <Compile Include="Internal\Impl\ThreadSafeIncrementalSequenceGenerator.cs" />
     <Compile Include="ISequenceGenerator.cs" />
     <Compile Include="IMessageSerializer.cs" />

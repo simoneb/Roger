@@ -4,14 +4,6 @@ using Roger.Utilities;
 
 namespace Roger.Internal.Impl
 {
-    /// <summary>
-    /// Default implementation of the <see cref="IExchangeResolver"/> interface.
-    /// </summary>
-    /// <remarks>
-    /// Supports exchanges defined using the <see cref="RogerMessageAttribute"/> and inherited classes,
-    /// and propagates them along the inheritance chain. 
-    /// Multiple attributes along the inheritance chain are not supported, even if they specify the same exchange.
-    /// </remarks>
     internal class DefaultExchangeResolver : IExchangeResolver
     {
         private static readonly string[] InvalidChars = new[]{" "};

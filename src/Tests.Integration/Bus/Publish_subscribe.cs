@@ -6,12 +6,12 @@ namespace Tests.Integration.Bus
     public class Publish_subscribe : With_default_bus
     {
         private GenericConsumer<MyMessage> simpleConsumer;
-        private GenericConsumerOfDerivedClasses<MyBaseMessage> baseConsumer;
+        private GenericConsumer<MyBaseMessage> baseConsumer;
 
         protected override void BeforeBusInitialization()
         {
             Register(simpleConsumer = new GenericConsumer<MyMessage>());
-            Register(baseConsumer = new GenericConsumerOfDerivedClasses<MyBaseMessage>());
+            Register(baseConsumer = new GenericConsumer<MyBaseMessage>());
         }
 
         [Test]

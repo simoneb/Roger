@@ -7,7 +7,7 @@ using Roger.Chat.Messages;
 namespace Roger.Chat.Client
 {
     [Export]
-    public class ShellViewModel : Screen, IConsumer<InstantMessage>, IConsumer<CurrentClients>, IConsumer<CurrentMessages>, IConsumer<ClientConnected>, IConsumer<ClientDisconnected>
+    public class ShellViewModel : Screen, IConsumer<ChatMessage>
     {
         private readonly IRabbitBus bus;
         private readonly IWindowManager windowManager;
@@ -75,14 +75,15 @@ namespace Roger.Chat.Client
 
         public void Consume(ClientConnected message)
         {
-            var currentMessage = bus.CurrentMessage;
+            var endpoint = bus.CurrentMessage.Endpoint;
 
-            Execute.OnUIThread(() => clients.Add(new ClientViewModel{Username = message.Username, Endpoint = currentMessage.Endpoint}));
+            Execute.OnUIThread(() => clients.Add(new ClientViewModel{Username = message.Username, Endpoint = endpoint}));
         }
 
         public void Consume(ClientDisconnected message)
         {
-            Execute.OnUIThread(() => clients.Remove(clients.Single(c => c.Endpoint.Equals(bus.CurrentMessage.Endpoint))));
+            var endpoint = bus.CurrentMessage.Endpoint;
+            Execute.OnUIThread(() => clients.Remove(clients.Single(c => c.Endpoint.Equals(endpoint))));
         }
 
         protected override void  OnViewLoaded(object view)
@@ -95,6 +96,11 @@ namespace Roger.Chat.Client
             username = promptUsernameViewModel.Username;
 
             bus.Publish(new ClientConnected {Username = username});
+        }
+
+        public void Consume(ChatMessage message)
+        {
+            // received chat message that we didn't know about
         }
     }
 }

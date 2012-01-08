@@ -12,25 +12,23 @@ namespace Tests.Integration.Bus
     public abstract class With_default_bus : With_rabbitmq_broker
     {
         protected DefaultRogerBus Bus;
-        private ManualRegistrationConsumerResolver consumerResolver;
+        private SimpleConsumerContainer consumerContainer;
         protected IModel TestModel;
         private IConnection localConnection;
 
         [SetUp]
         public void InitializeBus()
         {
-            consumerResolver = new ManualRegistrationConsumerResolver(new DefaultSupportedMessageTypesResolver());
+            consumerContainer = new SimpleConsumerContainer();
             Bus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateConnection),
-                                       consumerResolver,
-                                       log: new DebugLog(),
+                                       consumerContainer,
                                        idGenerator: IdGenerator,
-                                       messageFilters: MessageFilters,
-                                       sequenceGenerator: SequenceGenerator);
+                                       sequenceGenerator: SequenceGenerator, messageFilters: MessageFilters, log: new DebugLog());
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
             TestModel.ExchangeDeclare("TestExchange", 
-                                      ExchangeType.Direct, 
+                                      ExchangeType.Topic, 
                                       true /* to have the exchange there when restarting broker app within tests */, 
                                       false, 
                                       null);
@@ -84,7 +82,7 @@ namespace Tests.Integration.Bus
 
         protected void Register(IConsumer consumer)
         {
-            consumerResolver.Register(consumer);
+            consumerContainer.Register(consumer);
         }
     }
 }

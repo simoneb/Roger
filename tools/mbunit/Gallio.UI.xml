@@ -1236,6 +1236,60 @@
             display in a Windows Forms UI.
             </summary>
         </member>
+        <member name="T:Gallio.UI.Reports.Preferences.NamespaceDoc">
+            <summary>
+            The Gallio.UI.Reports.Preferences namespace contains types for managing user preferences about test reporting.
+            </summary>
+        </member>
+        <member name="T:Gallio.UI.Reports.Preferences.ReportPreferencePane">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Gallio.UI.Reports.Preferences.ReportPreferencePane.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:Gallio.UI.Reports.Preferences.ReportPreferencePane.ApplyPendingSettingsChanges(Gallio.Runtime.Security.IElevationContext,Gallio.Runtime.ProgressMonitoring.IProgressMonitor)">
+            <inheritdoc />
+        </member>
+        <member name="F:Gallio.UI.Reports.Preferences.ReportPreferencePane.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Gallio.UI.Reports.Preferences.ReportPreferencePane.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Gallio.UI.Reports.Preferences.ReportPreferencePane.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:Gallio.UI.Reports.Preferences.ReportPreferencePane.PreferenceManager">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Gallio.UI.Reports.Preferences.ReportPreferencePaneProvider">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Gallio.UI.Reports.Preferences.ReportPreferencePaneProvider.#ctor(Gallio.Runner.Reports.Preferences.ReportPreferenceManager)">
+            <summary>
+            
+            </summary>
+            <param name="preferenceManager"></param>
+        </member>
+        <member name="M:Gallio.UI.Reports.Preferences.ReportPreferencePaneProvider.CreatePreferencePane">
+            <inheritdoc />
+        </member>
         <member name="T:Gallio.UI.Reports.TestStepRunViewer">
             <summary>
             <para>
@@ -1269,13 +1323,21 @@
             </summary>
             <param name="testStepRuns">The test step runs.</param>
         </member>
-        <member name="M:Gallio.UI.Reports.TestStepRunViewer.Show(System.Collections.Generic.ICollection{Gallio.Runner.Reports.Schema.TestStepRun},Gallio.Model.Schema.TestModelData)">
+        <member name="M:Gallio.UI.Reports.TestStepRunViewer.Show(System.Collections.Generic.ICollection{Gallio.Runner.Reports.Schema.TestStepRun},System.Boolean)">
+            <summary>
+            Displays information about a set of test step run.
+            </summary>
+            <param name="testStepRuns">The test step runs.</param>
+            <param name="recurse">Show child test results recursively</param>
+        </member>
+        <member name="M:Gallio.UI.Reports.TestStepRunViewer.Show(System.Collections.Generic.ICollection{Gallio.Runner.Reports.Schema.TestStepRun},Gallio.Model.Schema.TestModelData,System.Boolean)">
             <summary>
             Displays information about a set of test step runs, using additional
             information from the test model when available.
             </summary>
             <param name="testStepRuns">The test step runs.</param>
             <param name="testModelData">The test model data, or null if not available.</param>
+            <param name="recurse">Show child test results recursively</param>
         </member>
         <member name="F:Gallio.UI.Reports.TestStepRunViewer.components">
             <summary> 

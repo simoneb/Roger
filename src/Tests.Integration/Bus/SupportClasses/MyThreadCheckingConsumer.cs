@@ -6,25 +6,25 @@ namespace Tests.Integration.Bus.SupportClasses
 {
     public class MyThreadCheckingConsumer : IConsumer<MyMessage>
     {
-        private readonly IRabbitBus m_bus;
+        private readonly IRabbitBus bus;
         public readonly SynchronizedCollection<MyMessage> Received = new SynchronizedCollection<MyMessage>();
-        readonly AutoResetEvent handle = new AutoResetEvent(false);
+        private readonly CountdownEvent handle;
 
-        public MyThreadCheckingConsumer(IRabbitBus bus)
+        public MyThreadCheckingConsumer(IRabbitBus bus, int numberOfMessages)
         {
-            m_bus = bus;
+            this.bus = bus;
+            handle = new CountdownEvent(numberOfMessages);
         }
 
         public void Consume(MyMessage message)
         {
-            Received.Add((MyMessage)m_bus.CurrentMessage.Body);
-            handle.Set();
+            Received.Add((MyMessage)bus.CurrentMessage.Body);
+            handle.Signal();
         }
 
-        public void WaitUntil(int numberOfMessages)
+        public bool WaitUntilDelivery(int timeout)
         {
-            while (Received.Count < numberOfMessages)
-                handle.WaitOne(100);
+            return handle.Wait(timeout);
         }
     }
 }

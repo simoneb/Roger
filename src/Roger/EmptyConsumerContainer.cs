@@ -6,9 +6,9 @@ namespace Roger
     /// <summary>
     /// Resolves no consumers, thus preventing any automatic message subscriptions
     /// </summary>
-    public class OneWayBusConsumerResolver : IConsumerResolver
+    public class EmptyConsumerContainer : IConsumerContainer
     {
-        public IEnumerable<IConsumer> Resolve(Type messageType)
+        public IEnumerable<IConsumer> Resolve(Type consumerType)
         {
             yield break;
         }
@@ -16,9 +16,9 @@ namespace Roger
         public void Release(IEnumerable<IConsumer> consumers)
         {}
 
-        public ISet<Type> GetAllSupportedMessageTypes()
+        public IEnumerable<Type> GetAllConsumerTypes()
         {
-            return new HashSet<Type>();
+            yield break;
         }
     }
 }

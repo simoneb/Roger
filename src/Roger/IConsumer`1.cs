@@ -1,6 +1,6 @@
 ﻿namespace Roger
 {
-    public interface IConsumer<T> : IConsumer where T : class
+    public interface IConsumer<in T> : IConsumer where T : class
     {
         void Consume(T message);
     }

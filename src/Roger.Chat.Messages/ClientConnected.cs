@@ -3,9 +3,13 @@
 namespace Roger.Chat.Messages
 {
     [DataContract]
-    public class ClientConnected
+    public class ClientConnected : ChatMessage
     {
         [DataMember(Order = 1)]
         public string Username { get; set; }
+    }
+
+    public abstract class ChatMessage
+    {
     }
 }

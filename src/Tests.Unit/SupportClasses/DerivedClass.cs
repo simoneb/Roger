@@ -1,4 +1,4 @@
 namespace Tests.Unit.SupportClasses
 {
-    class ConcreteBase {}
+    class DerivedClass : BaseClass {}
 }

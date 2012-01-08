@@ -3,7 +3,7 @@
 namespace Roger.Chat.Messages
 {
     [DataContract]
-    public class InstantMessage
+    public class InstantMessage : ChatMessage
     {
         [DataMember(Order = 1)]
         public string Username { get; set; }

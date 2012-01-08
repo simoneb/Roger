@@ -28,7 +28,6 @@ namespace Tests.Unit
                                                 Substitute.For<IIdGenerator>(),
                                                 Substitute.For<ISequenceGenerator>(),
                                                 Substitute.For<IExchangeResolver>(),
-                                                Substitute.For<IRoutingKeyResolver>(),
                                                 Substitute.For<IMessageSerializer>(),
                                                 Substitute.For<ITypeResolver>(), Substitute.For<IRogerLog>(),
                                                 Substitute.For<Func<RogerEndpoint>>(), 

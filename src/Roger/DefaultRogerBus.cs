@@ -23,32 +23,26 @@ namespace Roger
         /// 
         /// </summary>
         /// <param name="connectionFactory"></param>
-        /// <param name="consumerResolver"></param>
-        /// <param name="supportedMessageTypesResolver"></param>
+        /// <param name="consumerContainer"></param>
         /// <param name="exchangeResolver"></param>
-        /// <param name="routingKeyResolver"></param>
         /// <param name="serializer"></param>
-        /// <param name="log"></param>
         /// <param name="idGenerator"></param>
         /// <param name="sequenceGenerator"></param>
         /// <param name="messageFilters"></param>
         /// <param name="noLocal">Configuress whether messages published by the bus should be received by consumers active on the same instance of the bus</param>
+        /// <param name="log"></param>
         public DefaultRogerBus(IConnectionFactory connectionFactory,
-                                IConsumerResolver consumerResolver = null,
-                                ISupportedMessageTypesResolver supportedMessageTypesResolver = null,
-                                IExchangeResolver exchangeResolver = null,
-                                IRoutingKeyResolver routingKeyResolver = null,
-                                IMessageSerializer serializer = null,
-                                IRogerLog log = null,
-                                IIdGenerator idGenerator = null,
-                                ISequenceGenerator sequenceGenerator = null,
-                                IEnumerable<IMessageFilter> messageFilters = null,
-                                bool noLocal = false)
+                               IConsumerContainer consumerContainer = null,
+                               IExchangeResolver exchangeResolver = null,
+                               IMessageSerializer serializer = null,
+                               IIdGenerator idGenerator = null,
+                               ISequenceGenerator sequenceGenerator = null,
+                               IEnumerable<IMessageFilter> messageFilters = null,
+                               bool noLocal = false,
+                               IRogerLog log = null)
         {
-            consumerResolver = consumerResolver.Or(Default.ConsumerResolver);
-            supportedMessageTypesResolver = supportedMessageTypesResolver.Or(Default.SupportedMessageTypesResolver);
+            consumerContainer = consumerContainer.Or(Default.ConsumerContainer);
             exchangeResolver = exchangeResolver.Or(Default.ExchangeResolver);
-            routingKeyResolver = routingKeyResolver.Or(Default.RoutingKeyResolver);
             serializer = serializer.Or(Default.Serializer);
             idGenerator = idGenerator.Or(Default.IdGenerator);
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
@@ -61,7 +55,6 @@ namespace Roger
                                                               idGenerator,
                                                               sequenceGenerator,
                                                               exchangeResolver,
-                                                              routingKeyResolver,
                                                               serializer,
                                                               Default.TypeResolver,
                                                               this.log,
@@ -71,14 +64,13 @@ namespace Roger
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,
                                                            exchangeResolver,
-                                                           routingKeyResolver,
                                                            serializer,
                                                            Default.TypeResolver, 
-                                                           consumerResolver,
+                                                           consumerContainer,
                                                            Default.Reflection, 
-                                                           supportedMessageTypesResolver,
                                                            messageFilters,
-                                                           this.log);
+                                                           this.log,
+                                                           new DefaultQueueFactory());
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
@@ -170,10 +162,8 @@ namespace Roger
             log.Debug("Disposing bus");
 
             publishingProcess.Dispose();
-
-            // TODO: beware that currently here order is important as consumer won't stop unless connection is closed
-            connection.Dispose();
             consumingProcess.Dispose();
+            connection.Dispose();
         }
     }
 }

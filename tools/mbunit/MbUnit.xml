@@ -4384,6 +4384,101 @@
             <exception cref="T:Gallio.Framework.Assertions.AssertionException">Thrown if the verification failed unless the current <see cref="P:Gallio.Framework.Assertions.AssertionContext.AssertionFailureBehavior"/> indicates otherwise.</exception>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="actualXml"/>, <paramref name="searchedPath"/>, or <paramref name="options"/> is null.</exception>
         </member>
+        <member name="T:MbUnit.Framework.ExpectedInvalidOperationExceptionAttribute">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the exception message may optionally be specified.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:MbUnit.Framework.ExpectedExceptionAttribute">
+            <summary>
+            Declares that the associated test is expected to throw an exception of
+            a particular type.
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the exception message may optionally be specified.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.#ctor(System.Type)">
+            <summary>
+            Declares that the associated test is expected to throw an exception of
+            a particular type.
+            </summary>
+            <param name="exceptionType">The expected exception type.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.#ctor(System.Type,System.String)">
+            <summary>
+            Declares that the associated test is expected to throw an exception of
+            a particular type.
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the exception message may also optionally be specified.
+            </para>
+            </remarks>
+            <param name="exceptionType">The expected exception type.</param>
+            <param name="message">The expected exception message, or null if not specified.
+            May be a substring of the actual exception message.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.#ctor(System.Type,System.String,System.Type)">
+            <summary>
+            Declares that the associated test is expected to throw an exception of
+            a particular type.
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the exception message may also optionally be specified.
+            </para>
+            </remarks>
+            <param name="exceptionType">The expected exception type.</param>
+            <param name="message">The expected exception message, or null if not specified.
+            May be a substring of the actual exception message.</param>
+            <param name="innerExceptionType">The expected inner exception type, or null if not specified.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.DecorateMethodTest(Gallio.Framework.Pattern.IPatternScope,Gallio.Common.Reflection.IMethodInfo)">
+            <inheritdoc />
+        </member>
+        <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.ExceptionType">
+            <summary>
+            Gets the expected exception type.
+            </summary>
+        </member>
+        <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.Message">
+            <summary>
+            Gets or sets the expected exception message, or null if none specified.
+            May be a substring of the actual exception message.
+            </summary>
+        </member>
+        <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.InnerExceptionType">
+            <summary>
+            Gets or sets expected inner exception type.
+            </summary>
+        </member>
+        <member name="M:MbUnit.Framework.ExpectedInvalidOperationExceptionAttribute.#ctor">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+        </member>
+        <member name="M:MbUnit.Framework.ExpectedInvalidOperationExceptionAttribute.#ctor(System.String)">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the exception message may also optionally be specified.
+            </para>
+            </remarks>
+            <param name="message">The expected exception message, or null if not specified.</param>
+        </member>
         <member name="T:MbUnit.Framework.RandomGenerationDataAttribute">
             <summary>
             Provides a column of random values as a data source.
@@ -7392,75 +7487,6 @@
             </para>
             </remarks>
         </member>
-        <member name="T:MbUnit.Framework.ExpectedExceptionAttribute">
-            <summary>
-            Declares that the associated test is expected to throw an exception of
-            a particular type.
-            </summary>
-            <remarks>
-            <para>
-            The expected contents of the exception message may optionally be specified.
-            </para>
-            </remarks>
-        </member>
-        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.#ctor(System.Type)">
-            <summary>
-            Declares that the associated test is expected to throw an exception of
-            a particular type.
-            </summary>
-            <param name="exceptionType">The expected exception type.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
-        </member>
-        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.#ctor(System.Type,System.String)">
-            <summary>
-            Declares that the associated test is expected to throw an exception of
-            a particular type.
-            </summary>
-            <remarks>
-            <para>
-            The expected contents of the exception message may also optionally be specified.
-            </para>
-            </remarks>
-            <param name="exceptionType">The expected exception type.</param>
-            <param name="message">The expected exception message, or null if not specified.
-            May be a substring of the actual exception message.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
-        </member>
-        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.#ctor(System.Type,System.String,System.Type)">
-            <summary>
-            Declares that the associated test is expected to throw an exception of
-            a particular type.
-            </summary>
-            <remarks>
-            <para>
-            The expected contents of the exception message may also optionally be specified.
-            </para>
-            </remarks>
-            <param name="exceptionType">The expected exception type.</param>
-            <param name="message">The expected exception message, or null if not specified.
-            May be a substring of the actual exception message.</param>
-            <param name="innerExceptionType">The expected inner exception type, or null if not specified.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
-        </member>
-        <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.DecorateMethodTest(Gallio.Framework.Pattern.IPatternScope,Gallio.Common.Reflection.IMethodInfo)">
-            <inheritdoc />
-        </member>
-        <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.ExceptionType">
-            <summary>
-            Gets the expected exception type.
-            </summary>
-        </member>
-        <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.Message">
-            <summary>
-            Gets or sets the expected exception message, or null if none specified.
-            May be a substring of the actual exception message.
-            </summary>
-        </member>
-        <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.InnerExceptionType">
-            <summary>
-            Gets or sets expected inner exception type.
-            </summary>
-        </member>
         <member name="M:MbUnit.Framework.ExpectedArgumentExceptionAttribute.#ctor">
             <summary>
             Declares that the associated test is expected to throw an <see cref="T:System.ArgumentException"/>.
@@ -7900,6 +7926,9 @@
             The class must have a public default constructor.  The class may not be static.
             </para>
             </remarks>
+        </member>
+        <member name="M:MbUnit.Framework.TestFixtureAttribute.Validate(Gallio.Framework.Pattern.IPatternScope,Gallio.Common.Reflection.ITypeInfo)">
+            <inheritdoc />
         </member>
         <member name="T:MbUnit.Framework.FixtureSetUpAttribute">
             <summary>
@@ -8491,7 +8520,7 @@
                 {
                     PropertyName = "MyProperty",
                     ValidValues = { 123, 456, 789 },
-                    IncompetentValues =
+                    InvalidValues =
                     {
                         { typeof(ArgumentOutOfRangeException), -100, -999, 1000, 99999 },
                         { typeof(ArgumentException), 666 }
@@ -9384,6 +9413,395 @@
         <member name="M:MbUnit.Framework.BinaryDataAttribute.PopulateDataSource(Gallio.Framework.Pattern.IPatternScope,Gallio.Framework.Data.DataSource,Gallio.Common.Reflection.ICodeElementInfo)">
             <inheritdoc />
         </member>
+        <member name="T:MbUnit.Framework.CatchExceptionAttribute">
+            <summary>
+            Declares that the associated test's <see cref="T:Gallio.Model.TestOutcome"/> should be interpreted as having completed 
+            with a specified <see cref="T:Gallio.Model.TestOutcome"/> if a specified exception is thrown during the test.
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the detected exception's <see cref="P:System.Exception.Message"/> may optionally be specified.
+            </para>
+            <para>
+            The <see cref="T:Gallio.Model.TestOutcome"/> that is returned when a matching exception is thrown may optionally be specified.
+            By default, the test will be treated as <see cref="P:Gallio.Model.TestOutcome.Error"/> if a matching exception is thrown.
+            </para>
+            </remarks>
+            <example>
+            <para>
+            This C# example shows a test with a <see cref="T:MbUnit.Framework.CatchExceptionAttribute"/> that will 
+            result in a <see cref="P:Gallio.Model.TestOutcome.Error"/> (the default <see cref="P:MbUnit.Framework.CatchExceptionAttribute.Outcome"/>) 
+            if the test throws a <see cref="T:System.NotSupportedException"/>.
+            <code><![CDATA[
+            /// <summary>
+            /// This test will have an outcome of <see cref="TestOutcome.Error"/>.
+            /// </summary>
+            [Test]
+            [CatchException(typeof(NotSupportedException))]
+            public void CatchExceptionExample1()
+            {
+                throw new NotSupportedException();
+            }
+            ]]></code>
+            </para>
+            <para>
+            This C# example shows a test with a <see cref="T:MbUnit.Framework.CatchExceptionAttribute"/> that will 
+            result in a <see cref="P:Gallio.Model.TestOutcome.Pending"/> 
+            if the test throws a <see cref="T:System.NotImplementedException"/>.
+            <code><![CDATA[
+            /// <summary>
+            /// This test will have an outcome of <see cref="TestOutcome.Pending"/>.
+            /// </summary>
+            [Test]
+            [CatchException(typeof(NotImplementedException), StandardOutcome = "TestOutcome.Pending")]
+            public void CatchExceptionExample2()
+            {
+                throw new NotImplementedException();
+            }
+            ]]></code>
+            </para>
+            <para>
+            This C# example shows a test with a <see cref="T:MbUnit.Framework.CatchExceptionAttribute"/> that will 
+            result in a <see cref="P:Gallio.Model.TestOutcome.Passed"/> 
+            if the test throws a <see cref="T:System.NotImplementedException"/> 
+            or if the test doesn't throw any exceptions.
+            <code><![CDATA[
+            /// <summary>
+            /// This test will have an outcome of <see cref="TestOutcome.Passed"/> 
+            /// whether the test throws a <see cref="NotImplementedException"/> or throws no exception.
+            /// </summary>
+            [Test]
+            [CatchException(typeof(NotImplementedException), StandardOutcome = "TestOutcome.Passed")]
+            public void CatchExceptionExample3()
+            {
+                bool randomBool = new Random().Next() % 2 == 0;
+                if (randomBool)
+                    throw new NotImplementedException();
+            }
+            ]]></code>
+            </para>
+            <para>
+            This C# example shows a test with multiple <see cref="T:MbUnit.Framework.CatchExceptionAttribute"/>s that will: 
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> of <see cref="P:Gallio.Model.TestOutcome.Pending"/> 
+            if the test throws a <see cref="T:System.NotImplementedException"/>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> with a 
+            <see cref="P:Gallio.Model.TestOutcome.Status"/> of <see cref="F:Gallio.Model.TestStatus.Skipped"/> and a 
+            <see cref="P:Gallio.Model.TestOutcome.Category"/> of <c>"notsupported"</c> 
+            if the test throws a <see cref="T:System.NotSupportedException"/>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> with a 
+            <see cref="P:Gallio.Model.TestOutcome.Status"/> of <see cref="F:Gallio.Model.TestStatus.Inconclusive"/> and a 
+            <see cref="P:Gallio.Model.TestOutcome.Category"/> of <c>"deadlock"</c> 
+            if the test throws a <see cref="T:System.TimeoutException"/> 
+            with a <see cref="P:System.Exception.Message"/> that contains the substring <c>"deadlock"</c>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> with a 
+            <see cref="P:Gallio.Model.TestOutcome.Status"/> of <see cref="F:Gallio.Model.TestStatus.Inconclusive"/> and a 
+            <see cref="P:Gallio.Model.TestOutcome.Category"/> of <c>"timeout"</c> 
+            if the test throws a <see cref="T:System.TimeoutException"/> 
+            with a <see cref="P:System.Exception.Message"/> that contains the substring <c>"server not responding"</c>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> of <see cref="P:Gallio.Model.TestOutcome.Failed"/> 
+            if the test throws any other <see cref="T:System.Exception"/> not listed above;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> of <see cref="P:Gallio.Model.TestOutcome.Passed"/> 
+            if the test does not throw any <see cref="T:System.Exception"/>s.
+            <code><![CDATA[
+            /// <remarks>
+            /// This test can have any of several outcomes depending on what type of exception is thrown (if any) during test execution.
+            /// </remarks>
+            [Test]
+            [CatchException(typeof(NotSupportedException), OutcomeStatus = TestStatus.Skipped, OutcomeCategory = "notsupported")]
+            [CatchException(typeof(NotImplementedException), StandardOutcome = "TestOutcome.Pending")]
+            [CatchException(typeof(TimeoutException), ExceptionMessage = "deadlock", OutcomeStatus = TestStatus.Inconclusive, OutcomeCategory = "deadlock", Order = 2)]
+            [CatchException(typeof(TimeoutException), ExceptionMessage = "server not responding", OutcomeStatus = TestStatus.Inconclusive, OutcomeCategory = "timeout", Order = 3)]
+            public void CatchExceptionExample4()
+            {
+                //throw new NotSupportedException(); //outcome would be: new TestOutcome(TestStatus.Skipped, "notsupported")
+                throw new NotImplementedException(); //outcome would be: TestOutcome.Pending
+                //throw new TimeoutException("A deadlock occurred."); //outcome would be: new TestOutcome(TestStatus.Inconclusive, "deadlock")
+                //throw new TimeoutException("The server is not responding."); //outcome would be: new TestOutcome(TestStatus.Inconclusive, "timeout")
+                //throw new TimeoutException("Transaction timeout."); //outcome would be: TestOutcome.Failed
+                //throw new TimeoutException(); //outcome would be: TestOutcome.Failed
+                //throw new ArithmeticException(); //outcome would be: TestOutcome.Failed
+                //return; //outcome would be: TestOutcome.Passed
+            }
+            ]]></code>
+            </para>
+            </example>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.#ctor(System.Type)">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.Exception"/> of
+            a particular type.
+            </summary>
+            <param name="exceptionType">The expected exception type.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="exceptionType"/> is not the <see cref="T:System.Type"/> of an <see cref="T:System.Exception"/>.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.#ctor(System.Type,Gallio.Model.TestStatus)">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.Exception"/> of
+            a particular type, and the <see cref="T:Gallio.Model.TestStatus"/> of the <see cref="T:Gallio.Model.TestOutcome"/> 
+            that should be used if/when it does.
+            </summary>
+            <param name="exceptionType">The expected exception type.</param>
+            <param name="outcomeStatus">
+            The <see cref="T:Gallio.Model.TestStatus"/> that will be used to construct the 
+            <see cref="T:Gallio.Model.TestOutcome"/> if a detected exception is handled.
+            </param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="exceptionType"/> is not the <see cref="T:System.Type"/> of an <see cref="T:System.Exception"/>.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.#ctor(System.Type,Gallio.Model.TestStatus,System.String)">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.Exception"/> of
+            a particular type, and the <see cref="T:Gallio.Model.TestOutcome"/> 
+            that should be used if/when it does.
+            </summary>
+            <param name="exceptionType">The expected exception type.</param>
+            <param name="outcomeStatus">
+            The <see cref="T:Gallio.Model.TestStatus"/> that will be used to construct the 
+            <see cref="T:Gallio.Model.TestOutcome"/> if a detected exception is handled.
+            </param>
+            <param name="outcomeCategory">
+            The <see cref="P:Gallio.Model.TestOutcome.Category"/> that will be used to construct the 
+            <see cref="T:Gallio.Model.TestOutcome"/> if a detected exception is handled.
+            </param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="exceptionType"/> is not the <see cref="T:System.Type"/> of an <see cref="T:System.Exception"/>.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.DecorateTest(Gallio.Framework.Pattern.IPatternScope,Gallio.Common.Reflection.ICodeElementInfo)">
+            <inheritdoc />
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.ExecuteTestInstanceChainCatchExceptionDecorator(System.Action{Gallio.Framework.Pattern.PatternTestInstanceState},Gallio.Framework.Pattern.PatternTestInstanceState)">
+            <summary>
+            This method does the actual work of catching and handling (or not) <see cref="T:System.Exception"/>s.
+            </summary>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.OnInnerActionCompleted(System.Exception,System.Boolean)">
+            <summary>
+            Performs the work of analysing (and either handling or rethrowing) a detected exception.
+            </summary>
+            <remarks>
+            <para>
+            This method could be overridden by inheritors to extend or modify the behavior 
+            associated with detecting <see cref="T:System.Exception"/>s.
+            <para>
+            Theoretically, the <see cref="T:MbUnit.Framework.ExpectedExceptionAttribute"/> could be implemented as a subclass of 
+            <see cref="T:MbUnit.Framework.CatchExceptionAttribute"/> that overrides the behavior of 
+            <see cref="M:MbUnit.Framework.CatchExceptionAttribute.OnInnerActionCompleted(System.Exception,System.Boolean)"/> to always return <c>true</c>.
+            </para>
+            </para>
+            <para>
+            Implementation Note: Normally this method would have a return type of <c>void</c>. 
+            However, since it is not possible rethrow a caught exception using "throw;" 
+            except from directly within the <c>catch</c> block 
+            (i.e. the same method the <c>catch</c> block is declared in),
+            it was necessary to use the returned value to indicate to the calling method whether or not the 
+            detected <see cref="T:System.Exception"/> should be re-thrown.
+            </para>
+            </remarks>
+            <param name="ex">The detected <see cref="T:System.Exception"/>.</param>
+            <param name="isExpected">Indicates whether <paramref name="ex"/> matches the catch-criteria of the instance.</param>
+            <returns>
+            <c>true</c> to indicate that the <see cref="T:Gallio.Model.TestOutcome"/> should be <see cref="P:Gallio.Model.TestOutcome.Passed"/> 
+            (e.g. when <paramref name="isExpected"/> is <c>true</c>).
+            Else <c>false</c> to indicate that the detected exception (if any) was not handled 
+            and should be rethrown (if needed).
+            </returns>
+            <exception cref="T:Gallio.Framework.SilentTestException">
+            Propogated when thrown by <see cref="M:MbUnit.Framework.CatchExceptionAttribute.HandleExpectedException(System.Exception)"/> to indicate that the detected exception was handled, 
+            and that the <see cref="T:Gallio.Model.TestOutcome"/> should be something other than <see cref="P:Gallio.Model.TestOutcome.Passed"/>.
+            </exception>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.IsExpectedException(System.Exception)">
+            <summary>
+            Indicates whether a detected <see cref="T:System.Exception"/> (or the lack of one) is expected, 
+            and should be caught and handled (by <see cref="M:MbUnit.Framework.CatchExceptionAttribute.HandleExpectedException(System.Exception)"/>) 
+            based upon the instance's matching properties.
+            </summary>
+            <seealso cref="P:MbUnit.Framework.CatchExceptionAttribute.ExceptionType"/>
+            <seealso cref="P:MbUnit.Framework.CatchExceptionAttribute.ExceptionMessage"/>
+            <seealso cref="M:MbUnit.Framework.CatchExceptionAttribute.OnInnerActionCompleted(System.Exception,System.Boolean)"/>
+        </member>
+        <member name="M:MbUnit.Framework.CatchExceptionAttribute.HandleExpectedException(System.Exception)">
+            <summary>
+            Performs the work of handling a detected exception that matches the catching-criteria.
+            </summary>
+            <remarks>
+            <para>
+            This method could be overridden by inheritors to extend or modify the behavior 
+            associated with handling <see cref="T:System.Exception"/>s that match the configured catching-criteria.
+            </para>
+            </remarks>
+            <param name="ex">The detected <see cref="T:System.Exception"/> that matches the catching-criteria.</param>
+            <exception cref="T:Gallio.Framework.SilentTestException">
+            Thrown to return a non-<see cref="P:Gallio.Model.TestOutcome.Passed"/> outcome back up the call stack.
+            </exception>
+        </member>
+        <member name="P:MbUnit.Framework.CatchExceptionAttribute.ExceptionType">
+            <summary>
+            Gets the type of <see cref="T:System.Exception"/> that is handled.
+            </summary>
+        </member>
+        <member name="P:MbUnit.Framework.CatchExceptionAttribute.ExceptionMessage">
+            <summary>
+            Gets or sets the substring that must be contained in the detected <see cref="T:System.Exception"/>'s <see cref="P:System.Exception.Message"/> for it to be handled, 
+            or <c>null</c> if none specified.
+            </summary>
+        </member>
+        <member name="P:MbUnit.Framework.CatchExceptionAttribute.OutcomeStatus">
+            <summary>
+            Gets or sets the <see cref="P:Gallio.Model.TestOutcome.Category"/> that will be used to construct the 
+            <see cref="T:Gallio.Model.TestOutcome"/> when a detected exception is handled.
+            </summary>
+            <see cref="P:MbUnit.Framework.CatchExceptionAttribute.Outcome"/>
+            <see cref="P:MbUnit.Framework.CatchExceptionAttribute.OutcomeCategory"/>
+        </member>
+        <member name="P:MbUnit.Framework.CatchExceptionAttribute.OutcomeCategory">
+            <summary>
+            Gets or sets the <see cref="P:Gallio.Model.TestOutcome.Category"/> that will be used to construct the 
+            <see cref="T:Gallio.Model.TestOutcome"/> if a detected exception is handled.
+            </summary>
+            <see cref="P:MbUnit.Framework.CatchExceptionAttribute.Outcome"/>
+            <see cref="P:MbUnit.Framework.CatchExceptionAttribute.OutcomeStatus"/>
+        </member>
+        <member name="P:MbUnit.Framework.CatchExceptionAttribute.Outcome">
+            <summary>
+            Gets or sets the <see cref="T:Gallio.Model.TestOutcome"/> that will be used if a matching exception is thrown.
+            Defaults to <see cref="P:Gallio.Model.TestOutcome.Error"/>.
+            </summary>
+        </member>
+        <member name="P:MbUnit.Framework.CatchExceptionAttribute.StandardOutcome">
+            <summary>
+            This is a <see cref="T:System.String"/>-typed alias of the <see cref="P:MbUnit.Framework.CatchExceptionAttribute.Outcome"/> property.
+            </summary>
+        </member>
+        <member name="T:MbUnit.Framework.AssertExceptionAttribute">
+            <summary>
+            Declares that the associated test's <see cref="T:Gallio.Model.TestOutcome"/> should be 
+            <see cref="P:Gallio.Model.TestOutcome.Passed"/> 
+            only if a specified exception is thrown during the test.
+            Otherwise, the test's outcome should be <see cref="P:Gallio.Model.TestOutcome.Failed"/> 
+            </summary>
+            <remarks>
+            <para>
+            The expected contents of the detected exception's <see cref="P:System.Exception.Message"/> may optionally be specified.
+            </para>
+            <para>
+            The <see cref="T:Gallio.Model.TestOutcome"/> that is returned when a matching exception is thrown may optionally be specified.
+            By default, the test will be treated as <see cref="P:Gallio.Model.TestOutcome.Passed"/> if a matching exception is thrown.
+            </para>
+            </remarks>
+            <example>
+            <para>
+            This C# example shows a test with a <see cref="T:MbUnit.Framework.AssertExceptionAttribute"/> that will 
+            result in a <see cref="P:Gallio.Model.TestOutcome.Passed"/> 
+            when the test throws a <see cref="T:System.NotSupportedException"/>.
+            <code><![CDATA[
+            /// <summary>
+            /// This test will have an outcome of <see cref="TestOutcome.Passed"/>.
+            /// </summary>
+            [Test]
+            [AssertException(typeof(NotSupportedException))]
+            public void AssertExceptionExample1()
+            {
+                throw new NotSupportedException();
+            }
+            ]]></code>
+            </para>
+            <para>
+            This C# example shows a test with a <see cref="T:MbUnit.Framework.AssertExceptionAttribute"/> that will 
+            result in a <see cref="P:Gallio.Model.TestOutcome.Failed"/> 
+            unless the test throws a <see cref="T:System.NotSupportedException"/>.
+            <code><![CDATA[
+            /// <summary>
+            /// This test will have an outcome of <see cref="TestOutcome.Failed"/> 
+            /// whether the test throws a <see cref="NotImplementedException"/> or throws no exception.
+            /// </summary>
+            [Test]
+            [AssertException(typeof(NotSupportedException))]
+            public void AssertExceptionExample2()
+            {
+                bool randomBool = new Random().Next() % 2 == 0;
+                if (randomBool)
+                    throw new NotImplementedException();
+            }
+            ]]></code>
+            </para>
+            <para>
+            This C# example shows a test with multiple <see cref="T:MbUnit.Framework.CatchExceptionAttribute"/>s that will: 
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> of <see cref="P:Gallio.Model.TestOutcome.Pending"/> 
+            if the test throws a <see cref="T:System.NotImplementedException"/>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> with a 
+            <see cref="P:Gallio.Model.TestOutcome.Status"/> of <see cref="F:Gallio.Model.TestStatus.Skipped"/> and a 
+            <see cref="P:Gallio.Model.TestOutcome.Category"/> of <c>"notsupported"</c> 
+            if the test throws a <see cref="T:System.NotSupportedException"/>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> with a 
+            <see cref="P:Gallio.Model.TestOutcome.Status"/> of <see cref="F:Gallio.Model.TestStatus.Inconclusive"/> and a 
+            <see cref="P:Gallio.Model.TestOutcome.Category"/> of <c>"deadlock"</c> 
+            if the test throws a <see cref="T:System.TimeoutException"/> 
+            with a <see cref="P:System.Exception.Message"/> that contains the substring <c>"deadlock"</c>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> with a 
+            <see cref="P:Gallio.Model.TestOutcome.Status"/> of <see cref="F:Gallio.Model.TestStatus.Inconclusive"/> and a 
+            <see cref="P:Gallio.Model.TestOutcome.Category"/> of <c>"timeout"</c> 
+            if the test throws a <see cref="T:System.TimeoutException"/> 
+            with a <see cref="P:System.Exception.Message"/> that contains the substring <c>"server not responding"</c>;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> of <see cref="P:Gallio.Model.TestOutcome.Failed"/> 
+            if the test throws any other <see cref="T:System.Exception"/> not listed above;
+            result in a <see cref="T:Gallio.Model.TestOutcome"/> of <see cref="P:Gallio.Model.TestOutcome.Passed"/> 
+            if the test does not throw any <see cref="T:System.Exception"/>s.
+            <code><![CDATA[
+            /// <remarks>
+            /// This test can have any of several outcomes depending on what type of exception is thrown (if any) during test execution.
+            /// </remarks>
+            [Test]
+            [CatchException(typeof(NotSupportedException), OutcomeStatus = TestStatus.Skipped, OutcomeCategory = "notsupported")]
+            [CatchException(typeof(NotImplementedException), StandardOutcome = "TestOutcome.Pending")]
+            [CatchException(typeof(TimeoutException), ExceptionMessage = "deadlock", OutcomeStatus = TestStatus.Inconclusive, OutcomeCategory = "deadlock", Order = 2)]
+            [CatchException(typeof(TimeoutException), ExceptionMessage = "server not responding", OutcomeStatus = TestStatus.Inconclusive, OutcomeCategory = "timeout", Order = 3)]
+            [AssertException(typeof(ArithmeticException), Order = 4)]
+            public void AssertExceptionExample3()
+            {
+                //throw new NotSupportedException(); //outcome would be: new TestOutcome(TestStatus.Skipped, "notsupported")
+                throw new NotImplementedException(); //outcome would be: TestOutcome.Pending
+                //throw new TimeoutException("A deadlock occurred."); //outcome would be: new TestOutcome(TestStatus.Inconclusive, "deadlock")
+                //throw new TimeoutException("The server is not responding."); //outcome would be: new TestOutcome(TestStatus.Inconclusive, "timeout")
+                //throw new TimeoutException("Transaction timeout."); //outcome would be: TestOutcome.Failed
+                //throw new TimeoutException(); //outcome would be: TestOutcome.Failed
+                //throw new ArithmeticException(); //outcome would be: TestOutcome.Passed
+                //return; //outcome would be: TestOutcome.Failed
+            }
+            ]]></code>
+            </para>
+            </example>
+        </member>
+        <member name="M:MbUnit.Framework.AssertExceptionAttribute.#ctor(System.Type)">
+            <summary>
+            Declares that the associated test is expected to throw an <see cref="T:System.Exception"/> of
+            a particular type.
+            </summary>
+            <param name="exceptionType">The expected exception type.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="exceptionType"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="exceptionType"/> is not the <see cref="T:System.Type"/> of an <see cref="T:System.Exception"/>.</exception>
+        </member>
+        <member name="M:MbUnit.Framework.AssertExceptionAttribute.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:MbUnit.Framework.AssertExceptionAttribute.OnInnerActionCompleted(System.Exception,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:MbUnit.Framework.AssertExceptionAttribute.HandleUnexpectedException(System.Exception)">
+            <summary>
+            Performs the work of handling a detected exception that does not match the catching-criteria.
+            Also performs any work related to handling the scenario where an exception is not detected.
+            </summary>
+            <param name="ex"><c>null</c>, or the detected <see cref="T:System.Exception"/> that does not match the catching-criteria.</param>
+            <exception cref="T:Gallio.Framework.SilentTestException">
+            Thrown to return a non-<see cref="P:Gallio.Model.TestOutcome.Passed"/> outcome back up the call stack.
+            </exception>
+            <seealso cref="M:MbUnit.Framework.CatchExceptionAttribute.HandleExpectedException(System.Exception)"/>
+        </member>
         <member name="T:MbUnit.Framework.TextDataAttribute">
             <summary>
             Provides text data from resource contents.
@@ -9759,6 +10177,28 @@
                 string expected = "<Animal name='Peary Caribou'><!-- Living in herds numbering less than 20. --></Animal>" +;
                 string actual = "<Animal name='Peary Caribou'><!-- Unknown surviving number. --></Animal>" +;
                 Assert.Xml.AreEqual(expected, actual, XmlOptions.Custom.IgnoreComments); // Pass!
+            }
+            ]]></code>
+            </example>
+        </member>
+        <member name="P:MbUnit.Framework.CustomXmlOptions.Enclose">
+            <summary>
+            Encloses the XML fragments within a "root" element.
+            </summary>
+            <remarks> 
+            <para>
+            The .NET XML parser (<see cref="T:System.Xml.XmlReader"/>) does not support multiple root elements.
+            This option encloses the multiple elements within a unique root element.
+            </para>
+            </remarks>
+            <example>
+            <code><![CDATA[
+            [Test]
+            public void MyXmlTest()
+            {
+                string expected = "<a/><b/><c/>"; // Multiple root elements!
+                string actual = "<a/><b/><c/>";
+                Assert.Xml.AreEqual(expected, actual, XmlOptions.Custom.EncloseInRootElement); // Pass!
             }
             ]]></code>
             </example>
@@ -11966,7 +12406,7 @@
             the test tree.
             </para>
             <para>
-            Contrast with <see cref="T:MbUnit.Framework.DynamicTestFactoryAttribute"/>.
+            Contrast with <see cref="T:MbUnit.Framework.StaticTestFactoryAttribute"/>.
             </para>
             <para>
             The method to which this attribute is applied must be declared by the
@@ -12013,7 +12453,7 @@
             ]]></code>
             </para>
             </example>
-            <seealso cref="T:MbUnit.Framework.DynamicTestFactoryAttribute"/>
+            <seealso cref="T:MbUnit.Framework.StaticTestFactoryAttribute"/>
             <seealso cref="T:MbUnit.Framework.TestCase"/>
         </member>
         <member name="M:MbUnit.Framework.DynamicTestFactoryAttribute.Execute(Gallio.Framework.Pattern.PatternTestInstanceState)">

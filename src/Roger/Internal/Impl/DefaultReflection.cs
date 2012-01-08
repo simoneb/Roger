@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Roger.Internal.Impl
@@ -20,6 +21,21 @@ namespace Roger.Internal.Impl
             {
                 throw InnerExceptionWhilePreservingStackTrace(e);
             }
+        }
+
+        public IEnumerable<Type> Hierarchy(Type type)
+        {
+            var stack = new Stack<Type>();
+
+            var @base = type;
+
+            while (@base != null && @base != typeof(object))
+            {
+                stack.Push(@base);
+                @base = @base.BaseType;
+            }
+
+            return stack;
         }
 
         private static Exception InnerExceptionWhilePreservingStackTrace(TargetInvocationException e)

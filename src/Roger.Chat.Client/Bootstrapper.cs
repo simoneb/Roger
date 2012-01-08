@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using System.Threading;
 using Caliburn.Micro;
 using RabbitMQ.Client;
 using Roger.Chat.Messages;
@@ -19,7 +20,7 @@ namespace Roger.Chat.Client
             container = new CompositionContainer(
                 new AggregateCatalog(AssemblySource.Instance.Select(x => new AssemblyCatalog(x))));
 
-            var consumerResolver = new ManualRegistrationConsumerResolver(new DefaultSupportedMessageTypesResolver());
+            var consumerResolver = new SimpleConsumerContainer();
 
             connectionFactory = new DefaultConnectionFactory("localhost");
             var bus = new DefaultRogerBus(connectionFactory, consumerResolver, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
@@ -57,6 +58,8 @@ namespace Roger.Chat.Client
 
             var bus = container.GetExportedValue<IRabbitBus>();
             bus.Publish(new ClientDisconnected());
+
+            Thread.Sleep(200);
 
             bus.Dispose();
         }

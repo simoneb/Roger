@@ -16,12 +16,12 @@ namespace Roger.Chat.Server
                 model.ExchangeDeclare("RabbusChat", ExchangeType.Topic, false);
             }
 
-            var consumerResolver = new ManualRegistrationConsumerResolver(new DefaultSupportedMessageTypesResolver());
+            var consumerContainer = new SimpleConsumerContainer();
 
-            var bus = new DefaultRogerBus(connectionFactory, consumerResolver, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
+            var bus = new DefaultRogerBus(connectionFactory, consumerContainer, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
             var chat = new ChatServer(bus);
 
-            consumerResolver.Register(chat);
+            consumerContainer.Register(chat);
 
             bus.Start();
 

@@ -3,7 +3,7 @@
 namespace Roger.Chat.Messages
 {
     [DataContract]
-    public class ClientDisconnected
+    public class ClientDisconnected : ChatMessage
     {
     }
 }

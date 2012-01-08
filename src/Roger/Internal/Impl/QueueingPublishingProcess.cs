@@ -33,7 +33,6 @@ namespace Roger.Internal.Impl
                                            IIdGenerator idGenerator,
                                            ISequenceGenerator sequenceGenerator,
                                            IExchangeResolver exchangeResolver,
-                                           IRoutingKeyResolver routingKeyResolver,
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
                                            IRogerLog log,
@@ -45,7 +44,7 @@ namespace Roger.Internal.Impl
             this.idGenerator = idGenerator;
             this.sequenceGenerator = sequenceGenerator;
             this.exchangeResolver = exchangeResolver;
-            this.routingKeyResolver = routingKeyResolver;
+            routingKeyResolver = Default.RoutingKeyResolver;
             this.serializer = serializer;
             this.typeResolver = typeResolver;
             this.currentLocalEndpoint = currentLocalEndpoint;

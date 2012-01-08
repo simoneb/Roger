@@ -23,5 +23,10 @@ namespace Roger.Utilities
         {
             yield return value;
         }
+
+        internal static IEnumerable<Type> ConsumerOf(this IEnumerable<Type> messageTypes)
+        {
+            return messageTypes.Select(m => typeof (IConsumer<>).MakeGenericType(m));
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Tests.Integration.Bus
     {
         protected override void BeforeBusInitialization()
         {
-            TestModel.ExchangeDeclare("RequestExchange", ExchangeType.Direct, false, true, null);
+            TestModel.ExchangeDeclare("RequestExchange", ExchangeType.Topic, false, true, null);
         }
 
         [Test]

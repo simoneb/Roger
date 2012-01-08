@@ -16,10 +16,10 @@ namespace Roger.Internal.Impl
         private readonly IReliableConnection connection;
         private IModel receivingModel;
         private QueueingBasicConsumer queueConsumer;
-        private readonly IConsumerResolver consumerResolver;
+        private readonly IConsumerContainer consumerContainer;
         private readonly IRogerLog log;
         private readonly IExchangeResolver exchangeResolver;
-        private readonly IRoutingKeyResolver routingKeyResolver;
+        private readonly IBindingKeyResolver bindingKeyResolver;
         private readonly ITypeResolver typeResolver;
         private readonly IMessageSerializer serializer;
         private readonly IReflection reflection;
@@ -27,9 +27,10 @@ namespace Roger.Internal.Impl
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IEnumerable<IMessageFilter> messageFilters;
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
+        private readonly IQueueFactory queueFactory;
 
         [ThreadStatic]
-        private static CurrentMessageInformation _currentMessage;
+        private static CurrentMessageInformation currentMessage;
 
         private int disposed;
         private Task consumingTask;
@@ -37,25 +38,25 @@ namespace Roger.Internal.Impl
         public DefaultConsumingProcess(IReliableConnection connection,
                                        IIdGenerator idGenerator,
                                        IExchangeResolver exchangeResolver,
-                                       IRoutingKeyResolver routingKeyResolver,
                                        IMessageSerializer serializer,
                                        ITypeResolver typeResolver,
-                                       IConsumerResolver consumerResolver,
+                                       IConsumerContainer consumerContainer,
                                        IReflection reflection,
-                                       ISupportedMessageTypesResolver supportedMessageTypesResolver,
                                        IEnumerable<IMessageFilter> messageFilters,
-                                       IRogerLog log)
+                                       IRogerLog log,
+                                       IQueueFactory queueFactory)
         {
             this.connection = connection;
-            this.consumerResolver = consumerResolver;
+            this.consumerContainer = consumerContainer;
             this.log = log;
+            this.queueFactory = queueFactory;
             this.exchangeResolver = exchangeResolver;
-            this.routingKeyResolver = routingKeyResolver;
+            bindingKeyResolver = Default.BindingKeyResolver;
             this.typeResolver = typeResolver;
             this.serializer = serializer;
             this.reflection = reflection;
             this.idGenerator = idGenerator;
-            this.supportedMessageTypesResolver = supportedMessageTypesResolver;
+            supportedMessageTypesResolver = Default.SupportedMessageTypesResolver;
             this.messageFilters = messageFilters;
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
@@ -65,7 +66,7 @@ namespace Roger.Internal.Impl
         {
             receivingModel = connection.CreateModel();
 
-            Endpoint = new RogerEndpoint(receivingModel.QueueDeclare("", false, true, false, null));
+            Endpoint = new RogerEndpoint(queueFactory.Create(receivingModel));
 
             CreateConsumer();
             ConsumeAsynchronously();
@@ -73,7 +74,7 @@ namespace Roger.Internal.Impl
 
         private void CreateConsumer()
         {
-            CreateBindings(consumerResolver.GetAllSupportedMessageTypes());
+            CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
 
             queueConsumer = new QueueingBasicConsumer(receivingModel);
             receivingModel.BasicConsume(Endpoint.Queue, false, queueConsumer);
@@ -101,18 +102,18 @@ namespace Roger.Internal.Impl
                 if (messageType.IsReply())
                     continue;
 
-                var routingKey = routingKeyResolver.Resolve(messageType);
+                var bindingKey = bindingKeyResolver.Resolve(messageType);
 
-                log.DebugFormat("Binding queue {0} to exchange {1} with routing key {2}", Endpoint, exchange, routingKey);
+                log.DebugFormat("Binding queue {0} to exchange {1} with binding key {2}", Endpoint, exchange, bindingKey);
 
-                receivingModel.QueueBind(Endpoint.Queue, exchange, routingKey);
+                receivingModel.QueueBind(Endpoint.Queue, exchange, bindingKey);
             }
 
             log.Debug("Performing private messages bindings");
 
             foreach (var exchange in allExchanges)
             {
-                log.DebugFormat("Binding queue {0} to exchange {1} with quete name as routing key", Endpoint, exchange);
+                log.DebugFormat("Binding queue {0} to exchange {1} with queue name as binding key", Endpoint, exchange);
 
                 receivingModel.QueueBind(Endpoint.Queue, exchange, Endpoint.Queue);
             }
@@ -159,9 +160,9 @@ namespace Roger.Internal.Impl
 
         private void SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)
         {
-            _currentMessage = message;
+            currentMessage = message;
 
-            var consumers = ResolveConsumers(_currentMessage.MessageType);
+            var consumers = ResolveConsumers(currentMessage.MessageType);
 
             var localInstanceConsumers = consumers.Item1.ToArray();
             var defaultConsumers = consumers.Item2.ToArray();
@@ -169,7 +170,7 @@ namespace Roger.Internal.Impl
             log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             defaultConsumers.Length,
                             localInstanceConsumers.Length,
-                            _currentMessage.MessageType);
+                            currentMessage.MessageType);
 
             var allConsumers = localInstanceConsumers.Concat(defaultConsumers);
 
@@ -177,17 +178,17 @@ namespace Roger.Internal.Impl
             {
                 log.DebugFormat("Invoking Consume method on consumer {0} for message {1}",
                                 c.GetType(),
-                                _currentMessage.MessageType);
+                                currentMessage.MessageType);
 
-                reflection.InvokeConsume(c, _currentMessage.Body);
+                reflection.InvokeConsume(c, currentMessage.Body);
             }
 
-            consumerResolver.Release(defaultConsumers);
+            consumerContainer.Release(defaultConsumers);
         }
 
         private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)
         {
-            return Tuple.Create(InstanceConsumers(messageType), consumerResolver.Resolve(messageType));
+            return Tuple.Create(InstanceConsumers(messageType), reflection.Hierarchy(messageType).ConsumerOf().SelectMany(consumerContainer.Resolve).Distinct());
         }
 
         private IEnumerable<IConsumer> InstanceConsumers(Type messageType)
@@ -222,7 +223,7 @@ namespace Roger.Internal.Impl
 
         public CurrentMessageInformation CurrentMessage
         {
-            get { return _currentMessage; }
+            get { return currentMessage; }
         }
 
         private IDisposable RemoveInstanceConsumer(WeakReference consumerReference)
@@ -244,8 +245,11 @@ namespace Roger.Internal.Impl
             if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
                 return;
 
+            if(receivingModel != null)
+                receivingModel.Dispose();
+
             if (consumingTask != null)
-                consumingTask.Wait();
+                consumingTask.Wait(100);
         }
     }
 }

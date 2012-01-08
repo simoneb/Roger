@@ -4,9 +4,6 @@ using ProtoBuf;
 
 namespace Roger.Internal.Impl
 {
-    /// <summary>
-    /// Serializer implementation using protobuf-net as the serialization mechanism
-    /// </summary>
     internal class ProtoBufNetSerializer : IMessageSerializer
     {
         public object Deserialize(Type messageType, byte[] body)

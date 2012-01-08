@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
-namespace Roger
+namespace Roger.Internal
 {
-    public interface IRoutingKeyResolver
+    internal interface IRoutingKeyResolver
     {
         string Resolve(Type messageType);
         string Resolve<T>() where T : class;

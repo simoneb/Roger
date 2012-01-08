@@ -12,7 +12,7 @@ namespace Tests.Integration.Bus
 
         protected override void BeforeBusInitialization()
         {
-            Register(consumer = new MyThreadCheckingConsumer(Bus));
+            Register(consumer = new MyThreadCheckingConsumer(Bus, 200));
         }
 
         [Test]
@@ -23,8 +23,7 @@ namespace Tests.Integration.Bus
             t1.Start();
             t2.Start();
 
-            consumer.WaitUntil(200);
-
+            Assert.IsTrue(consumer.WaitUntilDelivery(1000));
             Assert.AreEqual(200, consumer.Received.Count);
             Assert.AreElementsEqualIgnoringOrder(Enumerable.Range(0, 200), consumer.Received.Select(r => r.Value));
         }
