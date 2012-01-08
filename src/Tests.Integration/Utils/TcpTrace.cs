@@ -5,12 +5,12 @@ namespace Tests.Integration.Utils
 {
     public class TcpTrace
     {
-        private static string _tcpTraceExecutablePath;
+        private static string tcpTraceExecutablePath;
         private Process process;
 
         public TcpTrace(string tcpTraceExecutablePath)
         {
-            _tcpTraceExecutablePath = tcpTraceExecutablePath;
+            TcpTrace.tcpTraceExecutablePath = tcpTraceExecutablePath;
         }
 
         public void Start(int listenPort, string serverName, int serverPort, string title)
@@ -30,7 +30,7 @@ namespace Tests.Integration.Utils
 
         private static Process StartProcess(string arguments)
         {
-            return Process.Start(new ProcessStartInfo(_tcpTraceExecutablePath, arguments)
+            return Process.Start(new ProcessStartInfo(tcpTraceExecutablePath, arguments)
             {
                 WindowStyle = ProcessWindowStyle.Hidden
             });

@@ -13,7 +13,7 @@ namespace Tests.Integration.Utils
     public class Bootstrap
     {
         private TcpTrace secondaryClientEndpoint;
-        private static readonly string All = ".*";
+        private const string All = ".*";
         public static RabbitBrokerAdmin Broker { get; private set; }
         public static TcpTrace FederationLinkTcpProxy { get; private set; }
         public static bool RunEmbeddedBroker { get { return bool.Parse(ConfigurationManager.AppSettings["RunEmbeddedBroker"]); } }
@@ -38,14 +38,14 @@ namespace Tests.Integration.Utils
             Broker.ResetNode();
             Broker.StartBrokerApplication();
 
-            //try
-            //{
-            //    Assert.IsNotNull(ResbitClient.Overview(), "Broker does not appear to be running");
-            //}
-            //catch (WebException e)
-            //{
-            //    Assert.Fail("Broker does not appear to be running: {0}", e);
-            //}
+            try
+            {
+                Assert.IsNotNull(ResbitClient.Overview(), "Broker does not appear to be running");
+            }
+            catch (WebException e)
+            {
+                Assert.Fail("Broker does not appear to be running: {0}", e);
+            }
 
             SetupSecondaryVirtualHost();
 
