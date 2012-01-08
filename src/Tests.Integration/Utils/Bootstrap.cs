@@ -68,8 +68,8 @@ namespace Tests.Integration.Utils
 
         private static void SetupSecondaryVirtualHost()
         {
-            Broker.AddVhost("secondary");
-            Broker.SetPermissions("guest", All, All, All, "secondary");
+            Broker.AddVhost(Globals.SecondaryVirtualHost);
+            Broker.SetPermissions("guest", All, All, All, Globals.SecondaryVirtualHost);
         }
 
         public static void StartFederationLink()
