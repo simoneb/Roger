@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Configuration;
 using System.Net;
-using System.Text.RegularExpressions;
 using Common;
 using MbUnit.Framework;
 using Resbit;
@@ -39,14 +38,14 @@ namespace Tests.Integration.Utils
             Broker.ResetNode();
             Broker.StartBrokerApplication();
 
-            try
-            {
-                Assert.IsNotNull(ResbitClient.Overview(), "Broker does not appear to be running");
-            }
-            catch (WebException e)
-            {
-                Assert.Fail("Broker does not appear to be running: {0}", e);
-            }
+            //try
+            //{
+            //    Assert.IsNotNull(ResbitClient.Overview(), "Broker does not appear to be running");
+            //}
+            //catch (WebException e)
+            //{
+            //    Assert.Fail("Broker does not appear to be running: {0}", e);
+            //}
 
             SetupSecondaryVirtualHost();
 
