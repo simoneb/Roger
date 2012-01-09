@@ -29,7 +29,7 @@ namespace Tests.Integration.Utils
             StartSecondaryConnectionLink();
 
             Environment.SetEnvironmentVariable("RABBITMQ_SERVER", @"..\..\..\..\RabbitMQServer");
-            Broker = new RabbitBrokerAdmin("rabbit@LOCALHOST"){StartupTimeout = 10000};
+            Broker = new RabbitBrokerAdmin {StartupTimeout = 10000};
             ResbitClient = new ResbitClient(Globals.MainHostName, "guest", "guest");
 
             StartBroker();
