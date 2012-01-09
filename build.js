@@ -16,6 +16,6 @@ task('test', 'build', function () {
 		runner.args('/v:Verbose', '/np')
 		
 	runner.args('src/Tests.Unit/bin/Release/Tests.Unit.dll')
-		//.args('src/Tests.Integration/bin/Release/Tests.Integration.dll')
+		.args('src/Tests.Integration/bin/Release/Tests.Integration.dll')
 		.run();
 });
