@@ -57,16 +57,9 @@ namespace Roger
             publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsTimer, log, TimeSpan.FromSeconds(2)),
                                                        new BasicReturnModule(log));
 
-            publishingProcess = new QueueingPublishingProcess(connection,
-                                                              idGenerator,
-                                                              sequenceGenerator,
-                                                              exchangeResolver,
-                                                              serializer,
-                                                              Default.TypeResolver,
-                                                              this.log,
-                                                              () => LocalEndpoint,
-                                                              publishModule);
-
+            // TODO: order here is important because both of the two guys below subscribe to
+            // connection established events, but the publisher cannot start publish unless
+            // the consumer has created the endpoint already
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,
                                                            exchangeResolver,
@@ -77,6 +70,16 @@ namespace Roger
                                                            messageFilters,
                                                            this.log,
                                                            new DefaultQueueFactory());
+
+            publishingProcess = new QueueingPublishingProcess(connection,
+                                                              idGenerator,
+                                                              sequenceGenerator,
+                                                              exchangeResolver,
+                                                              serializer,
+                                                              Default.TypeResolver,
+                                                              this.log,
+                                                              () => LocalEndpoint,
+                                                              publishModule);
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
