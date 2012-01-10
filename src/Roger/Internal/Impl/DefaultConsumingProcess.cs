@@ -144,7 +144,15 @@ namespace Roger.Internal.Impl
             foreach (var message in messages)
             {
                 SetCurrentMessageAndInvokeConsumers(message);
-                queueConsumer.Model.BasicAck(message.DeliveryTag, false);
+
+                try
+                {
+                    queueConsumer.Model.BasicAck(message.DeliveryTag, false);
+                }
+                catch (AlreadyClosedException e)
+                {
+                    log.ErrorFormat("Could not ack consumed message because model was already closed\r\n{0}", e);
+                }
             }
         }
 
@@ -218,6 +226,8 @@ namespace Roger.Internal.Impl
             var consumerReference = new WeakReference(consumer);
             instanceConsumers.TryAdd(consumerReference, null);
 
+            log.InfoFormat("Added instance subscription for consumer of type {0}, hash {1}", consumer.GetType(), consumerReference.GetHashCode());
+
             CreateBindings(GetSupportedMessageTypes(consumer));
 
             // TODO: queue bindings are not removed, no problem unless we start adding too many instance subscriptions
@@ -243,8 +253,9 @@ namespace Roger.Internal.Impl
         {
             return new DisposableAction(() =>
             {
-                object _;
-                instanceConsumers.TryRemove(consumerReference, out _);
+                object @null;
+                if(instanceConsumers.TryRemove(consumerReference, out @null))
+                    log.InfoFormat("Removed instance subscription with hash {0}", consumerReference.GetHashCode());
             });
         }
 
