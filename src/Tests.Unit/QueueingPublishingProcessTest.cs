@@ -59,7 +59,7 @@ namespace Tests.Unit
         public void Should_invoke_modules_when_connection_established()
         {
             connection.ConnectionEstabilished += Raise.Event<Action>();
-            publishModule.Received().ConnectionEstablished(model);
+            publishModule.Received().BeforePublishEnabled(model);
         }
 
         [Test]

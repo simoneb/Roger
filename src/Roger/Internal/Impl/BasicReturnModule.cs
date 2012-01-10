@@ -14,7 +14,7 @@ namespace Roger.Internal.Impl
             this.log = log;
         }
 
-        public void ConnectionEstablished(IModel publishModel)
+        public void BeforePublishEnabled(IModel publishModel)
         {
             publishModel.BasicReturn += PublishModelOnBasicReturn;
         }
@@ -38,7 +38,7 @@ namespace Roger.Internal.Impl
                 basicReturnHandler.Subscribe(new RogerGuid(properties.MessageId), basicReturnCallback);
         }
 
-        public void ConnectionUnexpectedShutdown()
+        public void AfterPublishDisabled()
         {
         }
 

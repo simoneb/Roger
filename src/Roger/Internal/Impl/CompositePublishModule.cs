@@ -20,10 +20,10 @@ namespace Roger.Internal.Impl
                 module.Initialize(publishingProcess);
         }
 
-        public void ConnectionEstablished(IModel publishModel)
+        public void BeforePublishEnabled(IModel publishModel)
         {
             foreach (var module in inner)
-                module.ConnectionEstablished(publishModel);
+                module.BeforePublishEnabled(publishModel);
         }
 
         public void BeforePublish(IDeliveryCommand command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null)
@@ -32,10 +32,10 @@ namespace Roger.Internal.Impl
                 module.BeforePublish(command, publishModel, properties, basicReturnCallback);
         }
 
-        public void ConnectionUnexpectedShutdown()
+        public void AfterPublishDisabled()
         {
             foreach (var module in inner)
-                module.ConnectionUnexpectedShutdown();
+                module.AfterPublishDisabled();
         }
 
         public void Dispose()

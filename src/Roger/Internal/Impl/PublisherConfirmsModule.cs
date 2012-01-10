@@ -30,14 +30,12 @@ namespace Roger.Internal.Impl
             timer.Callback += ProcessUnconfirmed;
         }
 
-        public void ConnectionEstablished(IModel publishModel)
+        public void BeforePublishEnabled(IModel publishModel)
         {
             publishModel.BasicAcks += PublishModelOnBasicAcks;
             publishModel.BasicNacks += PublishModelOnBasicNacks;
             publishModel.ConfirmSelect();
-
-            ForceProcessUnconfirmed();
-
+            
             timer.Start();
         }
 
@@ -46,9 +44,11 @@ namespace Roger.Internal.Impl
             unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, consideredUnconfirmedAfter));
         }
 
-        public void ConnectionUnexpectedShutdown()
+        public void AfterPublishDisabled()
         {
             timer.Stop();
+
+            ForceProcessUnconfirmed();
         }
 
         private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)

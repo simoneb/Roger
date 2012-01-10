@@ -30,7 +30,7 @@ namespace Tests.Unit
         [Test]
         public void Should_republish_messages_for_which_no_ack_or_nack_has_been_received()
         {
-            sut.ConnectionEstablished(model);
+            sut.BeforePublishEnabled(model);
             model.NextPublishSeqNo.Returns(1ul, 2ul, 3ul);
 
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
@@ -43,7 +43,7 @@ namespace Tests.Unit
         [Test]
         public void Should_not_republish_messages_for_which_ack_or_nack_has_been_received()
         {
-            sut.ConnectionEstablished(model);
+            sut.BeforePublishEnabled(model);
             model.NextPublishSeqNo.Returns(1ul);
 
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
@@ -58,7 +58,7 @@ namespace Tests.Unit
         [Test]
         public void Should_not_republish_messages_for_which_ack_has_been_received_after_initial_failure()
         {
-            sut.ConnectionEstablished(model);
+            sut.BeforePublishEnabled(model);
             model.NextPublishSeqNo.Returns(1ul, 2ul, 3ul);
 
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
@@ -73,30 +73,26 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void When_connection_is_established_should_process_messages_that_were_unconfirmed()
+        public void After_publish_is_disabled_should_process_messages_that_were_unconfirmed_so_as_to_put_them_on_top_of_the_list()
         {
-            sut.ConnectionEstablished(model);
             model.NextPublishSeqNo.Returns(1ul);
-
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
-            sut.ConnectionEstablished(model);
+            sut.AfterPublishDisabled();
 
             publishingProcess.ReceivedWithAnyArgs(1).Process(null);
         }
 
         [Test]
-        public void When_connection_is_established_should_process_messages_that_were_unconfirmed_ignoring_threshold()
+        public void Should_ignore_threshold_for_messages_published_after_publishing_has_been_disabled()
         {
-            sut = new PublisherConfirmsModule(Substitute.For<ITimer>(), new NullLog(), TimeSpan.FromSeconds(1000));
+            sut = new PublisherConfirmsModule(Substitute.For<ITimer>(), new NullLog(), TimeSpan.FromSeconds(10000 /* a high value */));
             sut.Initialize(publishingProcess);
 
-            sut.ConnectionEstablished(model);
             model.NextPublishSeqNo.Returns(1ul);
-
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
-            sut.ConnectionEstablished(model);
+            sut.AfterPublishDisabled();
 
             publishingProcess.ReceivedWithAnyArgs(1).Process(null);
         }

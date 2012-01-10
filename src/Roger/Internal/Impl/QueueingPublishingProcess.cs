@@ -57,7 +57,7 @@ namespace Roger.Internal.Impl
         private void ConnectionOnConnectionEstabilished()
         {
             publishModel = connection.CreateModel();
-            modules.ConnectionEstablished(publishModel);
+            modules.BeforePublishEnabled(publishModel);
 
             EnablePublishing();
         }
@@ -72,7 +72,7 @@ namespace Roger.Internal.Impl
         {
             DisablePublishing();
 
-            modules.ConnectionUnexpectedShutdown();
+            modules.AfterPublishDisabled();
         }
 
         private void DisablePublishing()
