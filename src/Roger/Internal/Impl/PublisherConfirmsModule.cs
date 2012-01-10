@@ -100,8 +100,9 @@ namespace Roger.Internal.Impl
                 foreach (var tp in toProcess)
                 {
                     IUnconfirmedCommandFactory publish;
-                    unconfirmedCommands.TryRemove(tp, out publish);
-                    publisher.Process(publish);
+
+                    if(unconfirmedCommands.TryRemove(tp, out publish))
+                        publisher.Process(publish);
                 }
             }
         }

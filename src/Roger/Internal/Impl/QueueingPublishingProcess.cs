@@ -263,6 +263,5 @@ namespace Roger.Internal.Impl
             tokenSource.Dispose();
             publishTask.Dispose();
         }
-
     }
 }
