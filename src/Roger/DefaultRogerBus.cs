@@ -54,8 +54,8 @@ namespace Roger
             connection = new ReliableConnection(connectionFactory, this.log);
 
             publisherConfirmsTimer = new SystemThreadingTimer(TimeSpan.FromSeconds(1));
-            publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsTimer),
-                                                       new BasicReturnModule());
+            publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsTimer, log, TimeSpan.FromSeconds(2)),
+                                                       new BasicReturnModule(log));
 
             publishingProcess = new QueueingPublishingProcess(connection,
                                                               idGenerator,

@@ -20,7 +20,7 @@ namespace Tests.Unit
         public void Setup()
         {
             timer = Substitute.For<ITimer>();
-            sut = new PublisherConfirmsModule(timer);
+            sut = new PublisherConfirmsModule(timer, new NullLog());
             publishingProcess = Substitute.For<IPublishingProcess>();
             model = Substitute.For<IModel>();
 
@@ -88,7 +88,7 @@ namespace Tests.Unit
         [Test]
         public void When_connection_is_established_should_process_messages_that_were_unconfirmed_ignoring_threshold()
         {
-            sut = new PublisherConfirmsModule(Substitute.For<ITimer>(), TimeSpan.FromSeconds(1000));
+            sut = new PublisherConfirmsModule(Substitute.For<ITimer>(), new NullLog(), TimeSpan.FromSeconds(1000));
             sut.Initialize(publishingProcess);
 
             sut.ConnectionEstablished(model);

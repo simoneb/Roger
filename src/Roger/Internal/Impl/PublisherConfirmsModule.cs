@@ -17,11 +17,11 @@ namespace Roger.Internal.Impl
         private IPublishingProcess publisher;
         private int disposed;
 
-        public PublisherConfirmsModule(ITimer timer, TimeSpan? consideredUnconfirmedAfter = null)
+        public PublisherConfirmsModule(ITimer timer, IRogerLog log, TimeSpan? consideredUnconfirmedAfter = null)
         {
             this.timer = timer;
+            this.log = log;
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
-            log = new NullLog();
         }
 
         public void Initialize(IPublishingProcess publishingProcess)
@@ -83,23 +83,26 @@ namespace Roger.Internal.Impl
 
         private void ProcessUnconfirmed()
         {
-            ProcessCommands(unconfirmedCommands.Where(p => p.Value.CanExecute));
+            ProcessCommands(unconfirmedCommands.Where(p => p.Value.CanExecute).Select(p => p.Key).ToArray());
         }
 
         private void ForceProcessUnconfirmed()
         {
-            ProcessCommands(unconfirmedCommands);
+            ProcessCommands(unconfirmedCommands.Keys);
         }
 
-        private void ProcessCommands(IEnumerable<KeyValuePair<ulong, IUnconfirmedCommandFactory>> toProcess)
+        private void ProcessCommands(ICollection<ulong> toProcess)
         {
-            log.Info("Processing unconfirmed messages");
-
-            foreach (var tp in toProcess)
+            if (toProcess.Any())
             {
-                IUnconfirmedCommandFactory publish;
-                unconfirmedCommands.TryRemove(tp.Key, out publish);
-                publisher.Process(publish);
+                log.InfoFormat("Processing {0} unconfirmed messages", toProcess.Count);
+
+                foreach (var tp in toProcess)
+                {
+                    IUnconfirmedCommandFactory publish;
+                    unconfirmedCommands.TryRemove(tp, out publish);
+                    publisher.Process(publish);
+                }
             }
         }
 
