@@ -11,14 +11,6 @@ namespace Roger.Utilities
             return messageType.IsDefined(typeof (RogerReplyAttribute), false);
         }
 
-        internal static IEnumerable<T> ConcatIf<T>(this IEnumerable<T> input, bool condition, T toConcat)
-        {
-            if (!condition)
-                return input;
-
-            return input.Concat(Return(toConcat));
-        }
-
         internal static IEnumerable<T> Return<T>(this T value)
         {
             yield return value;

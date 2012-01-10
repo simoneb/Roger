@@ -29,6 +29,7 @@ namespace Roger.Internal.Impl
         private readonly IEnumerable<IMessageFilter> messageFilters;
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private readonly IQueueFactory queueFactory;
+        private readonly bool noLocal;
 
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
@@ -45,12 +46,14 @@ namespace Roger.Internal.Impl
                                        IReflection reflection,
                                        IEnumerable<IMessageFilter> messageFilters,
                                        IRogerLog log,
-                                       IQueueFactory queueFactory)
+                                       IQueueFactory queueFactory,
+                                       bool noLocal)
         {
             this.connection = connection;
             this.consumerContainer = consumerContainer;
             this.log = log;
             this.queueFactory = queueFactory;
+            this.noLocal = noLocal;
             this.exchangeResolver = exchangeResolver;
             bindingKeyResolver = Default.BindingKeyResolver;
             this.typeResolver = typeResolver;
@@ -81,7 +84,7 @@ namespace Roger.Internal.Impl
         private void CreateConsumer()
         {
             queueConsumer = new QueueingBasicConsumer(receivingModel);
-            receivingModel.BasicConsume(Endpoint.Queue, false, queueConsumer);
+            receivingModel.BasicConsume(Endpoint.Queue, false, "", noLocal, false, null, queueConsumer);
         }
 
         public RogerEndpoint Endpoint { get; private set; }

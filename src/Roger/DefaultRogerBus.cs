@@ -48,7 +48,7 @@ namespace Roger
             serializer = serializer.Or(Default.Serializer);
             idGenerator = idGenerator.Or(Default.IdGenerator);
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
-            messageFilters = messageFilters.Or(Default.Filters).ConcatIf(noLocal, new NoLocalFilter(() => LocalEndpoint));
+            messageFilters = messageFilters.Or(Default.Filters);
             this.log = log.Or(Default.Log);
 
             connection = new ReliableConnection(connectionFactory, this.log);
@@ -69,7 +69,8 @@ namespace Roger
                                                            Default.Reflection, 
                                                            messageFilters,
                                                            this.log,
-                                                           new DefaultQueueFactory());
+                                                           new DefaultQueueFactory(), 
+                                                           noLocal);
 
             publishingProcess = new QueueingPublishingProcess(connection,
                                                               idGenerator,

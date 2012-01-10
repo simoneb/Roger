@@ -34,7 +34,8 @@ namespace Tests.Unit
                                               Substitute.For<IReflection>(),
                                               Enumerable.Empty<IMessageFilter>(),
                                               Substitute.For<IRogerLog>(), 
-                                              queueFactory);
+                                              queueFactory, 
+                                              false);
         }
 
         [Test]

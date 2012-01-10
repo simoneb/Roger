@@ -57,7 +57,6 @@
     <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
     <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\Impl\MandatoryCommand.cs" />
-    <Compile Include="Internal\Impl\NoLocalFilter.cs" />
     <Compile Include="Internal\Impl\PublishCommand.cs" />
     <Compile Include="Internal\Impl\PublishCommandFactory.cs" />
     <Compile Include="Internal\Impl\PublisherConfirmsModule.cs" />
