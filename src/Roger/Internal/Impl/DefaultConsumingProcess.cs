@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 using Roger.Utilities;
 
 namespace Roger.Internal.Impl
@@ -250,8 +251,15 @@ namespace Roger.Internal.Impl
 
             if(receivingModel != null)
             {
-                receivingModel.QueueDelete(Endpoint);
-                receivingModel.Dispose();
+                try
+                {
+                    receivingModel.QueueDelete(Endpoint);
+                    receivingModel.Dispose();
+                }
+                catch (OperationInterruptedException e)
+                {
+                    log.ErrorFormat("Could not delete queue or dispose model\r\n{0}", e);
+                }
             }
 
             if (consumingTask != null)

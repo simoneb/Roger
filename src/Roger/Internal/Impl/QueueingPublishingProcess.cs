@@ -110,7 +110,7 @@ namespace Roger.Internal.Impl
                         /* 
                          * we may experience a newtork problem even before the connection notifies its own shutdown
                          * but it's safer not to disable publishing to avoid the risk of deadlocking
-                         * Instead we catch the exception and hopefully republish these messages
+                         * Instead we catch the exception and hopefully will republish these messages
                          */
                         catch (AlreadyClosedException e)
                         {
