@@ -29,7 +29,7 @@ namespace Tests.Integration.Utils
             StartSecondaryConnectionLink();
 
             Environment.SetEnvironmentVariable("RABBITMQ_SERVER", @"..\..\..\..\RabbitMQServer");
-            Environment.SetEnvironmentVariable("RABBITMQ_SERVER_START_ARGS", "RogerIntegrationTests");
+            Environment.SetEnvironmentVariable("RABBITMQ_SERVER_START_ARGS", "-setcookie RogerIntegrationTests");
             Broker = new RabbitBrokerAdmin("rabbit@SIMONEDESKTOP", "RogerIntegrationTests") {StartupTimeout = 10000};
             ResbitClient = new ResbitClient(Globals.MainHostName, "guest", "guest"); 
 
