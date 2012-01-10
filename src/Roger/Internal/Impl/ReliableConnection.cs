@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -34,7 +35,7 @@ namespace Roger.Internal.Impl
             }
             catch (BrokerUnreachableException e)
             {
-                log.ErrorFormat("Cannot create connection, broker is unreachable, rescheduling.\r\n{0}", e);
+                log.ErrorFormat("Cannot create connection, broker is unreachable\r\n{0}", e);
 
                 ConnectionAttemptFailed();
 
@@ -45,26 +46,6 @@ namespace Roger.Internal.Impl
             log.Debug("Connection created");
             connection.ConnectionShutdown += HandleConnectionShutdown;
             ConnectionEstabilished();
-        }
-
-        private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)
-        {
-            // remove handler to be safe and prevent eventual callbacks from being invoked by closed connections
-            conn.ConnectionShutdown -= HandleConnectionShutdown;
-
-            // connection has been closed because we asked it!
-            if (disposed)
-            {
-                GracefulShutdown();
-                log.Debug("Connection has been shut down");
-            }
-            else
-            {
-                UnexpectedShutdown(reason);
-                log.DebugFormat("Connection (hashcode {0}) was shut down unexpectedly, rescheduling: {1}", conn.GetHashCode(), reason);
-
-                ScheduleConnect();
-            }
         }
 
         private void ScheduleConnect()
@@ -82,6 +63,26 @@ namespace Roger.Internal.Impl
             initializationTimer.Change(ConnectionAttemptInterval, Never);
         }
 
+        private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)
+        {
+            // remove handler to be safe and prevent eventual callbacks from being invoked by closed connections
+            conn.ConnectionShutdown -= HandleConnectionShutdown;
+
+            // connection has been closed because we asked it!
+            if (disposed)
+            {
+                GracefulShutdown();
+                log.Debug("Connection has been shut down gracefully upon request");
+            }
+            else
+            {
+                UnexpectedShutdown(reason);
+                log.DebugFormat("Connection (hashcode {0}) was shut down unexpectedly: {1}", conn.GetHashCode(), reason);
+
+                ScheduleConnect();
+            }
+        }
+
         public void Dispose()
         {
             if (disposed) return;
@@ -90,13 +91,19 @@ namespace Roger.Internal.Impl
             if (connection != null)
                 try
                 {
-                    // here we dispose just the connection because the client library user guide
-                    // says that doing so all channels are implicitly closed as well
-                    connection.Dispose();
+                    connection.Close();
                 }
                 catch (AlreadyClosedException e)
                 {
                     log.ErrorFormat("Trying to close connection but it was already closed.\r\n{0}", e);
+                }
+                catch (IOException e)
+                {
+                    log.ErrorFormat("Trying to close connection but something went wrong.\r\n{0}", e);
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("Trying to close connection but something went wrong.\r\n{0}", e);
                 }
         }
 
