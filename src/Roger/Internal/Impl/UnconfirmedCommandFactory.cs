@@ -7,19 +7,19 @@ namespace Roger.Internal.Impl
     internal class UnconfirmedCommandFactory : IUnconfirmedCommandFactory
     {
         private readonly IDeliveryCommand inner;
-        private readonly TimeSpan republishUnconfirmedMessagesThreshold;
+        private readonly TimeSpan? consideredUnconfirmedAfter;
         private readonly DateTimeOffset created;
 
-        public UnconfirmedCommandFactory(IDeliveryCommand inner, TimeSpan republishUnconfirmedMessagesThreshold)
+        public UnconfirmedCommandFactory(IDeliveryCommand inner, TimeSpan? consideredUnconfirmedAfter)
         {
             created = SystemTime.Now;
             this.inner = inner;
-            this.republishUnconfirmedMessagesThreshold = republishUnconfirmedMessagesThreshold;
+            this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
         }
 
         public bool CanExecute
         {
-            get { return SystemTime.Now - created >= republishUnconfirmedMessagesThreshold; }
+            get { return !consideredUnconfirmedAfter.HasValue || SystemTime.Now >= created + consideredUnconfirmedAfter; }
         }
 
         public IDeliveryCommand Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)

@@ -18,6 +18,8 @@ namespace Roger
         private readonly IRogerLog log;
         private readonly IPublishingProcess publishingProcess;
         private int disposed;
+        private SystemThreadingTimer publisherConfirmsTimer;
+        private CompositePublishModule publishModule;
 
         /// <summary>
         /// 
@@ -51,16 +53,13 @@ namespace Roger
 
             connection = new ReliableConnection(connectionFactory, this.log);
 
-            publishingProcess = new QueueingPublishingProcess(connection,
-                                                              idGenerator,
-                                                              sequenceGenerator,
-                                                              exchangeResolver,
-                                                              serializer,
-                                                              Default.TypeResolver,
-                                                              this.log,
-                                                              () => LocalEndpoint,
-                                                              TimeSpan.FromSeconds(10));
+            publisherConfirmsTimer = new SystemThreadingTimer(TimeSpan.FromSeconds(1));
+            publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsTimer, log, TimeSpan.FromSeconds(2)),
+                                                       new BasicReturnModule(log));
 
+            // TODO: order here is important because both of the two guys below subscribe to
+            // connection established events, but the publisher cannot start publish unless
+            // the consumer has created the endpoint already
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,
                                                            exchangeResolver,
@@ -71,6 +70,16 @@ namespace Roger
                                                            messageFilters,
                                                            this.log,
                                                            new DefaultQueueFactory());
+
+            publishingProcess = new QueueingPublishingProcess(connection,
+                                                              idGenerator,
+                                                              sequenceGenerator,
+                                                              exchangeResolver,
+                                                              serializer,
+                                                              Default.TypeResolver,
+                                                              this.log,
+                                                              () => LocalEndpoint,
+                                                              publishModule);
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
@@ -163,6 +172,8 @@ namespace Roger
 
             publishingProcess.Dispose();
             consumingProcess.Dispose();
+            publisherConfirmsTimer.Dispose();
+            publishModule.Dispose();
             connection.Dispose();
         }
     }

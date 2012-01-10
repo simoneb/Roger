@@ -2,8 +2,8 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal
 {
-    internal interface IDeliveryCommand
+    public interface IDeliveryCommand
     {
-        void Execute(IModel model, RogerEndpoint endpoint, IBasicReturnHandler basicReturnHandler);
+        void Execute(IModel model, RogerEndpoint endpoint, IPublishModule modules);
     }
 }
