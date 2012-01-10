@@ -30,7 +30,7 @@ namespace Roger.Internal.Impl
         private readonly IQueueFactory queueFactory;
 
         [ThreadStatic]
-        private static CurrentMessageInformation currentMessage;
+        private static CurrentMessageInformation _currentMessage;
 
         private int disposed;
         private Task consumingTask;
@@ -163,9 +163,9 @@ namespace Roger.Internal.Impl
 
         private void SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)
         {
-            currentMessage = message;
+            _currentMessage = message;
 
-            var consumers = ResolveConsumers(currentMessage.MessageType);
+            var consumers = ResolveConsumers(_currentMessage.MessageType);
 
             var localInstanceConsumers = consumers.Item1.ToArray();
             var defaultConsumers = consumers.Item2.ToArray();
@@ -173,7 +173,7 @@ namespace Roger.Internal.Impl
             log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             defaultConsumers.Length,
                             localInstanceConsumers.Length,
-                            currentMessage.MessageType);
+                            _currentMessage.MessageType);
 
             var allConsumers = localInstanceConsumers.Concat(defaultConsumers);
 
@@ -181,9 +181,9 @@ namespace Roger.Internal.Impl
             {
                 log.DebugFormat("Invoking Consume method on consumer {0} for message {1}",
                                 c.GetType(),
-                                currentMessage.MessageType);
+                                _currentMessage.MessageType);
 
-                reflection.InvokeConsume(c, currentMessage.Body);
+                reflection.InvokeConsume(c, _currentMessage.Body);
             }
 
             consumerContainer.Release(defaultConsumers);
@@ -226,7 +226,7 @@ namespace Roger.Internal.Impl
 
         public CurrentMessageInformation CurrentMessage
         {
-            get { return currentMessage; }
+            get { return _currentMessage; }
         }
 
         private IDisposable RemoveInstanceConsumer(WeakReference consumerReference)
