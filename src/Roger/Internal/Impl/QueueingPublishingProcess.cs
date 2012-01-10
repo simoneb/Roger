@@ -12,7 +12,6 @@ namespace Roger.Internal.Impl
     internal class QueueingPublishingProcess : IPublishingProcess
     {
         private readonly IReliableConnection connection;
-        private readonly IBasicReturnHandler basicReturnHandler;
         private readonly IRogerLog log;
         private int disposed;
         private Task publishTask;
@@ -50,8 +49,6 @@ namespace Roger.Internal.Impl
             this.currentLocalEndpoint = currentLocalEndpoint;
             this.modules = modules;
 
-            basicReturnHandler = new DefaultBasicReturnHandler(this.log);
-
             connection.ConnectionEstabilished += ConnectionOnConnectionEstabilished;
             connection.UnexpectedShutdown += ConnectionOnUnexpectedShutdown;
 
@@ -72,7 +69,6 @@ namespace Roger.Internal.Impl
         private void ConnectionOnConnectionEstabilished()
         {
             publishModel = connection.CreateModel();
-            publishModel.BasicReturn += PublishModelOnBasicReturn;
 
             EnablePublishing();
 
@@ -83,13 +79,6 @@ namespace Roger.Internal.Impl
         {
             publishEnabled.Set();
             log.Debug("Publishing is enabled");
-        }
-
-        private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)
-        {
-            // beware, this is called on the RabbitMQ client connection thread, we should not block
-            log.DebugFormat("Model issued a basic return for message {{we can do better here}} with reply {0} - {1}", args.ReplyCode, args.ReplyText);
-            basicReturnHandler.Handle(new BasicReturn(new RogerGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
         public void Start()
@@ -112,13 +101,11 @@ namespace Roger.Internal.Impl
                         
                         var command = factory.Create(publishModel, idGenerator, typeResolver, serializer, sequenceGenerator);
 
-                        modules.BeforePublish(command, publishModel);
-                        
                         log.Debug("Executing publish action");
 
                         try
                         {
-                            command.Execute(publishModel, currentLocalEndpoint(), basicReturnHandler);
+                            command.Execute(publishModel, currentLocalEndpoint(), modules);
                         }
                         /* 
                          * we may experience a newtork problem even before the connection notifies its own shutdown

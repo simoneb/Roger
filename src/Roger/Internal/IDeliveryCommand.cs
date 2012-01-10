@@ -4,6 +4,6 @@ namespace Roger.Internal
 {
     public interface IDeliveryCommand
     {
-        void Execute(IModel model, RogerEndpoint endpoint, IBasicReturnHandler basicReturnHandler);
+        void Execute(IModel model, RogerEndpoint endpoint, IPublishModule modules);
     }
 }

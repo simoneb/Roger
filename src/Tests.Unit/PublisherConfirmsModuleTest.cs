@@ -30,7 +30,7 @@ namespace Tests.Unit
             sut.ConnectionEstablished(model);
             model.NextPublishSeqNo.Returns(1ul, 2ul, 3ul);
 
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model);
+            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
             sut.ProcessUnconfirmed();
 
@@ -43,7 +43,7 @@ namespace Tests.Unit
             sut.ConnectionEstablished(model);
             model.NextPublishSeqNo.Returns(1ul);
 
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model);
+            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
             model.BasicAcks += Raise.Event<BasicAckEventHandler>(model, new BasicAckEventArgs { DeliveryTag = 1, Multiple = false });
 
@@ -58,7 +58,7 @@ namespace Tests.Unit
             sut.ConnectionEstablished(model);
             model.NextPublishSeqNo.Returns(1ul, 2ul, 3ul);
 
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model);
+            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
             sut.ProcessUnconfirmed();
 

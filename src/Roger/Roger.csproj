@@ -46,10 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicReturn.cs" />
+    <Compile Include="Internal\AbstractDeliveryCommand.cs" />
     <Compile Include="Internal\IBindingKeyResolver.cs" />
     <Compile Include="Internal\IDeliveryCommand.cs" />
     <Compile Include="Internal\IDeliveryCommandFactory.cs" />
     <Compile Include="Internal\Impl\AbstractDeliveryCommandFactory.cs" />
+    <Compile Include="Internal\Impl\BasicReturnModule.cs" />
+    <Compile Include="Internal\Impl\CompositePublishModule.cs" />
     <Compile Include="Internal\Impl\DefaultBindingKeyResolver.cs" />
     <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
     <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />

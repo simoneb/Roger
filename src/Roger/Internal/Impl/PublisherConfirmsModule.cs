@@ -18,6 +18,11 @@ namespace Roger.Internal.Impl
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
         }
 
+        public void Initialize(IPublishingProcess publishingProcess)
+        {
+            publisher = publishingProcess;
+        }
+
         public void ConnectionEstablished(IModel publishModel)
         {
             publishModel.BasicAcks += PublishModelOnBasicAcks;
@@ -26,14 +31,9 @@ namespace Roger.Internal.Impl
             log = new NullLog();
         }
 
-        public void BeforePublish(IDeliveryCommand command, IModel publishModel)
+        public void BeforePublish(IDeliveryCommand command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
         {
             unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, consideredUnconfirmedAfter));
-        }
-
-        public void Initialize(IPublishingProcess publishingProcess)
-        {
-            publisher = publishingProcess;
         }
 
         private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)

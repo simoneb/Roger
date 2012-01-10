@@ -59,7 +59,7 @@ namespace Roger
                                                               Default.TypeResolver,
                                                               this.log,
                                                               () => LocalEndpoint,
-                                                              new PublisherConfirmsModule());
+                                                              new CompositePublishModule(new PublisherConfirmsModule(), new BasicReturnModule()));
 
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,
