@@ -57,7 +57,7 @@ namespace Roger.Internal.Impl
 
             if (args.Multiple)
             {
-                log.DebugFormat("Broker confirmed all deliveries up to and including {0}", args.DeliveryTag);
+                log.DebugFormat("Broker confirmed all deliveries up to and including #{0}", args.DeliveryTag);
 
                 var toRemove = unconfirmedCommands.Keys.Where(tag => tag <= args.DeliveryTag).ToArray();
 
@@ -66,19 +66,19 @@ namespace Roger.Internal.Impl
             }
             else
             {
-                log.DebugFormat("Broker confirmed delivery {0}", args.DeliveryTag);
+                log.DebugFormat("Broker confirmed delivery #{0}", args.DeliveryTag);
                 unconfirmedCommands.TryRemove(args.DeliveryTag, out _);
             }
 
-            log.DebugFormat("Deliveries yet to be confirmed: {0}", unconfirmedCommands.Count);
+            log.DebugFormat("Left to be confirmed: {0}", unconfirmedCommands.Count);
         }
 
         private void PublishModelOnBasicNacks(IModel model, BasicNackEventArgs args)
         {
             if (args.Multiple)
-                log.WarnFormat("Broker nacked all deliveries up to and including {0}", args.DeliveryTag);
+                log.WarnFormat("Broker nacked all deliveries up to and including #{0}", args.DeliveryTag);
             else
-                log.WarnFormat("Broker nacked delivery {0}", args.DeliveryTag);
+                log.WarnFormat("Broker nacked delivery #{0}", args.DeliveryTag);
         }
 
         private void ProcessUnconfirmed()

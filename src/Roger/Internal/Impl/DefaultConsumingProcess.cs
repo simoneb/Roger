@@ -99,7 +99,13 @@ namespace Roger.Internal.Impl
 
             var allExchanges = new HashSet<string>();
 
-            log.Debug("Performing pub/sub bindings");
+            if(!messageTypes.Any())
+            {
+                log.Debug("No binding to perform");
+                return;
+            }
+
+            log.Debug("Performing standard bindings");
 
             foreach (var messageType in messageTypes)
             {
@@ -116,7 +122,7 @@ namespace Roger.Internal.Impl
                 receivingModel.QueueBind(Endpoint.Queue, exchange, bindingKey);
             }
 
-            log.Debug("Performing private messages bindings");
+            log.Debug("Performing private bindings");
 
             foreach (var exchange in allExchanges)
             {
