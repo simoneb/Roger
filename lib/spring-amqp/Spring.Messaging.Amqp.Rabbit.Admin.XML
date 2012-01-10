@@ -391,19 +391,6 @@
             </summary>
             <returns>The default node name.</returns>
         </member>
-        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
-            </summary>
-        </member>
-        <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
-            Create an instance by supplying the erlang node name (e.g. "rabbit@myserver"), or simply the hostname (if the
-            alive name is "rabbit").
-            </summary>
-            <param name="nodeName">The node name or hostname to use.</param>
-        </member>
         <member name="M:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin.#ctor(System.String,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:Spring.Messaging.Amqp.Rabbit.Admin.RabbitBrokerAdmin"/> class.
