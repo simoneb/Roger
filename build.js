@@ -15,7 +15,7 @@ task('unit-test', 'build', function () {
 	.run();
 });
 
-task('integration-test', 'test', function() {
+task('integration-test', 'unit-test', function() {
 	createRunner()
 	.args('src/Tests.Integration/bin/Release/Tests.Integration.dll')
 	.run();
