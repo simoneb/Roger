@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Linq;
+using RabbitMQ.Client.Exceptions;
 
 namespace Roger.Internal.Impl
 {
@@ -58,6 +60,11 @@ namespace Roger.Internal.Impl
 
         private void ConnectionOnUnexpectedShutdown(ShutdownEventArgs shutdownEventArgs)
         {
+            DisablePublishing();
+        }
+
+        private void DisablePublishing()
+        {
             log.Warn("Disabling publishing due to unexpected connection shutdown");
             publishEnabled.Reset();
         }
@@ -108,7 +115,10 @@ namespace Roger.Internal.Impl
 
         private void PublishModelOnBasicNacks(IModel model, BasicNackEventArgs args)
         {
-            
+            if (args.Multiple)
+                log.WarnFormat("Broker nacked all deliveries up to and including {0}", args.DeliveryTag);
+            else
+                log.WarnFormat("Broker nacked delivery {0}", args.DeliveryTag);
         }
 
         private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)
@@ -136,16 +146,29 @@ namespace Roger.Internal.Impl
                             break;
                         }
                         
-                        var command = factory.Create(publishModel,
-                                                     idGenerator,
-                                                     typeResolver,
-                                                     serializer,
-                                                     sequenceGenerator);
+                        var command = factory.Create(publishModel, idGenerator, typeResolver, serializer, sequenceGenerator);
 
                         unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, republishUnconfirmedMessagesThreshold));
 
                         log.Debug("Executing publish action");
-                        command.Execute(publishModel, currentLocalEndpoint(), basicReturnHandler); // TODO: handle failure
+
+                        try
+                        {
+                            command.Execute(publishModel, currentLocalEndpoint(), basicReturnHandler);
+                        }
+                        /* 
+                         * we may experience a newtork problem even before the connection notifies its own shutdown
+                         * but it's safer not to disable publishing to avoid the risk of deadlocking
+                         * Instead we catch the exception and hopefully republish these messages
+                         */
+                        catch (AlreadyClosedException e)
+                        {
+                            log.ErrorFormat("Model was already closed when trying to publish on it\r\n{0}", e);
+                        }
+                        catch (IOException e)
+                        {
+                            log.ErrorFormat("IO error when trying to publish\r\n{0}", e);
+                        }
                     }
                 }
                 catch (OperationCanceledException)

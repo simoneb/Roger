@@ -33,7 +33,7 @@ namespace Roger.Internal.Impl
             {
                 connection = connectionFactory.CreateConnection();
             }
-            catch (BrokerUnreachableException e)
+            catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this one only
             {
                 log.ErrorFormat("Cannot create connection, broker is unreachable\r\n{0}", e);
 

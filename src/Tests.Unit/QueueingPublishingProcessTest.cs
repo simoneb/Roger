@@ -11,7 +11,7 @@ using Roger.Internal.Impl;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class QueueingPublisherTest
+    public class QueueingPublishingProcessTest
     {
         private IReliableConnection connection;
         private QueueingPublishingProcess sut;

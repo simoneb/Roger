@@ -62,7 +62,7 @@
     <Compile Include="GenericsTest.cs" />
     <Compile Include="MEF\MEFConsumerContainerTests.cs" />
     <Compile Include="Message_type_serialization.cs" />
-    <Compile Include="QueueingPublisherTest.cs" />
+    <Compile Include="QueueingPublishingProcessTest.cs" />
     <Compile Include="ResequencingFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RogerEndpointTest.cs" />
