@@ -58,8 +58,7 @@ namespace Roger
                                                               serializer,
                                                               Default.TypeResolver,
                                                               this.log,
-                                                              () => LocalEndpoint,
-                                                              TimeSpan.FromSeconds(10));
+                                                              () => LocalEndpoint);
 
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,

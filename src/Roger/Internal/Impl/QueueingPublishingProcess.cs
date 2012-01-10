@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Linq;
 using RabbitMQ.Client.Exceptions;
 
 namespace Roger.Internal.Impl
@@ -21,7 +20,6 @@ namespace Roger.Internal.Impl
         private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
         private IModel publishModel;
-        private readonly ConcurrentDictionary<ulong, IUnconfirmedCommandFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedCommandFactory>();
         private readonly IIdGenerator idGenerator;
         private readonly ISequenceGenerator sequenceGenerator;
         private readonly IExchangeResolver exchangeResolver;
@@ -29,7 +27,7 @@ namespace Roger.Internal.Impl
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
         private readonly Func<RogerEndpoint> currentLocalEndpoint;
-        private readonly TimeSpan republishUnconfirmedMessagesThreshold;
+        private readonly IPublishingModule modules;
 
         internal QueueingPublishingProcess(IReliableConnection connection,
                                            IIdGenerator idGenerator,
@@ -39,7 +37,7 @@ namespace Roger.Internal.Impl
                                            ITypeResolver typeResolver,
                                            IRogerLog log,
                                            Func<RogerEndpoint> currentLocalEndpoint,
-                                           TimeSpan republishUnconfirmedMessagesThreshold)
+                                           IPublishingModule modules = null)
         {
             this.connection = connection;
             this.log = log;
@@ -50,12 +48,14 @@ namespace Roger.Internal.Impl
             this.serializer = serializer;
             this.typeResolver = typeResolver;
             this.currentLocalEndpoint = currentLocalEndpoint;
-            this.republishUnconfirmedMessagesThreshold = republishUnconfirmedMessagesThreshold;
+            this.modules = modules;
 
             basicReturnHandler = new DefaultBasicReturnHandler(this.log);
 
             connection.ConnectionEstabilished += ConnectionOnConnectionEstabilished;
             connection.UnexpectedShutdown += ConnectionOnUnexpectedShutdown;
+
+            modules.Initialize(this);
         }
 
         private void ConnectionOnUnexpectedShutdown(ShutdownEventArgs shutdownEventArgs)
@@ -71,54 +71,18 @@ namespace Roger.Internal.Impl
 
         private void ConnectionOnConnectionEstabilished()
         {
-            CreatePublishModel();
-            EnablePublishing();
-        }
-
-        private void CreatePublishModel()
-        {
             publishModel = connection.CreateModel();
-
-            publishModel.BasicAcks += PublishModelOnBasicAcks;
-            publishModel.BasicNacks += PublishModelOnBasicNacks;
             publishModel.BasicReturn += PublishModelOnBasicReturn;
-            publishModel.ConfirmSelect();
+
+            EnablePublishing();
+
+            modules.ConnectionEstablished(publishModel);
         }
 
         private void EnablePublishing()
         {
             publishEnabled.Set();
             log.Debug("Publishing is enabled");
-        }
-
-        private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)
-        {
-            IUnconfirmedCommandFactory _;
-
-            if (args.Multiple)
-            {
-                log.DebugFormat("Broker confirmed all deliveries up to and including {0}", args.DeliveryTag);
-
-                var toRemove = unconfirmedCommands.Keys.Where(tag => tag <= args.DeliveryTag).ToArray();
-
-                foreach (var tag in toRemove)
-                    unconfirmedCommands.TryRemove(tag, out _);
-            }
-            else
-            {
-                log.DebugFormat("Broker confirmed delivery {0}", args.DeliveryTag);
-                unconfirmedCommands.TryRemove(args.DeliveryTag, out _);
-            }
-
-            log.DebugFormat("Deliveries yet to be confirmed: {0}", unconfirmedCommands.Count);
-        }
-
-        private void PublishModelOnBasicNacks(IModel model, BasicNackEventArgs args)
-        {
-            if (args.Multiple)
-                log.WarnFormat("Broker nacked all deliveries up to and including {0}", args.DeliveryTag);
-            else
-                log.WarnFormat("Broker nacked delivery {0}", args.DeliveryTag);
         }
 
         private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)
@@ -148,8 +112,8 @@ namespace Roger.Internal.Impl
                         
                         var command = factory.Create(publishModel, idGenerator, typeResolver, serializer, sequenceGenerator);
 
-                        unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, republishUnconfirmedMessagesThreshold));
-
+                        modules.BeforePublish(command, publishModel);
+                        
                         log.Debug("Executing publish action");
 
                         try
@@ -180,6 +144,11 @@ namespace Roger.Internal.Impl
                     log.Error("Publishing queue was disposed while iterating over it, this is not supposed to be happening");
                 }
             }, TaskCreationOptions.LongRunning);
+        }
+
+        public void Process(IDeliveryCommandFactory factory)
+        {
+            Enqueue(factory);
         }
 
         private void Enqueue(IDeliveryCommandFactory factory)
@@ -303,16 +272,5 @@ namespace Roger.Internal.Impl
             publishTask.Dispose();
         }
 
-        internal void ProcessUnconfirmed()
-        {
-            var toProcess = unconfirmedCommands.Where(p => p.Value.CanExecute);
-
-            foreach (var tp in toProcess)
-            {
-                IUnconfirmedCommandFactory publish;
-                unconfirmedCommands.TryRemove(tp.Key, out publish);
-                Enqueue(publish);         
-            }
-        }
     }
 }

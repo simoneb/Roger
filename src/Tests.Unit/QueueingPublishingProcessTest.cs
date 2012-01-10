@@ -31,8 +31,7 @@ namespace Tests.Unit
                                                 Substitute.For<IMessageSerializer>(),
                                                 Substitute.For<ITypeResolver>(), 
                                                 Substitute.For<IRogerLog>(),
-                                                Substitute.For<Func<RogerEndpoint>>(), 
-                                                TimeSpan.Zero);
+                                                Substitute.For<Func<RogerEndpoint>>());
             sut.Start();
         }
 
