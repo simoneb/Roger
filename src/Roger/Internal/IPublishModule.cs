@@ -1,8 +1,8 @@
 using RabbitMQ.Client;
 
-namespace Roger.Internal.Impl
+namespace Roger.Internal
 {
-    internal interface IPublishingModule
+    public interface IPublishModule
     {
         void ConnectionEstablished(IModel publishModel);
         void BeforePublish(IDeliveryCommand command, IModel publishModel);

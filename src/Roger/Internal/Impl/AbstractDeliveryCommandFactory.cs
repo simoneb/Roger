@@ -14,11 +14,11 @@ namespace Roger.Internal.Impl
         }
 
         protected Func<RogerEndpoint, IBasicProperties> CreateProperties(IModel model,
-                                                                          IIdGenerator idGenerator,
-                                                                          ITypeResolver typeResolver,
-                                                                          IMessageSerializer serializer,
-                                                                          ISequenceGenerator sequenceGenerator,
-                                                                          params Action<IBasicProperties>[] additionalActions)
+                                                                         IIdGenerator idGenerator,
+                                                                         ITypeResolver typeResolver,
+                                                                         IMessageSerializer serializer,
+                                                                         ISequenceGenerator sequenceGenerator,
+                                                                         params Action<IBasicProperties>[] additionalActions)
         {
             var properties = model.CreateBasicProperties();
 

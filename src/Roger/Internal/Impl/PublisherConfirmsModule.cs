@@ -6,14 +6,14 @@ using RabbitMQ.Client.Events;
 
 namespace Roger.Internal.Impl
 {
-    class PublisherConfirmsModule : IPublishingModule
+    internal class PublisherConfirmsModule : IPublishModule
     {
         private NullLog log;
         private readonly ConcurrentDictionary<ulong, IUnconfirmedCommandFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedCommandFactory>();
-        private readonly TimeSpan consideredUnconfirmedAfter;
+        private readonly TimeSpan? consideredUnconfirmedAfter;
         private IPublishingProcess publisher;
 
-        public PublisherConfirmsModule(TimeSpan consideredUnconfirmedAfter)
+        public PublisherConfirmsModule(TimeSpan? consideredUnconfirmedAfter = null)
         {
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
         }

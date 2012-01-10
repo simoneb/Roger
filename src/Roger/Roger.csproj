@@ -53,7 +53,6 @@
     <Compile Include="Internal\Impl\DefaultBindingKeyResolver.cs" />
     <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
     <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />
-    <Compile Include="Internal\Impl\IPublishingModule.cs" />
     <Compile Include="Internal\Impl\MandatoryCommand.cs" />
     <Compile Include="Internal\Impl\NoLocalFilter.cs" />
     <Compile Include="Internal\Impl\PublishCommand.cs" />
@@ -68,6 +67,7 @@
     <Compile Include="Internal\Impl\SendCommand.cs" />
     <Compile Include="Internal\Impl\SendCommandFactory.cs" />
     <Compile Include="Internal\Impl\UnconfirmedCommandFactory.cs" />
+    <Compile Include="Internal\IPublishModule.cs" />
     <Compile Include="Internal\IQueueFactory.cs" />
     <Compile Include="Internal\IReliableConnection.cs" />
     <Compile Include="Internal\Impl\ReliableConnection.cs" />

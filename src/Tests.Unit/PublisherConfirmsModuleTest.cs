@@ -1,4 +1,3 @@
-using System;
 using MbUnit.Framework;
 using NSubstitute;
 using RabbitMQ.Client;
@@ -9,7 +8,7 @@ using Roger.Internal.Impl;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class PublishConfirmsModuleTest
+    public class PublisherConfirmsModuleTest
     {
         private PublisherConfirmsModule sut;
         private IPublishingProcess publishingProcess;
@@ -18,7 +17,7 @@ namespace Tests.Unit
         [SetUp]
         public void Setup()
         {
-            sut = new PublisherConfirmsModule(TimeSpan.Zero);
+            sut = new PublisherConfirmsModule();
             publishingProcess = Substitute.For<IPublishingProcess>();
             model = Substitute.For<IModel>();
 
@@ -35,7 +34,7 @@ namespace Tests.Unit
 
             sut.ProcessUnconfirmed();
 
-            publishingProcess.ReceivedWithAnyArgs(2).Process(null);
+            publishingProcess.ReceivedWithAnyArgs(1).Process(null);
         }
 
         [Test]
@@ -50,7 +49,7 @@ namespace Tests.Unit
 
             sut.ProcessUnconfirmed();
 
-            publishingProcess.ReceivedWithAnyArgs(1).Process(null);
+            publishingProcess.ReceivedWithAnyArgs(0).Process(null);
         }
 
         [Test]
@@ -67,7 +66,7 @@ namespace Tests.Unit
 
             sut.ProcessUnconfirmed();
 
-            publishingProcess.ReceivedWithAnyArgs(2).Process(null);
+            publishingProcess.ReceivedWithAnyArgs(1).Process(null);
         }
     }
 }

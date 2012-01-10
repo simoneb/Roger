@@ -27,7 +27,7 @@ namespace Roger.Internal.Impl
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
         private readonly Func<RogerEndpoint> currentLocalEndpoint;
-        private readonly IPublishingModule modules;
+        private readonly IPublishModule modules;
 
         internal QueueingPublishingProcess(IReliableConnection connection,
                                            IIdGenerator idGenerator,
@@ -37,7 +37,7 @@ namespace Roger.Internal.Impl
                                            ITypeResolver typeResolver,
                                            IRogerLog log,
                                            Func<RogerEndpoint> currentLocalEndpoint,
-                                           IPublishingModule modules = null)
+                                           IPublishModule modules)
         {
             this.connection = connection;
             this.log = log;
