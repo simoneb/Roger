@@ -117,29 +117,29 @@ namespace Roger
             return consumingProcess.AddInstanceSubscription(instanceConsumer);
         }
 
-        public void Publish(object message)
+        public void Publish(object message, bool persistent = true)
         {
-            publishingProcess.Publish(message);
+            publishingProcess.Publish(message, persistent);
         }
 
-        public void Request(object message, Action<BasicReturn> basicReturnCallback = null)
+        public void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.Request(message, basicReturnCallback);
+            publishingProcess.Request(message, basicReturnCallback, persistent);
         }
 
-        public void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null)
+        public void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.Send(endpoint, message, basicReturnCallback);
+            publishingProcess.Send(endpoint, message, basicReturnCallback, persistent);
         }
 
-        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null)
+        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.PublishMandatory(message, basicReturnCallback);
+            publishingProcess.PublishMandatory(message, basicReturnCallback, persistent);
         }
 
-        public void Reply(object message, Action<BasicReturn> basicReturnCallback = null)
+        public void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.Reply(message, CurrentMessage, basicReturnCallback);
+            publishingProcess.Reply(message, CurrentMessage, basicReturnCallback, persistent);
         }
 
         public void Consume(object message)

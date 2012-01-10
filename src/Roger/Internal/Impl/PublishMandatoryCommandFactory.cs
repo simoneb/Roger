@@ -9,19 +9,22 @@ namespace Roger.Internal.Impl
         private readonly string routingKey;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
+        private readonly bool persistent;
 
-        public PublishMandatoryCommandFactory(Type messageType, string exchange, string routingKey, byte[] body, Action<BasicReturn> basicReturnCallback) : base(messageType)
+        public PublishMandatoryCommandFactory(Type messageType, string exchange, string routingKey, byte[] body, Action<BasicReturn> basicReturnCallback, bool persistent) : base(messageType)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;
             this.body = body;
             this.basicReturnCallback = basicReturnCallback;
+            this.persistent = persistent;
         }
 
         public override IDeliveryCommand Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
         {
-            var properties = CreateProperties(model, idGenerator, typeResolver, serializer, sequenceGenerator);
-            return new PublishMandatoryCommand(exchange, routingKey, body, basicReturnCallback, properties);
+            var createProperties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator, persistent);
+
+            return new PublishMandatoryCommand(exchange, routingKey, body, basicReturnCallback, createProperties);
         }
     }
 }

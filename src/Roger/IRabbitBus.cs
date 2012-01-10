@@ -39,7 +39,8 @@ namespace Roger
         /// Publishes a message so that subscribers will receive it
         /// </summary>
         /// <param name="message">The message to be published</param>
-        void Publish(object message);
+        /// <param name="persistent"> </param>
+        void Publish(object message, bool persistent = true);
 
         /// <summary>
         /// Publishes a message so that every subscriber will receive it, 
@@ -47,7 +48,8 @@ namespace Roger
         /// </summary>
         /// <param name="message">The message to be published</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscriber</param>
-        void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null);
+        /// <param name="persistent"> </param>
+        void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
 
         /// <summary>
         /// Sends a request by means of <paramref name="message"/>, expecting a reply,
@@ -56,14 +58,16 @@ namespace Roger
         /// </summary>
         /// <param name="message">The request message</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>
-        void Request(object message, Action<BasicReturn> basicReturnCallback = null);
+        /// <param name="persistent"> </param>
+        void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
 
         /// <summary>
         /// Replies to a request sent by means of <see cref="Request(object)"/>
         /// </summary>
         /// <param name="message">The response message</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>
-        void Reply(object message, Action<BasicReturn> basicReturnCallback = null);
+        /// <param name="persistent"> </param>
+        void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
 
         /// <summary>
         /// Manually shove a message into the bus and let consumers consume it
@@ -77,7 +81,8 @@ namespace Roger
         /// <param name="endpoint">The recipient endpoint of the message</param>
         /// <param name="message">The message</param>
         /// <param name="basicReturnCallback">A callback invoked if the message could not be routed to the endpoint</param>
-        void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null);
+        /// <param name="persistent"> </param>
+        void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
 
         /// <summary>
         /// Fired when the bus is started successfully

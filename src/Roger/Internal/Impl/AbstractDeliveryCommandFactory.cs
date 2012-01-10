@@ -13,12 +13,13 @@ namespace Roger.Internal.Impl
             this.messageType = messageType;
         }
 
-        protected Func<RogerEndpoint, IBasicProperties> CreateProperties(IModel model,
-                                                                         IIdGenerator idGenerator,
-                                                                         ITypeResolver typeResolver,
-                                                                         IMessageSerializer serializer,
-                                                                         ISequenceGenerator sequenceGenerator,
-                                                                         params Action<IBasicProperties>[] additionalActions)
+        protected Func<RogerEndpoint, IBasicProperties> CreatePropertiesFactory(IModel model,
+                                                                                IIdGenerator idGenerator,
+                                                                                ITypeResolver typeResolver,
+                                                                                IMessageSerializer serializer,
+                                                                                ISequenceGenerator sequenceGenerator,
+                                                                                bool persistent,
+                                                                                params Action<IBasicProperties>[] additionalActions)
         {
             var properties = model.CreateBasicProperties();
 
@@ -30,6 +31,9 @@ namespace Roger.Internal.Impl
             {
                 {Headers.Sequence, BitConverter.GetBytes(sequenceGenerator.Next())}
             };
+
+            if (persistent)
+                properties.DeliveryMode = 2;
 
             foreach (var additionalAction in additionalActions)
                 additionalAction(properties);

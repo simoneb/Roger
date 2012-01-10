@@ -9,18 +9,20 @@ namespace Roger.Internal.Impl
         private readonly CurrentMessageInformation currentMessage;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
+        private bool persistent;
 
-        public ReplyCommandFactory(Type messageType, string exchange, CurrentMessageInformation currentMessage, byte[] body, Action<BasicReturn> basicReturnCallback) : base(messageType)
+        public ReplyCommandFactory(Type messageType, string exchange, CurrentMessageInformation currentMessage, byte[] body, Action<BasicReturn> basicReturnCallback, bool persistent) : base(messageType)
         {
             this.exchange = exchange;
             this.currentMessage = currentMessage;
             this.body = body;
             this.basicReturnCallback = basicReturnCallback;
+            this.persistent = persistent;
         }
 
         public override IDeliveryCommand Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
         {
-            var properties = CreateProperties(model, idGenerator, typeResolver, serializer, sequenceGenerator, p => p.CorrelationId = currentMessage.CorrelationId);
+            var properties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator, persistent, p => p.CorrelationId = currentMessage.CorrelationId);
 
             return new ReplyCommand(exchange, currentMessage.Endpoint, body, basicReturnCallback, properties);
         }

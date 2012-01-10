@@ -48,7 +48,7 @@ namespace Tests.Unit
         {
             connection.ConnectionEstabilished += Raise.Event<Action>();
 
-            sut.Publish(new object());
+            sut.Publish(new object(), false);
 
             Thread.Sleep(100);
 
@@ -67,7 +67,7 @@ namespace Tests.Unit
         {
             connection.ConnectionEstabilished += Raise.Event<Action>();
 
-            sut.Publish(new object());
+            sut.Publish(new object(), false);
 
             Thread.Sleep(100);
 
@@ -77,7 +77,7 @@ namespace Tests.Unit
         [Test]
         public void Should_not_publish_messages_until_connection_is_established()
         {
-            sut.Publish(new object());
+            sut.Publish(new object(), false);
 
             Thread.Sleep(100);
 
