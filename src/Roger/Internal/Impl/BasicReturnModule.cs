@@ -31,5 +31,13 @@ namespace Roger.Internal.Impl
             if (basicReturnCallback != null)
                 basicReturnHandler.Subscribe(new RogerGuid(properties.MessageId), basicReturnCallback);
         }
+
+        public void ConnectionUnexpectedShutdown()
+        {
+        }
+
+        public void Dispose()
+        {
+        }
     }
 }

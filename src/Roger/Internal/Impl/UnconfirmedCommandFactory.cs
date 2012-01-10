@@ -19,7 +19,7 @@ namespace Roger.Internal.Impl
 
         public bool CanExecute
         {
-            get { return !consideredUnconfirmedAfter.HasValue || created + consideredUnconfirmedAfter >= SystemTime.Now; }
+            get { return !consideredUnconfirmedAfter.HasValue || SystemTime.Now >= created + consideredUnconfirmedAfter; }
         }
 
         public IDeliveryCommand Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)

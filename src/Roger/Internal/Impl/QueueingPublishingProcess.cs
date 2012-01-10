@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 
 namespace Roger.Internal.Impl
@@ -55,30 +54,31 @@ namespace Roger.Internal.Impl
             modules.Initialize(this);
         }
 
-        private void ConnectionOnUnexpectedShutdown(ShutdownEventArgs shutdownEventArgs)
-        {
-            DisablePublishing();
-        }
-
-        private void DisablePublishing()
-        {
-            log.Warn("Disabling publishing due to unexpected connection shutdown");
-            publishEnabled.Reset();
-        }
-
         private void ConnectionOnConnectionEstabilished()
         {
             publishModel = connection.CreateModel();
+            modules.ConnectionEstablished(publishModel);
 
             EnablePublishing();
-
-            modules.ConnectionEstablished(publishModel);
         }
 
         private void EnablePublishing()
         {
             publishEnabled.Set();
             log.Debug("Publishing is enabled");
+        }
+
+        private void ConnectionOnUnexpectedShutdown(ShutdownEventArgs shutdownEventArgs)
+        {
+            DisablePublishing();
+
+            modules.ConnectionUnexpectedShutdown();
+        }
+
+        private void DisablePublishing()
+        {
+            log.Warn("Disabling publishing due to unexpected connection shutdown");
+            publishEnabled.Reset();
         }
 
         public void Start()

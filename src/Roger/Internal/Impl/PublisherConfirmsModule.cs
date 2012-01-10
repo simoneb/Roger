@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -8,19 +10,24 @@ namespace Roger.Internal.Impl
 {
     internal class PublisherConfirmsModule : IPublishModule
     {
-        private NullLog log;
+        private readonly IRogerLog log;
         private readonly ConcurrentDictionary<ulong, IUnconfirmedCommandFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedCommandFactory>();
+        private readonly ITimer timer;
         private readonly TimeSpan? consideredUnconfirmedAfter;
         private IPublishingProcess publisher;
+        private int disposed;
 
-        public PublisherConfirmsModule(TimeSpan? consideredUnconfirmedAfter = null)
+        public PublisherConfirmsModule(ITimer timer, TimeSpan? consideredUnconfirmedAfter = null)
         {
+            this.timer = timer;
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
+            log = new NullLog();
         }
 
         public void Initialize(IPublishingProcess publishingProcess)
         {
             publisher = publishingProcess;
+            timer.Callback += ProcessUnconfirmed;
         }
 
         public void ConnectionEstablished(IModel publishModel)
@@ -28,12 +35,20 @@ namespace Roger.Internal.Impl
             publishModel.BasicAcks += PublishModelOnBasicAcks;
             publishModel.BasicNacks += PublishModelOnBasicNacks;
             publishModel.ConfirmSelect();
-            log = new NullLog();
+
+            ForceProcessUnconfirmed();
+
+            timer.Start();
         }
 
         public void BeforePublish(IDeliveryCommand command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
         {
             unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, consideredUnconfirmedAfter));
+        }
+
+        public void ConnectionUnexpectedShutdown()
+        {
+            timer.Stop();
         }
 
         private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)
@@ -66,9 +81,19 @@ namespace Roger.Internal.Impl
                 log.WarnFormat("Broker nacked delivery {0}", args.DeliveryTag);
         }
 
-        internal void ProcessUnconfirmed()
+        private void ProcessUnconfirmed()
         {
-            var toProcess = unconfirmedCommands.Where(p => p.Value.CanExecute);
+            ProcessCommands(unconfirmedCommands.Where(p => p.Value.CanExecute));
+        }
+
+        private void ForceProcessUnconfirmed()
+        {
+            ProcessCommands(unconfirmedCommands);
+        }
+
+        private void ProcessCommands(IEnumerable<KeyValuePair<ulong, IUnconfirmedCommandFactory>> toProcess)
+        {
+            log.Info("Processing unconfirmed messages");
 
             foreach (var tp in toProcess)
             {
@@ -76,6 +101,14 @@ namespace Roger.Internal.Impl
                 unconfirmedCommands.TryRemove(tp.Key, out publish);
                 publisher.Process(publish);
             }
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
+                return;
+
+            timer.Callback -= ProcessUnconfirmed;
         }
     }
 }

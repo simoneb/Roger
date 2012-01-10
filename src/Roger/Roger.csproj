@@ -69,6 +69,7 @@
     <Compile Include="Internal\Impl\RequestCommandFactory.cs" />
     <Compile Include="Internal\Impl\SendCommand.cs" />
     <Compile Include="Internal\Impl\SendCommandFactory.cs" />
+    <Compile Include="Internal\Impl\SystemThreadingTimer.cs" />
     <Compile Include="Internal\Impl\UnconfirmedCommandFactory.cs" />
     <Compile Include="Internal\IPublishModule.cs" />
     <Compile Include="Internal\IQueueFactory.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Internal\Impl\RandomIdGenerator.cs" />
     <Compile Include="Internal\IRoutingKeyResolver.cs" />
     <Compile Include="Internal\ISupportedMessageTypesResolver.cs" />
+    <Compile Include="Internal\ITimer.cs" />
     <Compile Include="Internal\IUnconfirmedCommandFactory.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />

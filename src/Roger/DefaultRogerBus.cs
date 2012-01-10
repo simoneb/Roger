@@ -18,6 +18,8 @@ namespace Roger
         private readonly IRogerLog log;
         private readonly IPublishingProcess publishingProcess;
         private int disposed;
+        private SystemThreadingTimer publisherConfirmsTimer;
+        private CompositePublishModule publishModule;
 
         /// <summary>
         /// 
@@ -51,6 +53,10 @@ namespace Roger
 
             connection = new ReliableConnection(connectionFactory, this.log);
 
+            publisherConfirmsTimer = new SystemThreadingTimer(TimeSpan.FromSeconds(1));
+            publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsTimer),
+                                                       new BasicReturnModule());
+
             publishingProcess = new QueueingPublishingProcess(connection,
                                                               idGenerator,
                                                               sequenceGenerator,
@@ -59,7 +65,7 @@ namespace Roger
                                                               Default.TypeResolver,
                                                               this.log,
                                                               () => LocalEndpoint,
-                                                              new CompositePublishModule(new PublisherConfirmsModule(), new BasicReturnModule()));
+                                                              publishModule);
 
             consumingProcess = new DefaultConsumingProcess(connection,
                                                            idGenerator,
@@ -163,6 +169,8 @@ namespace Roger
 
             publishingProcess.Dispose();
             consumingProcess.Dispose();
+            publisherConfirmsTimer.Dispose();
+            publishModule.Dispose();
             connection.Dispose();
         }
     }
