@@ -30,8 +30,8 @@ namespace Tests.Integration.Utils
 
             Environment.SetEnvironmentVariable("RABBITMQ_SERVER", @"..\..\..\..\RabbitMQServer");
             Environment.SetEnvironmentVariable("RABBITMQ_SERVER_START_ARGS", "-setcookie RogerIntegrationTests");
-            Broker = new RabbitBrokerAdmin("rabbit@SIMONEDESKTOP", "RogerIntegrationTests") {StartupTimeout = 10000};
-            ResbitClient = new ResbitClient(Globals.MainHostName, "guest", "guest"); 
+            Broker = new RabbitBrokerAdmin(cookie: "RogerIntegrationTests") {StartupTimeout = 10000};
+            ResbitClient = new ResbitClient(Globals.MainHostName, "guest", "guest");
 
             StartBroker();
 
