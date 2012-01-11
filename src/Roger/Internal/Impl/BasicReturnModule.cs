@@ -38,7 +38,7 @@ namespace Roger.Internal.Impl
                 basicReturnHandler.Subscribe(new RogerGuid(properties.MessageId), basicReturnCallback);
         }
 
-        public void AfterPublishDisabled()
+        public void AfterPublishDisabled(IModel publishModel)
         {
         }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,26 +85,36 @@ namespace Roger.Internal.Impl
         private void CreateConsumer()
         {
             queueConsumer = new QueueingBasicConsumer(receivingModel);
-            receivingModel.BasicConsume(Endpoint.Queue, false, "", noLocal, false, null, queueConsumer);
+
+            try
+            {
+                receivingModel.BasicConsume(Endpoint.Queue, false, "", noLocal, false, null, queueConsumer);
+            }
+            catch (OperationInterruptedException e)
+            {
+                log.ErrorFormat("Operation interrupted while invoking BasicConsume method\r\n{0}", e);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("Exception while invoking BasicConsume method\r\n{0}", e);
+            }
         }
 
         public RogerEndpoint Endpoint { get; private set; }
 
-// ReSharper disable ParameterTypeCanBeEnumerable.Local
         private void CreateBindings(ISet<Type> messageTypes)
-// ReSharper restore ParameterTypeCanBeEnumerable.Local
         {
             // Here we allow eventual duplicate bindings if this method is called multiple times which result
             // in queues being bound to the same exchange with the same arguments
             // http://www.rabbitmq.com/amqp-0-9-1-reference.html#queue.bind
-
-            var allExchanges = new HashSet<string>();
 
             if(!messageTypes.Any())
             {
                 log.Debug("No binding to perform");
                 return;
             }
+
+            var allExchanges = new HashSet<string>();
 
             log.Debug("Performing standard bindings");
 
@@ -152,6 +163,10 @@ namespace Roger.Internal.Impl
                 catch (AlreadyClosedException e)
                 {
                     log.ErrorFormat("Could not ack consumed message because model was already closed\r\n{0}", e);
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("Could not ack consumed message\r\n{0}", e);
                 }
             }
         }
@@ -278,7 +293,11 @@ namespace Roger.Internal.Impl
                 }
                 catch (OperationInterruptedException e)
                 {
-                    log.ErrorFormat("Could not delete queue or dispose model\r\n{0}", e);
+                    log.ErrorFormat("Operation interrupted while deleting queue or disposing model\r\n{0}", e);
+                }
+                catch(Exception e)
+                {
+                    log.ErrorFormat("Exception while deleting queue and disposing model\r\n{0}", e);
                 }
             }
 

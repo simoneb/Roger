@@ -78,7 +78,7 @@ namespace Tests.Unit
             model.NextPublishSeqNo.Returns(1ul);
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
-            sut.AfterPublishDisabled();
+            sut.AfterPublishDisabled(model);
 
             publishingProcess.ReceivedWithAnyArgs(1).Process(null);
         }
@@ -92,7 +92,7 @@ namespace Tests.Unit
             model.NextPublishSeqNo.Returns(1ul);
             sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
 
-            sut.AfterPublishDisabled();
+            sut.AfterPublishDisabled(model);
 
             publishingProcess.ReceivedWithAnyArgs(1).Process(null);
         }

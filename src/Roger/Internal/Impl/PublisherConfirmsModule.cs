@@ -44,9 +44,13 @@ namespace Roger.Internal.Impl
             unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, consideredUnconfirmedAfter));
         }
 
-        public void AfterPublishDisabled()
+        public void AfterPublishDisabled(IModel publishModel)
         {
             timer.Stop();
+
+            // make sure we don't receive unwanted events
+            publishModel.BasicAcks -= PublishModelOnBasicAcks;
+            publishModel.BasicNacks -= PublishModelOnBasicNacks;
 
             ForceProcessUnconfirmed();
         }

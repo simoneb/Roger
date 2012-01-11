@@ -32,10 +32,10 @@ namespace Roger.Internal.Impl
                 module.BeforePublish(command, publishModel, properties, basicReturnCallback);
         }
 
-        public void AfterPublishDisabled()
+        public void AfterPublishDisabled(IModel publishModel)
         {
             foreach (var module in inner)
-                module.AfterPublishDisabled();
+                module.AfterPublishDisabled(publishModel);
         }
 
         public void Dispose()

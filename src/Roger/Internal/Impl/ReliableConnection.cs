@@ -10,13 +10,13 @@ namespace Roger.Internal.Impl
     {
         private readonly IConnectionFactory connectionFactory;
         private readonly IRogerLog log;
-        public event Action ConnectionEstabilished = delegate {  };
         private IConnection connection;
         private bool disposed;
         private Timer initializationTimer;
         private static readonly TimeSpan Never = TimeSpan.FromMilliseconds(-1);
         public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
 
+        public event Action ConnectionEstabilished = delegate {  };
         public event Action ConnectionAttemptFailed = delegate { };
         public event Action GracefulShutdown = delegate { };
         public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
@@ -33,7 +33,7 @@ namespace Roger.Internal.Impl
             {
                 connection = connectionFactory.CreateConnection();
             }
-            catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this one only
+            catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this exception only
             {
                 log.ErrorFormat("Cannot create connection, broker is unreachable\r\n{0}", e);
 

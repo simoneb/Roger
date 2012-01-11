@@ -72,7 +72,7 @@ namespace Roger.Internal.Impl
         {
             DisablePublishing();
 
-            modules.AfterPublishDisabled();
+            modules.AfterPublishDisabled(publishModel);
         }
 
         private void DisablePublishing()
@@ -107,7 +107,7 @@ namespace Roger.Internal.Impl
                         {
                             command.Execute(publishModel, currentLocalEndpoint(), modules);
                         }
-                        /* 
+                            /* 
                          * we may experience a newtork problem even before the connection notifies its own shutdown
                          * but it's safer not to disable publishing to avoid the risk of deadlocking
                          * Instead we catch the exception and hopefully will republish these messages
