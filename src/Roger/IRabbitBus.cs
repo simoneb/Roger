@@ -25,7 +25,8 @@ namespace Roger
         /// <summary>
         /// Starts the bus
         /// </summary>
-        void Start();
+        /// <param name="onFirstConnection">Callback invoked when connection is established for the first time</param>
+        void Start(Action onFirstConnection = null);
 
         /// <summary>
         /// Subscribes a consumer manually to the messages it is interested in
@@ -85,12 +86,7 @@ namespace Roger
         void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
 
         /// <summary>
-        /// Fired when the bus is started successfully
-        /// </summary>
-        event Action Started;
-
-        /// <summary>
-        /// Fired when the connection to the server is either unavailable or lost
+        /// Fired when either an attempt at connecting to the server is unsuccessful or an existing connection is shut down unexpectedly
         /// </summary>
         event Action ConnectionFailure;
     }

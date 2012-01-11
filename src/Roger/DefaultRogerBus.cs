@@ -18,8 +18,8 @@ namespace Roger
         private readonly IRogerLog log;
         private readonly IPublishingProcess publishingProcess;
         private int disposed;
-        private SystemThreadingTimer publisherConfirmsTimer;
-        private CompositePublishModule publishModule;
+        private readonly SystemThreadingTimer publisherConfirmsTimer;
+        private readonly CompositePublishModule publishModule;
 
         /// <summary>
         /// 
@@ -87,7 +87,6 @@ namespace Roger
             connection.UnexpectedShutdown += ConnectionUnexpectedShutdown;
         }
 
-        public event Action Started = delegate { };
         public event Action ConnectionFailure = delegate { };
 
         public CurrentMessageInformation CurrentMessage
@@ -105,11 +104,11 @@ namespace Roger
             get { return connection.ConnectionAttemptInterval; }
         }
 
-        public void Start()
+        public void Start(Action onFirstConnection = null)
         {
             log.Debug("Starting bus");
 
-            connection.Connect();
+            connection.Connect(onFirstConnection);
             publishingProcess.Start();
         }
 
@@ -150,7 +149,6 @@ namespace Roger
 
         private void ConnectionEstabilished()
         {
-            Started();
             log.Debug("Bus started");
         }
 
