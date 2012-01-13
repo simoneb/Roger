@@ -14,7 +14,7 @@ namespace Roger.Internal.Impl
         private readonly IRogerLog log;
         private int disposed;
         private Task publishTask;
-        private readonly BlockingCollection<IDeliveryCommandFactory> publishingQueue = new BlockingCollection<IDeliveryCommandFactory>();
+        private readonly BlockingCollection<IDeliveryFactory> publishingQueue = new BlockingCollection<IDeliveryFactory>();
         private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
         private IModel publishModel;
@@ -133,12 +133,12 @@ namespace Roger.Internal.Impl
             }, TaskCreationOptions.LongRunning);
         }
 
-        public void Process(IDeliveryCommandFactory factory)
+        public void Process(IDeliveryFactory factory)
         {
             Enqueue(factory);
         }
 
-        private void Enqueue(IDeliveryCommandFactory factory)
+        private void Enqueue(IDeliveryFactory factory)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace Roger.Internal.Impl
         {
             var messageType = message.GetType();
 
-            Enqueue(new PublishCommandFactory(messageType,
+            Enqueue(new PublishDeliveryFactory(messageType,
                                               Exchange(messageType),
                                               RoutingKey(messageType),
                                               Serialize(message), 
@@ -170,7 +170,7 @@ namespace Roger.Internal.Impl
         {
             var messageType = message.GetType();
 
-            Enqueue(new RequestCommandFactory(messageType,
+            Enqueue(new RequestDeliveryFactory(messageType,
                                               Exchange(messageType),
                                               RoutingKey(messageType),
                                               Serialize(message),
@@ -182,7 +182,7 @@ namespace Roger.Internal.Impl
         {
             var messageType = message.GetType();
 
-            Enqueue(new SendCommandFactory(messageType,
+            Enqueue(new SendDeliveryFactory(messageType,
                                            Exchange(messageType),
                                            recipient,
                                            Serialize(message),
@@ -194,7 +194,7 @@ namespace Roger.Internal.Impl
         {
             var messageType = message.GetType();
 
-            Enqueue(new PublishMandatoryCommandFactory(messageType,
+            Enqueue(new PublishMandatoryDeliveryFactory(messageType,
                                                        Exchange(messageType),
                                                        RoutingKey(messageType),
                                                        Serialize(message),
@@ -207,7 +207,7 @@ namespace Roger.Internal.Impl
             EnsureRequestContext(currentMessage);
             ValidateReplyMessage(message);
 
-            Enqueue(new ReplyCommandFactory(message.GetType(),
+            Enqueue(new ReplyDeliveryFactory(message.GetType(),
                                             Exchange(currentMessage.MessageType),
                                             currentMessage,
                                             Serialize(message),

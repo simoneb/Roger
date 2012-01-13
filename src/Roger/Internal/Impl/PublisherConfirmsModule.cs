@@ -11,7 +11,7 @@ namespace Roger.Internal.Impl
     internal class PublisherConfirmsModule : IPublishModule
     {
         private readonly IRogerLog log;
-        private readonly ConcurrentDictionary<ulong, IUnconfirmedCommandFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedCommandFactory>();
+        private readonly ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory>();
         private readonly ITimer timer;
         private readonly TimeSpan? consideredUnconfirmedAfter;
         private IPublishingProcess publisher;
@@ -39,9 +39,9 @@ namespace Roger.Internal.Impl
             timer.Start();
         }
 
-        public void BeforePublish(IDeliveryCommand command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
+        public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
         {
-            unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedCommandFactory(command, consideredUnconfirmedAfter));
+            unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedDeliveryFactory(command, consideredUnconfirmedAfter));
         }
 
         public void AfterPublishDisabled(IModel publishModel)
@@ -57,7 +57,7 @@ namespace Roger.Internal.Impl
 
         private void PublishModelOnBasicAcks(IModel model, BasicAckEventArgs args)
         {
-            IUnconfirmedCommandFactory _;
+            IUnconfirmedDeliveryFactory _;
 
             if (args.Multiple)
             {
@@ -103,7 +103,7 @@ namespace Roger.Internal.Impl
 
                 foreach (var tp in toProcess)
                 {
-                    IUnconfirmedCommandFactory publish;
+                    IUnconfirmedDeliveryFactory publish;
 
                     if(unconfirmedCommands.TryRemove(tp, out publish))
                         publisher.Process(publish);

@@ -35,6 +35,7 @@ namespace Tests.Unit
                                               Enumerable.Empty<IMessageFilter>(),
                                               Substitute.For<IRogerLog>(), 
                                               queueFactory, 
+                                              Substitute.For<IConsumerInvoker>(),
                                               false);
         }
 

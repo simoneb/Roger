@@ -11,12 +11,7 @@ namespace Roger.Utilities
             return messageType.IsDefined(typeof (RogerReplyAttribute), false);
         }
 
-        internal static IEnumerable<T> Return<T>(this T value)
-        {
-            yield return value;
-        }
-
-        internal static IEnumerable<Type> ConsumerOf(this IEnumerable<Type> messageTypes)
+        internal static IEnumerable<Type> ConsumersOf(this IEnumerable<Type> messageTypes)
         {
             return messageTypes.Select(m => typeof (IConsumer<>).MakeGenericType(m));
         }

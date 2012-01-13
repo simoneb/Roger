@@ -70,6 +70,7 @@ namespace Roger
                                                            messageFilters,
                                                            this.log,
                                                            new DefaultQueueFactory(), 
+                                                           Default.ConsumerInvoker,
                                                            noLocal);
 
             publishingProcess = new QueueingPublishingProcess(connection,

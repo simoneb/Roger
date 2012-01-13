@@ -26,7 +26,7 @@ namespace Roger.Internal.Impl
                 module.BeforePublishEnabled(publishModel);
         }
 
-        public void BeforePublish(IDeliveryCommand command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null)
+        public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null)
         {
             foreach (var module in inner)
                 module.BeforePublish(command, publishModel, properties, basicReturnCallback);

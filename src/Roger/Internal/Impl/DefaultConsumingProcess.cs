@@ -30,12 +30,13 @@ namespace Roger.Internal.Impl
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private readonly IQueueFactory queueFactory;
         private readonly bool noLocal;
+        private int disposed;
+        private Task consumingTask;
+        private readonly IConsumerInvoker consumerInvoker;
 
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
 
-        private int disposed;
-        private Task consumingTask;
 
         public DefaultConsumingProcess(IReliableConnection connection,
                                        IIdGenerator idGenerator,
@@ -47,12 +48,14 @@ namespace Roger.Internal.Impl
                                        IEnumerable<IMessageFilter> messageFilters,
                                        IRogerLog log,
                                        IQueueFactory queueFactory,
+                                       IConsumerInvoker consumerInvoker,
                                        bool noLocal)
         {
             this.connection = connection;
             this.consumerContainer = consumerContainer;
             this.log = log;
             this.queueFactory = queueFactory;
+            this.consumerInvoker = consumerInvoker;
             this.noLocal = noLocal;
             this.exchangeResolver = exchangeResolver;
             bindingKeyResolver = Default.BindingKeyResolver;
@@ -151,12 +154,8 @@ namespace Roger.Internal.Impl
         {
             var messages = messageFilters.Aggregate(BlockingDequeue(queueConsumer.Queue), (current, filter) => filter.Filter(current, queueConsumer.Model));
 
-            foreach (var message in messages)
-            {
-                SetCurrentMessageAndInvokeConsumers(message);
-
+            foreach (var message in messages.Where(SetCurrentMessageAndInvokeConsumers))
                 AckMessage(message);
-            }
         }
 
         private void AckMessage(CurrentMessageInformation message)
@@ -198,37 +197,35 @@ namespace Roger.Internal.Impl
             };
         }
 
-        private void SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)
+        private bool SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)
         {
             _currentMessage = message;
 
-            var consumers = ResolveConsumers(_currentMessage.MessageType);
+            IEnumerable<IConsumer> consumers;
 
-            var localInstanceConsumers = consumers.Item1.ToArray();
-            var defaultConsumers = consumers.Item2.ToArray();
-
-            log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
-                            defaultConsumers.Length,
-                            localInstanceConsumers.Length,
-                            _currentMessage.MessageType);
-
-            var allConsumers = localInstanceConsumers.Concat(defaultConsumers);
-
-            foreach (var c in allConsumers)
-            {
-                log.DebugFormat("Invoking Consume method on consumer {0} for message {1}",
-                                c.GetType(),
-                                _currentMessage.MessageType);
-
-                reflection.InvokeConsume(c, _currentMessage.Body);
-            }
-
-            consumerContainer.Release(defaultConsumers);
+            using(ResolveAndRelease(message.MessageType, out consumers))
+                return consumerInvoker.Invoke(consumers, _currentMessage);
         }
 
-        private Tuple<IEnumerable<IConsumer>, IEnumerable<IConsumer>> ResolveConsumers(Type messageType)
+        private IDisposable ResolveAndRelease(Type messageType, out IEnumerable<IConsumer> consumers)
         {
-            return Tuple.Create(InstanceConsumers(messageType), reflection.Hierarchy(messageType).ConsumerOf().SelectMany(consumerContainer.Resolve).Distinct());
+            var resolved = ResolveConsumers(messageType);
+            consumers = resolved.All;
+
+            return new DisposableAction(() => consumerContainer.Release(resolved.StandardConsumers));
+        }
+
+        private Consumers ResolveConsumers(Type messageType)
+        {
+            var localConsumers = InstanceConsumers(messageType).ToArray();
+            var standardConsumers = reflection.Hierarchy(messageType).ConsumersOf().SelectMany(consumerContainer.Resolve).Distinct().ToArray();
+
+            log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
+                            standardConsumers.Length,
+                            localConsumers.Length,
+                            messageType);
+
+            return new Consumers(localConsumers, standardConsumers);
         }
 
         private IEnumerable<IConsumer> InstanceConsumers(Type messageType)
@@ -304,6 +301,23 @@ namespace Roger.Internal.Impl
             catch (AggregateException e)
             {
                 log.ErrorFormat("Exception while waiting on consuming task\r\n{0}", e.Flatten());
+            }
+        }
+
+        private class Consumers
+        {
+            public IConsumer[] LocalConsumers { get; private set; }
+            public IConsumer[] StandardConsumers { get; private set; }
+
+            public IEnumerable<IConsumer> All
+            {
+                get { return StandardConsumers.Concat(LocalConsumers); }
+            }
+
+            public Consumers(IConsumer[] localConsumers, IConsumer[] standardConsumers)
+            {
+                LocalConsumers = localConsumers;
+                StandardConsumers = standardConsumers;
             }
         }
 

@@ -33,7 +33,7 @@ namespace Tests.Unit
             sut.BeforePublishEnabled(model);
             model.NextPublishSeqNo.Returns(1ul, 2ul, 3ul);
 
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
+            sut.BeforePublish(Substitute.For<IDelivery>(), model, Substitute.For<IBasicProperties>(), null);
 
             timer.Callback += Raise.Event<Action>();
 
@@ -46,7 +46,7 @@ namespace Tests.Unit
             sut.BeforePublishEnabled(model);
             model.NextPublishSeqNo.Returns(1ul);
 
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
+            sut.BeforePublish(Substitute.For<IDelivery>(), model, Substitute.For<IBasicProperties>(), null);
 
             model.BasicAcks += Raise.Event<BasicAckEventHandler>(model, new BasicAckEventArgs { DeliveryTag = 1, Multiple = false });
 
@@ -61,7 +61,7 @@ namespace Tests.Unit
             sut.BeforePublishEnabled(model);
             model.NextPublishSeqNo.Returns(1ul, 2ul, 3ul);
 
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
+            sut.BeforePublish(Substitute.For<IDelivery>(), model, Substitute.For<IBasicProperties>(), null);
 
             timer.Callback += Raise.Event<Action>();
 
@@ -76,7 +76,7 @@ namespace Tests.Unit
         public void After_publish_is_disabled_should_process_messages_that_were_unconfirmed_so_as_to_put_them_on_top_of_the_list()
         {
             model.NextPublishSeqNo.Returns(1ul);
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
+            sut.BeforePublish(Substitute.For<IDelivery>(), model, Substitute.For<IBasicProperties>(), null);
 
             sut.AfterPublishDisabled(model);
 
@@ -90,7 +90,7 @@ namespace Tests.Unit
             sut.Initialize(publishingProcess);
 
             model.NextPublishSeqNo.Returns(1ul);
-            sut.BeforePublish(Substitute.For<IDeliveryCommand>(), model, Substitute.For<IBasicProperties>(), null);
+            sut.BeforePublish(Substitute.For<IDelivery>(), model, Substitute.For<IBasicProperties>(), null);
 
             sut.AfterPublishDisabled(model);
 

@@ -10,6 +10,6 @@ namespace Roger.Internal
         void Send(RogerEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback, bool persistent);
         void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback, bool persistent);
         void Reply(object message, CurrentMessageInformation currentMessage, Action<BasicReturn> basicReturnCallback, bool persistent);
-        void Process(IDeliveryCommandFactory factory);
+        void Process(IDeliveryFactory factory);
     }
 }

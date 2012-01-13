@@ -71,7 +71,7 @@ namespace Tests.Unit
 
             Thread.Sleep(100);
 
-            publishModule.Received().BeforePublish(Arg.Any<IDeliveryCommand>(), model, Arg.Any<IBasicProperties>(), Arg.Any<Action<BasicReturn>>());
+            publishModule.Received().BeforePublish(Arg.Any<IDelivery>(), model, Arg.Any<IBasicProperties>(), Arg.Any<Action<BasicReturn>>());
         }
 
         [Test]

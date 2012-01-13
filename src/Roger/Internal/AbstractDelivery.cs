@@ -3,12 +3,12 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal
 {
-    internal abstract class AbstractDeliveryCommand : IDeliveryCommand
+    internal abstract class AbstractDelivery : IDelivery
     {
         private readonly Func<RogerEndpoint, IBasicProperties> createProperties;
         private readonly Action<BasicReturn> basicReturnCallback;
 
-        protected AbstractDeliveryCommand(Func<RogerEndpoint, IBasicProperties> createProperties, Action<BasicReturn> basicReturnCallback = null)
+        protected AbstractDelivery(Func<RogerEndpoint, IBasicProperties> createProperties, Action<BasicReturn> basicReturnCallback = null)
         {
             this.createProperties = createProperties;
             this.basicReturnCallback = basicReturnCallback;
