@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -18,7 +19,7 @@ namespace Roger.Internal.Impl
         private IModel receivingModel;
         private QueueingBasicConsumer queueConsumer;
         private readonly IConsumerContainer consumerContainer;
-        private readonly IRogerLog log;
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
         private readonly IExchangeResolver exchangeResolver;
         private readonly IBindingKeyResolver bindingKeyResolver;
         private readonly ITypeResolver typeResolver;
@@ -46,14 +47,12 @@ namespace Roger.Internal.Impl
                                        IConsumerContainer consumerContainer,
                                        IReflection reflection,
                                        IEnumerable<IMessageFilter> messageFilters,
-                                       IRogerLog log,
                                        IQueueFactory queueFactory,
                                        IConsumerInvoker consumerInvoker,
                                        bool noLocal)
         {
             this.connection = connection;
             this.consumerContainer = consumerContainer;
-            this.log = log;
             this.queueFactory = queueFactory;
             this.consumerInvoker = consumerInvoker;
             this.noLocal = noLocal;
@@ -94,11 +93,11 @@ namespace Roger.Internal.Impl
             }
             catch (OperationInterruptedException e)
             {
-                log.ErrorFormat("Operation interrupted while invoking BasicConsume method\r\n{0}", e);
+                log.Error("Operation interrupted while invoking BasicConsume method", e);
             }
             catch (Exception e)
             {
-                log.ErrorFormat("Exception while invoking BasicConsume method\r\n{0}", e);
+                log.Error("Exception while invoking BasicConsume method", e);
             }
         }
 
@@ -166,11 +165,11 @@ namespace Roger.Internal.Impl
             }
             catch (AlreadyClosedException e)
             {
-                log.ErrorFormat("Could not ack consumed message because model was already closed\r\n{0}", e);
+                log.Error("Could not ack consumed message because model was already closed", e);
             }
             catch (Exception e)
             {
-                log.ErrorFormat("Could not ack consumed message\r\n{0}", e);
+                log.Error("Could not ack consumed message", e);
             }
         }
 
@@ -300,7 +299,7 @@ namespace Roger.Internal.Impl
             }
             catch (AggregateException e)
             {
-                log.ErrorFormat("Exception while waiting on consuming task\r\n{0}", e.Flatten());
+                log.Error("Exception while waiting on consuming task", e.Flatten());
             }
         }
 
@@ -333,11 +332,11 @@ namespace Roger.Internal.Impl
             }
             catch (OperationInterruptedException e)
             {
-                log.ErrorFormat("Operation interrupted while deleting queue or disposing model\r\n{0}", e);
+                log.Error("Operation interrupted while deleting queue or disposing model", e);
             }
             catch (Exception e)
             {
-                log.ErrorFormat("Exception while deleting queue and disposing model\r\n{0}", e);
+                log.Error("Exception while deleting queue and disposing model", e);
             }
         }
     }

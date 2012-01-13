@@ -18,8 +18,7 @@ namespace Tests.Integration.Bus
             var container = new SimpleConsumerContainer();
             container.Register(consumer = new GenericConsumer<MyMessage>());
             secondaryBus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateSecondaryConnectionToMainVirtualHost),
-                                               container,
-                                               log: Log);
+                                               container);
             secondaryBus.Start();
         }
 

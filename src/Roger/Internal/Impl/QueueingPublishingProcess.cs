@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
@@ -11,7 +12,7 @@ namespace Roger.Internal.Impl
     internal class QueueingPublishingProcess : IPublishingProcess
     {
         private readonly IReliableConnection connection;
-        private readonly IRogerLog log;
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
         private int disposed;
         private Task publishTask;
         private readonly BlockingCollection<IDeliveryFactory> publishingQueue = new BlockingCollection<IDeliveryFactory>();
@@ -33,12 +34,10 @@ namespace Roger.Internal.Impl
                                            IExchangeResolver exchangeResolver,
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
-                                           IRogerLog log,
                                            Func<RogerEndpoint> currentLocalEndpoint,
                                            IPublishModule modules)
         {
             this.connection = connection;
-            this.log = log;
             this.idGenerator = idGenerator;
             this.sequenceGenerator = sequenceGenerator;
             this.exchangeResolver = exchangeResolver;
@@ -114,11 +113,11 @@ namespace Roger.Internal.Impl
                          */
                         catch (AlreadyClosedException e)
                         {
-                            log.ErrorFormat("Model was already closed when trying to publish on it\r\n{0}", e);
+                            log.Error("Model was already closed when trying to publish on it", e);
                         }
                         catch (IOException e)
                         {
-                            log.ErrorFormat("IO error when trying to publish\r\n{0}", e);
+                            log.Error("IO error when trying to publish", e);
                         }
                     }
                 }
@@ -151,7 +150,7 @@ namespace Roger.Internal.Impl
             }
             catch (InvalidOperationException e)
             {
-                log.ErrorFormat("Could not enqueue message for publishing: {0}", e);
+                log.Error("Could not enqueue message for publishing", e);
             }
         }
 

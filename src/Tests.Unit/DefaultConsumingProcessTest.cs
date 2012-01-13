@@ -32,8 +32,7 @@ namespace Tests.Unit
                                               Substitute.For<ITypeResolver>(),
                                               Substitute.For<IConsumerContainer>(), 
                                               Substitute.For<IReflection>(),
-                                              Enumerable.Empty<IMessageFilter>(),
-                                              Substitute.For<IRogerLog>(), 
+                                              Enumerable.Empty<IMessageFilter>(), 
                                               queueFactory, 
                                               Substitute.For<IConsumerInvoker>(),
                                               false);

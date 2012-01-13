@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using Common.Logging;
 
 namespace Roger.Internal.Impl
 {
     internal class DefaultBasicReturnHandler : IBasicReturnHandler
     {
-        private readonly IRogerLog log;
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
 
         private readonly ConcurrentDictionary<RogerGuid, Func<BasicReturn, bool>> callbacks =
             new ConcurrentDictionary<RogerGuid, Func<BasicReturn, bool>>();
-
-        public DefaultBasicReturnHandler(IRogerLog log)
-        {
-            this.log = log;
-        }
 
         public void Subscribe(RogerGuid messageId, Action<BasicReturn> callback)
         {

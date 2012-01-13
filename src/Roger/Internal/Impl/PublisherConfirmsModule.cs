@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -10,17 +11,16 @@ namespace Roger.Internal.Impl
 {
     internal class PublisherConfirmsModule : IPublishModule
     {
-        private readonly IRogerLog log;
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
         private readonly ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory>();
         private readonly ITimer timer;
         private readonly TimeSpan? consideredUnconfirmedAfter;
         private IPublishingProcess publisher;
         private int disposed;
 
-        public PublisherConfirmsModule(ITimer timer, IRogerLog log, TimeSpan? consideredUnconfirmedAfter = null)
+        public PublisherConfirmsModule(ITimer timer, TimeSpan? consideredUnconfirmedAfter = null)
         {
             this.timer = timer;
-            this.log = log;
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
         }
 

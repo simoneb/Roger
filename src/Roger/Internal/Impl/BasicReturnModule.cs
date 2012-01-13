@@ -6,13 +6,7 @@ namespace Roger.Internal.Impl
 {
     internal class BasicReturnModule : IPublishModule
     {
-        private readonly IRogerLog log;
         private DefaultBasicReturnHandler basicReturnHandler;
-
-        public BasicReturnModule(IRogerLog log)
-        {
-            this.log = log;
-        }
 
         public void BeforePublishEnabled(IModel publishModel)
         {
@@ -21,7 +15,7 @@ namespace Roger.Internal.Impl
 
         public void Initialize(IPublishingProcess publishingProcess)
         {
-            basicReturnHandler = new DefaultBasicReturnHandler(log);
+            basicReturnHandler = new DefaultBasicReturnHandler();
         }
 
         private void PublishModelOnBasicReturn(IModel model, BasicReturnEventArgs args)

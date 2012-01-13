@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL" />
     <Reference Include="Gallio">
       <HintPath>..\..\tools\mbunit\Gallio.dll</HintPath>
     </Reference>
@@ -74,7 +75,6 @@
     <Compile Include="Bus\Send.cs" />
     <Compile Include="Bus\Instance_subscriptions.cs" />
     <Compile Include="Bus\SupportClasses\CatchingMyRequestResponder.cs" />
-    <Compile Include="Bus\SupportClasses\DebugLog.cs" />
     <Compile Include="Bus\SupportClasses\GenericMultipleArrivalsConsumer.cs" />
     <Compile Include="Bus\SupportClasses\IdentityConnectionFactory.cs" />
     <Compile Include="Bus\SupportClasses\GenericConsumer.cs" />
@@ -87,7 +87,6 @@
     <Compile Include="Bus\SupportClasses\SendConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
-    <Compile Include="Bus\SupportClasses\StandardOutLog.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
     <Compile Include="Federation\Federation_link_goes_down.cs" />
     <Compile Include="Federation\Subscriber_on_secondary_node.cs" />

@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
+using Common.Logging;
 
 namespace Roger.Internal.Impl
 {
     class AlwaysSuccessConsumerInvoker : IConsumerInvoker
     {
         private readonly IReflection reflection;
-        private readonly NullLog log;
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
 
         public AlwaysSuccessConsumerInvoker(IReflection reflection)
         {
             this.reflection = reflection;
-            log = new NullLog();
         }
 
         public bool Invoke(IEnumerable<IConsumer> consumers, CurrentMessageInformation message)
@@ -26,7 +26,7 @@ namespace Roger.Internal.Impl
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("Exception while invoking consumer\r\n{0}", e);
+                    log.Error("Exception while invoking consumer", e);
                 }
             }
 

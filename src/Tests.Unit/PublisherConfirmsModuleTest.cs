@@ -20,7 +20,7 @@ namespace Tests.Unit
         public void Setup()
         {
             timer = Substitute.For<ITimer>();
-            sut = new PublisherConfirmsModule(timer, new NullLog());
+            sut = new PublisherConfirmsModule(timer);
             publishingProcess = Substitute.For<IPublishingProcess>();
             model = Substitute.For<IModel>();
 
@@ -86,7 +86,7 @@ namespace Tests.Unit
         [Test]
         public void Should_ignore_threshold_for_messages_published_after_publishing_has_been_disabled()
         {
-            sut = new PublisherConfirmsModule(Substitute.For<ITimer>(), new NullLog(), TimeSpan.FromSeconds(10000 /* a high value */));
+            sut = new PublisherConfirmsModule(Substitute.For<ITimer>(), TimeSpan.FromSeconds(10000 /* a high value */));
             sut.Initialize(publishingProcess);
 
             model.NextPublishSeqNo.Returns(1ul);

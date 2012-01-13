@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
@@ -9,7 +10,7 @@ namespace Roger.Internal.Impl
     internal class ReliableConnection : IReliableConnection
     {
         private readonly IConnectionFactory connectionFactory;
-        private readonly IRogerLog log;
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
         private IConnection connection;
         private bool disposed;
         private Timer initializationTimer;
@@ -21,10 +22,9 @@ namespace Roger.Internal.Impl
         public event Action GracefulShutdown = delegate { };
         public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
 
-        public ReliableConnection(IConnectionFactory connectionFactory, IRogerLog log)
+        public ReliableConnection(IConnectionFactory connectionFactory)
         {
             this.connectionFactory = connectionFactory;
-            this.log = log;
         }
 
         public void Connect()
@@ -35,7 +35,7 @@ namespace Roger.Internal.Impl
             }
             catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this exception only
             {
-                log.ErrorFormat("Cannot create connection, broker is unreachable\r\n{0}", e);
+                log.Error("Cannot create connection, broker is unreachable", e);
 
                 ConnectionAttemptFailed();
 
@@ -96,15 +96,15 @@ namespace Roger.Internal.Impl
                 }
                 catch (AlreadyClosedException e)
                 {
-                    log.ErrorFormat("Trying to close connection but it was already closed.\r\n{0}", e);
+                    log.Error("Trying to close connection but it was already closed", e);
                 }
                 catch (IOException e)
                 {
-                    log.ErrorFormat("Trying to close connection but something went wrong.\r\n{0}", e);
+                    log.Error("Trying to close connection but something went wrong", e);
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("Trying to close connection but something went wrong.\r\n{0}", e);
+                    log.Error("Trying to close connection but something went wrong", e);
                 }
         }
 
