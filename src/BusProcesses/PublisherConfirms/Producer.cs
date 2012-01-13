@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Common;
 using Roger;
 
@@ -16,7 +15,8 @@ namespace BusProcesses.PublisherConfirms
             PublisherConfirmsProvider.DeclareExchange(connectionFactory);
 
             var bus = new DefaultRogerBus(connectionFactory, new EmptyConsumerContainer());
-            bus.Start(() => Task.Factory.StartNew(() => StartPublishing(bus, waitHandle)));
+            bus.Start();
+            StartPublishing(bus, waitHandle);
         }
 
         private void StartPublishing(IRabbitBus bus, WaitHandle waitHandle)

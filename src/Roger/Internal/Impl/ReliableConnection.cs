@@ -27,7 +27,7 @@ namespace Roger.Internal.Impl
             this.log = log;
         }
 
-        public void Connect(Action onFirstConnection = null)
+        public void Connect()
         {
             try
             {
@@ -45,9 +45,6 @@ namespace Roger.Internal.Impl
 
             log.Debug("Connection created");
             connection.ConnectionShutdown += HandleConnectionShutdown;
-
-            if (onFirstConnection != null)
-                onFirstConnection();
 
             ConnectionEstabilished();
         }

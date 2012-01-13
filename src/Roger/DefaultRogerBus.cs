@@ -104,11 +104,11 @@ namespace Roger
             get { return connection.ConnectionAttemptInterval; }
         }
 
-        public void Start(Action onFirstConnection = null)
+        public void Start()
         {
             log.Debug("Starting bus");
 
-            connection.Connect(onFirstConnection);
+            connection.Connect();
             publishingProcess.Start();
         }
 

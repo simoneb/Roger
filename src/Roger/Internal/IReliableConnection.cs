@@ -6,7 +6,7 @@ namespace Roger.Internal
     public interface IReliableConnection : IDisposable
     {
         TimeSpan ConnectionAttemptInterval { get; }
-        void Connect(Action onFirstConnection = null);
+        void Connect();
         IModel CreateModel();
         event Action ConnectionAttemptFailed;
         event Action<ShutdownEventArgs> UnexpectedShutdown;

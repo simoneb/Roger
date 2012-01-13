@@ -25,8 +25,7 @@ namespace Roger
         /// <summary>
         /// Starts the bus
         /// </summary>
-        /// <param name="onFirstConnection">Callback invoked when connection is established for the first time</param>
-        void Start(Action onFirstConnection = null);
+        void Start();
 
         /// <summary>
         /// Subscribes a consumer manually to the messages it is interested in
