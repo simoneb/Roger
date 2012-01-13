@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -156,18 +155,23 @@ namespace Roger.Internal.Impl
             {
                 SetCurrentMessageAndInvokeConsumers(message);
 
-                try
-                {
-                    queueConsumer.Model.BasicAck(message.DeliveryTag, false);
-                }
-                catch (AlreadyClosedException e)
-                {
-                    log.ErrorFormat("Could not ack consumed message because model was already closed\r\n{0}", e);
-                }
-                catch (Exception e)
-                {
-                    log.ErrorFormat("Could not ack consumed message\r\n{0}", e);
-                }
+                AckMessage(message);
+            }
+        }
+
+        private void AckMessage(CurrentMessageInformation message)
+        {
+            try
+            {
+                queueConsumer.Model.BasicAck(message.DeliveryTag, false);
+            }
+            catch (AlreadyClosedException e)
+            {
+                log.ErrorFormat("Could not ack consumed message because model was already closed\r\n{0}", e);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("Could not ack consumed message\r\n{0}", e);
             }
         }
 
@@ -284,25 +288,43 @@ namespace Roger.Internal.Impl
             if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
                 return;
 
-            if(receivingModel != null)
-            {
-                try
-                {
-                    receivingModel.QueueDelete(Endpoint);
-                    receivingModel.Dispose();
-                }
-                catch (OperationInterruptedException e)
-                {
-                    log.ErrorFormat("Operation interrupted while deleting queue or disposing model\r\n{0}", e);
-                }
-                catch(Exception e)
-                {
-                    log.ErrorFormat("Exception while deleting queue and disposing model\r\n{0}", e);
-                }
-            }
+            DisposeModel();
+            WaitForConsumingTask();
+        }
 
-            if (consumingTask != null)
+        private void WaitForConsumingTask()
+        {
+            if (consumingTask == null)
+                return;
+
+            try
+            {
                 consumingTask.Wait(100);
+            }
+            catch (AggregateException e)
+            {
+                log.ErrorFormat("Exception while waiting on consuming task\r\n{0}", e.Flatten());
+            }
+        }
+
+        private void DisposeModel()
+        {
+            if (receivingModel == null) 
+                return;
+
+            try
+            {
+                receivingModel.QueueDelete(Endpoint);
+                receivingModel.Dispose();
+            }
+            catch (OperationInterruptedException e)
+            {
+                log.ErrorFormat("Operation interrupted while deleting queue or disposing model\r\n{0}", e);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("Exception while deleting queue and disposing model\r\n{0}", e);
+            }
         }
     }
 }
