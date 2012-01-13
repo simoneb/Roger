@@ -69,6 +69,10 @@
     <Compile Include="ToStringEqualityComparer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BusProcesses\BusProcesses.csproj">
+      <Project>{2E72B3AD-17A8-4E95-A434-FB8BA70266C9}</Project>
+      <Name>BusProcesses</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
       <Name>Common</Name>

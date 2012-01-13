@@ -1,0 +1,35 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Common;
+using Roger;
+
+namespace BusProcesses.PublisherConfirms
+{
+    [Serializable]
+    public class Producer : IProcess
+    {
+        public void Start(WaitHandle waitHandle)
+        {
+            var connectionFactory = new DefaultConnectionFactory(Globals.MainHostName);
+
+            PublisherConfirmsProvider.DeclareExchange(connectionFactory);
+
+            var bus = new DefaultRogerBus(connectionFactory, new EmptyConsumerContainer());
+            bus.Start(() => Task.Factory.StartNew(() => StartPublishing(bus, waitHandle)));
+        }
+
+        private void StartPublishing(IRabbitBus bus, WaitHandle waitHandle)
+        {
+            var counter = 0;
+
+            while (!waitHandle.WaitOne(10))
+            {
+                bus.Publish(new PublisherConfirmsMessage {Counter = ++counter}, persistent: false);
+                Console.WriteLine("Published message {0}", counter);
+            }
+
+            bus.Dispose();
+        }
+    }
+}

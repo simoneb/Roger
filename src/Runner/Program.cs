@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
+using BusProcesses.PublisherConfirms;
 using Common;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace Runner
 
         static void Main(string[] args)
         {
-            Run<Federation.Runner>(args);
+            Run<PublisherConfirmsProvider>(args);
         }
 
         private static void Run<T>(IEnumerable<string> args) where T : IProcessesProvider
@@ -82,10 +83,11 @@ namespace Runner
             Task.Factory.StartNew(() => process.Start(waitHandle), TaskCreationOptions.LongRunning)
                 .ContinueWith(PrintException, TaskContinuationOptions.OnlyOnFaulted);
 
-            Console.CancelKeyPress += delegate
+            Console.CancelKeyPress += (a, b) =>
             {
                 Console.WriteLine("Exiting...");
                 waitHandle.Set();
+                b.Cancel = true;
             };
 
             waitHandle.WaitOne();
