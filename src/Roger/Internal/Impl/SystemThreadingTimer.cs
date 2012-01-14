@@ -1,58 +1,62 @@
 ﻿using System;
 using System.Threading;
+using Common.Logging;
 
 namespace Roger.Internal.Impl
 {
     internal class SystemThreadingTimer : ITimer
     {
-        private readonly long interval;
         private readonly Timer timer;
         private int disposed;
+        private static readonly TimeSpan Never = TimeSpan.FromMilliseconds(-1);
+        private readonly ILog log = LogManager.GetCurrentClassLogger();
 
-        public SystemThreadingTimer(TimeSpan interval)
+        public event Action Callback = delegate {  };
+
+        public SystemThreadingTimer()
         {
-            this.interval = (long)interval.TotalMilliseconds;
             timer = new Timer(OnCallback);
         }
 
-        public void Start()
+        private bool Disposed
         {
-            if (Disposed())
+            get { return disposed == 1; }
+        }
+
+        public void Start(TimeSpan? startIn = null)
+        {
+            if (Disposed)
                 return;
 
-            timer.Change(interval, Timeout.Infinite);
+            log.DebugFormat("Will callback in {0}", startIn);
+            timer.Change(startIn ?? TimeSpan.Zero, Never);
         }
 
         private void OnCallback(object state)
         {
-            if(Disposed())
+            if(Disposed)
                 return;
 
+            log.Debug("Calling back");
             Callback();
         }
 
-        public event Action Callback = delegate {  };
-
         public void Stop()
         {
-            if (Disposed())
+            if (Disposed)
                 return;
 
-            timer.Change(Timeout.Infinite, Timeout.Infinite);
+            log.Debug("Stopped");
+            timer.Change(Never, Never);
         }
 
         public void Dispose()
         {
-            if (Disposed())
+            if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
                 return;
 
             Stop();
             timer.Dispose();
-        }
-
-        private bool Disposed()
-        {
-            return Interlocked.CompareExchange(ref disposed, 1, 0) == 1;
         }
     }
 }

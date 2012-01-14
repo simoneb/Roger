@@ -13,21 +13,21 @@ namespace Roger.Internal.Impl
     {
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private readonly ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory>();
-        private readonly ITimer timer;
+        private readonly IScheduler scheduler;
         private readonly TimeSpan? consideredUnconfirmedAfter;
         private IPublishingProcess publisher;
         private int disposed;
 
-        public PublisherConfirmsModule(ITimer timer, TimeSpan? consideredUnconfirmedAfter = null)
+        public PublisherConfirmsModule(IScheduler scheduler, TimeSpan? consideredUnconfirmedAfter = null)
         {
-            this.timer = timer;
+            this.scheduler = scheduler;
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
         }
 
         public void Initialize(IPublishingProcess publishingProcess)
         {
             publisher = publishingProcess;
-            timer.Callback += ProcessUnconfirmed;
+            scheduler.Callback += ProcessUnconfirmed;
         }
 
         public void BeforePublishEnabled(IModel publishModel)
@@ -36,7 +36,7 @@ namespace Roger.Internal.Impl
             publishModel.BasicNacks += PublishModelOnBasicNacks;
             publishModel.ConfirmSelect();
             
-            timer.Start();
+            scheduler.Start();
         }
 
         public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
@@ -46,7 +46,7 @@ namespace Roger.Internal.Impl
 
         public void AfterPublishDisabled(IModel publishModel)
         {
-            timer.Stop();
+            scheduler.Stop();
 
             // make sure we don't receive unwanted events
             publishModel.BasicAcks -= PublishModelOnBasicAcks;
@@ -116,7 +116,7 @@ namespace Roger.Internal.Impl
             if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
                 return;
 
-            timer.Callback -= ProcessUnconfirmed;
+            scheduler.Callback -= ProcessUnconfirmed;
         }
     }
 }

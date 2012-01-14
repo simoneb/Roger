@@ -74,6 +74,7 @@
     <Compile Include="Internal\Impl\RequestDeliveryFactory.cs" />
     <Compile Include="Internal\Impl\SendDelivery.cs" />
     <Compile Include="Internal\Impl\SendDeliveryFactory.cs" />
+    <Compile Include="Internal\Impl\SystemThreadingScheduler.cs" />
     <Compile Include="Internal\Impl\SystemThreadingTimer.cs" />
     <Compile Include="Internal\Impl\UnconfirmedDeliveryFactory.cs" />
     <Compile Include="Internal\IPublishModule.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="IIdGenerator.cs" />
     <Compile Include="Internal\Impl\RandomIdGenerator.cs" />
     <Compile Include="Internal\IRoutingKeyResolver.cs" />
+    <Compile Include="Internal\IScheduler.cs" />
     <Compile Include="Internal\ISupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\ITimer.cs" />
     <Compile Include="Internal\IUnconfirmedDeliveryFactory.cs" />

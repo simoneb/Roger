@@ -64,6 +64,7 @@
     <Compile Include="Message_type_serialization.cs" />
     <Compile Include="PublisherConfirmsModuleTest.cs" />
     <Compile Include="QueueingPublishingProcessTest.cs" />
+    <Compile Include="ReliableConnectionTest.cs" />
     <Compile Include="ResequencingFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RogerEndpointTest.cs" />

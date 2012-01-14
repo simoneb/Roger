@@ -15,15 +15,16 @@ namespace Roger
     public class DefaultRogerBus : IRabbitBus
     {
         private readonly IReliableConnection connection;
-        private readonly IConsumingProcess consumingProcess;
-        private readonly IPublishingProcess publishingProcess;
-        private readonly SystemThreadingTimer publisherConfirmsTimer;
+        private readonly IConsumingProcess consumer;
+        private readonly IPublishingProcess publisher;
+        private readonly IScheduler publisherConfirmsScheduler;
         private readonly CompositePublishModule publishModule;
-        private int disposed;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
+        private readonly SystemThreadingTimer reconnectionTimer;
+        private int disposed;
 
         /// <summary>
-        /// 
+        /// Default library entry point
         /// </summary>
         /// <param name="connectionFactory"></param>
         /// <param name="consumerContainer"></param>
@@ -49,35 +50,36 @@ namespace Roger
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
             messageFilters = messageFilters.Or(Default.Filters);
 
-            connection = new ReliableConnection(connectionFactory);
+            reconnectionTimer = new SystemThreadingTimer();
+            connection = new ReliableConnection(connectionFactory, reconnectionTimer);
 
-            publisherConfirmsTimer = new SystemThreadingTimer(TimeSpan.FromSeconds(1));
-            publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsTimer, TimeSpan.FromSeconds(2)),
+            publisherConfirmsScheduler = new SystemThreadingScheduler(TimeSpan.FromSeconds(1));
+            publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsScheduler, TimeSpan.FromSeconds(2)),
                                                        new BasicReturnModule());
 
             // TODO: order here is important because both of the two guys below subscribe to
             // connection established events, but the publisher cannot start publish unless
             // the consumer has created the endpoint already
-            consumingProcess = new DefaultConsumingProcess(connection,
-                                                           idGenerator,
-                                                           exchangeResolver,
-                                                           serializer,
-                                                           Default.TypeResolver, 
-                                                           consumerContainer,
-                                                           Default.Reflection, 
-                                                           messageFilters,
-                                                           new DefaultQueueFactory(), 
-                                                           Default.ConsumerInvoker,
-                                                           noLocal);
+            consumer = new DefaultConsumingProcess(connection,
+                                                   idGenerator,
+                                                   exchangeResolver,
+                                                   serializer,
+                                                   Default.TypeResolver,
+                                                   consumerContainer,
+                                                   Default.Reflection,
+                                                   messageFilters,
+                                                   new DefaultQueueFactory(),
+                                                   Default.ConsumerInvoker,
+                                                   noLocal);
 
-            publishingProcess = new QueueingPublishingProcess(connection,
-                                                              idGenerator,
-                                                              sequenceGenerator,
-                                                              exchangeResolver,
-                                                              serializer,
-                                                              Default.TypeResolver,
-                                                              () => LocalEndpoint,
-                                                              publishModule);
+            publisher = new QueueingPublishingProcess(connection,
+                                                      idGenerator,
+                                                      sequenceGenerator,
+                                                      exchangeResolver,
+                                                      serializer,
+                                                      Default.TypeResolver,
+                                                      () => LocalEndpoint,
+                                                      publishModule);
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
@@ -88,12 +90,12 @@ namespace Roger
 
         public CurrentMessageInformation CurrentMessage
         {
-            get { return consumingProcess.CurrentMessage; }
+            get { return consumer.CurrentMessage; }
         }
 
         public RogerEndpoint LocalEndpoint
         {
-            get { return consumingProcess.Endpoint; }
+            get { return consumer.Endpoint; }
         }
 
         public TimeSpan ConnectionAttemptInterval
@@ -106,42 +108,42 @@ namespace Roger
             log.Debug("Starting bus");
 
             connection.Connect();
-            publishingProcess.Start();
+            publisher.Start();
         }
 
         public IDisposable AddInstanceSubscription(IConsumer instanceConsumer)
         {
-            return consumingProcess.AddInstanceSubscription(instanceConsumer);
+            return consumer.AddInstanceSubscription(instanceConsumer);
         }
 
         public void Publish(object message, bool persistent = true)
         {
-            publishingProcess.Publish(message, persistent);
+            publisher.Publish(message, persistent);
         }
 
         public void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.Request(message, basicReturnCallback, persistent);
+            publisher.Request(message, basicReturnCallback, persistent);
         }
 
         public void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.Send(endpoint, message, basicReturnCallback, persistent);
+            publisher.Send(endpoint, message, basicReturnCallback, persistent);
         }
 
         public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.PublishMandatory(message, basicReturnCallback, persistent);
+            publisher.PublishMandatory(message, basicReturnCallback, persistent);
         }
 
         public void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
         {
-            publishingProcess.Reply(message, CurrentMessage, basicReturnCallback, persistent);
+            publisher.Reply(message, CurrentMessage, basicReturnCallback, persistent);
         }
 
         public void Consume(object message)
         {
-            consumingProcess.Consume(message);
+            consumer.Consume(message);
         }
 
         private void ConnectionEstabilished()
@@ -166,9 +168,10 @@ namespace Roger
 
             log.Debug("Disposing bus");
 
-            publishingProcess.Dispose();
-            consumingProcess.Dispose();
-            publisherConfirmsTimer.Dispose();
+            publisher.Dispose();
+            consumer.Dispose();
+            publisherConfirmsScheduler.Dispose();
+            reconnectionTimer.Dispose();
             publishModule.Dispose();
             connection.Dispose();
         }

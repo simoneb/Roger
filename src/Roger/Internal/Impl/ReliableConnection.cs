@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Threading;
 using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -10,11 +9,11 @@ namespace Roger.Internal.Impl
     internal class ReliableConnection : IReliableConnection
     {
         private readonly IConnectionFactory connectionFactory;
+        private readonly ITimer timer;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private IConnection connection;
         private bool disposed;
-        private Timer initializationTimer;
-        private static readonly TimeSpan Never = TimeSpan.FromMilliseconds(-1);
+
         public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
 
         public event Action ConnectionEstabilished = delegate {  };
@@ -22,15 +21,18 @@ namespace Roger.Internal.Impl
         public event Action GracefulShutdown = delegate { };
         public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
 
-        public ReliableConnection(IConnectionFactory connectionFactory)
+        public ReliableConnection(IConnectionFactory connectionFactory, ITimer timer)
         {
             this.connectionFactory = connectionFactory;
+            this.timer = timer;
+            timer.Callback += Connect;
         }
 
         public void Connect()
         {
             try
             {
+                log.Debug("Trying to connect to broker");
                 connection = connectionFactory.CreateConnection();
             }
             catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this exception only
@@ -53,15 +55,7 @@ namespace Roger.Internal.Impl
         {
             log.DebugFormat("Scheduling connection to be retried in {0}", ConnectionAttemptInterval);
 
-            initializationTimer = new Timer(timer =>
-            {
-                ((Timer)timer).Dispose();
-
-                if (!disposed)
-                    Connect();
-            });
-
-            initializationTimer.Change(ConnectionAttemptInterval, Never);
+            timer.Start(ConnectionAttemptInterval);
         }
 
         private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)
@@ -88,6 +82,8 @@ namespace Roger.Internal.Impl
         {
             if (disposed) return;
             disposed = true;
+
+            timer.Stop();
 
             if (connection != null)
                 try
