@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -128,11 +129,12 @@
     <Compile Include="IMessageSerializer.cs" />
     <Compile Include="Internal\Impl\ProtoBufNetSerializer.cs" />
     <Compile Include="Default.cs" />
+    <Compile Include="Utilities\ConcurrentSelfExpiringCache.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\ICache.cs" />
+    <Compile Include="Utilities\MemoryCache.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
-    <Compile Include="Utilities\ConcurrentSelfExpiringCache.cs" />
     <Compile Include="Utilities\SystemTime.cs" />
   </ItemGroup>
   <ItemGroup />

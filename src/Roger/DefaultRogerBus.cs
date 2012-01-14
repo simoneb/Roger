@@ -44,16 +44,16 @@ namespace Roger
                                IEnumerable<IMessageFilter> messageFilters = null,
                                bool noLocal = false)
         {
+            reconnectionTimer = new SystemThreadingTimer();
+            connection = new ReliableConnection(connectionFactory, reconnectionTimer);
+            
             consumerContainer = consumerContainer.Or(Default.ConsumerContainer);
             exchangeResolver = exchangeResolver.Or(Default.ExchangeResolver);
             serializer = serializer.Or(Default.Serializer);
             idGenerator = idGenerator.Or(Default.IdGenerator);
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
-            messageFilters = messageFilters.Or(Default.Filters);
-
-            reconnectionTimer = new SystemThreadingTimer();
-            connection = new ReliableConnection(connectionFactory, reconnectionTimer);
-
+            messageFilters = messageFilters.Or(Default.Filters(this));
+            
             publisherConfirmsScheduler = new SystemThreadingScheduler(TimeSpan.FromSeconds(1));
             publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsScheduler, TimeSpan.FromSeconds(2)),
                                                        new BasicReturnModule());
@@ -85,9 +85,18 @@ namespace Roger
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
             connection.UnexpectedShutdown += ConnectionUnexpectedShutdown;
+            connection.GracefulShutdown += ConnectionGracefulShutdown;
         }
 
-        public event Action ConnectionFailure = delegate { };
+        private void ConnectionGracefulShutdown()
+        {
+            log.Debug("Bus Stopped");
+            Stopped();
+        }
+
+        public event Action Stopped = delegate {  };
+
+        public event Action Interrupted = delegate { };
 
         public CurrentMessageInformation CurrentMessage
         {
@@ -160,16 +169,21 @@ namespace Roger
         private void ConnectionEstabilished()
         {
             log.Debug("Bus started");
+            Started();
         }
+
+        public event Action Started = delegate { };
 
         private void ConnectionAttemptFailed()
         {
-            ConnectionFailure();
+            log.Debug("Bus interrupted");
+            Interrupted();
         }
 
         private void ConnectionUnexpectedShutdown(ShutdownEventArgs obj)
         {
-            ConnectionFailure();
+            log.Debug("Bus interrupted");
+            Interrupted();
         }
 
         public void Dispose()

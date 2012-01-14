@@ -23,6 +23,9 @@ namespace Roger
         /// </summary>
         RogerEndpoint LocalEndpoint { get; }
 
+        event Action Started;
+        event Action Stopped;
+
         /// <summary>
         /// Starts the bus asynchronously
         /// </summary>
@@ -93,6 +96,6 @@ namespace Roger
         /// <summary>
         /// Fired when either an attempt at connecting to the server is unsuccessful or an existing connection is shut down unexpectedly
         /// </summary>
-        event Action ConnectionFailure;
+        event Action Interrupted;
     }
 }

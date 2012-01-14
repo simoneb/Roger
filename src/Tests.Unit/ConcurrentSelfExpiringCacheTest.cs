@@ -11,7 +11,7 @@ namespace Tests.Unit
         [SetUp]
         public void Setup()
         {
-            sut = new ConcurrentSelfExpiringCache<int>(TimeSpan.FromMinutes(1));
+            sut = new ConcurrentSelfExpiringCache<int>(TimeSpan.FromMinutes(1), 1);
         }
 
         [TearDown]
@@ -23,44 +23,86 @@ namespace Tests.Unit
         [Test]
         public void Should_add_one_item()
         {
-            Assert.IsTrue(sut.TryAdd(1));
+            ShouldAdd(1);
         }
 
         [Test]
         public void Should_not_add_duplicate_items()
         {
             sut.TryAdd(1);
-            Assert.IsFalse(sut.TryAdd(1));
+            ShouldNotAdd(1);
+        }
+
+        private void ShouldNotAdd(int i)
+        {
+            Assert.IsFalse(sut.TryAdd(i));
         }
 
         [Test]
-        public void Should_expire_items_when_after_new_items()
+        public void Should_expire_items()
         {
             sut.TryAdd(1);
             SystemTime.GoForward(TimeSpan.FromMinutes(1.1));
-            sut.TryAdd(2);
 
-            Assert.IsTrue(sut.TryAdd(1));
+            ShouldAdd(1);
         }
 
         [Test]
-        public void Should_not_expire_items_if_no_new_items_are_added()
+        public void Should_expire_items_even_if_no_new_items_are_added()
         {
             sut.TryAdd(1);
             SystemTime.GoForward(TimeSpan.FromMinutes(1.1));
-            Assert.IsFalse(sut.TryAdd(1));
+            ShouldAdd(1);
+        }
+
+        private void ShouldAdd(int i)
+        {
+            Assert.IsTrue(sut.TryAdd(i));
         }
 
         [Test]
-        public void Should_pospone_expiry_if_same_item_is_added_before_expiry()
+        public void Should_slide_expiry_if_same_item_is_added_before_expiry()
         {
             sut.TryAdd(1);
             SystemTime.GoForward(TimeSpan.FromSeconds(50));
-            sut.TryAdd(2);
-            Assert.IsFalse(sut.TryAdd(1));
+            ShouldNotAdd(1);
             SystemTime.GoForward(TimeSpan.FromSeconds(50));
-            sut.TryAdd(3);
-            Assert.IsFalse(sut.TryAdd(1));
+            ShouldNotAdd(1);
+        }
+
+        [Test]
+        public void Should_not_expire_entries_if_paused()
+        {
+            sut.TryAdd(1);
+            sut.PauseEvictions();
+            SystemTime.GoForward(TimeSpan.FromMinutes(1.1));
+
+            ShouldNotAdd(1);
+        }
+
+        [Test]
+        public void Should_expire_entries_when_resumed_only_after_initial_expiry_has_elapsed_totally_again()
+        {
+            sut.TryAdd(1);
+            sut.PauseEvictions();
+            SystemTime.GoForward(TimeSpan.FromMinutes(5));
+
+            sut.ResumeEvictions();
+
+            SystemTime.GoForward(TimeSpan.FromMinutes(1.1));
+
+            ShouldAdd(1);
+        }
+
+        [Test]
+        public void Should_slide_expiry_of_existing_items_when_resumed()
+        {
+            sut.TryAdd(1);
+            sut.PauseEvictions();
+            SystemTime.GoForward(TimeSpan.FromMinutes(1.1));
+
+            sut.ResumeEvictions();
+            ShouldNotAdd(1);
         }
     }
 }

@@ -15,5 +15,11 @@ namespace Roger.Utilities
         {
             return messageTypes.Select(m => typeof (IConsumer<>).MakeGenericType(m));
         }
+
+        internal static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            foreach (var entry in enumerable)
+                action(entry);
+        }
     }
 }

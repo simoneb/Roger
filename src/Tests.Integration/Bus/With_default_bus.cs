@@ -23,7 +23,7 @@ namespace Tests.Integration.Bus
         [SetUp]
         public void InitializeBus()
         {
-            var props = new NameValueCollection {{"showLogName", "false"}, {"showDateTime", "false"}};
+            var props = new NameValueCollection {{"showLogName", "true"}, {"showDateTime", "false"}};
 
             LogManager.Adapter = RunningOnTeamCity
                                      ? (ILoggerFactoryAdapter)new ConsoleOutLoggerFactoryAdapter(props)

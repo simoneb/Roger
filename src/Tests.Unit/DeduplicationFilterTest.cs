@@ -18,7 +18,7 @@ namespace Tests.Unit
         public void Setup()
         {
             cache = Substitute.For<ICache<RogerGuid>>();
-            sut = new DeduplicationFilter(cache);
+            sut = new DeduplicationFilter(Substitute.For<IRabbitBus>(), cache);
         }
 
         [Test]
