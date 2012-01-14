@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
 using Common;
-using Common.Logging;
-using Common.Logging.Simple;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Roger;
@@ -23,12 +20,6 @@ namespace Tests.Integration.Bus
         [SetUp]
         public void InitializeBus()
         {
-            var props = new NameValueCollection {{"showLogName", "true"}, {"showDateTime", "false"}};
-
-            LogManager.Adapter = RunningOnTeamCity
-                                     ? (ILoggerFactoryAdapter)new ConsoleOutLoggerFactoryAdapter(props)
-                                     : new TraceLoggerFactoryAdapter(props);
-
             consumerContainer = new SimpleConsumerContainer();
             Bus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateConnection),
                                       consumerContainer,
@@ -49,11 +40,6 @@ namespace Tests.Integration.Bus
             Bus.Start();
 
             AfterBusInitialization();
-        }
-
-        private bool RunningOnTeamCity
-        {
-            get { return Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != null; }
         }
 
         protected virtual IIdGenerator IdGenerator { get { return Default.IdGenerator;} }

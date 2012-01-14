@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Net;
 using Common;
+using Common.Logging;
+using Common.Logging.Simple;
 using MbUnit.Framework;
 using Resbit;
 using Spring.Messaging.Amqp.Rabbit.Admin;
@@ -12,6 +15,20 @@ namespace Tests.Integration.Utils
     [AssemblyFixture]
     public class Bootstrap
     {
+        static Bootstrap()
+        {
+            var props = new NameValueCollection { { "showLogName", "true" }, { "showDateTime", "false" } };
+
+            LogManager.Adapter = RunningOnTeamCity
+                                     ? (ILoggerFactoryAdapter)new ConsoleOutLoggerFactoryAdapter(props)
+                                     : new TraceLoggerFactoryAdapter(props);
+        }
+
+        private static bool RunningOnTeamCity
+        {
+            get { return Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != null; }
+        }
+
         private static TcpTrace secondaryClientEndpoint;
         private const string All = ".*";
         public static RabbitBrokerAdmin Broker { get; private set; }
