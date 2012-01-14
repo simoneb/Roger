@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -10,9 +11,12 @@ namespace Roger.Internal.Impl
     {
         private readonly IConnectionFactory connectionFactory;
         private readonly ITimer timer;
+        private readonly IWaiter waiter;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private IConnection connection;
         private bool disposed;
+        private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
+        private CancellationToken token;
 
         public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
 
@@ -21,41 +25,47 @@ namespace Roger.Internal.Impl
         public event Action GracefulShutdown = delegate { };
         public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
 
-        public ReliableConnection(IConnectionFactory connectionFactory, ITimer timer)
+        public ReliableConnection(IConnectionFactory connectionFactory, ITimer reconnectionTimer) : this(connectionFactory, reconnectionTimer, new DefaultWaiter())
+        {
+        }
+
+        public ReliableConnection(IConnectionFactory connectionFactory, ITimer timer, IWaiter waiter)
         {
             this.connectionFactory = connectionFactory;
             this.timer = timer;
-            timer.Callback += Connect;
+            this.waiter = waiter;
+            token = tokenSource.Token;
+            timer.Callback += BlockingConnect;
         }
 
         public void Connect()
         {
-            try
-            {
-                log.Debug("Trying to connect to broker");
-                connection = connectionFactory.CreateConnection();
-            }
-            catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this exception only
-            {
-                log.Error("Cannot create connection, broker is unreachable", e);
-
-                ConnectionAttemptFailed();
-
-                ScheduleConnect();
-                return;
-            }
-
-            log.Debug("Connection created");
-            connection.ConnectionShutdown += HandleConnectionShutdown;
-
-            ConnectionEstabilished();
+            BlockingConnect();
         }
 
-        private void ScheduleConnect()
+        private void BlockingConnect()
         {
-            log.DebugFormat("Scheduling connection to be retried in {0}", ConnectionAttemptInterval);
+            while (!token.IsCancellationRequested)
+                try
+                {
+                    log.Debug("Trying to connect to broker");
+                    connection = connectionFactory.CreateConnection();
+                    
+                    log.Debug("Connection created");
+                    connection.ConnectionShutdown += HandleConnectionShutdown;
 
-            timer.Start(ConnectionAttemptInterval);
+                    ConnectionEstabilished();
+                    return;
+                }
+                catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this exception only
+                {
+                    log.Error("Cannot create connection, broker is unreachable", e);
+
+                    ConnectionAttemptFailed();
+
+                    if (waiter.Wait(token.WaitHandle, ConnectionAttemptInterval))
+                        return;
+                }
         }
 
         private void HandleConnectionShutdown(IConnection conn, ShutdownEventArgs reason)
@@ -74,7 +84,9 @@ namespace Roger.Internal.Impl
                 UnexpectedShutdown(reason);
                 log.DebugFormat("Connection (hashcode {0}) was shut down unexpectedly: {1}", conn.GetHashCode(), reason);
 
-                ScheduleConnect();
+                log.DebugFormat("Scheduling connection to be retried in {0}", ConnectionAttemptInterval);
+
+                timer.Start(ConnectionAttemptInterval);
             }
         }
 
@@ -84,6 +96,7 @@ namespace Roger.Internal.Impl
             disposed = true;
 
             timer.Stop();
+            tokenSource.Cancel();
 
             if (connection != null)
                 try

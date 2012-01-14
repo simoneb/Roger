@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Roger
 {
@@ -23,7 +24,12 @@ namespace Roger
         RogerEndpoint LocalEndpoint { get; }
 
         /// <summary>
-        /// Starts the bus
+        /// Starts the bus asynchronously
+        /// </summary>
+        Task<IRabbitBus> StartAsync();
+
+        /// <summary>
+        /// Starts the bus by blocking until the connection has been established
         /// </summary>
         void Start();
 

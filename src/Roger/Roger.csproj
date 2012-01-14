@@ -62,6 +62,7 @@
     <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
     <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\Impl\AlwaysSuccessConsumerInvoker.cs" />
+    <Compile Include="Internal\Impl\DefaultWaiter.cs" />
     <Compile Include="Internal\Impl\MandatoryDelivery.cs" />
     <Compile Include="Internal\Impl\PublishDelivery.cs" />
     <Compile Include="Internal\Impl\PublishDeliveryFactory.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Internal\ISupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\ITimer.cs" />
     <Compile Include="Internal\IUnconfirmedDeliveryFactory.cs" />
+    <Compile Include="Internal\IWaiter.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />
     <Compile Include="IMessageFilter.cs" />

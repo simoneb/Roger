@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MbUnit.Framework;
@@ -9,6 +10,7 @@ using RabbitMQ.Client.Exceptions;
 using Roger;
 using Roger.Internal;
 using Roger.Internal.Impl;
+using System.Linq;
 
 namespace Tests.Unit
 {
@@ -18,14 +20,16 @@ namespace Tests.Unit
         private IConnectionFactory connectionFactory;
         private ReliableConnection sut;
         private ITimer timer;
+        private IWaiter waiter;
 
         [SetUp]
         public void Setup()
         {
             connectionFactory = Substitute.For<IConnectionFactory>();
             timer = Substitute.For<ITimer>();
+            waiter = Substitute.For<IWaiter>();
 
-            sut = new ReliableConnection(connectionFactory, timer);
+            sut = new ReliableConnection(connectionFactory, timer, waiter);
         }
 
         [Test]
@@ -37,23 +41,38 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_block_until_first_connection_attempt_completes_successfully()
+        public void Should_run_until_connection_succeeds_1()
         {
-            RunTest(() => {});
-        }
+            var createConnectionCalled = new ManualResetEvent(false);
 
-        [Test]
-        public void Should_block_until_first_connection_attempt_completes_with_a_failure()
-        {
-            RunTest(() => { throw new BrokerUnreachableException(null, null); });
-        }
+            connectionFactory.When(f => f.CreateConnection()).Do(_ => createConnectionCalled.Set());
 
-        [Test]
-        public void Should_schedule_reconnection_when_connection_attempt_fails()
-        {
-            connectionFactory.CreateConnection().Returns(_ => { throw new BrokerUnreachableException(null, null); });
             sut.Connect();
-            timer.Received().Start(sut.ConnectionAttemptInterval);
+            Assert.IsTrue(createConnectionCalled.WaitOne());
+        }
+
+        [Test]
+        public void Should_run_until_connection_succeeds_2()
+        {
+            var threads = new List<int>();
+
+            var actions = new Queue<Action>(new[]
+            {
+                () => { throw new BrokerUnreachableException(null, null); }, 
+                new Action(() => { })
+            });
+
+            connectionFactory.When(f => f.CreateConnection()).Do(_ =>
+            {
+                actions.Dequeue()();
+                threads.Add(Thread.CurrentThread.ManagedThreadId);
+            });
+
+            sut.Connect();
+
+            waiter.Received(1).Wait(Arg.Any<WaitHandle>(), sut.ConnectionAttemptInterval);
+            Assert.AreEqual(0, actions.Count);
+            Assert.AreEqual(1, threads.Distinct().Count());
         }
 
         [Test]
@@ -86,30 +105,23 @@ namespace Tests.Unit
         }
 
         [Test]
+        public void Should_stop_trying_to_connect_if_disposed_of()
+        {
+            connectionFactory.When(f => f.CreateConnection()).Do(_ => { sut.Dispose(); throw new BrokerUnreachableException(null, null); });
+            waiter.Wait(Arg.Any<WaitHandle>(), sut.ConnectionAttemptInterval).Returns(true);
+
+            sut.Connect();
+
+            connectionFactory.Received(1).CreateConnection();
+        }
+
+        [Test]
         public void Should_stop_timer_on_dispose()
         {
             sut.Connect();
             sut.Dispose();
 
             timer.Received().Stop();
-        }
-
-        private void RunTest(Action createConnection)
-        {
-            var currentThread = Thread.CurrentThread.ManagedThreadId;
-            var createConnectionThread = 0;
-            var createConnectionCalled = new ManualResetEvent(false);
-
-            connectionFactory.When(f => f.CreateConnection()).Do(_ =>
-            {
-                createConnectionThread = Thread.CurrentThread.ManagedThreadId;
-                createConnection();
-                createConnectionCalled.Set();
-            });
-
-            sut.Connect();
-            createConnectionCalled.WaitOne(100);
-            Assert.AreEqual(currentThread, createConnectionThread);
         }
     }
 }

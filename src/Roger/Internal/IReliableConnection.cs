@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using RabbitMQ.Client;
 
 namespace Roger.Internal

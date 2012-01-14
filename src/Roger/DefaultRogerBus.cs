@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Common.Logging;
 using RabbitMQ.Client;
 using Roger.Internal;
@@ -105,10 +106,20 @@ namespace Roger
 
         public void Start()
         {
+            StartAsync().Wait();
+        }
+
+        public Task<IRabbitBus> StartAsync()
+        {
             log.Debug("Starting bus");
 
-            connection.Connect();
             publisher.Start();
+
+            return Task.Factory.StartNew(() =>
+            {
+                connection.Connect();
+                return (IRabbitBus)this;
+            });
         }
 
         public IDisposable AddInstanceSubscription(IConsumer instanceConsumer)
