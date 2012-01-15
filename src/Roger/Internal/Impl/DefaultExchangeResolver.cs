@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Roger.Utilities;
 
 namespace Roger.Internal.Impl
 {
@@ -17,9 +16,14 @@ namespace Roger.Internal.Impl
             return exchange;
         }
 
-        private static string GetExchangeName(Type messageType)
+        public bool IsReply(Type messageType)
         {
-            if (messageType.IsReply())
+            return messageType.IsDefined(typeof (RogerReplyAttribute), false);
+        }
+
+        private string GetExchangeName(Type messageType)
+        {
+            if (IsReply(messageType))
                 return GetExchangeName(messageType.GetCustomAttributes(typeof (RogerReplyAttribute), false)
                                                   .Cast<RogerReplyAttribute>()
                                                   .Single().RequestType);

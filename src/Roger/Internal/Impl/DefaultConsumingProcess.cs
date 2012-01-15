@@ -124,7 +124,7 @@ namespace Roger.Internal.Impl
                 var exchange = exchangeResolver.Resolve(messageType);
                 allExchanges.Add(exchange);
 
-                if (messageType.IsReply())
+                if (exchangeResolver.IsReply(messageType))
                     continue;
 
                 var bindingKey = bindingKeyResolver.Resolve(messageType);

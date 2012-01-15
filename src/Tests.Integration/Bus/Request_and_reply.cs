@@ -68,28 +68,6 @@ namespace Tests.Integration.Bus
         }
 
         [Test]
-        [Ignore("This is no longer the expected behavior, who knows whether it will make sense once again one day")]
-        public void Should_throw_if_more_than_one_consumer_can_receive_the_reply()
-        {
-            var responder = new MyRequestResponder(Bus);
-            var responseConsumer1 = new GenericConsumer<MyReply>();
-            var responseConsumer2 = new GenericConsumer<MyReply>();
-
-            Bus.AddInstanceSubscription(responder);
-            Bus.AddInstanceSubscription(responseConsumer1);
-            Bus.AddInstanceSubscription(responseConsumer2);
-
-            AggregateException error = null;
-            Bus.Request(new MyRequest(), _ => {});
-
-            WaitForRoundtrip();
-
-            Assert.IsNull(responseConsumer1.LastReceived);
-            Assert.IsNull(responseConsumer2.LastReceived);
-            Assert.IsNotNull(error);
-        }
-
-        [Test]
         public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_message()
         {
             Assert.Throws<InvalidOperationException>(() => Bus.Reply(new MyReply()));
@@ -107,20 +85,6 @@ namespace Tests.Integration.Bus
 
             Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
             Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);
-        }
-
-        [Test]
-        public void Reply_should_throw_if_message_is_not_decorated_with_the_correct_attribute()
-        {
-            var responder = new CatchingResponder<MyRequest, MyWrongReply>(Bus);
-            Bus.AddInstanceSubscription(responder);
-
-            Bus.Request(new MyRequest());
-
-            WaitForRoundtrip();
-
-            Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
-            Assert.AreEqual(ErrorMessages.ReplyMessageNotAReply, responder.Exception.Message);
         }
     }
 }

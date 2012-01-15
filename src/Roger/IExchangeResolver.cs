@@ -13,5 +13,12 @@ namespace Roger
         /// <param name="messageType">The type of the message</param>
         /// <returns>The name of the exchange</returns>
         string Resolve(Type messageType);
+
+        /// <summary>
+        /// Returns whether the supplied message type is a reply
+        /// </summary>
+        /// <param name="messageType"></param>
+        /// <returns></returns>
+        bool IsReply(Type messageType);
     }
 }

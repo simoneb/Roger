@@ -15,5 +15,10 @@ namespace Roger.Chat.Client
         {
             return exchangeName;
         }
+
+        public bool IsReply(Type messageType)
+        {
+            return false;
+        }
     }
 }

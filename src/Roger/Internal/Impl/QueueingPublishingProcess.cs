@@ -201,14 +201,13 @@ namespace Roger.Internal.Impl
                                                        persistent));
         }
 
-        public void Reply(object message, CurrentMessageInformation currentMessage, Action<BasicReturn> basicReturnCallback, bool persistent = true)
+        public void Reply(object message, CurrentMessageInformation request, Action<BasicReturn> basicReturnCallback, bool persistent = true)
         {
-            EnsureRequestContext(currentMessage);
-            ValidateReplyMessage(message);
+            EnsureRequestContext(request);
 
             Enqueue(new ReplyDeliveryFactory(message.GetType(),
-                                             Exchange(currentMessage.MessageType),
-                                             currentMessage,
+                                             Exchange(request.MessageType),
+                                             request,
                                              Serialize(message),
                                              basicReturnCallback,
                                              persistent));
@@ -222,15 +221,6 @@ namespace Roger.Internal.Impl
             {
                 log.Error("Reply method called out of the context of a message handling request");
                 throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
-            }
-        }
-
-        private void ValidateReplyMessage(object message)
-        {
-            if (!message.GetType().IsDefined(typeof(RogerReplyAttribute), false))
-            {
-                log.Error("Reply method called with a reply message not decorated woth the right attribute");
-                throw new InvalidOperationException(ErrorMessages.ReplyMessageNotAReply);
             }
         }
 
