@@ -16,12 +16,13 @@ namespace Roger.Internal
 
         public void Execute(IModel model, RogerEndpoint endpoint, IPublishModule modules)
         {
-            var basicProperties = createProperties(endpoint);
-            modules.BeforePublish(this, model, basicProperties, basicReturnCallback);
+            var properties = createProperties(endpoint);
 
-            ExecuteInternal(model, basicProperties);
+            modules.BeforePublish(this, model, properties, basicReturnCallback);
+
+            ExecuteCore(model, properties);
         }
 
-        protected abstract void ExecuteInternal(IModel model, IBasicProperties properties);
+        protected abstract void ExecuteCore(IModel model, IBasicProperties properties);
     }
 }

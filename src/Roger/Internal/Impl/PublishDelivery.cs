@@ -16,7 +16,7 @@ namespace Roger.Internal.Impl
             this.body = body;
         }
 
-        protected override void ExecuteInternal(IModel model, IBasicProperties properties)
+        protected override void ExecuteCore(IModel model, IBasicProperties properties)
         {
             model.BasicPublish(exchange, routingKey, properties, body);
         }

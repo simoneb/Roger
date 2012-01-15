@@ -10,7 +10,7 @@ namespace Roger.Internal.Impl
         private readonly byte[] body;
         private readonly bool persistent;
 
-        public PublishFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent) : base(messageType)
+        public PublishFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent) : base(messageType, persistent)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;
@@ -18,10 +18,8 @@ namespace Roger.Internal.Impl
             this.persistent = persistent;
         }
 
-        public override IDelivery Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
+        protected override IDelivery CreateCore(Func<RogerEndpoint, IBasicProperties> createProperties)
         {
-            var createProperties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator, persistent);
-
             return new PublishDelivery(exchange, routingKey, body, createProperties);
         }
     }

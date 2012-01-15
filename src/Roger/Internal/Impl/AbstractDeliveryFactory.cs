@@ -7,19 +7,26 @@ namespace Roger.Internal.Impl
     internal abstract class AbstractDeliveryFactory : IDeliveryFactory
     {
         private readonly Type messageType;
+        private readonly bool persistent;
 
-        protected AbstractDeliveryFactory(Type messageType)
+        protected AbstractDeliveryFactory(Type messageType, bool persistent)
         {
             this.messageType = messageType;
+            this.persistent = persistent;
         }
 
-        protected Func<RogerEndpoint, IBasicProperties> CreatePropertiesFactory(IModel model,
-                                                                                IIdGenerator idGenerator,
-                                                                                ITypeResolver typeResolver,
-                                                                                IMessageSerializer serializer,
-                                                                                ISequenceGenerator sequenceGenerator,
-                                                                                bool persistent,
-                                                                                params Action<IBasicProperties>[] additionalActions)
+        public IDelivery Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
+        {
+            var createProperties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator);
+
+            return CreateCore(createProperties);
+        }
+
+        private Func<RogerEndpoint, IBasicProperties> CreatePropertiesFactory(IModel model,
+                                                                              IIdGenerator idGenerator,
+                                                                              ITypeResolver typeResolver,
+                                                                              IMessageSerializer serializer,
+                                                                              ISequenceGenerator sequenceGenerator)
         {
             var properties = model.CreateBasicProperties();
 
@@ -35,8 +42,7 @@ namespace Roger.Internal.Impl
             if (persistent)
                 properties.DeliveryMode = 2;
 
-            foreach (var additionalAction in additionalActions)
-                additionalAction(properties);
+            FillAdditionalProperties(properties, idGenerator);
 
             return endpoint =>
             {
@@ -45,10 +51,10 @@ namespace Roger.Internal.Impl
             };
         }
 
-        public abstract IDelivery Create(IModel model,
-                                         IIdGenerator idGenerator,
-                                         ITypeResolver typeResolver,
-                                         IMessageSerializer serializer,
-                                         ISequenceGenerator sequenceGenerator);
+        protected virtual void FillAdditionalProperties(IBasicProperties properties, IIdGenerator idGenerator)
+        {
+        }
+
+        protected abstract IDelivery CreateCore(Func<RogerEndpoint, IBasicProperties> createProperties);
     }
 }

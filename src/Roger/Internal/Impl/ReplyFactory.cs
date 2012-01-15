@@ -9,22 +9,28 @@ namespace Roger.Internal.Impl
         private readonly CurrentMessageInformation currentMessage;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
-        private readonly bool persistent;
 
-        public ReplyFactory(Type messageType, string exchange, CurrentMessageInformation currentMessage, byte[] body, Action<BasicReturn> basicReturnCallback, bool persistent) : base(messageType)
+        public ReplyFactory(Type messageType,
+                            string exchange,
+                            CurrentMessageInformation currentMessage,
+                            byte[] body,
+                            Action<BasicReturn> basicReturnCallback,
+                            bool persistent) : base(messageType, persistent)
         {
             this.exchange = exchange;
             this.currentMessage = currentMessage;
             this.body = body;
             this.basicReturnCallback = basicReturnCallback;
-            this.persistent = persistent;
         }
 
-        public override IDelivery Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
+        protected override IDelivery CreateCore(Func<RogerEndpoint, IBasicProperties> createProperties)
         {
-            var properties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator, persistent, p => p.CorrelationId = currentMessage.CorrelationId);
+            return new ReplyDelivery(exchange, currentMessage.Endpoint, body, basicReturnCallback, createProperties);
+        }
 
-            return new ReplyDelivery(exchange, currentMessage.Endpoint, body, basicReturnCallback, properties);
+        protected override void FillAdditionalProperties(IBasicProperties properties, IIdGenerator idGenerator)
+        {
+            properties.CorrelationId = currentMessage.CorrelationId;
         }
     }
 }

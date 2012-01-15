@@ -9,30 +9,22 @@ namespace Roger.Internal.Impl
         private readonly string routingKey;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
-        private readonly bool persistent;
 
         public PublishMandatoryFactory(Type messageType,
                                                string exchange,
                                                string routingKey,
                                                byte[] body,
                                                Action<BasicReturn> basicReturnCallback,
-                                               bool persistent) : base(messageType)
+                                               bool persistent) : base(messageType, persistent)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;
             this.body = body;
             this.basicReturnCallback = basicReturnCallback;
-            this.persistent = persistent;
         }
 
-        public override IDelivery Create(IModel model,
-                                         IIdGenerator idGenerator,
-                                         ITypeResolver typeResolver,
-                                         IMessageSerializer serializer,
-                                         ISequenceGenerator sequenceGenerator)
+        protected override IDelivery CreateCore(Func<RogerEndpoint, IBasicProperties> createProperties)
         {
-            var createProperties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator, persistent);
-
             return new PublishMandatoryDelivery(exchange, routingKey, body, basicReturnCallback, createProperties);
         }
     }
