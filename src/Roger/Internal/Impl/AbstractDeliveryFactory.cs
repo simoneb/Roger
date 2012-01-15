@@ -46,9 +46,9 @@ namespace Roger.Internal.Impl
         }
 
         public abstract IDelivery Create(IModel model,
-                                                IIdGenerator idGenerator,
-                                                ITypeResolver typeResolver,
-                                                IMessageSerializer serializer,
-                                                ISequenceGenerator sequenceGenerator);
+                                         IIdGenerator idGenerator,
+                                         ITypeResolver typeResolver,
+                                         IMessageSerializer serializer,
+                                         ISequenceGenerator sequenceGenerator);
     }
 }

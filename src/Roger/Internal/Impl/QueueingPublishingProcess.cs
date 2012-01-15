@@ -18,14 +18,14 @@ namespace Roger.Internal.Impl
         private readonly BlockingCollection<IDeliveryFactory> publishingQueue = new BlockingCollection<IDeliveryFactory>();
         private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
-        private IModel publishModel;
+        private IModel model;
         private readonly IIdGenerator idGenerator;
         private readonly ISequenceGenerator sequenceGenerator;
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
-        private readonly Func<RogerEndpoint> currentLocalEndpoint;
+        private readonly Func<RogerEndpoint> getEndpoint;
         private readonly IPublishModule modules;
 
         internal QueueingPublishingProcess(IReliableConnection connection,
@@ -34,7 +34,7 @@ namespace Roger.Internal.Impl
                                            IExchangeResolver exchangeResolver,
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
-                                           Func<RogerEndpoint> currentLocalEndpoint,
+                                           Func<RogerEndpoint> getEndpoint,
                                            IPublishModule modules)
         {
             this.connection = connection;
@@ -44,7 +44,7 @@ namespace Roger.Internal.Impl
             routingKeyResolver = Default.RoutingKeyResolver;
             this.serializer = serializer;
             this.typeResolver = typeResolver;
-            this.currentLocalEndpoint = currentLocalEndpoint;
+            this.getEndpoint = getEndpoint;
             this.modules = modules;
 
             connection.ConnectionEstabilished += ConnectionOnConnectionEstabilished;
@@ -55,8 +55,8 @@ namespace Roger.Internal.Impl
 
         private void ConnectionOnConnectionEstabilished()
         {
-            publishModel = connection.CreateModel();
-            modules.BeforePublishEnabled(publishModel);
+            model = connection.CreateModel();
+            modules.BeforePublishEnabled(model);
 
             EnablePublishing();
         }
@@ -71,7 +71,7 @@ namespace Roger.Internal.Impl
         {
             DisablePublishing();
 
-            modules.AfterPublishDisabled(publishModel);
+            modules.AfterPublishDisabled(model);
         }
 
         private void DisablePublishing()
@@ -98,15 +98,15 @@ namespace Roger.Internal.Impl
                             break;
                         }
                         
-                        var command = factory.Create(publishModel, idGenerator, typeResolver, serializer, sequenceGenerator);
+                        var delivery = factory.Create(model, idGenerator, typeResolver, serializer, sequenceGenerator);
 
-                        log.Debug("Executing publish action");
+                        log.Debug("Executing delivery");
 
                         try
                         {
-                            command.Execute(publishModel, currentLocalEndpoint(), modules);
+                            delivery.Execute(model, getEndpoint(), modules);
                         }
-                            /* 
+                         /* 
                          * we may experience a newtork problem even before the connection notifies its own shutdown
                          * but it's safer not to disable publishing to avoid the risk of deadlocking
                          * Instead we catch the exception and hopefully will republish these messages
@@ -141,16 +141,16 @@ namespace Roger.Internal.Impl
         {
             try
             {
-                log.Debug("Enqueuing publish action");
+                log.Debug("Enqueuing delivery");
                 publishingQueue.Add(factory);
             }
             catch (ObjectDisposedException)
             {
-                log.Error("Could not enqueue message for publishing as publishing queue has been disposed of already");
+                log.Error("Could not enqueue delivery as publishing queue has been disposed of already");
             }
             catch (InvalidOperationException e)
             {
-                log.Error("Could not enqueue message for publishing", e);
+                log.Error("Could not enqueue delivery", e);
             }
         }
 
@@ -158,59 +158,59 @@ namespace Roger.Internal.Impl
         {
             var messageType = message.GetType();
 
-            Enqueue(new PublishDeliveryFactory(messageType,
-                                              Exchange(messageType),
-                                              RoutingKey(messageType),
-                                              Serialize(message), 
-                                              persistent));
+            Enqueue(new PublishFactory(messageType,
+                                       Exchange(messageType),
+                                       RoutingKey(messageType),
+                                       Serialize(message),
+                                       persistent));
         }
 
         public void Request(object message, Action<BasicReturn> basicReturnCallback, bool persistent)
         {
             var messageType = message.GetType();
 
-            Enqueue(new RequestDeliveryFactory(messageType,
-                                              Exchange(messageType),
-                                              RoutingKey(messageType),
-                                              Serialize(message),
-                                              persistent,
-                                              basicReturnCallback));
+            Enqueue(new RequestFactory(messageType,
+                                       Exchange(messageType),
+                                       RoutingKey(messageType),
+                                       Serialize(message),
+                                       persistent,
+                                       basicReturnCallback));
         }
 
         public void Send(RogerEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback, bool persistent)
         {
             var messageType = message.GetType();
 
-            Enqueue(new SendDeliveryFactory(messageType,
-                                           Exchange(messageType),
-                                           recipient,
-                                           Serialize(message),
-                                           basicReturnCallback, 
-                                           persistent));
+            Enqueue(new SendFactory(messageType,
+                                    Exchange(messageType),
+                                    recipient,
+                                    Serialize(message),
+                                    basicReturnCallback,
+                                    persistent));
         }
 
         public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback, bool persistent)
         {
             var messageType = message.GetType();
 
-            Enqueue(new PublishMandatoryDeliveryFactory(messageType,
-                                                       Exchange(messageType),
-                                                       RoutingKey(messageType),
-                                                       Serialize(message),
-                                                       basicReturnCallback, 
-                                                       persistent));
+            Enqueue(new PublishMandatoryFactory(messageType,
+                                                Exchange(messageType),
+                                                RoutingKey(messageType),
+                                                Serialize(message),
+                                                basicReturnCallback,
+                                                persistent));
         }
 
-        public void Reply(object message, CurrentMessageInformation request, Action<BasicReturn> basicReturnCallback, bool persistent = true)
+        public void Reply(object message, CurrentMessageInformation request, Action<BasicReturn> basicReturnCallback, bool persistent)
         {
             EnsureRequestContext(request);
 
-            Enqueue(new ReplyDeliveryFactory(message.GetType(),
-                                             Exchange(request.MessageType),
-                                             request,
-                                             Serialize(message),
-                                             basicReturnCallback,
-                                             persistent));
+            Enqueue(new ReplyFactory(message.GetType(),
+                                     Exchange(request.MessageType),
+                                     request,
+                                     Serialize(message),
+                                     basicReturnCallback,
+                                     persistent));
         }
 
         private void EnsureRequestContext(CurrentMessageInformation currentMessage)

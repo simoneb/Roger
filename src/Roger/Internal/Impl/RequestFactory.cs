@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal.Impl
 {
-    internal class RequestDeliveryFactory : AbstractDeliveryFactory
+    internal class RequestFactory : AbstractDeliveryFactory
     {
         private readonly string exchange;
         private readonly string routingKey;
@@ -11,7 +11,7 @@ namespace Roger.Internal.Impl
         private readonly bool persistent;
         private readonly Action<BasicReturn> basicReturnCallback;
 
-        public RequestDeliveryFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent, Action<BasicReturn> basicReturnCallback) : base(messageType)
+        public RequestFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent, Action<BasicReturn> basicReturnCallback) : base(messageType)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;

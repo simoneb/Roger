@@ -3,14 +3,14 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal.Impl
 {
-    internal class PublishDeliveryFactory : AbstractDeliveryFactory
+    internal class PublishFactory : AbstractDeliveryFactory
     {
         private readonly string exchange;
         private readonly string routingKey;
         private readonly byte[] body;
         private readonly bool persistent;
 
-        public PublishDeliveryFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent) : base(messageType)
+        public PublishFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent) : base(messageType)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;

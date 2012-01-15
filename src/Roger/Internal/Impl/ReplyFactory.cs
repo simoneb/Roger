@@ -3,15 +3,15 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal.Impl
 {
-    internal class ReplyDeliveryFactory : AbstractDeliveryFactory
+    internal class ReplyFactory : AbstractDeliveryFactory
     {
         private readonly string exchange;
         private readonly CurrentMessageInformation currentMessage;
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
-        private bool persistent;
+        private readonly bool persistent;
 
-        public ReplyDeliveryFactory(Type messageType, string exchange, CurrentMessageInformation currentMessage, byte[] body, Action<BasicReturn> basicReturnCallback, bool persistent) : base(messageType)
+        public ReplyFactory(Type messageType, string exchange, CurrentMessageInformation currentMessage, byte[] body, Action<BasicReturn> basicReturnCallback, bool persistent) : base(messageType)
         {
             this.exchange = exchange;
             this.currentMessage = currentMessage;
