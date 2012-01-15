@@ -52,7 +52,7 @@ namespace Roger
             serializer = serializer.Or(Default.Serializer);
             idGenerator = idGenerator.Or(Default.IdGenerator);
             sequenceGenerator = sequenceGenerator.Or(Default.SequenceGenerator);
-            messageFilters = messageFilters.Or(Default.Filters(this));
+            messageFilters = messageFilters.Or(Default.Filters);
             
             publisherConfirmsScheduler = new SystemThreadingScheduler(TimeSpan.FromSeconds(1));
             publishModule = new CompositePublishModule(new PublisherConfirmsModule(publisherConfirmsScheduler, TimeSpan.FromSeconds(2)),

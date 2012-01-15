@@ -53,8 +53,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConcurrentSelfExpiringCacheTest.cs" />
-    <Compile Include="DeduplicationFilterTest.cs" />
+    <Compile Include="Bootstrap.cs" />
     <Compile Include="DefaultConsumingProcessTest.cs" />
     <Compile Include="DefaultReflectionTests.cs" />
     <Compile Include="DefaultSupportedMessageTypesResolverTest.cs" />
@@ -65,7 +64,7 @@
     <Compile Include="PublisherConfirmsModuleTest.cs" />
     <Compile Include="QueueingPublishingProcessTest.cs" />
     <Compile Include="ReliableConnectionTest.cs" />
-    <Compile Include="ResequencingFilterTest.cs" />
+    <Compile Include="ResequencingDeduplicationFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RogerEndpointTest.cs" />
     <Compile Include="RogerGuidTests.cs" />
@@ -90,10 +89,15 @@
     <Compile Include="SupportClasses\RogerMessageInheritorAttribute.cs" />
     <Compile Include="SupportClasses\SimplyDecorated.cs" />
     <Compile Include="SupportClasses\SomeExchangeRogerMessageAttribute.cs" />
+    <Compile Include="TaskExtensions.cs" />
     <Compile Include="TimestampTest.cs" />
     <Compile Include="Routing_key_generation.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Roger.MEF\Roger.MEF.csproj">
       <Project>{DD76D805-CBC9-40CA-B000-F05D87A3FC81}</Project>
       <Name>Roger.MEF</Name>

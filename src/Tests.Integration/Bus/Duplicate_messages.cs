@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using MbUnit.Framework;
 using Roger;
 using Roger.Internal.Impl;
@@ -13,21 +11,22 @@ namespace Tests.Integration.Bus
     {
         protected override IEnumerable<IMessageFilter> MessageFilters
         {
-            get { yield return new DeduplicationFilter(Bus, TimeSpan.FromSeconds(5), 1); }
+            get { yield return new ResequencingDeduplicationFilter(); }
         }
 
-        protected override IIdGenerator IdGenerator
+        protected override ISequenceGenerator SequenceGenerator
         {
-            get { return new StaticIdGenerator(); }
+            get { return new ReverseSequenceGenerator(); }
         }
 
-        private class StaticIdGenerator : IIdGenerator
+        private class ReverseSequenceGenerator : ISequenceGenerator
         {
-            private RogerGuid? guid;
+            private readonly IEnumerator<uint> ids = new[] {1, 2, 3, 4, 5, 5, 4, 3, 2, 1}.Cast<uint>().GetEnumerator();
 
-            public RogerGuid Next()
+            public uint Next()
             {
-                return (RogerGuid) (guid ?? (guid = RogerGuid.NewGuid()));
+                ids.MoveNext();
+                return ids.Current;
             }
         }
 
@@ -41,30 +40,8 @@ namespace Tests.Integration.Bus
                 Bus.Publish(new MyMessage {Value = i});
 
             Assert.IsFalse(consumer.WaitForDelivery());
-            Assert.AreEqual(1, consumer.Received.Count);
-            Assert.AreEqual(0, consumer.Received.Single().Value);
-        }
-
-        [Test]
-        public void Will_receive_duplicate_messages_if_delivered_after_cache_expiry()
-        {
-            var consumer = new GenericMultipleArrivalsConsumer<MyMessage>(20);
-            Bus.AddInstanceSubscription(consumer);
-
-            for (int i = 0; i < 10; i++)
-                Bus.Publish(new MyMessage { Value = i });
-
-            Assert.IsFalse(consumer.WaitForDelivery());
-
-            Thread.Sleep(TimeSpan.FromSeconds(6));
-
-            for (int i = 0; i < 10; i++)
-                Bus.Publish(new MyMessage { Value = i });
-
-            Assert.IsFalse(consumer.WaitForDelivery());
-            
-            Assert.AreEqual(2, consumer.Received.Count);
-            Assert.AreEqual(0, consumer.Received.Select(r => r.Value).Distinct().Single());
+            Assert.AreEqual(5, consumer.Received.Count);
+            Assert.AreElementsEqual(Enumerable.Range(0, 5), consumer.Received.Select(r => r.Value));
         }
     }
 }

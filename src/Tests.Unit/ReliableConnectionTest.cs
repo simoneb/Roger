@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using MbUnit.Framework;
 using NSubstitute;
 using RabbitMQ.Client;
@@ -58,7 +58,7 @@ namespace Tests.Unit
 
             var actions = new Queue<Action>(new[]
             {
-                () => { throw new BrokerUnreachableException(null, null); }, 
+                () => { throw BUE; }, 
                 new Action(() => { })
             });
 
@@ -107,12 +107,17 @@ namespace Tests.Unit
         [Test]
         public void Should_stop_trying_to_connect_if_disposed_of()
         {
-            connectionFactory.When(f => f.CreateConnection()).Do(_ => { sut.Dispose(); throw new BrokerUnreachableException(null, null); });
+            connectionFactory.When(f => f.CreateConnection()).Do(_ => { sut.Dispose(); throw BUE; });
             waiter.Wait(Arg.Any<WaitHandle>(), sut.ConnectionAttemptInterval).Returns(true);
 
             sut.Connect();
 
             connectionFactory.Received(1).CreateConnection();
+        }
+
+        private static BrokerUnreachableException BUE
+        {
+            get { return new BrokerUnreachableException(new Hashtable(), new Hashtable()); }
         }
 
         [Test]

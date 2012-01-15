@@ -1,5 +1,9 @@
+using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
+using Common.Logging;
+using Common.Logging.Simple;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -184,6 +188,20 @@ namespace Common
                 add { inner.CallbackException += value; }
                 remove { inner.CallbackException -= value; }
             }
+        }
+
+        public static void InitializeTestLogging()
+        {
+            var props = new NameValueCollection { { "showLogName", "true" }, { "showDateTime", "false" } };
+
+            LogManager.Adapter = RunningOnTeamCity
+                                     ? (ILoggerFactoryAdapter)new ConsoleOutLoggerFactoryAdapter(props)
+                                     : new TraceLoggerFactoryAdapter(props);
+        }
+
+        private static bool RunningOnTeamCity
+        {
+            get { return Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != null; }
         }
     }
 }

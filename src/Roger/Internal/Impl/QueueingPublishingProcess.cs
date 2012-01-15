@@ -207,11 +207,11 @@ namespace Roger.Internal.Impl
             ValidateReplyMessage(message);
 
             Enqueue(new ReplyDeliveryFactory(message.GetType(),
-                                            Exchange(currentMessage.MessageType),
-                                            currentMessage,
-                                            Serialize(message),
-                                            basicReturnCallback,
-                                            persistent));
+                                             Exchange(currentMessage.MessageType),
+                                             currentMessage,
+                                             Serialize(message),
+                                             basicReturnCallback,
+                                             persistent));
         }
 
         private void EnsureRequestContext(CurrentMessageInformation currentMessage)

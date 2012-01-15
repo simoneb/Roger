@@ -85,8 +85,7 @@
     <Compile Include="Internal\Impl\ReliableConnection.cs" />
     <Compile Include="Internal\Impl\DefaultConsumingProcess.cs" />
     <Compile Include="Internal\IConsumingProcess.cs" />
-    <Compile Include="Internal\Impl\DeduplicationFilter.cs" />
-    <Compile Include="Internal\Impl\ResequencingFilter.cs" />
+    <Compile Include="Internal\Impl\ResequencingDeduplicationFilter.cs" />
     <Compile Include="IIdGenerator.cs" />
     <Compile Include="Internal\Impl\RandomIdGenerator.cs" />
     <Compile Include="Internal\IRoutingKeyResolver.cs" />
@@ -129,11 +128,8 @@
     <Compile Include="IMessageSerializer.cs" />
     <Compile Include="Internal\Impl\ProtoBufNetSerializer.cs" />
     <Compile Include="Default.cs" />
-    <Compile Include="Utilities\ConcurrentSelfExpiringCache.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\ICache.cs" />
-    <Compile Include="Utilities\MemoryCache.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
     <Compile Include="Utilities\SystemTime.cs" />
   </ItemGroup>

@@ -18,13 +18,7 @@ namespace Roger
         private static readonly Lazy<IIdGenerator> DefaultGuidGenerator = new Lazy<IIdGenerator>(() => new RandomIdGenerator());
         private static readonly Lazy<ISequenceGenerator> DefaultSequenceGenerator = new Lazy<ISequenceGenerator>(() => new ThreadSafeIncrementalSequenceGenerator());
         private static readonly Lazy<IConsumerInvoker> DefaultConsumerInvoker = new Lazy<IConsumerInvoker>(() => new AlwaysSuccessConsumerInvoker(DefaultReflection.Value));
-
-        private static readonly Lazy<Func<IRabbitBus, IEnumerable<IMessageFilter>>> DefaultFilters =
-            new Lazy<Func<IRabbitBus, IEnumerable<IMessageFilter>>>(() => c => new IMessageFilter[]
-            {
-                new DeduplicationFilter(c, TimeSpan.FromMinutes(2)),
-                new ResequencingFilter()
-            });
+        private static readonly Lazy<IEnumerable<IMessageFilter>> DefaultFilters = new Lazy<IEnumerable<IMessageFilter>>(() => new[] {new ResequencingDeduplicationFilter()});
 
         public static IConsumerContainer ConsumerContainer { get { return DefaultConsumerResolver.Value; } }
         public static ITypeResolver TypeResolver { get { return DefaultTypeResolver.Value; } }
@@ -35,7 +29,7 @@ namespace Roger
         public static IBindingKeyResolver BindingKeyResolver { get { return DefaultBindingKeyResolver.Value; } }
         public static IMessageSerializer Serializer { get { return DefaultSerializer.Value; } }
         public static IIdGenerator IdGenerator { get { return DefaultGuidGenerator.Value; } }
-        public static IEnumerable<IMessageFilter> Filters(IRabbitBus bus) { return DefaultFilters.Value(bus);  }
+        public static IEnumerable<IMessageFilter> Filters { get { return DefaultFilters.Value; } }
         public static ISequenceGenerator SequenceGenerator { get { return DefaultSequenceGenerator.Value; } }
         public static IConsumerInvoker ConsumerInvoker { get { return DefaultConsumerInvoker.Value; } }
     }
