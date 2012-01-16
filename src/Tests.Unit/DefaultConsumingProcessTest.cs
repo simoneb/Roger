@@ -31,7 +31,6 @@ namespace Tests.Unit
                                               Substitute.For<IMessageSerializer>(), 
                                               Substitute.For<ITypeResolver>(),
                                               Substitute.For<IConsumerContainer>(), 
-                                              Substitute.For<IReflection>(),
                                               Enumerable.Empty<IMessageFilter>(), 
                                               queueFactory, 
                                               Substitute.For<IConsumerInvoker>(),

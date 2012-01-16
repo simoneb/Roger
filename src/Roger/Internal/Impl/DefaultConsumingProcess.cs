@@ -21,10 +21,9 @@ namespace Roger.Internal.Impl
         private readonly IConsumerContainer consumerContainer;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private readonly IExchangeResolver exchangeResolver;
-        private readonly IBindingKeyResolver bindingKeyResolver;
+        private readonly IRoutingKeyResolver bindingKeyResolver;
         private readonly ITypeResolver typeResolver;
         private readonly IMessageSerializer serializer;
-        private readonly IReflection reflection;
         private readonly IIdGenerator idGenerator;
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
         private readonly IEnumerable<IMessageFilter> messageFilters;
@@ -45,7 +44,6 @@ namespace Roger.Internal.Impl
                                        IMessageSerializer serializer,
                                        ITypeResolver typeResolver,
                                        IConsumerContainer consumerContainer,
-                                       IReflection reflection,
                                        IEnumerable<IMessageFilter> messageFilters,
                                        IQueueFactory queueFactory,
                                        IConsumerInvoker consumerInvoker,
@@ -57,10 +55,9 @@ namespace Roger.Internal.Impl
             this.consumerInvoker = consumerInvoker;
             this.noLocal = noLocal;
             this.exchangeResolver = exchangeResolver;
-            bindingKeyResolver = Default.BindingKeyResolver;
+            bindingKeyResolver = Default.RoutingKeyResolver;
             this.typeResolver = typeResolver;
             this.serializer = serializer;
-            this.reflection = reflection;
             this.idGenerator = idGenerator;
             supportedMessageTypesResolver = Default.SupportedMessageTypesResolver;
             this.messageFilters = messageFilters;
@@ -217,7 +214,7 @@ namespace Roger.Internal.Impl
         private Consumers ResolveConsumers(Type messageType)
         {
             var localConsumers = InstanceConsumers(messageType).ToArray();
-            var standardConsumers = reflection.Hierarchy(messageType).ConsumersOf().SelectMany(consumerContainer.Resolve).Distinct().ToArray();
+            var standardConsumers = consumerContainer.Resolve(messageType.HierarchyRoot().ConsumerOf()).Distinct().ToArray();
 
             log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             standardConsumers.Length,

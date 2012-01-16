@@ -8,12 +8,17 @@ namespace Roger.Internal.Impl
     {
         public ISet<Type> Resolve(Type consumerType)
         {
-            var explicitMessages = from i in consumerType.GetInterfaces()
-                                   where i.IsGenericType
-                                   where typeof (IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
-                                   select i.GetGenericArguments().Single();
+            var supportedMessages = (from i in consumerType.GetInterfaces()
+                                     where i.IsGenericType
+                                     where typeof (IConsumer<>).IsAssignableFrom(i.GetGenericTypeDefinition())
+                                     let message = i.GetGenericArguments().Single()
+                                     select new {Root = message.HierarchyRoot(), Message = message}).ToArray();
 
-            return new HashSet<Type>(explicitMessages);
+
+            if (supportedMessages.Any(m => supportedMessages.All(i => i.Message != m.Root) && m.Message != m.Root))
+                throw new InvalidOperationException("Consuming only derived class of message hierarchy is not supported");
+
+            return new HashSet<Type>(supportedMessages.Select(m => m.Root));
         }
     }
 }

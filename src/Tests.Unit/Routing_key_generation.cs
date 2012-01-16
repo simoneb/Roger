@@ -20,9 +20,9 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Derived_type()
+        public void Derived_type_should_resolve_to_base_type()
         {
-            Assert.AreEqual("Tests.Unit.SupportClasses.MyMessage.MyDerivedMessage", sut.Resolve(typeof(MyDerivedMessage)));            
+            Assert.AreEqual("Tests.Unit.SupportClasses.MyMessage", sut.Resolve(typeof(MyDerivedMessage)));            
         }
         
         [Test]

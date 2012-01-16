@@ -1,7 +1,6 @@
 ﻿using System;
 using MbUnit.Framework;
 using Roger;
-using Roger.Internal;
 using Roger.Internal.Impl;
 using Tests.Unit.SupportClasses;
 
@@ -29,6 +28,12 @@ namespace Tests.Unit
             public void Consume(MyDerivedMessage message) { }
         }
 
+        class DerivedClassOnlyConsumer : IConsumer<MyDerivedMessage>
+        {
+            public void Consume(MyDerivedMessage message)
+            {}
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -48,9 +53,15 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Consumer_consuming_both_base_and_derived_class()
+        public void Consumer_consuming_both_base_and_derived_class_should_resolve_to_base_class_only()
         {
-            Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyMessage), typeof(MyDerivedMessage) }, sut.Resolve(typeof(BothBaseAndDerivedConsumer)));
+            Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyMessage) }, sut.Resolve(typeof(BothBaseAndDerivedConsumer)));
+        }
+
+        [Test]
+        public void Consumer_of_derived_class_only_is_not_supported()
+        {
+            Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof (DerivedClassOnlyConsumer)));
         }
     }
 }

@@ -55,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
     <Compile Include="DefaultConsumingProcessTest.cs" />
-    <Compile Include="DefaultReflectionTests.cs" />
     <Compile Include="DefaultSupportedMessageTypesResolverTest.cs" />
     <Compile Include="Exchange_resolution.cs" />
     <Compile Include="GenericsTest.cs" />
@@ -63,6 +62,7 @@
     <Compile Include="Message_type_serialization.cs" />
     <Compile Include="PublisherConfirmsModuleTest.cs" />
     <Compile Include="QueueingPublishingProcessTest.cs" />
+    <Compile Include="ReflectionExtensionsTest.cs" />
     <Compile Include="ReliableConnectionTest.cs" />
     <Compile Include="ResequencingDeduplicationFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

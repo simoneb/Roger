@@ -52,14 +52,12 @@
   <ItemGroup>
     <Compile Include="BasicReturn.cs" />
     <Compile Include="Internal\AbstractDelivery.cs" />
-    <Compile Include="Internal\IBindingKeyResolver.cs" />
     <Compile Include="Internal\IConsumerInvoker.cs" />
     <Compile Include="Internal\IDelivery.cs" />
     <Compile Include="Internal\IDeliveryFactory.cs" />
     <Compile Include="Internal\Impl\AbstractDeliveryFactory.cs" />
     <Compile Include="Internal\Impl\BasicReturnModule.cs" />
     <Compile Include="Internal\Impl\CompositePublishModule.cs" />
-    <Compile Include="Internal\Impl\DefaultBindingKeyResolver.cs" />
     <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
     <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />
     <Compile Include="Internal\Impl\AlwaysSuccessConsumerInvoker.cs" />
@@ -113,8 +111,7 @@
     <Compile Include="RogerEndpoint.cs" />
     <Compile Include="RogerMessageAttribute.cs" />
     <Compile Include="RogerReplyAttribute.cs" />
-    <Compile Include="Internal\Impl\DefaultReflection.cs" />
-    <Compile Include="Internal\IReflection.cs" />
+    <Compile Include="Internal\Impl\ReflectionExtensions.cs" />
     <Compile Include="Internal\Impl\DefaultExchangeResolver.cs" />
     <Compile Include="Internal\Impl\DefaultRoutingKeyResolver.cs" />
     <Compile Include="Internal\Impl\DefaultTypeResolver.cs" />

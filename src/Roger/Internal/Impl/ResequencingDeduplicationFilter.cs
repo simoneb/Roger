@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Logging;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 using Roger.Utilities;
 
 namespace Roger.Internal.Impl
@@ -42,7 +43,18 @@ namespace Roger.Internal.Impl
                                     message.MessageId, 
                                     endpoint);
 
-                    model.BasicAck(message.DeliveryTag, false);
+                    try
+                    {
+                        model.BasicAck(message.DeliveryTag, false);
+                    }
+                    catch (AlreadyClosedException e)
+                    {
+                        log.Error("Could not ack filtered message because model was already closed", e);
+                    }
+                    catch (Exception e)
+                    {
+                        log.Error("Could not ack filtered message", e);
+                    }
                 }
             }
         }

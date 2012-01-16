@@ -67,7 +67,6 @@ namespace Roger
                                                    serializer,
                                                    Default.TypeResolver,
                                                    consumerContainer,
-                                                   Default.Reflection,
                                                    messageFilters,
                                                    new DefaultQueueFactory(),
                                                    Default.ConsumerInvoker,

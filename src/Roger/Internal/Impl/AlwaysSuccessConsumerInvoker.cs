@@ -6,13 +6,7 @@ namespace Roger.Internal.Impl
 {
     class AlwaysSuccessConsumerInvoker : IConsumerInvoker
     {
-        private readonly IReflection reflection;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
-
-        public AlwaysSuccessConsumerInvoker(IReflection reflection)
-        {
-            this.reflection = reflection;
-        }
 
         public bool Invoke(IEnumerable<IConsumer> consumers, CurrentMessageInformation message)
         {
@@ -22,7 +16,7 @@ namespace Roger.Internal.Impl
 
                 try
                 {
-                    reflection.InvokeConsume(consumer, message.Body);
+                    consumer.InvokePreservingStackTrace(message.Body);
                 }
                 catch (Exception e)
                 {

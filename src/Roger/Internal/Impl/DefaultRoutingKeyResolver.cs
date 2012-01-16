@@ -14,23 +14,12 @@ namespace Roger.Internal.Impl
 
         public string Resolve(Type messageType)
         {
-            var routingKey = new StringBuilder(messageType.Namespace);
-
-            var baseType = messageType;
-            var stack = new Stack<string>();
-
-            while (baseType != null && baseType != typeof(object))
-            {
-                stack.Push(baseType.Name);
-                baseType = baseType.BaseType;
-            }
-
-            stack.Aggregate(routingKey, (b, s) => b.Append("." + s));
+            var routingKey = messageType.HierarchyRoot().ToString();
 
             if(routingKey.Length > 255)
                 throw new InvalidOperationException("Routing key should be shorter than 256 characters");
 
-            return routingKey.ToString();
+            return routingKey;
         }
     }
 }

@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using Roger;
 using Roger.Internal;
 using Roger.Internal.Impl;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {
@@ -47,7 +48,7 @@ namespace Tests.Unit
         {
             connection.ConnectionEstabilished += Raise.Event<Action>();
 
-            sut.Publish(new object(), false);
+            sut.Publish(new MyMessage(), false);
 
             Thread.Sleep(100);
 
@@ -66,7 +67,7 @@ namespace Tests.Unit
         {
             connection.ConnectionEstabilished += Raise.Event<Action>();
 
-            sut.Publish(new object(), false);
+            sut.Publish(new MyMessage(), false);
 
             Thread.Sleep(100);
 
@@ -76,7 +77,7 @@ namespace Tests.Unit
         [Test]
         public void Should_not_publish_messages_until_connection_is_established()
         {
-            sut.Publish(new object(), false);
+            sut.Publish(new MyMessage(), false);
 
             Thread.Sleep(100);
 
