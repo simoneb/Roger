@@ -36,7 +36,7 @@ namespace Roger.Internal.Impl
 
             properties.Headers = new Hashtable
             {
-                {Headers.Sequence, BitConverter.GetBytes(sequenceGenerator.Next())}
+                {Headers.Sequence, BitConverter.GetBytes(sequenceGenerator.Next(messageType))}
             };
 
             if (persistent)

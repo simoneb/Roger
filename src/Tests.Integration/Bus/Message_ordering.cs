@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MbUnit.Framework;
 using Roger;
@@ -25,7 +26,7 @@ namespace Tests.Integration.Bus
         {
             private readonly IEnumerator<uint> ids = Sequence.Cast<uint>().GetEnumerator();
 
-            public uint Next()
+            public uint Next(Type messageType)
             {
                 ids.MoveNext();
                 return ids.Current;

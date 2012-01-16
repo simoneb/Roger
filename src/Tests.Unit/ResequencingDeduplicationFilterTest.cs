@@ -10,6 +10,7 @@ using System.Linq;
 using Roger;
 using Roger.Internal;
 using Roger.Internal.Impl;
+using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
 {
@@ -36,6 +37,20 @@ namespace Tests.Unit
         {
             input.Close();
             output.Close();
+        }
+
+        [Test]
+        [Row("someQueue", typeof(MyMessage), "someQueue", typeof(MyMessage), true)]
+        [Row("someQueue", typeof(MyMessage), "someOtherQueue", typeof(MyMessage), false)]
+        [Row("someQueue", typeof(MyMessage), "someQueue", typeof(MyDerivedMessage), true)]
+        [Row("someOtherQueue", typeof(MyMessage), "someQueue", typeof(MyDerivedMessage), false)]
+        public void Sequence_key_should_handle_equality_correctly(string firstEndpoint, Type firstMessage, string secondEndpoint, Type secondMessage, bool outcome)
+        {
+            var first = new ResequencingDeduplicationFilter.SequenceKey(new RogerEndpoint(firstEndpoint), firstMessage);
+            var second = new ResequencingDeduplicationFilter.SequenceKey(new RogerEndpoint(secondEndpoint), secondMessage);
+
+            Assert.AreEqual(outcome, first.Equals(second));
+            Assert.AreEqual(outcome, first.GetHashCode().Equals(second.GetHashCode()));
         }
 
         [Test]
@@ -98,9 +113,27 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_handle_sequences_using_publisher_endpoint_as_discriminator()
+        public void Should_handle_sequences_using_publisher_endpoint_as_discriminator_for_same_type_of_message()
         {
             Delivering(Message(1, "queue1"), Message(1, "queue2")).WillReceiveJustThat();
+        }
+
+        [Test]
+        public void Should_treat_messages_of_same_hierarchy_as_same_message_when_from_same_endpoint()
+        {
+            Delivering(Message<MyMessage>(1), Message<MyDerivedMessage>(2)).WillReceiveJustThat();            
+        }
+
+        [Test]
+        public void Should_treat_messages_of_same_hierarchy_as_same_message_when_from_same_endpoint_deduplicating_them_when_same_sequence()
+        {
+            Delivering(Message<MyMessage>(1), Message<MyDerivedMessage>(1)).WillReceiveOnly(1);
+        }
+
+        [Test]
+        public void Should_discriminate_using_message_type_for_messages_belonging_to_different_hierarchies_regardless_of_endpoint()
+        {
+            Delivering(Message<MyMessage>(1), Message<MyOtherMessage>(1)).WillReceiveJustThat();            
         }
 
         private Delivery Delivering(params uint[] i)
@@ -175,15 +208,21 @@ namespace Tests.Unit
             return filter.Select(f => f.Body).Cast<uint>().ToArray();
         }
 
-        private static CurrentMessageInformation Message(uint sequenceAndBody, string endpoint = null)
+        private static CurrentMessageInformation Message<T>(uint sequenceBodyAndDeliveryTag, string endpoint = null)
         {
             return new CurrentMessageInformation
             {
-                Headers = new Hashtable {{Headers.Sequence, BitConverter.GetBytes(sequenceAndBody)}},
-                Body = sequenceAndBody,
+                Headers = new Hashtable { { Headers.Sequence, BitConverter.GetBytes(sequenceBodyAndDeliveryTag) } },
+                Body = sequenceBodyAndDeliveryTag,
                 Endpoint = new RogerEndpoint(endpoint ?? "someQueue"),
-                DeliveryTag = sequenceAndBody
+                DeliveryTag = sequenceBodyAndDeliveryTag,
+                MessageType = typeof(T)
             };
+        }
+
+        private static CurrentMessageInformation Message(uint sequenceBodyAndDeliveryTag, string endpoint = null)
+        {
+            return Message<MyMessage>(sequenceBodyAndDeliveryTag, endpoint);
         }
     }
 }

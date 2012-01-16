@@ -1,14 +1,15 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace Roger.Internal.Impl
 {
     internal class ThreadSafeIncrementalSequenceGenerator : ISequenceGenerator
     {
-        private int currentSequence;
+        readonly ConcurrentDictionary<Type, uint> sequences = new ConcurrentDictionary<Type, uint>();
 
-        public uint Next()
+        public uint Next(Type messageType)
         {
-            return (uint) Interlocked.Increment(ref currentSequence);
+            return sequences.AddOrUpdate(messageType.HierarchyRoot(), type => 1u, (type, s) => s+1);
         }
     }
 }

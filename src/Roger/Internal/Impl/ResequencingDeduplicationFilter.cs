@@ -11,8 +11,8 @@ namespace Roger.Internal.Impl
 {
     internal class ResequencingDeduplicationFilter : IMessageFilter
     {
-        private readonly ConcurrentDictionary<RogerEndpoint, uint> nextSequences = new ConcurrentDictionary<RogerEndpoint, uint>();
-        private readonly ConcurrentDictionary<RogerEndpoint, SortedDictionary<uint, CurrentMessageInformation>> pendingMessages = new ConcurrentDictionary<RogerEndpoint, SortedDictionary<uint, CurrentMessageInformation>>();
+        private readonly ConcurrentDictionary<SequenceKey, uint> nextSequences = new ConcurrentDictionary<SequenceKey, uint>();
+        private readonly ConcurrentDictionary<SequenceKey, SortedDictionary<uint, CurrentMessageInformation>> pendingMessages = new ConcurrentDictionary<SequenceKey, SortedDictionary<uint, CurrentMessageInformation>>();
         private readonly ILog log = LogManager.GetCurrentClassLogger();
 
         public IEnumerable<CurrentMessageInformation> Filter(IEnumerable<CurrentMessageInformation> input, IModel model)
@@ -20,28 +20,28 @@ namespace Roger.Internal.Impl
             foreach (var message in input)
             {
                 var receivedSequence = BitConverter.ToUInt32((byte[])message.Headers[Headers.Sequence], 0);
-                var endpoint = message.Endpoint;
+                var sequenceKey = new SequenceKey(message.Endpoint, message.MessageType);
 
-                if (Unknown(endpoint) || CorrectSequence(endpoint, receivedSequence))
+                if (Unknown(sequenceKey) || CorrectSequence(sequenceKey, receivedSequence))
                 {
-                    nextSequences[endpoint] = receivedSequence + 1;
-                    log.DebugFormat("Correct sequence {0} on endpoint {1}", receivedSequence, endpoint);
+                    nextSequences[sequenceKey] = receivedSequence + 1;
+                    log.DebugFormat("Correct sequence {0} for key {1}", receivedSequence, sequenceKey);
                     yield return message;
 
-                    foreach (var p in Filter(Pending(endpoint, receivedSequence), model))
+                    foreach (var p in Filter(Pending(sequenceKey, receivedSequence), model))
                         yield return p;
                 }
-                else if (Unordered(endpoint, receivedSequence))
+                else if (Unordered(sequenceKey, receivedSequence))
                 {
-                    log.WarnFormat("Unexpected sequence {0} on endpoint {1}. Was expecting {2}", receivedSequence, endpoint, nextSequences[endpoint]);
-                    pendingMessages[endpoint].Add(receivedSequence, message);
+                    log.WarnFormat("Unexpected sequence {0} for key {1}. Was expecting {2}", receivedSequence, sequenceKey, nextSequences[sequenceKey]);
+                    pendingMessages[sequenceKey].Add(receivedSequence, message);
                 }
                 else
                 {
-                    log.DebugFormat("Filtering out (and acking) message sequence {0} - id {1} on endpoint {2} as already processed", 
+                    log.DebugFormat("Filtering out (and acking) message sequence {0} - id {1} for key {2} as already processed", 
                                     receivedSequence, 
                                     message.MessageId, 
-                                    endpoint);
+                                    sequenceKey);
 
                     try
                     {
@@ -59,32 +59,49 @@ namespace Roger.Internal.Impl
             }
         }
 
-        private bool Unordered(RogerEndpoint endpoint, uint sequence)
+        internal struct SequenceKey
+        {
+            public readonly RogerEndpoint Endpoint;
+            public readonly Type MessageType;
+
+            public SequenceKey(RogerEndpoint endpoint, Type messageType)
+            {
+                Endpoint = endpoint;
+                MessageType = messageType.HierarchyRoot();
+            }
+
+            public override string ToString()
+            {
+                return string.Format("Endpoint: {0}, MessageType: {1}", Endpoint, MessageType);
+            }
+        }
+
+        private bool Unordered(SequenceKey endpoint, uint sequence)
         {
             return sequence > nextSequences[endpoint];
         }
 
-        private bool CorrectSequence(RogerEndpoint endpoint, uint sequence)
+        private bool CorrectSequence(SequenceKey endpoint, uint sequence)
         {
             return sequence == nextSequences[endpoint];
         }
 
-        private bool Unknown(RogerEndpoint endpoint)
+        private bool Unknown(SequenceKey endpoint)
         {
             return !nextSequences.ContainsKey(endpoint);
         }
 
-        private IEnumerable<CurrentMessageInformation> Pending(RogerEndpoint endpoint, uint receivedSequence)
+        private IEnumerable<CurrentMessageInformation> Pending(SequenceKey key, uint receivedSequence)
         {
-            var toProcess = pendingMessages.GetOrAdd(endpoint, SortedDictionary)
+            var toProcess = pendingMessages.GetOrAdd(key, SortedDictionary)
                                            .Where(p => p.Key, (p, c) => c == p + 1, receivedSequence)
                                            .ToArray();
 
             if(toProcess.Any())
-                log.DebugFormat("Processing {0} out of {1} pending messages for endpoint {2}", toProcess.Length, pendingMessages[endpoint].Count, endpoint);
+                log.DebugFormat("Processing {0} out of {1} pending messages for key {2}", toProcess.Length, pendingMessages[key].Count, key);
 
             foreach (var p in toProcess)
-                pendingMessages[endpoint].Remove(p.Key);
+                pendingMessages[key].Remove(p.Key);
 
             return toProcess.Select(p => p.Value);
         }

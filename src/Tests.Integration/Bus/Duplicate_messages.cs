@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MbUnit.Framework;
@@ -23,7 +24,7 @@ namespace Tests.Integration.Bus
         {
             private readonly IEnumerator<uint> ids = new[] {1, 2, 3, 4, 5, 5, 4, 3, 2, 1}.Cast<uint>().GetEnumerator();
 
-            public uint Next()
+            public uint Next(Type messageType)
             {
                 ids.MoveNext();
                 return ids.Current;

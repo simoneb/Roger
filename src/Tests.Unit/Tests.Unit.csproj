@@ -68,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RogerEndpointTest.cs" />
     <Compile Include="RogerGuidTests.cs" />
+    <Compile Include="SequenceGeneratorTest.cs" />
     <Compile Include="SupportClasses\BaseClass.cs" />
     <Compile Include="SupportClasses\DerivedClass.cs" />
     <Compile Include="SupportClasses\DecoratedMessageBase.cs" />
