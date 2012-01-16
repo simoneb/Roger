@@ -16,7 +16,7 @@ namespace Tests.Unit
             public void Consume(MyMessage message) { }
         }
 
-        class MultipleConsumer : IConsumer<MyMessage>, IConsumer<MyOtherMessage>
+        class MultipleInterfaceConsumer : IConsumer<MyMessage>, IConsumer<MyOtherMessage>
         {
             public void Consume(MyMessage message) { }
             public void Consume(MyOtherMessage message) { }
@@ -34,6 +34,17 @@ namespace Tests.Unit
             {}
         }
 
+        class MultipleConsumerWithSingleInterface : IConsumer<MyMessage, MyOtherMessage>
+        {
+            public void Consume(MyMessage message)
+            {
+            }
+
+            public void Consume(MyOtherMessage message)
+            {
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -49,7 +60,7 @@ namespace Tests.Unit
         [Test]
         public void Consumer_implementing_multiple_interfaces()
         {
-            Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyMessage), typeof(MyOtherMessage) }, sut.Resolve(typeof(MultipleConsumer)));
+            Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyMessage), typeof(MyOtherMessage) }, sut.Resolve(typeof(MultipleInterfaceConsumer)));
         }
 
         [Test]
@@ -62,6 +73,12 @@ namespace Tests.Unit
         public void Consumer_of_derived_class_only_is_not_supported()
         {
             Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof (DerivedClassOnlyConsumer)));
+        }
+
+        [Test]
+        public void Consumer_implementing_interface_with_multiple_messages()
+        {
+            Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyMessage), typeof(MyOtherMessage) }, sut.Resolve(typeof(MultipleConsumerWithSingleInterface)));            
         }
     }
 }

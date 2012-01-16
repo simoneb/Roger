@@ -104,7 +104,6 @@
     <Compile Include="DefaultConnectionFactory.cs" />
     <Compile Include="Internal\ErrorMessages.cs" />
     <Compile Include="IConnectionFactory.cs" />
-    <Compile Include="IConsumer`1.cs" />
     <Compile Include="IConsumer.cs" />
     <Compile Include="IRabbitBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,7 +125,7 @@
     <Compile Include="Internal\Impl\ProtoBufNetSerializer.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="Utilities\DisposableAction.cs" />
-    <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
     <Compile Include="Utilities\SystemTime.cs" />
   </ItemGroup>
