@@ -15,35 +15,25 @@ namespace Tests.Integration.Bus
         }
 
         [Test]
-        public void Should_handle_exception_gracefully_and_retry_connection()
-        {
-            SafelyShutDownBroker();
-            RestartBrokerAndWaitForConnectionRecovery();
-
-            Bus.Publish(new MyMessage());
-            consumer.WaitForDelivery();
-
-            Assert.IsNotNull(consumer.LastReceived);
-        }
-
-        [Test]
         public void Should_be_able_to_publish_messages_after_recovery()
         {
             Bus.Publish(new MyMessage {Value = 1});
-            consumer.WaitForDelivery();
+            
+            Assert.IsTrue(consumer.WaitForDelivery(), "Message was not delivered in time");
 
             SafelyShutDownBroker();
             RestartBrokerAndWaitForConnectionRecovery();
 
             Bus.Publish(new MyMessage {Value = 2});
-            consumer.WaitForDelivery();
+            
+            Assert.IsTrue(consumer.WaitForDelivery(), "Message was not delivered in time");
 
             Assert.IsNotNull(consumer.LastReceived);
             Assert.AreEqual(2, consumer.LastReceived.Value);
         }
 
         [Test]
-        public void Should_be_able_to_publish_message_during_broker_failure_and_perform_publish_once_back_online()
+        public void Should_be_able_to_enqueue_message_during_broker_failure_and_perform_publish_once_back_online()
         {
             SafelyShutDownBroker();
 
@@ -51,7 +41,7 @@ namespace Tests.Integration.Bus
 
             RestartBrokerAndWaitForConnectionRecovery();
 
-            consumer.WaitForDelivery();
+            Assert.IsTrue(consumer.WaitForDelivery(), "Message was not delivered in time");
 
             Assert.IsNotNull(consumer.LastReceived);
             Assert.AreEqual(1, consumer.LastReceived.Value);
@@ -65,9 +55,7 @@ namespace Tests.Integration.Bus
 
         private static void SafelyShutDownBroker()
         {
-            Thread.Sleep(1000);
             Broker.StopBrokerApplication();
-            Thread.Sleep(1000);
         }
     }
 }

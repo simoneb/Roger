@@ -123,6 +123,7 @@ namespace Tests.Integration.Utils
         {
             Broker.StopBrokerApplication();
             Broker.ResetNode();
+            Broker.StartBrokerApplication();
 
             if (RunEmbeddedBroker)
                 Broker.StopNode();
