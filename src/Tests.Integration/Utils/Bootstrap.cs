@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Configuration;
 using System.Net;
 using Common;
-using Common.Logging;
-using Common.Logging.Simple;
 using MbUnit.Framework;
 using Resbit;
 using Spring.Messaging.Amqp.Rabbit.Admin;
@@ -25,6 +22,7 @@ namespace Tests.Integration.Utils
         public static RabbitBrokerAdmin Broker { get; private set; }
         private static TcpTrace federationLinkTcpProxy;
         public static bool RunEmbeddedBroker { get { return bool.Parse(ConfigurationManager.AppSettings["RunEmbeddedBroker"]); } }
+        public static bool ResetBrokerAtStartup { get { return bool.Parse(ConfigurationManager.AppSettings["ResetBrokerAtStartup"]); } }
         public static ResbitClient ResbitClient { get; private set; }
 
         [FixtureSetUp]
@@ -42,10 +40,6 @@ namespace Tests.Integration.Utils
             ResbitClient = new ResbitClient(Globals.MainHostName, "guest", "guest");
 
             StartBroker();
-
-            Broker.StopBrokerApplication();
-            Broker.ResetNode();
-            Broker.StartBrokerApplication();
 
             try
             {
@@ -105,13 +99,18 @@ namespace Tests.Integration.Utils
         {
             if (RunEmbeddedBroker)
                 Broker.StartBrokerApplication();
+
+            if(ResetBrokerAtStartup)
+            {
+                Broker.StopBrokerApplication();
+                Broker.ResetNode();
+                Broker.StartBrokerApplication();
+            }
         }
 
         [FixtureTearDown]
         public void TestFixtureTeardown()
         {
-            Broker.StopBrokerApplication();
-            Broker.ResetNode();
             StopBroker();
 
             StopFederationLink();
@@ -122,6 +121,9 @@ namespace Tests.Integration.Utils
 
         private static void StopBroker()
         {
+            Broker.StopBrokerApplication();
+            Broker.ResetNode();
+
             if (RunEmbeddedBroker)
                 Broker.StopNode();
         }
