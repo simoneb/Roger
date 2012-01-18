@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using RabbitMQ.Client;
+
+namespace Roger.Internal.Impl
+{
+    internal class PublishModuleCollection : IPublishModule
+    {
+        private readonly LinkedList<IPublishModule> inner;
+        private int disposed;
+
+        public PublishModuleCollection(params IPublishModule[] inner)
+        {
+            this.inner = new LinkedList<IPublishModule>(inner);
+        }
+
+        public void AddFirst(IPublishModule module)
+        {
+            inner.AddFirst(module);
+        }
+
+        public void AddLast(IPublishModule module)
+        {
+            inner.AddLast(module);
+        }
+
+        public void Initialize(IPublishingProcess publishingProcess)
+        {
+            foreach (var module in inner)
+                module.Initialize(publishingProcess);
+        }
+
+        public void BeforePublishEnabled(IModel publishModel)
+        {
+            foreach (var module in inner)
+                module.BeforePublishEnabled(publishModel);
+        }
+
+        public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null)
+        {
+            foreach (var module in inner)
+                module.BeforePublish(command, publishModel, properties, basicReturnCallback);
+        }
+
+        public void AfterPublishDisabled(IModel publishModel)
+        {
+            foreach (var module in inner)
+                module.AfterPublishDisabled(publishModel);
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
+                return;
+
+            foreach (var module in inner)
+                module.Dispose();
+        }
+    }
+}

@@ -4,6 +4,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Roger;
+using Roger.Internal.Impl;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus
@@ -21,10 +22,11 @@ namespace Tests.Integration.Bus
             consumerContainer = new SimpleConsumerContainer();
 
             Bus = new RogerBus(ConnectionFactory,
-                                      consumerContainer,
-                                      idGenerator: IdGenerator,
-                                      sequenceGenerator: SequenceGenerator,
-                                      messageFilters: MessageFilters);
+                               consumerContainer,
+                               idGenerator: IdGenerator,
+                               sequenceGenerator: SequenceGenerator,
+                               messageFilters: MessageFilters,
+                               options: new RogerOptions(prefetchCount: null /*no safety nets during tests*/));
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -46,10 +48,10 @@ namespace Tests.Integration.Bus
             get { return new ManualConnectionFactory(Helpers.CreateConnection); }
         }
 
-        protected virtual IIdGenerator IdGenerator { get { return Default.IdGenerator;} }
+        protected virtual IIdGenerator IdGenerator { get { return new RandomIdGenerator();} }
 
         protected virtual IEnumerable<IMessageFilter> MessageFilters { get { yield break; } }
-        protected virtual ISequenceGenerator SequenceGenerator { get { return Default.SequenceGenerator; } }
+        protected virtual ISequenceGenerator SequenceGenerator { get { return new ThreadSafeIncrementalSequenceGenerator(); } }
 
         protected virtual void BeforeBusInitialization()
         {

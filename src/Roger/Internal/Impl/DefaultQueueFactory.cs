@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using RabbitMQ.Client;
 
 namespace Roger.Internal.Impl
@@ -10,23 +11,23 @@ namespace Roger.Internal.Impl
         private readonly bool autoDelete;
         private readonly IDictionary arguments;
 
-        public DefaultQueueFactory(bool durable = true, bool exclusive = false, bool autoDelete = false, uint queueExpiryMilliseconds = 0, uint messageTtlMilliseconds = 0)
+        public DefaultQueueFactory(bool durable = true, bool exclusive = false, bool autoDelete = false, TimeSpan? queueExpiry = null, TimeSpan? messageTtl = null)
         {
             this.durable = durable;
             this.exclusive = exclusive;
             this.autoDelete = autoDelete;
             arguments = new Hashtable();
 
-            if (queueExpiryMilliseconds > 0)
-                arguments["x-expires"] = queueExpiryMilliseconds;
+            if (queueExpiry.HasValue)
+                arguments["x-expires"] = (int)queueExpiry.Value.TotalMilliseconds;
 
-            if (messageTtlMilliseconds > 0)
-                arguments["x-message-ttl"] = messageTtlMilliseconds;
+            if (messageTtl.HasValue)
+                arguments["x-message-ttl"] = (int)messageTtl.Value.TotalMilliseconds;
         }
 
-        public QueueDeclareOk Create(IModel model)
+        public QueueDeclareOk Create(IModel model, string name = "")
         {
-            return model.QueueDeclare("", durable, exclusive, autoDelete, arguments);
+            return model.QueueDeclare(name, durable, exclusive, autoDelete, arguments);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Roger.Internal.Impl
         {
             foreach (var consumer in consumers)
             {
-                log.DebugFormat("Invoking Consume method on consumer {0} for message {1}", consumer.GetType(), message.MessageType);
+                log.TraceFormat("Invoking Consume method on consumer {0} for message {1}", consumer.GetType(), message.MessageType);
 
                 try
                 {

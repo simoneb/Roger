@@ -41,7 +41,7 @@ namespace Roger.Internal.Impl
             this.idGenerator = idGenerator;
             this.sequenceGenerator = sequenceGenerator;
             this.exchangeResolver = exchangeResolver;
-            routingKeyResolver = Default.RoutingKeyResolver;
+            routingKeyResolver = new DefaultRoutingKeyResolver();
             this.serializer = serializer;
             this.typeResolver = typeResolver;
             this.getEndpoint = getEndpoint;

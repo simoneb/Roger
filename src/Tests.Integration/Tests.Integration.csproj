@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Acks_behavior.cs" />
     <Compile Include="Bus\Broker_shutdown_recovery.cs" />
+    <Compile Include="Bus\Client_overflow_with_duplicates_and_resequencing.cs" />
     <Compile Include="Bus\Connection_shutdown_on_consumer_side.cs" />
     <Compile Include="Bus\Duplicate_messages.cs" />
     <Compile Include="Bus\Message_ordering.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Bus\SupportClasses\MyThreadCheckingConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
+    <Compile Include="Bus\SupportClasses\SlowConsumer.cs" />
     <Compile Include="Bus\With_bus_on_secondary.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
     <Compile Include="Federation\Federation_link_goes_down.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Federation\General_federation_tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirms_behavior.cs" />
+    <Compile Include="QueueFactoryTest.cs" />
     <Compile Include="QueueingBasicConsumer_behavior.cs" />
     <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />

@@ -15,13 +15,28 @@ namespace Roger.Internal.Impl
         private readonly ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory> unconfirmedCommands = new ConcurrentDictionary<ulong, IUnconfirmedDeliveryFactory>();
         private readonly IScheduler scheduler;
         private readonly TimeSpan? consideredUnconfirmedAfter;
+        private readonly bool ownsDependencies;
         private IPublishingProcess publisher;
         private int disposed;
 
         public PublisherConfirmsModule(IScheduler scheduler, TimeSpan? consideredUnconfirmedAfter = null)
+            : this(scheduler, consideredUnconfirmedAfter, false)
+        {
+        }
+
+        public PublisherConfirmsModule(TimeSpan processUnconfirmedMessagesInterval, TimeSpan? consideredUnconfirmedAfter)
+            : this(new SystemThreadingScheduler(processUnconfirmedMessagesInterval),
+                   consideredUnconfirmedAfter, true)
+        {
+        }
+
+        private PublisherConfirmsModule(IScheduler scheduler,
+                                        TimeSpan? consideredUnconfirmedAfter,
+                                        bool ownsDependencies)
         {
             this.scheduler = scheduler;
             this.consideredUnconfirmedAfter = consideredUnconfirmedAfter;
+            this.ownsDependencies = ownsDependencies;
         }
 
         public void Initialize(IPublishingProcess publishingProcess)
@@ -117,6 +132,9 @@ namespace Roger.Internal.Impl
                 return;
 
             scheduler.Callback -= ProcessUnconfirmed;
+
+            if(ownsDependencies)
+                scheduler.Dispose();
         }
     }
 }

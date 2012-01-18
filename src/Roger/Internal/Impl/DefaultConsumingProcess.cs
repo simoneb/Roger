@@ -26,10 +26,10 @@ namespace Roger.Internal.Impl
         private readonly IMessageSerializer serializer;
         private readonly IIdGenerator idGenerator;
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
-        private readonly IEnumerable<IMessageFilter> messageFilters;
+        private readonly IMessageFilter messageFilters;
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private readonly IQueueFactory queueFactory;
-        private readonly bool noLocal;
+        private readonly RogerOptions options;
         private int disposed;
         private Task consumingTask;
         private readonly IConsumerInvoker consumerInvoker;
@@ -43,22 +43,22 @@ namespace Roger.Internal.Impl
                                        IMessageSerializer serializer,
                                        ITypeResolver typeResolver,
                                        IConsumerContainer consumerContainer,
-                                       IEnumerable<IMessageFilter> messageFilters,
+                                       IMessageFilter messageFilters,
                                        IQueueFactory queueFactory,
                                        IConsumerInvoker consumerInvoker,
-                                       bool noLocal)
+                                       RogerOptions options)
         {
             this.connection = connection;
             this.consumerContainer = consumerContainer;
             this.queueFactory = queueFactory;
             this.consumerInvoker = consumerInvoker;
-            this.noLocal = noLocal;
+            this.options = options;
             this.exchangeResolver = exchangeResolver;
-            bindingKeyResolver = Default.RoutingKeyResolver;
+            bindingKeyResolver = new DefaultRoutingKeyResolver();
             this.typeResolver = typeResolver;
             this.serializer = serializer;
             this.idGenerator = idGenerator;
-            supportedMessageTypesResolver = Default.SupportedMessageTypesResolver;
+            supportedMessageTypesResolver = new DefaultSupportedMessageTypesResolver();
             this.messageFilters = messageFilters;
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
@@ -80,6 +80,12 @@ namespace Roger.Internal.Impl
         {
             receivingModel = connection.CreateModel();
 
+            if(options.PrefetchCount.HasValue)
+            {
+                log.DebugFormat("Setting QoS with prefetch count {0} on consuming channel", options.PrefetchCount);
+                receivingModel.BasicQos(0, options.PrefetchCount.Value, false);
+            }
+
             if (Endpoint.IsEmpty)
             {
                 Endpoint = new RogerEndpoint(queueFactory.Create(receivingModel));
@@ -98,7 +104,7 @@ namespace Roger.Internal.Impl
 
             try
             {
-                receivingModel.BasicConsume(Endpoint.Queue, false, "", noLocal, false, null, queueConsumer);
+                receivingModel.BasicConsume(Endpoint.Queue, false, "", options.NoLocal, false, null, queueConsumer);
             }
             catch (OperationInterruptedException e)
             {
@@ -162,7 +168,7 @@ namespace Roger.Internal.Impl
         {
             log.Info("Beginning consuming loop");
 
-            var messages = messageFilters.Aggregate(BlockingDequeue(queueConsumer.Queue), (current, filter) => filter.Filter(current, queueConsumer.Model));
+            var messages = messageFilters.Filter(BlockingDequeue(queueConsumer.Queue), queueConsumer.Model);
 
             foreach (var message in messages.Where(SetCurrentMessageAndInvokeConsumers))
                 AckMessage(message);
@@ -178,7 +184,7 @@ namespace Roger.Internal.Impl
             }
             catch (AlreadyClosedException e)
             {
-                log.Debug("Could not ack consumed message because model was already closed", e);
+                log.Trace("Could not ack consumed message because model was already closed", e);
             }
             catch (Exception e)
             {
@@ -232,7 +238,7 @@ namespace Roger.Internal.Impl
             var localConsumers = InstanceConsumers(messageType).ToArray();
             var standardConsumers = consumerContainer.Resolve(messageType.HierarchyRoot().ConsumerOf()).Distinct().ToArray();
 
-            log.DebugFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
+            log.TraceFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             standardConsumers.Length,
                             localConsumers.Length,
                             messageType);
@@ -340,6 +346,7 @@ namespace Roger.Internal.Impl
 
             try
             {
+                // todo: we could try a second attempt on a standalone channel
                 receivingModel.QueueDelete(Endpoint);
                 receivingModel.Dispose();
             }

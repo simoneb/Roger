@@ -31,10 +31,10 @@ namespace Tests.Unit
                                               Substitute.For<IMessageSerializer>(), 
                                               Substitute.For<ITypeResolver>(),
                                               Substitute.For<IConsumerContainer>(), 
-                                              Enumerable.Empty<IMessageFilter>(), 
+                                              Substitute.For<IMessageFilter>(), 
                                               queueFactory, 
                                               Substitute.For<IConsumerInvoker>(),
-                                              false);
+                                              new RogerOptions());
         }
 
         [Test]
