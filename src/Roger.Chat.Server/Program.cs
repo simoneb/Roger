@@ -18,7 +18,7 @@ namespace Roger.Chat.Server
 
             var consumerContainer = new SimpleConsumerContainer();
 
-            var bus = new DefaultRogerBus(connectionFactory, consumerContainer, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
+            var bus = new RogerBus(connectionFactory, consumerContainer, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
             var chat = new ChatServer(bus);
 
             consumerContainer.Register(chat);

@@ -13,7 +13,7 @@ namespace BusProcesses.PublisherConfirms
             var connectionFactory = new DefaultConnectionFactory(Globals.MainHostName);
 
             PublisherConfirmsProvider.DeclareExchange(connectionFactory);
-            var bus = new DefaultRogerBus(connectionFactory, new SimpleConsumerContainer(new PublisherConfirmsConsumer()));
+            var bus = new RogerBus(connectionFactory, new SimpleConsumerContainer(new PublisherConfirmsConsumer()));
             bus.Start();
 
             waitHandle.WaitOne();

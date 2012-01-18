@@ -10,7 +10,7 @@ namespace Tests.Integration.Bus
 {
     public abstract class With_default_bus : With_rabbitmq_broker
     {
-        protected DefaultRogerBus Bus;
+        protected RogerBus Bus;
         private SimpleConsumerContainer consumerContainer;
         protected IModel TestModel;
         private IConnection localConnection;
@@ -20,7 +20,7 @@ namespace Tests.Integration.Bus
         {
             consumerContainer = new SimpleConsumerContainer();
 
-            Bus = new DefaultRogerBus(ConnectionFactory,
+            Bus = new RogerBus(ConnectionFactory,
                                       consumerContainer,
                                       idGenerator: IdGenerator,
                                       sequenceGenerator: SequenceGenerator,

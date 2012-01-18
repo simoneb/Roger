@@ -100,7 +100,7 @@
     <Compile Include="Internal\Impl\DefaultBasicReturnHandler.cs" />
     <Compile Include="Internal\IBasicReturnHandler.cs" />
     <Compile Include="CurrentMessageInformation.cs" />
-    <Compile Include="DefaultRogerBus.cs" />
+    <Compile Include="RogerBus.cs" />
     <Compile Include="DefaultConnectionFactory.cs" />
     <Compile Include="Internal\ErrorMessages.cs" />
     <Compile Include="IConnectionFactory.cs" />

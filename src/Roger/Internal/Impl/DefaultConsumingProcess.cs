@@ -37,7 +37,6 @@ namespace Roger.Internal.Impl
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
 
-
         public DefaultConsumingProcess(IReliableConnection connection,
                                        IIdGenerator idGenerator,
                                        IExchangeResolver exchangeResolver,

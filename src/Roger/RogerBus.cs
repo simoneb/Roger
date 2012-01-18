@@ -13,7 +13,7 @@ namespace Roger
     /// <summary>
     /// Main entry point of the library
     /// </summary>
-    public class DefaultRogerBus : IRabbitBus
+    public class RogerBus : IRabbitBus
     {
         private readonly IReliableConnection connection;
         private readonly IConsumingProcess consumer;
@@ -35,14 +35,14 @@ namespace Roger
         /// <param name="sequenceGenerator"></param>
         /// <param name="messageFilters"></param>
         /// <param name="noLocal">Configuress whether messages published by the bus should be received by consumers active on the same instance of the bus</param>
-        public DefaultRogerBus(IConnectionFactory connectionFactory,
-                               IConsumerContainer consumerContainer = null,
-                               IExchangeResolver exchangeResolver = null,
-                               IMessageSerializer serializer = null,
-                               IIdGenerator idGenerator = null,
-                               ISequenceGenerator sequenceGenerator = null,
-                               IEnumerable<IMessageFilter> messageFilters = null,
-                               bool noLocal = false)
+        public RogerBus(IConnectionFactory connectionFactory,
+                        IConsumerContainer consumerContainer = null,
+                        IExchangeResolver exchangeResolver = null,
+                        IMessageSerializer serializer = null,
+                        IIdGenerator idGenerator = null,
+                        ISequenceGenerator sequenceGenerator = null,
+                        IEnumerable<IMessageFilter> messageFilters = null,
+                        bool noLocal = false)
         {
             reconnectionTimer = new SystemThreadingTimer();
             connection = new ReliableConnection(connectionFactory, reconnectionTimer);

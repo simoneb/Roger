@@ -11,7 +11,7 @@ namespace Tests.Integration.Bus
 {
     public abstract class With_bus_on_secondary : With_default_bus
     {
-        protected DefaultRogerBus SecondaryBus;
+        protected RogerBus SecondaryBus;
         private SimpleConsumerContainer secondaryConsumerContainer;
 
         protected override void AfterBusInitialization()
@@ -20,7 +20,7 @@ namespace Tests.Integration.Bus
 
             BeforeSecondaryBusInitialization();
             
-            SecondaryBus = new DefaultRogerBus(new ManualConnectionFactory(Helpers.CreateSecondaryConnectionToMainVirtualHost),
+            SecondaryBus = new RogerBus(new ManualConnectionFactory(Helpers.CreateSecondaryConnectionToMainVirtualHost),
                                                secondaryConsumerContainer);
 
             SecondaryBus.Start();

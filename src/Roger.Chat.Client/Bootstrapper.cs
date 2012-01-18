@@ -23,7 +23,7 @@ namespace Roger.Chat.Client
             var consumerResolver = new SimpleConsumerContainer();
 
             connectionFactory = new DefaultConnectionFactory("localhost");
-            var bus = new DefaultRogerBus(connectionFactory, consumerResolver, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
+            var bus = new RogerBus(connectionFactory, consumerResolver, exchangeResolver: new StaticExchangeResolver("RabbusChat"));
 
             var batch = new CompositionBatch();
 
