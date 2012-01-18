@@ -16,34 +16,30 @@ namespace Tests.Integration.Bus
         [Test]
         public void Should_send_to_specific_endpoint()
         {
-            var consumer = new SendConsumer();
+            var consumer = new GenericConsumer<SendMessage>();
             Bus.AddInstanceSubscription(consumer);
             Bus.Send(Bus.LocalEndpoint, new SendMessage());
 
-            WaitForDelivery();
-
-            Assert.IsTrue(consumer.Received);
+            Assert.IsTrue(consumer.WaitForDelivery());
         }
 
         [Test]
         public void Should_report_error_if_send_cannot_be_performed()
         {
-            var consumer = new SendConsumer();
+            var consumer = new GenericConsumer<SendMessage>();
             Bus.AddInstanceSubscription(consumer);
 
             BasicReturn error = null;
             Bus.Send(new RogerEndpoint("inexistent"), new SendMessage(), reason => error = reason);
 
-            WaitForDelivery();
-
-            Assert.IsFalse(consumer.Received);
+            Assert.IsFalse(consumer.WaitForDelivery());
             Assert.IsNotNull(error);
         }
 
         [Test]
         public void Error_reports_should_be_raised_only_for_the_call_which_triggered_them()
         {
-            var consumer = new SendConsumer();
+            var consumer = new GenericConsumer<SendMessage>();
             Bus.AddInstanceSubscription(consumer);
 
             var errors = new SynchronizedCollection<BasicReturn>();
@@ -51,9 +47,7 @@ namespace Tests.Integration.Bus
             Bus.Send(new RogerEndpoint("inexistent1"), new SendMessage(), errors.Add);
             Bus.Send(new RogerEndpoint("inexistent2"), new SendMessage(), errors.Add);
 
-            WaitForDelivery();
-
-            Assert.IsFalse(consumer.Received);
+            Assert.IsFalse(consumer.WaitForDelivery());
             Assert.AreEqual(2, errors.Count);
         }
 
@@ -64,8 +58,7 @@ namespace Tests.Integration.Bus
             Bus.AddInstanceSubscription(consumer);
             Bus.Send(Bus.LocalEndpoint, new SendMessage());
 
-            WaitForDelivery();
-
+            Assert.IsTrue(consumer.WaitForDelivery());
             Assert.AreEqual(Bus.LocalEndpoint, consumer.CurrentMessage.Endpoint);
         }
     }

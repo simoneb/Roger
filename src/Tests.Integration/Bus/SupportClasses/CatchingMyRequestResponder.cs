@@ -3,7 +3,7 @@ using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class CatchingResponder<TRequest, TReply> : IConsumer<TRequest> where TRequest : class
+    public class CatchingResponder<TRequest, TReply> : GenericConsumer<TRequest> where TRequest : class
     {
         private readonly IRabbitBus bus;
 
@@ -12,7 +12,7 @@ namespace Tests.Integration.Bus.SupportClasses
             this.bus = bus;
         }
 
-        public void Consume(TRequest message)
+        public override void Consume(TRequest message)
         {
             try
             {
@@ -22,6 +22,8 @@ namespace Tests.Integration.Bus.SupportClasses
             {
                 Exception = e;
             }
+
+            base.Consume(message);
         }
 
         public Exception Exception { get; private set; }

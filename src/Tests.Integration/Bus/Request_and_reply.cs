@@ -22,9 +22,8 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            WaitForRoundtrip();
-
-            Assert.IsNotNull(responder.Received);
+            Assert.IsTrue(responder.WaitForDelivery());
+            Assert.IsNotNull(responder.LastReceived);
         }
 
         [Test]
@@ -38,8 +37,7 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            responseConsumer.WaitForDelivery();
-
+            Assert.IsTrue(responseConsumer.WaitForDelivery());
             Assert.IsNotNull(responseConsumer.LastReceived);
         }
 
@@ -54,7 +52,7 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            WaitForRoundtrip();
+            Assert.IsTrue(responseConsumer.WaitForDelivery());
 
             Assert.AreEqual("RequestExchange", responseConsumer.CurrentMessage.Exchange);
         }
@@ -81,7 +79,7 @@ namespace Tests.Integration.Bus
 
             Bus.Publish(new MyRequest());
 
-            WaitForRoundtrip();
+            Assert.IsTrue(responder.WaitForDelivery());
 
             Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
             Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);

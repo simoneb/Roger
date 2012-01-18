@@ -42,7 +42,7 @@ namespace Tests.Integration.Bus
 
             Bus.AddInstanceSubscription(consumer);
 
-            WaitForDelivery();
+            consumer.WaitForDelivery();
 
             var handle = new ManualResetEvent(false);
 

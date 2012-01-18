@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
@@ -20,7 +19,8 @@ namespace Tests.Integration.Bus
         public void InitializeBus()
         {
             consumerContainer = new SimpleConsumerContainer();
-            Bus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateConnection),
+
+            Bus = new DefaultRogerBus(ConnectionFactory,
                                       consumerContainer,
                                       idGenerator: IdGenerator,
                                       sequenceGenerator: SequenceGenerator,
@@ -41,6 +41,11 @@ namespace Tests.Integration.Bus
             AfterBusInitialization();
         }
 
+        protected virtual IConnectionFactory ConnectionFactory
+        {
+            get { return new ManualConnectionFactory(Helpers.CreateConnection); }
+        }
+
         protected virtual IIdGenerator IdGenerator { get { return Default.IdGenerator;} }
 
         protected virtual IEnumerable<IMessageFilter> MessageFilters { get { yield break; } }
@@ -59,6 +64,8 @@ namespace Tests.Integration.Bus
         {
             Bus.Dispose();
 
+            AfterBusDispose();
+
             try
             {
                 localConnection.Dispose();
@@ -70,18 +77,12 @@ namespace Tests.Integration.Bus
             }
         }
 
-        protected static void WaitForRoundtrip()
+        protected virtual void AfterBusDispose()
         {
-            WaitForDelivery();
-            WaitForDelivery();
+            
         }
 
-        protected static void WaitForDelivery()
-        {
-            Thread.Sleep(500);
-        }
-
-        protected void Register(IConsumer consumer)
+        protected void RegisterOnDefaultBus(IConsumer consumer)
         {
             consumerContainer.Register(consumer);
         }

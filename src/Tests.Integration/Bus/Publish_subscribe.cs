@@ -10,8 +10,8 @@ namespace Tests.Integration.Bus
 
         protected override void BeforeBusInitialization()
         {
-            Register(simpleConsumer = new GenericConsumer<MyMessage>());
-            Register(baseConsumer = new GenericConsumer<MyBaseMessage>());
+            RegisterOnDefaultBus(simpleConsumer = new GenericConsumer<MyMessage>());
+            RegisterOnDefaultBus(baseConsumer = new GenericConsumer<MyBaseMessage>());
         }
 
         [Test]

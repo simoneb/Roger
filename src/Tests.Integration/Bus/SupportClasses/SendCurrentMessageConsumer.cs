@@ -2,7 +2,7 @@ using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class SendCurrentMessageConsumer : IConsumer<SendMessage>
+    public class SendCurrentMessageConsumer : GenericConsumer<SendMessage>
     {
         private readonly IRabbitBus bus;
         public CurrentMessageInformation CurrentMessage;
@@ -12,9 +12,11 @@ namespace Tests.Integration.Bus.SupportClasses
             this.bus = bus;
         }
 
-        public void Consume(SendMessage message)
+        public override void Consume(SendMessage message)
         {
             CurrentMessage = bus.CurrentMessage;
+
+            base.Consume(message);
         }
     }
 }

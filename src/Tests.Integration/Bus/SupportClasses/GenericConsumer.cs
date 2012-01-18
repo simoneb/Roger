@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Roger;
 
@@ -8,9 +9,11 @@ namespace Tests.Integration.Bus.SupportClasses
     {
         public T LastReceived;
         private readonly AutoResetEvent delivered = new AutoResetEvent(false);
+        public readonly SynchronizedCollection<T> Received = new SynchronizedCollection<T>();
 
-        public void Consume(T message)
+        public virtual void Consume(T message)
         {
+            Received.Add(message);
             LastReceived = message;
             delivered.Set();
         }

@@ -7,6 +7,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Tests.Integration.Utils;
 
 namespace Tests.Integration
 {
@@ -198,19 +199,6 @@ namespace Tests.Integration
                 for (int i = 0; i < NumberOfMessagesToProduce; i++)
                     model.BasicPublish("", m_queueName, null, i.Bytes());
             }
-        }
-    }
-
-    public static class Extension
-    {
-        public static IEnumerable<T> Times<T>(this int times, IEnumerable<T> enumerable)
-        {
-            IEnumerable<T> result = enumerable;
-
-            for (int i = 1; i < times;i++)
-                result = result.Concat(enumerable);
-
-            return result;
         }
     }
 }

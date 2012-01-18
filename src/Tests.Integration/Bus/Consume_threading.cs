@@ -12,7 +12,7 @@ namespace Tests.Integration.Bus
 
         protected override void BeforeBusInitialization()
         {
-            Register(consumer = new MyThreadCheckingConsumer(Bus, 200));
+            RegisterOnDefaultBus(consumer = new MyThreadCheckingConsumer(Bus, 200));
         }
 
         [Test]

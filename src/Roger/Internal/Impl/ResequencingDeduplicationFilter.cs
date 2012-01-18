@@ -49,11 +49,11 @@ namespace Roger.Internal.Impl
                     }
                     catch (AlreadyClosedException e)
                     {
-                        log.Error("Could not ack filtered message because model was already closed", e);
+                        log.Debug("Could not ack filtered-out message because model was already closed", e);
                     }
                     catch (Exception e)
                     {
-                        log.Error("Could not ack filtered message", e);
+                        log.Warn("Could not ack filtered-out message for unknown cause", e);
                     }
                 }
             }
@@ -72,7 +72,7 @@ namespace Roger.Internal.Impl
 
             public override string ToString()
             {
-                return string.Format("Endpoint: {0}, MessageType: {1}", Endpoint, MessageType);
+                return string.Format("{0}/{1}", Endpoint, MessageType);
             }
         }
 

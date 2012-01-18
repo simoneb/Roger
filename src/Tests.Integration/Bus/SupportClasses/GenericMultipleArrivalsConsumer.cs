@@ -1,4 +1,5 @@
-using System.Collections.Concurrent;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using Roger;
 
@@ -6,26 +7,36 @@ namespace Tests.Integration.Bus.SupportClasses
 {
     public class GenericMultipleArrivalsConsumer<T> : IConsumer<T> where T : class
     {
-        private readonly CountdownEvent delivered;
-        private readonly ConcurrentQueue<T> received = new ConcurrentQueue<T>();
+        private CountdownEvent delivered;
+        public readonly SynchronizedCollection<T> Received = new SynchronizedCollection<T>();
 
         public GenericMultipleArrivalsConsumer(int expectedArrivals)
         {
             delivered = new CountdownEvent(expectedArrivals);
         }
 
-        public ConcurrentQueue<T> Received
+        private void SetExpectedArrivals(int expectedArrivals)
         {
-            get { return received; }
+            delivered = new CountdownEvent(expectedArrivals);
         }
 
-        public void Consume(T message)
+        public virtual void Consume(T message)
         {
-            Received.Enqueue(message);
+            Received.Add(message);
             delivered.Signal();
         }
 
-        public bool WaitForDelivery(int timeout = 1000)
+        public bool WaitForDelivery(int timeoutMs = 1000, int newCountToExpectOn = 0)
+        {
+            var success = delivered.Wait(timeoutMs);
+
+            if(success && newCountToExpectOn > 0)
+                SetExpectedArrivals(newCountToExpectOn);
+
+            return success;
+        }
+
+        public bool WaitForDelivery(TimeSpan timeout)
         {
             return delivered.Wait(timeout);
         }

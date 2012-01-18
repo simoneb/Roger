@@ -45,5 +45,11 @@ namespace Tests.Integration.Bus
             Assert.IsTrue(consumer.WaitForDelivery());
             Assert.AreEqual(Sequence.OrderBy(s => s).ToArray(), consumer.Received.Select(r => (uint)r.Value).ToArray());
         }
+
+        [Test]
+        public void Should_consume_ordered_messages_when_client_connection_goes_down_and_long_in_memory_queue()
+        {
+            
+        }
     }
 }

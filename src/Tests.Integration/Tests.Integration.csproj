@@ -76,7 +76,7 @@
     <Compile Include="Bus\Instance_subscriptions.cs" />
     <Compile Include="Bus\SupportClasses\CatchingMyRequestResponder.cs" />
     <Compile Include="Bus\SupportClasses\GenericMultipleArrivalsConsumer.cs" />
-    <Compile Include="Bus\SupportClasses\IdentityConnectionFactory.cs" />
+    <Compile Include="Bus\SupportClasses\ManualConnectionFactory.cs" />
     <Compile Include="Bus\SupportClasses\GenericConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyMessage.cs" />
     <Compile Include="Bus\SupportClasses\MyRequest.cs" />
@@ -84,9 +84,9 @@
     <Compile Include="Bus\SupportClasses\MyReply.cs" />
     <Compile Include="Bus\SupportClasses\MyResponseCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\MyThreadCheckingConsumer.cs" />
-    <Compile Include="Bus\SupportClasses\SendConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendCurrentMessageConsumer.cs" />
     <Compile Include="Bus\SupportClasses\SendMessage.cs" />
+    <Compile Include="Bus\With_bus_on_secondary.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
     <Compile Include="Federation\Federation_link_goes_down.cs" />
     <Compile Include="Federation\Subscriber_on_secondary_node.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="QueueingBasicConsumer_behavior.cs" />
     <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\ICustomModel.cs" />
     <Compile Include="Utils\TcpTrace.cs" />
     <Compile Include="Queues_test.cs" />

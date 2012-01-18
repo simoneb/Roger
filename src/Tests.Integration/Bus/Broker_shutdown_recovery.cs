@@ -11,7 +11,7 @@ namespace Tests.Integration.Bus
 
         protected override void BeforeBusInitialization()
         {
-            Register(consumer = new GenericConsumer<MyMessage>());
+            RegisterOnDefaultBus(consumer = new GenericConsumer<MyMessage>());
         }
 
         [Test]

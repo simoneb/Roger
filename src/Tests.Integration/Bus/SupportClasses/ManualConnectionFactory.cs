@@ -4,11 +4,11 @@ using Roger;
 
 namespace Tests.Integration.Bus.SupportClasses
 {
-    public class IdentityConnectionFactory : IConnectionFactory
+    public class ManualConnectionFactory : IConnectionFactory
     {
         private readonly Func<IConnection> connection;
 
-        public IdentityConnectionFactory(Func<IConnection> connection)
+        public ManualConnectionFactory(Func<IConnection> connection)
         {
             this.connection = connection;
         }

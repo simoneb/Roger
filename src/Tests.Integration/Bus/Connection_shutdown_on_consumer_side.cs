@@ -1,25 +1,18 @@
 ﻿using System;
 using System.Threading;
-using Common;
 using MbUnit.Framework;
-using Roger;
 using Tests.Integration.Bus.SupportClasses;
 using Tests.Integration.Utils;
 
 namespace Tests.Integration.Bus
 {
-    public class Connection_shutdown_on_consumer_side : With_default_bus
+    public class Connection_shutdown_on_consumer_side : With_bus_on_secondary
     {
-        private DefaultRogerBus secondaryBus;
         private GenericConsumer<MyMessage> consumer;
 
-        protected override void AfterBusInitialization()
+        protected override void BeforeSecondaryBusInitialization()
         {
-            var container = new SimpleConsumerContainer();
-            container.Register(consumer = new GenericConsumer<MyMessage>());
-            secondaryBus = new DefaultRogerBus(new IdentityConnectionFactory(Helpers.CreateSecondaryConnectionToMainVirtualHost),
-                                               container);
-            secondaryBus.Start();
+            RegisterOnSecondaryBus(consumer = new GenericConsumer<MyMessage>());
         }
 
         [Test]
@@ -44,13 +37,7 @@ namespace Tests.Integration.Bus
 
             Bootstrap.StartSecondaryConnectionLink();
 
-            Assert.IsTrue(consumer.WaitForDelivery(secondaryBus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1)));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            secondaryBus.Dispose();
+            Assert.IsTrue(consumer.WaitForDelivery(SecondaryBus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1)));
         }
     }
 }

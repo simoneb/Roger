@@ -67,12 +67,25 @@ namespace Roger.Internal.Impl
 
         private void ConnectionEstabilished()
         {
+            if (consumingTask != null)
+            {
+                log.Info("Connection restored, letting current consuming loop complete and will restart consuming when completed");
+                consumingTask = consumingTask.ContinueWith(task => StartConsuming(), TaskContinuationOptions.AttachedToParent);
+                return;
+            }
+
+            StartConsuming();
+        }
+
+        private void StartConsuming()
+        {
             receivingModel = connection.CreateModel();
 
-            if(Endpoint.IsEmpty)
+            if (Endpoint.IsEmpty)
             {
                 Endpoint = new RogerEndpoint(queueFactory.Create(receivingModel));
-                CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
+                CreateBindings(
+                    new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
                 log.DebugFormat("Created and bound queue {0}", Endpoint);
             }
 
@@ -148,10 +161,14 @@ namespace Roger.Internal.Impl
 
         private void ConsumeSynchronously()
         {
+            log.Info("Beginning consuming loop");
+
             var messages = messageFilters.Aggregate(BlockingDequeue(queueConsumer.Queue), (current, filter) => filter.Filter(current, queueConsumer.Model));
 
             foreach (var message in messages.Where(SetCurrentMessageAndInvokeConsumers))
                 AckMessage(message);
+
+            log.Info("Exiting consuming loop");
         }
 
         private void AckMessage(CurrentMessageInformation message)
@@ -162,11 +179,11 @@ namespace Roger.Internal.Impl
             }
             catch (AlreadyClosedException e)
             {
-                log.Error("Could not ack consumed message because model was already closed", e);
+                log.Debug("Could not ack consumed message because model was already closed", e);
             }
             catch (Exception e)
             {
-                log.Error("Could not ack consumed message", e);
+                log.Warn("Could not ack consumed message for unknown cause", e);
             }
         }
 
