@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Linq;
 
-namespace Tests.Integration.Federation
+namespace Tests.Integration.Exploratory.Federation
 {
     public class Federation_link_goes_down : With_federation
     {
@@ -40,14 +40,14 @@ namespace Tests.Integration.Federation
 
                 if (i == 5)
                 {
-                    ShutdownFederationLink();
+                    StopFederationProxy();
                     Thread.Sleep(100); // without this sleep at times the test fails because of message 6 not being received
                 }
             }
 
             Thread.Sleep(2000);
 
-            StartFederationLink();
+            StartFederationProxy();
 
             Thread.Sleep(5000); // leave some time to plugin to redeliver messages
 
@@ -74,17 +74,17 @@ namespace Tests.Integration.Federation
                 {
                     publish.WaitOne();
 
-                    model.BasicPublish(Globals.FederationExchangeName, "", null, toPublish.Bytes());
+                    model.BasicPublish(Constants.FederationExchangeName, "", null, toPublish.Bytes());
                 } while (toPublish != -1);
         }
 
         private void Consumer()
         {
-            using(var connection = Helpers.CreateSecondaryConnectionToSecondaryVirtualHost())
+            using(var connection = Helpers.CreateConnectionToSecondaryVirtualHostOnAlternativePort())
             using(var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare("", false, true, true, null);
-                model.QueueBind(queue, Globals.FederationExchangeName, "#");
+                model.QueueBind(queue, Constants.FederationExchangeName, "#");
 
                 var consumer = new QueueingBasicConsumer(model);
 

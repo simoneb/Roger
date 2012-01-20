@@ -15,7 +15,7 @@ namespace Tests.Integration.Bus
 
             BeforeSecondaryBusInitialization();
 
-            SecondaryBus = new RogerBus(new ManualConnectionFactory(Helpers.CreateSecondaryConnectionToMainVirtualHost),
+            SecondaryBus = new RogerBus(new ManualConnectionFactory(Helpers.CreateConnectionOnAlternativePort),
                                         secondaryConsumerContainer, options: new RogerOptions(prefetchCount: null));
 
             SecondaryBus.Start();

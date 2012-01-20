@@ -1,26 +1,26 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Tests.Integration.Federation
+namespace Tests.Integration.Exploratory.Federation
 {
     public class General_federation_tests : With_federation
     {
-        private static ManualResetEvent _consumerReady;
+        private static ManualResetEvent consumerReady;
 
         [SetUp]
         public void Setup()
         {
-            _consumerReady = new ManualResetEvent(false);
+            consumerReady = new ManualResetEvent(false);
         }
 
         [Test]
         public void Messages_should_go_from_source_to_destination()
         {
-            var consumer = Task.Factory.StartNew(() => SubscribeAndReceiveOnce(Helpers.CreateSecondaryConnectionToSecondaryVirtualHost()));
+            var consumer = Task.Factory.StartNew(() => SubscribeAndReceiveOnce(Helpers.CreateConnectionToSecondaryVirtualHostOnAlternativePort()));
 
             Task.Factory.StartNew(() => PublishOnce(Helpers.CreateConnection()));
 
@@ -37,7 +37,7 @@ namespace Tests.Integration.Federation
 
             Task.Factory.StartNew(() => SubscribeAndReceiveOnce(Helpers.CreateConnection()));
 
-            Task.Factory.StartNew(() => PublishOnce(Helpers.CreateSecondaryConnectionToSecondaryVirtualHost()));
+            Task.Factory.StartNew(() => PublishOnce(Helpers.CreateConnectionToSecondaryVirtualHostOnAlternativePort()));
 
             handle.WaitOne(2000);
         }
@@ -48,12 +48,12 @@ namespace Tests.Integration.Federation
             using (var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare("", false, false, true, null);
-                model.QueueBind(queue, Globals.FederationExchangeName, "#");
+                model.QueueBind(queue, Constants.FederationExchangeName, "#");
                 var consumer = new QueueingBasicConsumer(model);
 
                 model.BasicConsume(queue, true, consumer);
 
-                _consumerReady.Set();
+                consumerReady.Set();
 
                 return ((BasicDeliverEventArgs)consumer.Queue.Dequeue()).Body.String();
             }
@@ -64,9 +64,9 @@ namespace Tests.Integration.Federation
             using (connection)
             using (var model = connection.CreateModel())
             {
-                _consumerReady.WaitOne();
+                consumerReady.WaitOne();
 
-                model.BasicPublish(Globals.FederationExchangeName, "ciao", null, "Ciao".Bytes());
+                model.BasicPublish(Constants.FederationExchangeName, "ciao", null, "Ciao".Bytes());
             }
         }
     }

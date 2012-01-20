@@ -1,11 +1,11 @@
 using System.ServiceModel;
 
-namespace Tests.Integration.WCF
+namespace Tests.Integration.Exploratory.WCF
 {
     [ServiceContract]
-    public interface IOrderCallback
+    public interface ILogger
     {
         [OperationContract(IsOneWay = true)]
-        void OrderCompleted();
+        void Log(string message);
     }
 }

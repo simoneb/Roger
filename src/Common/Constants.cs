@@ -1,12 +1,11 @@
 ﻿namespace Common
 {
-    public static class Globals
+    public static class Constants
     {
-        public const string MainHostName = "localhost";
-        public const int MainConnectionPort = 5672;
+        public const string HostName = "localhost";
+        public const int MainPort = 5672;
+        public const int AlternativeConnectionPort = 5674;
         public const string MainVirtualHost = "/";
-        public const string SecondaryHostName = MainHostName;
-        public const int SecondaryConnectionPort = 5674;
         public const string SecondaryVirtualHost = "secondary";
 
         public const int FederationConnectionPort = 5673;

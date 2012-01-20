@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using MbUnit.Framework;
 using Tests.Integration.Bus.SupportClasses;
-using Tests.Integration.Utils;
 
 namespace Tests.Integration.Bus
 {
@@ -26,9 +25,9 @@ namespace Tests.Integration.Bus
 
             Assert.IsTrue(consumer.WaitForDelivery(2 * ConsumerDelayMs * 10, 90));
 
-            Bootstrap.StopSecondaryConnectionLink();
+            StopAlternativePortProxy();
             Thread.Sleep(100);
-            Bootstrap.StartSecondaryConnectionLink();
+            StartAlternativePortProxy();
 
             consumer.WaitForDelivery((int) (SecondaryBus.ConnectionAttemptInterval.TotalMilliseconds + 2 * ConsumerDelayMs * 90), 50);
 

@@ -10,7 +10,7 @@ namespace Resbit.Test
         [FixtureSetUp]
         public void SetupBase()
         {
-            Client = new ResbitClient(Globals.MainHostName, "guest", "guest");
+            Client = new ResbitClient(Constants.HostName, "guest", "guest");
         }
     }
 }

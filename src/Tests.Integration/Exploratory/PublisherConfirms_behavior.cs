@@ -5,7 +5,7 @@ using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Tests.Integration
+namespace Tests.Integration.Exploratory
 {
     public class Publisher_confirms_behavior : With_rabbitmq_broker
     {

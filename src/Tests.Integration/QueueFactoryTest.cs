@@ -20,11 +20,11 @@ namespace Tests.Integration
             {
                 var queue = factory.Create(model);
 
-                Assert.AreEqual(queue, RestClient.GetQueue(queue).name);
+                Assert.AreEqual(queue, BrokerHttp.GetQueue(queue).name);
 
                 Thread.Sleep(3000);
 
-                Assert.Throws<WebException>(() => RestClient.GetQueue(queue));
+                Assert.Throws<WebException>(() => BrokerHttp.GetQueue(queue));
             }
         }
 

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Common
@@ -21,7 +24,17 @@ namespace Common
 
         public static int Integer(this byte[] bytes)
         {
-            return int.Parse(String(bytes));
+            return Int32.Parse(String(bytes));
+        }
+
+        public static IEnumerable<T> Times<T>(this int times, IEnumerable<T> enumerable)
+        {
+            var result = enumerable;
+
+            for (int i = 1; i < times; i++)
+                result = result.Concat(enumerable);
+
+            return result;
         }
     }
 }

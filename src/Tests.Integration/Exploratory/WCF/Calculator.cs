@@ -1,6 +1,6 @@
 using System.ServiceModel;
 
-namespace Tests.Integration.WCF
+namespace Tests.Integration.Exploratory.WCF
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class Calculator : ICalculator

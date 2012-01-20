@@ -7,25 +7,24 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Tests.Integration.Utils;
 
-namespace Tests.Integration
+namespace Tests.Integration.Exploratory
 {
     public class Acks_behavior : With_rabbitmq_broker
     {
-        private int NumberOfMessagesToProduce = 10;
-        private ConcurrentQueue<int> m_received;
-        private IEnumerable<int> ExpectedMessages = Enumerable.Range(0, 10);
-        private string m_queueName;
-        private Action<IModel, ulong> OnReceived;
-        private int NumberOfExpectedMessages;
+        private const int NumberOfMessagesToProduce = 10;
+        private ConcurrentQueue<int> received;
+        private readonly IEnumerable<int> expectedMessages = Enumerable.Range(0, 10);
+        private string queueName;
+        private Action<IModel, ulong> onReceived;
+        private int numberOfExpectedMessages;
 
         [SetUp]
         public void Setup()
         {
-            NumberOfExpectedMessages = NumberOfMessagesToProduce;
-            OnReceived = delegate { };
-            m_received = new ConcurrentQueue<int>();
+            numberOfExpectedMessages = NumberOfMessagesToProduce;
+            onReceived = delegate { };
+            received = new ConcurrentQueue<int>();
         }
 
         [Test]
@@ -39,15 +38,15 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 500);
 
-            Assert.AreElementsEqual(ExpectedMessages, m_received);
+            Assert.AreElementsEqual(expectedMessages, received);
         }
 
         [Test]
         public void Explicit_ack()
         {
-            OnReceived = (model, deliveryTag) =>
+            onReceived = (model, deliveryTag) =>
             {
-                if (m_received.Count == 1)
+                if (received.Count == 1)
                     model.BasicAck(deliveryTag, false);
             };
 
@@ -59,17 +58,17 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 2000);
 
-            Assert.AreElementsEqual(ExpectedMessages, m_received);
+            Assert.AreElementsEqual(expectedMessages, received);
         }
 
         [Test]
         public void Explicit_ack_and_recover()
         {
-            NumberOfExpectedMessages = 20;
+            numberOfExpectedMessages = 20;
 
-            OnReceived = (model, deliveryTag) =>
+            onReceived = (model, deliveryTag) =>
             {
-                if (m_received.Count == 10)
+                if (received.Count == 10)
                     // apparently passing false is not supported
                     model.BasicRecover(true);
             };
@@ -82,22 +81,22 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 2000);
 
-            Assert.AreElementsEqual(2.Times(ExpectedMessages), m_received);
+            Assert.AreElementsEqual(2.Times(expectedMessages), received);
         }
 
         [Test]
         public void Nack_with_requeue()
         {
-            NumberOfExpectedMessages = 11;
+            numberOfExpectedMessages = 11;
 
             ulong toRedeliverSince = 0;
 
-            OnReceived = (model, deliveryTag) =>
+            onReceived = (model, deliveryTag) =>
             {
-                if (m_received.Count == 1)
+                if (received.Count == 1)
                     toRedeliverSince = deliveryTag;
                     
-                if(m_received.Count == 10)
+                if(received.Count == 10)
                     model.BasicNack(toRedeliverSince, false, true);
             };
 
@@ -109,22 +108,22 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 2000);
 
-            Assert.AreElementsEqual(ExpectedMessages.Concat(new[]{0}), m_received);
+            Assert.AreElementsEqual(expectedMessages.Concat(new[]{0}), received);
         }
 
         [Test]
         public void Reject_with_requeue()
         {
-            NumberOfExpectedMessages = 11;
+            numberOfExpectedMessages = 11;
 
             ulong toRedeliverSince = 0;
 
-            OnReceived = (model, deliveryTag) =>
+            onReceived = (model, deliveryTag) =>
             {
-                if (m_received.Count == 1)
+                if (received.Count == 1)
                     toRedeliverSince = deliveryTag;
                     
-                if(m_received.Count == 10)
+                if(received.Count == 10)
                     model.BasicReject(toRedeliverSince, true);
             };
 
@@ -136,22 +135,22 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 2000);
 
-            Assert.AreElementsEqual(ExpectedMessages.Concat(new[] { 0 }), m_received);
+            Assert.AreElementsEqual(expectedMessages.Concat(new[] { 0 }), received);
         }
 
         [Test]
         public void Nack_with_multiple_and_requeue_requeues_nacked_messages_in_the_order_they_were_published()
         {
-            NumberOfExpectedMessages = 15;
+            numberOfExpectedMessages = 15;
 
             ulong toRedeliverSince = 0;
 
-            OnReceived = (model, deliveryTag) =>
+            onReceived = (model, deliveryTag) =>
             {
-                if (m_received.Count == 5)
+                if (received.Count == 5)
                     toRedeliverSince = deliveryTag;
 
-                if(m_received.Count == 10)
+                if(received.Count == 10)
                     model.BasicNack(toRedeliverSince, true, true);
             };
 
@@ -163,12 +162,12 @@ namespace Tests.Integration
 
             SpinWait.SpinUntil(ReceivedAllMessages, 2000);
 
-            Assert.AreElementsEqual(ExpectedMessages.Concat(new[] { 0, 1, 2, 3, 4 }), m_received);
+            Assert.AreElementsEqual(expectedMessages.Concat(new[] { 0, 1, 2, 3, 4 }), received);
         }
 
         private bool ReceivedAllMessages()
         {
-            return m_received.Count == NumberOfExpectedMessages;
+            return received.Count == numberOfExpectedMessages;
         }
 
         private void Consumer(bool noAck)
@@ -176,17 +175,17 @@ namespace Tests.Integration
             using (var connection = Helpers.CreateSafeShutdownConnection())
             using (var model = connection.CreateModel())
             {
-                m_queueName = model.QueueDeclare("", false, false, true, null);
+                queueName = model.QueueDeclare("", false, false, true, null);
 
                 var consumer = new QueueingBasicConsumer(model);
 
-                model.BasicConsume(m_queueName, noAck, consumer);
+                model.BasicConsume(queueName, noAck, consumer);
 
                 foreach (BasicDeliverEventArgs _ in consumer.Queue)
                 {
-                    m_received.Enqueue(_.Body.Integer());
+                    received.Enqueue(_.Body.Integer());
 
-                    OnReceived(model, _.DeliveryTag);
+                    onReceived(model, _.DeliveryTag);
                 }
             }
         }
@@ -197,7 +196,7 @@ namespace Tests.Integration
             using (var model = connection.CreateModel())
             {
                 for (int i = 0; i < NumberOfMessagesToProduce; i++)
-                    model.BasicPublish("", m_queueName, null, i.Bytes());
+                    model.BasicPublish("", queueName, null, i.Bytes());
             }
         }
     }

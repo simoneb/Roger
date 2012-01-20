@@ -4,7 +4,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.ServiceModel;
 
-namespace Tests.Integration.WCF
+namespace Tests.Integration.Exploratory.WCF
 {
     public class Wcf_bindings : With_rabbitmq_broker
     {
@@ -13,7 +13,7 @@ namespace Tests.Integration.WCF
         {
             var host = new ServiceHost(typeof(Logger), new Uri("soap.amqp:///"));
 
-            var binding = new RabbitMQBinding(Globals.MainHostName, Globals.MainConnectionPort){OneWayOnly = true};
+            var binding = new RabbitMQBinding(Constants.HostName, Constants.MainPort){OneWayOnly = true};
 
             host.AddServiceEndpoint(typeof(ILogger), binding, "Log");
 
@@ -35,7 +35,7 @@ namespace Tests.Integration.WCF
         {
             var host = new ServiceHost(typeof(Calculator), new Uri("soap.amqp:///"));
 
-            var binding = new RabbitMQBinding(Globals.MainHostName, Globals.MainConnectionPort);
+            var binding = new RabbitMQBinding(Constants.HostName, Constants.MainPort);
 
             host.AddServiceEndpoint(typeof(ICalculator), binding, "Calculator");
 
@@ -53,7 +53,7 @@ namespace Tests.Integration.WCF
         {
             var host = new ServiceHost(typeof(OrderService), new Uri("soap.amqp:///"));
 
-            var binding = new RabbitMQBinding(Globals.MainHostName, Globals.MainConnectionPort);
+            var binding = new RabbitMQBinding(Constants.HostName, Constants.MainPort);
 
             host.AddServiceEndpoint(typeof(IOrderService), binding, "OrderService");
 

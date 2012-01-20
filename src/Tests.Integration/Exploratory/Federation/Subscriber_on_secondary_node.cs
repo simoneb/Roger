@@ -3,7 +3,7 @@ using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client.MessagePatterns;
 
-namespace Tests.Integration.Federation
+namespace Tests.Integration.Exploratory.Federation
 {
     public class Subscriber_on_secondary_node : With_federation
     {
@@ -33,17 +33,17 @@ namespace Tests.Integration.Federation
                 consumerReady.WaitOne();
 
                 int counter = 0;
-                model.BasicPublish(Globals.FederationExchangeName, "", null, (++counter).Bytes());
+                model.BasicPublish(Constants.FederationExchangeName, "", null, (++counter).Bytes());
             }
         }
 
         private int OneConsumer()
         {
-            using (var connection = Helpers.CreateSecondaryConnectionToSecondaryVirtualHost())
+            using (var connection = Helpers.CreateConnectionToSecondaryVirtualHostOnAlternativePort())
             using (var model = connection.CreateModel())
             {
                 var queue = model.QueueDeclare();
-                model.QueueBind(queue, Globals.FederationExchangeName, "#");
+                model.QueueBind(queue, Constants.FederationExchangeName, "#");
                 var subscription = new Subscription(model, queue, true);
 
                 consumerReady.Set();

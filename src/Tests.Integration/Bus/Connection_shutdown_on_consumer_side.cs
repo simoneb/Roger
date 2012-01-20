@@ -2,7 +2,6 @@
 using System.Threading;
 using MbUnit.Framework;
 using Tests.Integration.Bus.SupportClasses;
-using Tests.Integration.Utils;
 
 namespace Tests.Integration.Bus
 {
@@ -27,7 +26,7 @@ namespace Tests.Integration.Bus
         [Test]
         public void Consumer_should_receive_message_published_while_its_network_link_was_down()
         {
-            Bootstrap.StopSecondaryConnectionLink();
+            StopAlternativePortProxy();
 
             Thread.Sleep(100);
 
@@ -35,7 +34,7 @@ namespace Tests.Integration.Bus
 
             Thread.Sleep(100);
 
-            Bootstrap.StartSecondaryConnectionLink();
+            StartAlternativePortProxy();
 
             Assert.IsTrue(consumer.WaitForDelivery(SecondaryBus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1)));
         }

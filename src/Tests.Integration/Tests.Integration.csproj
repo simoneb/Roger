@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL" />
+    <Reference Include="Erlang, Version=0.9.5.0, Culture=neutral, PublicKeyToken=dd1e4028f8bbbc5a, processorArchitecture=MSIL" />
     <Reference Include="Gallio">
       <HintPath>..\..\tools\mbunit\Gallio.dll</HintPath>
     </Reference>
@@ -48,6 +49,7 @@
     <Reference Include="RabbitMQ.ServiceModel">
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.ServiceModel.dll</HintPath>
     </Reference>
+    <Reference Include="Spring.Erlang, Version=0.9.6.2000, Culture=neutral, PublicKeyToken=2954ea1110aebcfa, processorArchitecture=MSIL" />
     <Reference Include="Spring.Messaging.Amqp.Rabbit.Admin">
       <HintPath>..\..\lib\spring-amqp\Spring.Messaging.Amqp.Rabbit.Admin.dll</HintPath>
     </Reference>
@@ -62,7 +64,21 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Acks_behavior.cs" />
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Exploratory\Federation\Federation_link_goes_down.cs" />
+    <Compile Include="Exploratory\Federation\General_federation_tests.cs" />
+    <Compile Include="Exploratory\Federation\Subscriber_on_secondary_node.cs" />
+    <Compile Include="Exploratory\Federation\With_federation.cs" />
+    <Compile Include="Exploratory\WCF\Calculator.cs" />
+    <Compile Include="Exploratory\WCF\ICalculator.cs" />
+    <Compile Include="Exploratory\WCF\ILogger.cs" />
+    <Compile Include="Exploratory\WCF\IOrderCallback.cs" />
+    <Compile Include="Exploratory\WCF\IOrderService.cs" />
+    <Compile Include="Exploratory\WCF\Logger.cs" />
+    <Compile Include="Exploratory\WCF\OrderCallback.cs" />
+    <Compile Include="Exploratory\WCF\OrderService.cs" />
+    <Compile Include="Exploratory\WCF\Wcf_bindings.cs" />
+    <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="Bus\Broker_shutdown_recovery.cs" />
     <Compile Include="Bus\Client_overflow_with_duplicates_and_resequencing.cs" />
     <Compile Include="Bus\Connection_shutdown_on_consumer_side.cs" />
@@ -90,32 +106,17 @@
     <Compile Include="Bus\SupportClasses\SlowConsumer.cs" />
     <Compile Include="Bus\With_bus_on_secondary.cs" />
     <Compile Include="Bus\With_default_bus.cs" />
-    <Compile Include="Federation\Federation_link_goes_down.cs" />
-    <Compile Include="Federation\Subscriber_on_secondary_node.cs" />
-    <Compile Include="Federation\General_federation_tests.cs" />
+    <Compile Include="Exploratory\Acks_behavior.cs" />
+    <Compile Include="Exploratory\PublisherConfirms_behavior.cs" />
+    <Compile Include="Exploratory\QueueingBasicConsumer_behavior.cs" />
+    <Compile Include="Exploratory\Queues_test.cs" />
+    <Compile Include="Exploratory\When_dequeuing_manually.cs" />
+    <Compile Include="Exploratory\When_iterating_queue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PublisherConfirms_behavior.cs" />
     <Compile Include="QueueFactoryTest.cs" />
-    <Compile Include="QueueingBasicConsumer_behavior.cs" />
-    <Compile Include="Utils\Bootstrap.cs" />
     <Compile Include="Utils\CustomModel.cs" />
-    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\ICustomModel.cs" />
     <Compile Include="Utils\TcpTrace.cs" />
-    <Compile Include="Queues_test.cs" />
-    <Compile Include="WCF\Calculator.cs" />
-    <Compile Include="WCF\ICalculator.cs" />
-    <Compile Include="WCF\ILogger.cs" />
-    <Compile Include="WCF\IOrderCallback.cs" />
-    <Compile Include="WCF\IOrderService.cs" />
-    <Compile Include="WCF\Logger.cs" />
-    <Compile Include="WCF\OrderCallback.cs" />
-    <Compile Include="WCF\OrderService.cs" />
-    <Compile Include="WCF\Wcf_bindings.cs" />
-    <Compile Include="When_dequeuing_manually.cs" />
-    <Compile Include="When_iterating_queue.cs" />
-    <Compile Include="With_rabbitmq_broker.cs" />
-    <Compile Include="With_federation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

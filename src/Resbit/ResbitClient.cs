@@ -16,7 +16,7 @@ namespace Resbit
         private readonly string baseAddress;
         private readonly NetworkCredential networkCredential;
 
-        public ResbitClient(string hostName, string username, string password)
+        public ResbitClient(string hostName, string username = "guest", string password = "guest")
         {
             baseAddress = "http://" + hostName + ":55672/api/";
             networkCredential = new NetworkCredential(username, password);

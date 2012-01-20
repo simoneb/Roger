@@ -1,10 +1,10 @@
-﻿using System.Net;
+using System.Net;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
 using Tests.Integration.Utils;
 
-namespace Tests.Integration
+namespace Tests.Integration.Exploratory
 {
     public class Queues_test : With_rabbitmq_broker
     {
@@ -23,11 +23,11 @@ namespace Tests.Integration
             using(Model)
             {
                 var queue = Model.QueueDeclare();
-                Assert.IsNotNull(RestClient.GetQueue(queue));
+                Assert.IsNotNull(BrokerHttp.GetQueue(queue));
 
                 Model.QueueDelete(queue);
 
-                Assert.Throws<WebException>(() => RestClient.GetQueue(queue));
+                Assert.Throws<WebException>(() => BrokerHttp.GetQueue(queue));
             }
         }
 

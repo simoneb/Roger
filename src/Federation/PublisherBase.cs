@@ -15,7 +15,7 @@ namespace Federation
             {
                 while (!waitHandle.WaitOne(TimeSpan.FromMilliseconds(100)))
                 {
-                    model.BasicPublish(Globals.FederationExchangeName, "Routing.Key", null, string.Format("Ciao from {0}", GetType().Name).Bytes());
+                    model.BasicPublish(Constants.FederationExchangeName, "Routing.Key", null, string.Format("Ciao from {0}", GetType().Name).Bytes());
                     Console.WriteLine("Message published");
                 }
             }

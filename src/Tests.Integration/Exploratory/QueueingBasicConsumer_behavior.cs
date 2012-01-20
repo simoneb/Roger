@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using Common;
 using MbUnit.Framework;
 using RabbitMQ.Client;
-using System;
 
-namespace Tests.Integration
+namespace Tests.Integration.Exploratory
 {
     public abstract class QueueingBasicConsumer_behavior : With_rabbitmq_broker, IObserver<object>
     {

@@ -1,8 +1,7 @@
 using System.Threading;
 using MbUnit.Framework;
-using Tests.Integration.Utils;
 
-namespace Tests.Integration
+namespace Tests.Integration.Exploratory.Federation
 {
     public class With_federation : With_rabbitmq_broker
     {
@@ -11,16 +10,6 @@ namespace Tests.Integration
         {
             // leave some time to TcpTrace to reestabilish the connection to the server
             Thread.Sleep(2000);
-        }
-
-        protected static void StartFederationLink()
-        {
-            Bootstrap.StartFederationLink();
-        }
-
-        protected static void ShutdownFederationLink()
-        {
-            Bootstrap.StopFederationLink();
         }
     }
 }

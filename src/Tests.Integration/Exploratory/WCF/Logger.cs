@@ -1,7 +1,7 @@
 using System.ServiceModel;
 using System.Threading;
 
-namespace Tests.Integration.WCF
+namespace Tests.Integration.Exploratory.WCF
 {
     [ServiceBehavior]
     public class Logger : ILogger

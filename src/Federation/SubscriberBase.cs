@@ -16,7 +16,7 @@ namespace Federation
             {
                 var queue = model.QueueDeclare("", false, true, false, null);
 
-                model.QueueBind(queue, Globals.FederationExchangeName, "Routing.Key");
+                model.QueueBind(queue, Constants.FederationExchangeName, "Routing.Key");
 
                 var consumer = new EventingBasicConsumer { Model = model };
 
