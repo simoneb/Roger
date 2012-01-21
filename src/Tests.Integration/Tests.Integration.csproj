@@ -69,6 +69,7 @@
     <Compile Include="Exploratory\Federation\General_federation_tests.cs" />
     <Compile Include="Exploratory\Federation\Subscriber_on_secondary_node.cs" />
     <Compile Include="Exploratory\Federation\With_federation.cs" />
+    <Compile Include="Exploratory\Shutdown_protocol.cs" />
     <Compile Include="Exploratory\WCF\Calculator.cs" />
     <Compile Include="Exploratory\WCF\ICalculator.cs" />
     <Compile Include="Exploratory\WCF\ILogger.cs" />
