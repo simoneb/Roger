@@ -37,7 +37,7 @@ namespace Tests.Integration.Bus
 
             Bus.Request(new MyRequest());
 
-            Assert.IsTrue(responseConsumer.WaitForDelivery());
+            Assert.IsTrue(responseConsumer.WaitForDelivery(1500 /*roudtrip here*/));
             Assert.IsNotNull(responseConsumer.LastReceived);
         }
 
@@ -69,20 +69,6 @@ namespace Tests.Integration.Bus
         public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_message()
         {
             Assert.Throws<InvalidOperationException>(() => Bus.Reply(new MyReply()));
-        }
-
-        [Test]
-        public void Reply_should_throw_if_invoked_out_of_the_context_of_handling_a_request()
-        {
-            var responder = new CatchingResponder<MyRequest, MyReply>(Bus);
-            Bus.AddInstanceSubscription(responder);
-
-            Bus.Publish(new MyRequest());
-
-            Assert.IsTrue(responder.WaitForDelivery());
-
-            Assert.IsInstanceOfType<InvalidOperationException>(responder.Exception);
-            Assert.AreEqual(ErrorMessages.ReplyInvokedOutOfRequestContext, responder.Exception.Message);
         }
     }
 }

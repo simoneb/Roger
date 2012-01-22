@@ -83,5 +83,30 @@ namespace Tests.Unit
 
             model.DidNotReceiveWithAnyArgs().BasicPublish(null, null, null, null);
         }
+
+        [Test]
+        public void Should_throw_when_replying_out_of_context_of_a_request()
+        {
+            Assert.Throws<InvalidOperationException>(() => sut.Reply(new MyReply(), null, null, true));
+        }
+
+        [Test]
+        public void Should_enqueue_reply_when_correlation_id_same_as_request_id()
+        {
+            connection.ConnectionEstabilished += Raise.Event<Action>();
+
+            RogerGuid requestId = RogerGuid.NewGuid();
+
+            sut.Reply(new MyReply(), new CurrentMessageInformation{MessageId = requestId, Endpoint = new RogerEndpoint("someEndpoint")}, null, true);
+
+            Thread.Sleep(100);
+
+            model.Received().BasicPublish(Arg.Any<string>(),
+                                          Arg.Any<string>(),
+                                          true,
+                                          false,
+                                          Arg.Is<IBasicProperties>(p => p.CorrelationId == requestId), 
+                                          Arg.Any<byte[]>());
+        }
     }
 }

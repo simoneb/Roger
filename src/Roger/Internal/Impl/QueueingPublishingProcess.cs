@@ -173,8 +173,8 @@ namespace Roger.Internal.Impl
                                        Exchange(messageType),
                                        RoutingKey(messageType),
                                        Serialize(message),
-                                       persistent,
-                                       basicReturnCallback));
+                                       basicReturnCallback, 
+                                       persistent));
         }
 
         public void Send(RogerEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback, bool persistent)
@@ -201,26 +201,24 @@ namespace Roger.Internal.Impl
                                                 persistent));
         }
 
-        public void Reply(object message, CurrentMessageInformation request, Action<BasicReturn> basicReturnCallback, bool persistent)
+        public void Reply(object message, CurrentMessageInformation currentMessage, Action<BasicReturn> basicReturnCallback, bool persistent)
         {
-            EnsureRequestContext(request);
+            EnsureMessageHandlingContext(currentMessage);
 
             Enqueue(new ReplyFactory(message.GetType(),
-                                     Exchange(request.MessageType),
-                                     request,
+                                     Exchange(currentMessage.MessageType),
+                                     currentMessage,
                                      Serialize(message),
                                      basicReturnCallback,
                                      persistent));
         }
 
-        private void EnsureRequestContext(CurrentMessageInformation currentMessage)
+        private void EnsureMessageHandlingContext(CurrentMessageInformation currentMessage)
         {
-            if (currentMessage == null ||
-                currentMessage.Endpoint.IsEmpty ||
-                currentMessage.CorrelationId.IsEmpty)
+            if (currentMessage == null || currentMessage.Endpoint.IsEmpty)
             {
-                log.Error("Reply method called out of the context of a message handling request");
-                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfRequestContext);
+                log.Error("Reply method called out of the context of a message handling");
+                throw new InvalidOperationException(ErrorMessages.ReplyInvokedOutOfMessageContext);
             }
         }
 

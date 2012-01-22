@@ -10,7 +10,12 @@ namespace Roger.Internal.Impl
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
 
-        public RequestFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent, Action<BasicReturn> basicReturnCallback) : base(messageType, persistent)
+        public RequestFactory(Type messageType,
+                              string exchange,
+                              string routingKey,
+                              byte[] body,
+                              Action<BasicReturn> basicReturnCallback,
+                              bool persistent) : base(messageType, persistent)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;
@@ -21,11 +26,6 @@ namespace Roger.Internal.Impl
         protected override IDelivery CreateCore(Func<RogerEndpoint, IBasicProperties> createProperties)
         {
             return new RequestDelivery(exchange, routingKey, body, createProperties, basicReturnCallback);
-        }
-
-        protected override void FillAdditionalProperties(IBasicProperties properties, IIdGenerator idGenerator)
-        {
-            properties.CorrelationId = idGenerator.Next();
         }
     }
 }

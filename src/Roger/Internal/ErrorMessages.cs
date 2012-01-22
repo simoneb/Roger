@@ -4,7 +4,7 @@ namespace Roger.Internal
 {
     internal static class ErrorMessages
     {
-        internal const string ReplyInvokedOutOfRequestContext = "Reply can only be called when handling a request message";
+        internal const string ReplyInvokedOutOfMessageContext = "Reply can only be called when handling a message";
 
         internal static string MultipleMessageAttributes(Type messageType)
         {

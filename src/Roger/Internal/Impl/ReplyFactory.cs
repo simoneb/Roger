@@ -30,7 +30,7 @@ namespace Roger.Internal.Impl
 
         protected override void FillAdditionalProperties(IBasicProperties properties, IIdGenerator idGenerator)
         {
-            properties.CorrelationId = currentMessage.CorrelationId;
+            properties.CorrelationId = currentMessage.MessageId;
         }
     }
 }

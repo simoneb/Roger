@@ -71,7 +71,7 @@ namespace Roger
         void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
 
         /// <summary>
-        /// Replies to a request sent by means of <see cref="Request(object)"/>
+        /// Replies to a request sent by means of <see cref="Request"/>
         /// </summary>
         /// <param name="message">The response message</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>

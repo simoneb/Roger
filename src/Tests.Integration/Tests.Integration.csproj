@@ -92,7 +92,6 @@
     <Compile Include="Bus\Request_and_reply.cs" />
     <Compile Include="Bus\Send.cs" />
     <Compile Include="Bus\Instance_subscriptions.cs" />
-    <Compile Include="Bus\SupportClasses\CatchingMyRequestResponder.cs" />
     <Compile Include="Bus\SupportClasses\GenericMultipleArrivalsConsumer.cs" />
     <Compile Include="Bus\SupportClasses\ManualConnectionFactory.cs" />
     <Compile Include="Bus\SupportClasses\GenericConsumer.cs" />
