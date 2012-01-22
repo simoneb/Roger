@@ -14,7 +14,7 @@ namespace Roger.Internal.Impl
         private readonly IWaiter waiter;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private IConnection connection;
-        private bool disposed;
+        private int disposed;
         private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private CancellationToken token;
 
@@ -74,7 +74,7 @@ namespace Roger.Internal.Impl
             conn.ConnectionShutdown -= HandleConnectionShutdown;
 
             // connection has been closed because we asked it!
-            if (disposed)
+            if (disposed == 1)
             {
                 GracefulShutdown();
                 log.Debug("Connection has been shut down gracefully upon request");
@@ -92,8 +92,8 @@ namespace Roger.Internal.Impl
 
         public void Dispose()
         {
-            if (disposed) return;
-            disposed = true;
+            if (Interlocked.CompareExchange(ref disposed, 1, 0) == 1)
+                return;
 
             timer.Stop();
             tokenSource.Cancel();
