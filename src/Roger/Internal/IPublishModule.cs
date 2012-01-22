@@ -7,7 +7,7 @@ namespace Roger.Internal
     {
         void Initialize(IPublishingProcess publishingProcess);
         void BeforePublishEnabled(IModel publishModel);
-        void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null);
+        void BeforePublish(IDelivery delivery, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback);
         void AfterPublishDisabled(IModel publishModel);
     }
 }

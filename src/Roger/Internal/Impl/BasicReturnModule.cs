@@ -25,7 +25,7 @@ namespace Roger.Internal.Impl
             basicReturnHandler.Handle(new BasicReturn(new RogerGuid(args.BasicProperties.MessageId), args.ReplyCode, args.ReplyText));
         }
 
-        public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null)
+        public void BeforePublish(IDelivery delivery, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
         {
             // todo: handle this, we don't want to subscribe multiple times in case of republish
             if (basicReturnCallback != null)

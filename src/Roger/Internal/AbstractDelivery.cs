@@ -14,11 +14,11 @@ namespace Roger.Internal
             this.basicReturnCallback = basicReturnCallback;
         }
 
-        public void Execute(IModel model, RogerEndpoint endpoint, IPublishModule modules)
+        public void Execute(IModel model, RogerEndpoint endpoint, IPublishModule module)
         {
             var properties = createProperties(endpoint);
 
-            modules.BeforePublish(this, model, properties, basicReturnCallback);
+            module.BeforePublish(this, model, properties, basicReturnCallback);
 
             ExecuteCore(model, properties);
         }

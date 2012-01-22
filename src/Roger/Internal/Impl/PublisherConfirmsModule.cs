@@ -54,9 +54,9 @@ namespace Roger.Internal.Impl
             scheduler.Start();
         }
 
-        public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
+        public void BeforePublish(IDelivery delivery, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
         {
-            unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedDeliveryFactory(command, consideredUnconfirmedAfter));
+            unconfirmedCommands.TryAdd(publishModel.NextPublishSeqNo, new UnconfirmedDeliveryFactory(delivery, consideredUnconfirmedAfter));
         }
 
         public void AfterPublishDisabled(IModel publishModel)

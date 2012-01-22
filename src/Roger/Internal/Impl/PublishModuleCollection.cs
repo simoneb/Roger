@@ -37,10 +37,10 @@ namespace Roger.Internal.Impl
                 module.BeforePublishEnabled(publishModel);
         }
 
-        public void BeforePublish(IDelivery command, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback = null)
+        public void BeforePublish(IDelivery delivery, IModel publishModel, IBasicProperties properties, Action<BasicReturn> basicReturnCallback)
         {
             foreach (var module in inner)
-                module.BeforePublish(command, publishModel, properties, basicReturnCallback);
+                module.BeforePublish(delivery, publishModel, properties, basicReturnCallback);
         }
 
         public void AfterPublishDisabled(IModel publishModel)

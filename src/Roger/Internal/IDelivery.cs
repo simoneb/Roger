@@ -7,6 +7,6 @@ namespace Roger.Internal
     /// </summary>
     public interface IDelivery
     {
-        void Execute(IModel model, RogerEndpoint endpoint, IPublishModule modules);
+        void Execute(IModel model, RogerEndpoint endpoint, IPublishModule module);
     }
 }
