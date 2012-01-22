@@ -76,19 +76,19 @@ namespace Roger.Internal.Impl
             }
         }
 
-        private bool Unordered(SequenceKey endpoint, uint sequence)
+        private bool Unordered(SequenceKey key, uint sequence)
         {
-            return sequence > nextSequences[endpoint];
+            return sequence > nextSequences[key];
         }
 
-        private bool CorrectSequence(SequenceKey endpoint, uint sequence)
+        private bool CorrectSequence(SequenceKey key, uint sequence)
         {
-            return sequence == nextSequences[endpoint];
+            return sequence == nextSequences[key];
         }
 
-        private bool Unknown(SequenceKey endpoint)
+        private bool Unknown(SequenceKey key)
         {
-            return !nextSequences.ContainsKey(endpoint);
+            return !nextSequences.ContainsKey(key);
         }
 
         private IEnumerable<CurrentMessageInformation> Pending(SequenceKey key, uint receivedSequence)
