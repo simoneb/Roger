@@ -4,7 +4,7 @@ using Common.Logging;
 
 namespace Roger.Internal.Impl
 {
-    class AlwaysSuccessConsumerInvoker : IConsumerInvoker
+    internal class AlwaysSuccessConsumerInvoker : IConsumerInvoker
     {
         private readonly ILog log = LogManager.GetCurrentClassLogger();
 

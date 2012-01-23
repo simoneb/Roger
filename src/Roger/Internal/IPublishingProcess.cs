@@ -2,7 +2,7 @@ using System;
 
 namespace Roger.Internal
 {
-    public interface IPublishingProcess : IDisposable
+    internal interface IPublishingProcess : IDisposable
     {
         void Start();
         void Publish(object message, bool persistent);

@@ -9,12 +9,12 @@ namespace Tests.Unit
     [TestFixture]
     public class Exchange_resolution
     {
-        private DefaultExchangeResolver sut;
+        private AttributeExchangeResolver sut;
 
         [SetUp]
         public void Setup()
         {
-            sut = new DefaultExchangeResolver();
+            sut = new AttributeExchangeResolver();
         }
 
         [Test]

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using RabbitMQ.Client;
 
-namespace Roger.Internal.Impl
+namespace Roger
 {
-    internal class MessageFilterCollection : IMessageFilter
+    public class MessageFilterCollection : IMessageFilter
     {
         private readonly LinkedList<IMessageFilter> inner;
 
@@ -13,7 +13,7 @@ namespace Roger.Internal.Impl
             inner = new LinkedList<IMessageFilter>(messageFilters);
         }
 
-        public IEnumerable<CurrentMessageInformation> Filter(IEnumerable<CurrentMessageInformation> input, IModel model)
+        IEnumerable<CurrentMessageInformation> IMessageFilter.Filter(IEnumerable<CurrentMessageInformation> input, IModel model)
         {
             return inner.Aggregate(input, (messages, filter) => filter.Filter(messages, model));
         }
@@ -21,6 +21,12 @@ namespace Roger.Internal.Impl
         public void AddFirst(IMessageFilter filter)
         {
             inner.AddFirst(filter);
+        }
+
+        public void Add(params IMessageFilter[] filters)
+        {
+            foreach (var filter in filters)
+                inner.AddLast(filter);
         }
     }
 }

@@ -3,10 +3,7 @@ using System.Threading;
 
 namespace Roger.Internal
 {
-    /// <summary>
-    /// Waits until a timeout occurs on a <see cref="WaitHandle"/> instance
-    /// </summary>
-    public interface IWaiter
+    internal interface IWaiter
     {
         bool Wait(WaitHandle waitHandle, TimeSpan timeout);
     }

@@ -1,7 +1,6 @@
 using System;
 using MbUnit.Framework;
 using RabbitMQ.Client;
-using Roger.Internal;
 using Tests.Integration.Bus.SupportClasses;
 
 namespace Tests.Integration.Bus

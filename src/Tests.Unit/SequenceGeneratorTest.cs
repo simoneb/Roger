@@ -10,12 +10,12 @@ namespace Tests.Unit
     [TestFixture]
     public class SequenceGeneratorTest
     {
-        private ThreadSafeIncrementalSequenceGenerator sut;
+        private ByMessageHirarchyRootSequenceGenerator sut;
 
         [SetUp]
         public void Setup()
         {
-            sut = new ThreadSafeIncrementalSequenceGenerator();
+            sut = new ByMessageHirarchyRootSequenceGenerator();
         }
 
         [Test]

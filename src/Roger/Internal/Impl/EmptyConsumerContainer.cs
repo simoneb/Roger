@@ -1,12 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace Roger
+namespace Roger.Internal.Impl
 {
-    /// <summary>
-    /// Resolves no consumers, thus preventing any automatic message subscriptions
-    /// </summary>
-    public class EmptyConsumerContainer : IConsumerContainer
+    internal class EmptyConsumerContainer : IConsumerContainer
     {
         public IEnumerable<IConsumer> Resolve(Type messageRoot)
         {

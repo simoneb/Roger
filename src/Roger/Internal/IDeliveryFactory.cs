@@ -2,10 +2,7 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal
 {
-    /// <summary>
-    /// Factories of deliveries
-    /// </summary>
-    public interface IDeliveryFactory
+    internal interface IDeliveryFactory
     {
         IDelivery Create(IModel model,
                          IIdGenerator idGenerator,

@@ -14,7 +14,7 @@ namespace BusProcesses.PublisherConfirms
 
             PublisherConfirmsProvider.DeclareExchange(connectionFactory);
 
-            var bus = new RogerBus(connectionFactory, new EmptyConsumerContainer());
+            var bus = new RogerBus(connectionFactory);
             bus.Start();
             StartPublishing(bus, waitHandle);
         }

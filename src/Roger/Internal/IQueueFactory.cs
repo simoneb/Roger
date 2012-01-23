@@ -2,7 +2,7 @@
 
 namespace Roger.Internal
 {
-    public interface IQueueFactory
+    internal interface IQueueFactory
     {
         QueueDeclareOk Create(IModel model, string name = "");
     }

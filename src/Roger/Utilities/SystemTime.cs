@@ -4,12 +4,12 @@ namespace Roger.Utilities
 {
     internal static class SystemTime
     {
-        private static DateTimeOffset? _now;
+        private static DateTimeOffset? now;
 
         public static DateTimeOffset Now
         {
-            get { return _now ?? DateTimeOffset.Now; }
-            private set { _now = value; }
+            get { return now ?? DateTimeOffset.Now; }
+            private set { now = value; }
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Roger.Utilities
 
         public static void Reset()
         {
-            _now = null;
+            now = null;
         }
     }
 }

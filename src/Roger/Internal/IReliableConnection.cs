@@ -1,10 +1,9 @@
 using System;
-using System.Threading.Tasks;
 using RabbitMQ.Client;
 
 namespace Roger.Internal
 {
-    public interface IReliableConnection : IDisposable
+    internal interface IReliableConnection : IDisposable
     {
         TimeSpan ConnectionAttemptInterval { get; }
         void Connect();

@@ -20,9 +20,10 @@ namespace Roger.Internal.Impl
             inner.AddFirst(module);
         }
 
-        public void AddLast(IPublishModule module)
+        public void Add(params IPublishModule[] modules)
         {
-            inner.AddLast(module);
+            foreach (var module in modules)
+                inner.AddLast(module);
         }
 
         public void Initialize(IPublishingProcess publishingProcess)

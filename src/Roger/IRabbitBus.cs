@@ -23,6 +23,8 @@ namespace Roger
         /// </summary>
         RogerEndpoint LocalEndpoint { get; }
 
+        MessageFilterCollection Filters { get; }
+
         event Action Started;
         event Action Stopped;
 

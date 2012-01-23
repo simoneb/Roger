@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace Roger.Internal.Impl
 {
-    internal class ThreadSafeIncrementalSequenceGenerator : ISequenceGenerator
+    internal class ByMessageHirarchyRootSequenceGenerator : ISequenceGenerator
     {
         readonly ConcurrentDictionary<Type, uint> sequences = new ConcurrentDictionary<Type, uint>();
 

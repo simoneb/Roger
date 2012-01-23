@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
@@ -19,10 +17,12 @@ namespace Roger
         private readonly IReliableConnection connection;
         private readonly IConsumingProcess consumer;
         private readonly IPublishingProcess publisher;
-        private readonly PublishModuleCollection publishModule;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
-        private readonly SystemThreadingTimer reconnectionTimer;
+        private readonly ITimer reconnectionTimer;
+        private readonly MessageFilterCollection filters = new MessageFilterCollection();
+        private readonly PublishModuleCollection publishModules = new PublishModuleCollection();
         private int disposed;
+
 
         /// <summary>
         /// Default library entry point
@@ -33,7 +33,6 @@ namespace Roger
         /// <param name="serializer"></param>
         /// <param name="idGenerator"></param>
         /// <param name="sequenceGenerator"></param>
-        /// <param name="messageFilters"></param>
         /// <param name="options"> </param>
         public RogerBus(IConnectionFactory connectionFactory,
                         IConsumerContainer consumerContainer = null,
@@ -41,32 +40,28 @@ namespace Roger
                         IMessageSerializer serializer = null,
                         IIdGenerator idGenerator = null,
                         ISequenceGenerator sequenceGenerator = null,
-                        IEnumerable<IMessageFilter> messageFilters = null,
                         RogerOptions options = null)
         {
             reconnectionTimer = new SystemThreadingTimer();
             connection = new ReliableConnection(connectionFactory, reconnectionTimer);
             
             consumerContainer = consumerContainer.Or(new EmptyConsumerContainer());
-            exchangeResolver = exchangeResolver.Or(new DefaultExchangeResolver());
+            exchangeResolver = exchangeResolver.Or(new AttributeExchangeResolver());
             serializer = serializer.Or(new ProtoBufNetSerializer());
             idGenerator = idGenerator.Or(new RandomIdGenerator());
-            sequenceGenerator = sequenceGenerator.Or(new ThreadSafeIncrementalSequenceGenerator());
-            messageFilters = messageFilters.Or(Enumerable.Empty<IMessageFilter>());
+            sequenceGenerator = sequenceGenerator.Or(new ByMessageHirarchyRootSequenceGenerator());
             options = options.Or(new RogerOptions());
             
-            publishModule = new PublishModuleCollection(new BasicReturnModule());
+            publishModules.Add(new BasicReturnModule());
 
             if(options.UsePublisherConfirms)
-                publishModule.AddFirst(new PublisherConfirmsModule(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
+                publishModules.AddFirst(new PublisherConfirmsModule(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
 
             var queueFactory = new DefaultQueueFactory(queueExpiry: options.QueueUnusedTimeout, 
                                                        messageTtl: options.MessageTimeToLiveOnQueue);
 
-            var filters = new MessageFilterCollection(messageFilters.ToArray());
-
             if (options.DeduplicationAndResequencing)
-                filters.AddFirst(new ResequencingDeduplicationFilter());
+                Filters.Add(new ResequencingDeduplicationFilter());
 
             // TODO: order here is important because both of the two guys below subscribe to
             // connection established events, but the publisher cannot start publish unless
@@ -77,7 +72,7 @@ namespace Roger
                                                    serializer,
                                                    new DefaultTypeResolver(), 
                                                    consumerContainer,
-                                                   filters,
+                                                   Filters,
                                                    queueFactory,
                                                    new AlwaysSuccessConsumerInvoker(), 
                                                    options);
@@ -89,7 +84,7 @@ namespace Roger
                                                       serializer,
                                                       new DefaultTypeResolver(), 
                                                       () => LocalEndpoint,
-                                                      publishModule);
+                                                      publishModules);
 
             connection.ConnectionEstabilished += ConnectionEstabilished;
             connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
@@ -120,6 +115,11 @@ namespace Roger
         public TimeSpan ConnectionAttemptInterval
         {
             get { return connection.ConnectionAttemptInterval; }
+        }
+
+        public MessageFilterCollection Filters
+        {
+            get { return filters; }
         }
 
         public void Start()
@@ -205,7 +205,7 @@ namespace Roger
             publisher.Dispose();
             consumer.Dispose();
             reconnectionTimer.Dispose();
-            publishModule.Dispose();
+            publishModules.Dispose();
             connection.Dispose();
         }
     }

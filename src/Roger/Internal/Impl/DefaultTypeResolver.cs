@@ -4,11 +4,6 @@ namespace Roger.Internal.Impl
 {
     internal class DefaultTypeResolver : ITypeResolver
     {
-        public string Unresolve<T>()
-        {
-            return Unresolve(typeof(T));
-        }
-
         public string Unresolve(Type type)
         {
             var fullName = type.AssemblyQualifiedName;

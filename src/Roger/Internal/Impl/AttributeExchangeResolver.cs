@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Roger.Internal.Impl
 {
-    internal class DefaultExchangeResolver : IExchangeResolver
+    internal class AttributeExchangeResolver : IExchangeResolver
     {
         private static readonly string[] InvalidChars = new[]{" "};
 

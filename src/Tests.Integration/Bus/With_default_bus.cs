@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using Roger;
 using Roger.Internal.Impl;
 using Tests.Integration.Bus.SupportClasses;
+using System.Linq;
 
 namespace Tests.Integration.Bus
 {
@@ -25,8 +26,9 @@ namespace Tests.Integration.Bus
                                consumerContainer,
                                idGenerator: IdGenerator,
                                sequenceGenerator: SequenceGenerator,
-                               messageFilters: MessageFilters,
                                options: new RogerOptions(prefetchCount: null /*no safety nets during tests*/));
+
+            Bus.Filters.Add(MessageFilters.ToArray());
 
             localConnection = Helpers.CreateConnection();
             TestModel = localConnection.CreateModel();
@@ -51,7 +53,7 @@ namespace Tests.Integration.Bus
         protected virtual IIdGenerator IdGenerator { get { return new RandomIdGenerator();} }
 
         protected virtual IEnumerable<IMessageFilter> MessageFilters { get { yield break; } }
-        protected virtual ISequenceGenerator SequenceGenerator { get { return new ThreadSafeIncrementalSequenceGenerator(); } }
+        protected virtual ISequenceGenerator SequenceGenerator { get { return new ByMessageHirarchyRootSequenceGenerator(); } }
 
         protected virtual void BeforeBusInitialization()
         {

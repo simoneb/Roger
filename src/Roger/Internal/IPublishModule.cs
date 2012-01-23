@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace Roger.Internal
 {
-    public interface IPublishModule : IDisposable
+    internal interface IPublishModule : IDisposable
     {
         void Initialize(IPublishingProcess publishingProcess);
         void BeforePublishEnabled(IModel publishModel);
