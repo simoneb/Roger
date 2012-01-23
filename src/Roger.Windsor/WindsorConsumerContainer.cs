@@ -9,14 +9,21 @@ namespace Roger.Windsor
     {
         private readonly IWindsorContainer container;
 
+        private readonly IEnumerable<Type> consumerInterfaces = new[]
+        {
+            typeof (IConsumer<>),
+            typeof (IConsumer1<>),
+            typeof (IConsumer2<>)
+        };
+
         public WindsorConsumerContainer(IWindsorContainer container)
         {
             this.container = container;
         }
 
-        public IEnumerable<IConsumer> Resolve(Type consumerType)
+        public IEnumerable<IConsumer> Resolve(Type messageRoot)
         {
-            return container.ResolveAll(consumerType).Cast<IConsumer>();
+            return consumerInterfaces.Select(i => i.MakeGenericType(messageRoot)).SelectMany(i => container.ResolveAll(i).Cast<IConsumer>());
         }
 
         public void Release(IEnumerable<IConsumer> consumers)
@@ -27,7 +34,7 @@ namespace Roger.Windsor
 
         public IEnumerable<Type> GetAllConsumerTypes()
         {
-            return container.Kernel.GetHandlers(typeof (IConsumer<>)).Select(handler => handler.ComponentModel.Implementation);
+            return consumerInterfaces.SelectMany(i => container.Kernel.GetHandlers(i)).Select(h => h.ComponentModel.Implementation);
         }
     }
 }

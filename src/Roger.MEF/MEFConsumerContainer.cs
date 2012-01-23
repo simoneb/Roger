@@ -11,17 +11,27 @@ namespace Roger.MEF
     public class MEFConsumerContainer : IConsumerContainer
     {
         private readonly CompositionContainer container;
-        readonly Regex importRegex = new Regex(@"Roger.IConsumer\(.+\)");
+        readonly Regex importRegex = new Regex(@"Roger\.IConsumer\d?\(.+\)");
+
+        private readonly IEnumerable<Type> consumerInterfaces = new[]
+        {
+            typeof (IConsumer<>),
+            typeof (IConsumer1<>),
+            typeof (IConsumer2<>)
+        };
 
         public MEFConsumerContainer(CompositionContainer container)
         {
             this.container = container;
         }
 
-        public IEnumerable<IConsumer> Resolve(Type consumerType)
+        public IEnumerable<IConsumer> Resolve(Type messageRoot)
         {
-            return container.GetExports(new ImportDefinition(e => e.ContractName.Equals(AttributedModelServices.GetContractName(consumerType)), null, ImportCardinality.ZeroOrMore, false, true))
-                .Select(export => export.Value).Cast<IConsumer>();
+            return consumerInterfaces.Select(i => i.MakeGenericType(messageRoot))
+                .SelectMany(c =>
+                
+                container.GetExports(new ImportDefinition(e => e.ContractName.Equals(AttributedModelServices.GetContractName(c)), null, ImportCardinality.ZeroOrMore, false, true))
+                .Select(export => export.Value).Cast<IConsumer>());
         }
 
         public void Release(IEnumerable<IConsumer> consumers)

@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\lib\windsor\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\lib\windsor\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="Gallio">
       <HintPath>..\..\tools\mbunit\Gallio.dll</HintPath>
     </Reference>
@@ -69,6 +75,7 @@
     <Compile Include="RogerEndpointTest.cs" />
     <Compile Include="RogerGuidTests.cs" />
     <Compile Include="SequenceGeneratorTest.cs" />
+    <Compile Include="SimpleConsumerContainerTest.cs" />
     <Compile Include="SupportClasses\BaseClass.cs" />
     <Compile Include="SupportClasses\DerivedClass.cs" />
     <Compile Include="SupportClasses\DecoratedMessageBase.cs" />
@@ -93,15 +100,16 @@
     <Compile Include="TaskExtensions.cs" />
     <Compile Include="TimestampTest.cs" />
     <Compile Include="Routing_key_generation.cs" />
+    <Compile Include="WindsorConsumerContainerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{540E7440-1705-4B6B-87A9-99DFA0C366A7}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Roger.MEF\Roger.MEF.csproj">
-      <Project>{DD76D805-CBC9-40CA-B000-F05D87A3FC81}</Project>
-      <Name>Roger.MEF</Name>
+    <ProjectReference Include="..\Roger.Windsor\Roger.Windsor.csproj">
+      <Project>{9E1D695F-2509-4A20-9968-2AF9CF0D85B1}</Project>
+      <Name>Roger.Windsor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Roger\Roger.csproj">
       <Project>{BD4CC6D5-8212-4BFF-BFA0-B6F84E668230}</Project>
