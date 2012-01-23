@@ -16,9 +16,14 @@ namespace Roger
             this.consumers = new List<IConsumer>(consumers);
         }
 
-        public IEnumerable<IConsumer> Resolve(Type consumerType)
+        public IEnumerable<IConsumer> Resolve(Type messageRoot)
         {
-            return consumers.Where(consumerType.IsInstanceOfType);
+            return from consumer in consumers
+                   from @interface in consumer.GetType().GetInterfaces()
+                   where @interface.IsGenericType
+                   where typeof (IConsumer).IsAssignableFrom(@interface.GetGenericTypeDefinition())
+                   where @interface.GetGenericArguments().Any(a => a == messageRoot)
+                   select consumer;
         }
 
         public void Release(IEnumerable<IConsumer> consumers)

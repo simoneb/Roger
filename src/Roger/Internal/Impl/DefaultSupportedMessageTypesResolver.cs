@@ -9,8 +9,8 @@ namespace Roger.Internal.Impl
         private static readonly IEnumerable<Type> ConsumerInterfaces = new[]
         {
             typeof (IConsumer<>),
-            typeof (IConsumer<,>),
-            typeof (IConsumer<,,>)
+            typeof (IConsumer1<>),
+            typeof (IConsumer2<>)
         };
 
         public ISet<Type> Resolve(Type consumerType)
