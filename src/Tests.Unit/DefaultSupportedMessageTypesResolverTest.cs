@@ -34,17 +34,6 @@ namespace Tests.Unit
             {}
         }
 
-        class MultipleConsumerWithSingleInterface : IConsumer<MyMessage, MyOtherMessage>
-        {
-            public void Consume(MyMessage message)
-            {
-            }
-
-            public void Consume(MyOtherMessage message)
-            {
-            }
-        }
-
         [SetUp]
         public void Setup()
         {
@@ -73,12 +62,6 @@ namespace Tests.Unit
         public void Consumer_of_derived_class_only_is_not_supported()
         {
             Assert.Throws<InvalidOperationException>(() => sut.Resolve(typeof (DerivedClassOnlyConsumer)));
-        }
-
-        [Test]
-        public void Consumer_implementing_interface_with_multiple_messages()
-        {
-            Assert.AreElementsEqualIgnoringOrder(new[] { typeof(MyMessage), typeof(MyOtherMessage) }, sut.Resolve(typeof(MultipleConsumerWithSingleInterface)));            
         }
     }
 }

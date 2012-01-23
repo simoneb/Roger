@@ -236,7 +236,7 @@ namespace Roger.Internal.Impl
         private Consumers ResolveConsumers(Type messageType)
         {
             var localConsumers = InstanceConsumers(messageType).ToArray();
-            var standardConsumers = consumerContainer.Resolve(messageType.HierarchyRoot().ConsumerOf()).Distinct().ToArray();
+            var standardConsumers = consumerContainer.Resolve(messageType.HierarchyRoot()).Distinct().ToArray();
 
             log.TraceFormat("Found {0} standard consumers and {1} instance consumers for message {2}",
                             standardConsumers.Length,

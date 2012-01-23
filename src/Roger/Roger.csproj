@@ -45,6 +45,7 @@
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.XML" />
@@ -93,6 +94,7 @@
     <Compile Include="Internal\ITimer.cs" />
     <Compile Include="Internal\IUnconfirmedDeliveryFactory.cs" />
     <Compile Include="Internal\IWaiter.cs" />
+    <Compile Include="MEFConsumerContainer.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />
     <Compile Include="IMessageFilter.cs" />

@@ -8,7 +8,7 @@ namespace Roger
     /// </summary>
     public class EmptyConsumerContainer : IConsumerContainer
     {
-        public IEnumerable<IConsumer> Resolve(Type consumerType)
+        public IEnumerable<IConsumer> Resolve(Type messageRoot)
         {
             yield break;
         }
