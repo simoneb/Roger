@@ -4,6 +4,6 @@ namespace Roger.Internal
 {
     internal interface IQueueFactory
     {
-        QueueDeclareOk Create(IModel model, string name = "");
+        QueueDeclareOk Create(IModel model);
     }
 }

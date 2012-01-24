@@ -13,7 +13,7 @@ namespace Tests.Integration
         [Test]
         public void Should_respect_queue_lease()
         {
-            var factory = new DefaultQueueFactory(durable: false, queueExpiry: TimeSpan.FromSeconds(2));
+            var factory = new DefaultQueueFactory(false, false, false, TimeSpan.FromSeconds(2), null, _ => "");
 
             using (var connection = Helpers.CreateSafeShutdownConnection())
             using (var model = connection.CreateModel())
@@ -31,7 +31,7 @@ namespace Tests.Integration
         [Test]
         public void Should_respect_message_ttl()
         {
-            var factory = new DefaultQueueFactory(durable: false, messageTtl: TimeSpan.FromSeconds(1));
+            var factory = new DefaultQueueFactory(false, false, false, null, TimeSpan.FromSeconds(1), _ => "");
 
             using (var connection = Helpers.CreateSafeShutdownConnection())
             using (var model = connection.CreateModel())

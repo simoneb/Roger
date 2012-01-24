@@ -96,6 +96,7 @@
     <Compile Include="Internal\IWaiter.cs" />
     <Compile Include="MEFConsumerContainer.cs" />
     <Compile Include="MessageFilterCollection.cs" />
+    <Compile Include="QueueBuilder.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />
     <Compile Include="IMessageFilter.cs" />

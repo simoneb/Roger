@@ -57,8 +57,12 @@ namespace Roger
             if(options.UsePublisherConfirms)
                 publishModules.AddFirst(new PublisherConfirmsModule(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
 
-            var queueFactory = new DefaultQueueFactory(queueExpiry: options.QueueUnusedTimeout, 
-                                                       messageTtl: options.MessageTimeToLiveOnQueue);
+            var queueFactory = new DefaultQueueFactory(true, 
+                                                       false, 
+                                                       false, 
+                                                       options.QueueUnusedTimeout,
+                                                       options.MessageTimeToLiveOnQueue, 
+                                                       options.QueueName);
 
             if (options.DeduplicationAndResequencing)
                 Filters.Add(new ResequencingDeduplicationFilter());

@@ -11,7 +11,7 @@ namespace Tests.Integration.Bus
         {
             var handle = new ManualResetEvent(false);
 
-            Bus.PublishMandatory(new MyMessage {Value = 1}, reason => handle.Set());
+            Bus.PublishMandatory(new MyNeverSubscribedToMessage {Value = 1}, reason => handle.Set());
 
             if(!handle.WaitOne(100))
                 Assert.Fail("Delivery failure callback was not called");
@@ -25,8 +25,8 @@ namespace Tests.Integration.Bus
             var first = false;
             var second = false;
 
-            Bus.PublishMandatory(new MyMessage {Value = 1}, reason => { first = true; handle.Signal(); });
-            Bus.PublishMandatory(new MyMessage {Value = 2}, reason => { second = true; handle.Signal(); });
+            Bus.PublishMandatory(new MyNeverSubscribedToMessage {Value = 1}, reason => { first = true; handle.Signal(); });
+            Bus.PublishMandatory(new MyNeverSubscribedToMessage { Value = 2 }, reason => { second = true; handle.Signal(); });
 
             if(!handle.Wait(100))
                 Assert.Fail("Delivery failure callbacks were not called");
