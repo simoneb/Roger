@@ -11,6 +11,7 @@ using Roger;
 using Roger.Internal;
 using Roger.Internal.Impl;
 using System.Linq;
+using Roger.Messages;
 
 namespace Tests.Unit
 {
@@ -29,7 +30,7 @@ namespace Tests.Unit
             timer = Substitute.For<ITimer>();
             waiter = Substitute.For<IWaiter>();
 
-            sut = new ReliableConnection(connectionFactory, timer, waiter);
+            sut = new ReliableConnection(connectionFactory, timer, waiter, new Aggregator());
         }
 
         [Test]

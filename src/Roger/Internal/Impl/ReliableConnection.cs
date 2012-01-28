@@ -4,6 +4,7 @@ using System.Threading;
 using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
+using Roger.Messages;
 
 namespace Roger.Internal.Impl
 {
@@ -12,6 +13,7 @@ namespace Roger.Internal.Impl
         private readonly IConnectionFactory connectionFactory;
         private readonly ITimer timer;
         private readonly IWaiter waiter;
+        private readonly IAggregator aggregator;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private IConnection connection;
         private int disposed;
@@ -20,20 +22,16 @@ namespace Roger.Internal.Impl
 
         public TimeSpan ConnectionAttemptInterval { get { return TimeSpan.FromSeconds(5); } }
 
-        public event Action ConnectionEstabilished = delegate {  };
-        public event Action ConnectionAttemptFailed = delegate { };
-        public event Action GracefulShutdown = delegate { };
-        public event Action<ShutdownEventArgs> UnexpectedShutdown = delegate { };
-
-        public ReliableConnection(IConnectionFactory connectionFactory, ITimer reconnectionTimer) : this(connectionFactory, reconnectionTimer, new DefaultWaiter())
+        public ReliableConnection(IConnectionFactory connectionFactory, ITimer reconnectionTimer, IAggregator aggregator) : this(connectionFactory, reconnectionTimer, new DefaultWaiter(), aggregator)
         {
         }
 
-        public ReliableConnection(IConnectionFactory connectionFactory, ITimer timer, IWaiter waiter)
+        public ReliableConnection(IConnectionFactory connectionFactory, ITimer timer, IWaiter waiter, IAggregator aggregator)
         {
             this.connectionFactory = connectionFactory;
             this.timer = timer;
             this.waiter = waiter;
+            this.aggregator = aggregator;
             token = tokenSource.Token;
             timer.Callback += BlockingConnect;
         }
@@ -54,14 +52,14 @@ namespace Roger.Internal.Impl
                     log.Debug("Connection created");
                     connection.ConnectionShutdown += HandleConnectionShutdown;
 
-                    ConnectionEstabilished();
+                    aggregator.Notify(new ConnectionEstablished(this));
                     return;
                 }
                 catch (BrokerUnreachableException e) // looking at the client source it appears safe to catch this exception only
                 {
                     log.Error("Cannot create connection, broker is unreachable", e);
 
-                    ConnectionAttemptFailed();
+                    aggregator.Notify(new ConnectionAttemptFailed());
 
                     if (waiter.Wait(token.WaitHandle, ConnectionAttemptInterval))
                         return;
@@ -76,12 +74,12 @@ namespace Roger.Internal.Impl
             // connection has been closed because we asked it!
             if (disposed == 1)
             {
-                GracefulShutdown();
+                aggregator.Notify(new GracefulConnectionShutdown());
                 log.Debug("Connection has been shut down gracefully upon request");
             }
             else
             {
-                UnexpectedShutdown(reason);
+                aggregator.Notify(new ConnectionUnexpectedShutdown(reason));
                 log.DebugFormat("Connection (hashcode {0}) was shut down unexpectedly: {1}", conn.GetHashCode(), reason);
 
                 log.DebugFormat("Scheduling connection to be retried in {0}", ConnectionAttemptInterval);

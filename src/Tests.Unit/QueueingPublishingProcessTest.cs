@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using Roger;
 using Roger.Internal;
 using Roger.Internal.Impl;
+using Roger.Messages;
 using Tests.Unit.SupportClasses;
 
 namespace Tests.Unit
@@ -17,6 +18,7 @@ namespace Tests.Unit
         private QueueingPublishingProcess sut;
         private IModel model;
         private IPublishModule publishModule;
+        private Aggregator aggregator;
 
         [SetUp]
         public void Setup()
@@ -26,14 +28,14 @@ namespace Tests.Unit
             connection.CreateModel().Returns(model);
             publishModule = Substitute.For<IPublishModule>();
 
-            sut = new QueueingPublishingProcess(connection,
-                                                Substitute.For<IIdGenerator>(),
+            aggregator = new Aggregator();
+            sut = new QueueingPublishingProcess(Substitute.For<IIdGenerator>(),
                                                 Substitute.For<ISequenceGenerator>(),
                                                 Substitute.For<IExchangeResolver>(),
                                                 Substitute.For<IMessageSerializer>(),
                                                 Substitute.For<ITypeResolver>(),
                                                 Substitute.For<Func<RogerEndpoint>>(),
-                                                publishModule);
+                                                publishModule, aggregator);
             sut.Start();
         }
 
@@ -46,7 +48,7 @@ namespace Tests.Unit
         [Test]
         public void Should_publish_messages_when_connection_is_established()
         {
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
 
             sut.Publish(new MyMessage(), false);
 
@@ -58,14 +60,14 @@ namespace Tests.Unit
         [Test]
         public void Should_invoke_modules_when_connection_established()
         {
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
             publishModule.Received().BeforePublishEnabled(model);
         }
 
         [Test]
         public void Should_notify_module_before_each_publish()
         {
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
 
             sut.Publish(new MyMessage(), false);
 
@@ -93,7 +95,7 @@ namespace Tests.Unit
         [Test]
         public void Should_enqueue_reply_when_correlation_id_same_as_request_id()
         {
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
 
             RogerGuid requestId = RogerGuid.NewGuid();
 

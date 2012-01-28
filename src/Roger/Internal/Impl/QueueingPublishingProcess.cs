@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
+using Roger.Messages;
 
 namespace Roger.Internal.Impl
 {
-    internal class QueueingPublishingProcess : IPublishingProcess
+    internal class QueueingPublishingProcess : IPublishingProcess, IReceive<ConnectionEstablished>, IReceive<ConnectionUnexpectedShutdown>
     {
-        private readonly IReliableConnection connection;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private int disposed;
         private Task publishTask;
@@ -27,17 +27,17 @@ namespace Roger.Internal.Impl
         private readonly ITypeResolver typeResolver;
         private readonly Func<RogerEndpoint> getEndpoint;
         private readonly IPublishModule modules;
+        private readonly Aggregator aggregator;
 
-        internal QueueingPublishingProcess(IReliableConnection connection,
-                                           IIdGenerator idGenerator,
+        internal QueueingPublishingProcess(IIdGenerator idGenerator,
                                            ISequenceGenerator sequenceGenerator,
                                            IExchangeResolver exchangeResolver,
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
                                            Func<RogerEndpoint> getEndpoint,
-                                           IPublishModule modules)
+                                           IPublishModule modules,
+                                           Aggregator aggregator)
         {
-            this.connection = connection;
             this.idGenerator = idGenerator;
             this.sequenceGenerator = sequenceGenerator;
             this.exchangeResolver = exchangeResolver;
@@ -46,16 +46,15 @@ namespace Roger.Internal.Impl
             this.typeResolver = typeResolver;
             this.getEndpoint = getEndpoint;
             this.modules = modules;
+            this.aggregator = aggregator;
 
-            connection.ConnectionEstabilished += ConnectionOnConnectionEstabilished;
-            connection.UnexpectedShutdown += ConnectionOnUnexpectedShutdown;
-
+            aggregator.Subscribe(this);
             modules.Initialize(this);
         }
 
-        private void ConnectionOnConnectionEstabilished()
+        void IReceive<ConnectionEstablished>.Receive(ConnectionEstablished message)
         {
-            model = connection.CreateModel();
+            model = message.Connection.CreateModel();
             modules.BeforePublishEnabled(model);
 
             EnablePublishing();
@@ -67,7 +66,7 @@ namespace Roger.Internal.Impl
             log.Debug("Publishing is enabled");
         }
 
-        private void ConnectionOnUnexpectedShutdown(ShutdownEventArgs shutdownEventArgs)
+        void IReceive<ConnectionUnexpectedShutdown>.Receive(ConnectionUnexpectedShutdown message)
         {
             DisablePublishing();
 

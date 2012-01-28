@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
-using RabbitMQ.Client;
 using Roger.Internal;
 using Roger.Internal.Impl;
+using Roger.Messages;
 using Roger.Utilities;
 
 namespace Roger
@@ -12,7 +12,11 @@ namespace Roger
     /// <summary>
     /// Main entry point of the library
     /// </summary>
-    public class RogerBus : IRabbitBus
+    public class RogerBus : IRabbitBus, 
+                            IReceive<ConnectionEstablished>, 
+                            IReceive<GracefulConnectionShutdown>,
+                            IReceive<ConnectionAttemptFailed>, 
+                            IReceive<ConnectionUnexpectedShutdown>
     {
         private readonly IReliableConnection connection;
         private readonly IConsumingProcess consumer;
@@ -22,7 +26,7 @@ namespace Roger
         private readonly MessageFilterCollection filters = new MessageFilterCollection();
         private readonly PublishModuleCollection publishModules = new PublishModuleCollection();
         private int disposed;
-
+        private readonly Aggregator aggregator;
 
         /// <summary>
         /// Default library entry point
@@ -42,8 +46,9 @@ namespace Roger
                         ISequenceGenerator sequenceGenerator = null,
                         RogerOptions options = null)
         {
+            aggregator = new Aggregator();
             reconnectionTimer = new SystemThreadingTimer();
-            connection = new ReliableConnection(connectionFactory, reconnectionTimer);
+            connection = new ReliableConnection(connectionFactory, reconnectionTimer, aggregator);
             
             consumerContainer = consumerContainer.Or(new EmptyConsumerContainer());
             exchangeResolver = exchangeResolver.Or(new AttributeExchangeResolver());
@@ -70,8 +75,7 @@ namespace Roger
             // TODO: order here is important because both of the two guys below subscribe to
             // connection established events, but the publisher cannot start publish unless
             // the consumer has created the endpoint already
-            consumer = new DefaultConsumingProcess(connection,
-                                                   idGenerator,
+            consumer = new DefaultConsumingProcess(idGenerator,
                                                    exchangeResolver,
                                                    serializer,
                                                    new DefaultTypeResolver(), 
@@ -79,31 +83,30 @@ namespace Roger
                                                    Filters,
                                                    queueFactory,
                                                    new AlwaysSuccessConsumerInvoker(), 
-                                                   options);
+                                                   options,
+                                                   aggregator);
 
-            publisher = new QueueingPublishingProcess(connection,
-                                                      idGenerator,
+            publisher = new QueueingPublishingProcess(idGenerator,
                                                       sequenceGenerator,
                                                       exchangeResolver,
                                                       serializer,
                                                       new DefaultTypeResolver(), 
                                                       () => LocalEndpoint,
-                                                      publishModules);
+                                                      publishModules,
+                                                      aggregator);
 
-            connection.ConnectionEstabilished += ConnectionEstabilished;
-            connection.ConnectionAttemptFailed += ConnectionAttemptFailed;
-            connection.UnexpectedShutdown += ConnectionUnexpectedShutdown;
-            connection.GracefulShutdown += ConnectionGracefulShutdown;
+
+            aggregator.Subscribe(this);
         }
 
-        private void ConnectionGracefulShutdown()
+        void IReceive<GracefulConnectionShutdown>.Receive(GracefulConnectionShutdown message)
         {
             log.Debug("Bus Stopped");
             Stopped();
         }
 
+        public event Action Started = delegate { };
         public event Action Stopped = delegate {  };
-
         public event Action Interrupted = delegate { };
 
         public CurrentMessageInformation CurrentMessage
@@ -179,21 +182,19 @@ namespace Roger
             consumer.Consume(message);
         }
 
-        private void ConnectionEstabilished()
+        void IReceive<ConnectionEstablished>.Receive(ConnectionEstablished message)
         {
             log.Debug("Bus started");
             Started();
         }
 
-        public event Action Started = delegate { };
-
-        private void ConnectionAttemptFailed()
+        void IReceive<ConnectionAttemptFailed>.Receive(ConnectionAttemptFailed message)
         {
             log.Debug("Bus interrupted");
             Interrupted();
         }
 
-        private void ConnectionUnexpectedShutdown(ShutdownEventArgs obj)
+        void IReceive<ConnectionUnexpectedShutdown>.Receive(ConnectionUnexpectedShutdown message)
         {
             log.Debug("Bus interrupted");
             Interrupted();

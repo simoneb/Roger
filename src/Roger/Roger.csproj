@@ -96,6 +96,11 @@
     <Compile Include="Internal\IWaiter.cs" />
     <Compile Include="MEFConsumerContainer.cs" />
     <Compile Include="MessageFilterCollection.cs" />
+    <Compile Include="Messages\ConnectionAttemptFailed.cs" />
+    <Compile Include="Messages\ConnectionEstablished.cs" />
+    <Compile Include="Messages\ConnectionUnexpectedShutdown.cs" />
+    <Compile Include="Messages\Aggregator.cs" />
+    <Compile Include="Messages\GracefulConnectionShutdown.cs" />
     <Compile Include="QueueBuilder.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />
@@ -133,7 +138,6 @@
     <Compile Include="Utilities\ObjectExtensions.cs" />
     <Compile Include="Utilities\SystemTime.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -9,13 +9,13 @@ using Common.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
+using Roger.Messages;
 using Roger.Utilities;
 
 namespace Roger.Internal.Impl
 {
-    internal class DefaultConsumingProcess : IConsumingProcess
+    internal class DefaultConsumingProcess : IConsumingProcess, IReceive<ConnectionEstablished>
     {
-        private readonly IReliableConnection connection;
         private IModel receivingModel;
         private QueueingBasicConsumer queueConsumer;
         private readonly IConsumerContainer consumerContainer;
@@ -30,6 +30,7 @@ namespace Roger.Internal.Impl
         private readonly ConcurrentDictionary<WeakReference, object> instanceConsumers = new ConcurrentDictionary<WeakReference, object>();
         private readonly IQueueFactory queueFactory;
         private readonly RogerOptions options;
+        private readonly IAggregator aggregator;
         private int disposed;
         private Task consumingTask;
         private readonly IConsumerInvoker consumerInvoker;
@@ -37,8 +38,7 @@ namespace Roger.Internal.Impl
         [ThreadStatic]
         private static CurrentMessageInformation _currentMessage;
 
-        public DefaultConsumingProcess(IReliableConnection connection,
-                                       IIdGenerator idGenerator,
+        public DefaultConsumingProcess(IIdGenerator idGenerator,
                                        IExchangeResolver exchangeResolver,
                                        IMessageSerializer serializer,
                                        ITypeResolver typeResolver,
@@ -46,13 +46,14 @@ namespace Roger.Internal.Impl
                                        IMessageFilter messageFilters,
                                        IQueueFactory queueFactory,
                                        IConsumerInvoker consumerInvoker,
-                                       RogerOptions options)
+                                       RogerOptions options,
+                                       IAggregator aggregator)
         {
-            this.connection = connection;
             this.consumerContainer = consumerContainer;
             this.queueFactory = queueFactory;
             this.consumerInvoker = consumerInvoker;
             this.options = options;
+            this.aggregator = aggregator;
             this.exchangeResolver = exchangeResolver;
             bindingKeyResolver = new DefaultRoutingKeyResolver();
             this.typeResolver = typeResolver;
@@ -60,23 +61,22 @@ namespace Roger.Internal.Impl
             this.idGenerator = idGenerator;
             supportedMessageTypesResolver = new DefaultSupportedMessageTypesResolver();
             this.messageFilters = messageFilters;
-
-            connection.ConnectionEstabilished += ConnectionEstabilished;
+            aggregator.Subscribe(this);
         }
 
-        private void ConnectionEstabilished()
+        void IReceive<ConnectionEstablished>.Receive(ConnectionEstablished message)
         {
             if (consumingTask != null)
             {
                 log.Info("Connection restored, letting current consuming loop complete and will restart consuming when completed");
-                consumingTask = consumingTask.ContinueWith(task => StartConsuming(), TaskContinuationOptions.AttachedToParent);
+                consumingTask = consumingTask.ContinueWith(task => StartConsuming(message.Connection), TaskContinuationOptions.AttachedToParent);
                 return;
             }
 
-            StartConsuming();
+            StartConsuming(message.Connection);
         }
 
-        private void StartConsuming()
+        private void StartConsuming(IReliableConnection connection)
         {
             receivingModel = connection.CreateModel();
 

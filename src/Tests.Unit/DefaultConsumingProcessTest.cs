@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using Roger;
 using Roger.Internal;
 using Roger.Internal.Impl;
+using Roger.Messages;
 
 namespace Tests.Unit
 {
@@ -16,6 +17,7 @@ namespace Tests.Unit
         private IModel model;
         private DefaultConsumingProcess sut;
         private IQueueFactory queueFactory;
+        private Aggregator aggregator;
 
         [SetUp]
         public void Setup()
@@ -25,16 +27,17 @@ namespace Tests.Unit
             connection.CreateModel().Returns(model);
 
             queueFactory = Substitute.For<IQueueFactory>();
-            sut = new DefaultConsumingProcess(connection, 
-                                              Substitute.For<IIdGenerator>(),
+            aggregator = new Aggregator();
+
+            sut = new DefaultConsumingProcess(Substitute.For<IIdGenerator>(),
                                               Substitute.For<IExchangeResolver>(),
                                               Substitute.For<IMessageSerializer>(), 
                                               Substitute.For<ITypeResolver>(),
                                               Substitute.For<IConsumerContainer>(), 
-                                              Substitute.For<IMessageFilter>(), 
-                                              queueFactory, 
+                                              Substitute.For<IMessageFilter>(),
+                                              queueFactory,
                                               Substitute.For<IConsumerInvoker>(),
-                                              new RogerOptions());
+                                              new RogerOptions(), aggregator);
         }
 
         [Test]
@@ -42,7 +45,7 @@ namespace Tests.Unit
         {
             queueFactory.Create(model).Returns(new QueueDeclareOk("someQueue", 1, 1));
 
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
 
             queueFactory.Received().Create(model);
         }
@@ -52,8 +55,8 @@ namespace Tests.Unit
         {
             queueFactory.Create(model).Returns(new QueueDeclareOk("someQueue", 1, 1));
 
-            connection.ConnectionEstabilished += Raise.Event<Action>();
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
+            aggregator.Notify(new ConnectionEstablished(connection));
 
             queueFactory.Received(1).Create(model);
         }
@@ -62,7 +65,7 @@ namespace Tests.Unit
         public void Should_delete_queue_when_bus_is_disposed_of()
         {
             queueFactory.Create(model).Returns(new QueueDeclareOk("someQueue", 1, 1));
-            connection.ConnectionEstabilished += Raise.Event<Action>();
+            aggregator.Notify(new ConnectionEstablished(connection));
 
             sut.Dispose();
 
