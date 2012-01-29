@@ -72,9 +72,6 @@ namespace Roger
             if (options.DeduplicationAndResequencing)
                 Filters.Add(new ResequencingDeduplicationFilter());
 
-            // TODO: order here is important because both of the two guys below subscribe to
-            // connection established events, but the publisher cannot start publish unless
-            // the consumer has created the endpoint already
             consumer = new DefaultConsumingProcess(idGenerator,
                                                    exchangeResolver,
                                                    serializer,
@@ -90,8 +87,7 @@ namespace Roger
                                                       sequenceGenerator,
                                                       exchangeResolver,
                                                       serializer,
-                                                      new DefaultTypeResolver(), 
-                                                      () => LocalEndpoint,
+                                                      new DefaultTypeResolver(),
                                                       publishModules,
                                                       aggregator);
 
@@ -99,14 +95,10 @@ namespace Roger
             aggregator.Subscribe(this);
         }
 
-        void IReceive<GracefulConnectionShutdown>.Receive(GracefulConnectionShutdown message)
-        {
-            log.Debug("Bus Stopped");
-            Stopped();
-        }
-
         public event Action Started = delegate { };
+
         public event Action Stopped = delegate {  };
+
         public event Action Interrupted = delegate { };
 
         public CurrentMessageInformation CurrentMessage
@@ -192,6 +184,12 @@ namespace Roger
         {
             log.Debug("Bus interrupted");
             Interrupted();
+        }
+
+        void IReceive<GracefulConnectionShutdown>.Receive(GracefulConnectionShutdown message)
+        {
+            log.Debug("Bus Stopped");
+            Stopped();
         }
 
         void IReceive<ConnectionUnexpectedShutdown>.Receive(ConnectionUnexpectedShutdown message)

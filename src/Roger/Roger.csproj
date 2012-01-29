@@ -100,6 +100,7 @@
     <Compile Include="Messages\ConnectionEstablished.cs" />
     <Compile Include="Messages\ConnectionUnexpectedShutdown.cs" />
     <Compile Include="Messages\Aggregator.cs" />
+    <Compile Include="Messages\ConsumingEnabled.cs" />
     <Compile Include="Messages\GracefulConnectionShutdown.cs" />
     <Compile Include="QueueBuilder.cs" />
     <Compile Include="RogerGuid.cs" />

@@ -34,7 +34,6 @@ namespace Tests.Unit
                                                 Substitute.For<IExchangeResolver>(),
                                                 Substitute.For<IMessageSerializer>(),
                                                 Substitute.For<ITypeResolver>(),
-                                                Substitute.For<Func<RogerEndpoint>>(),
                                                 publishModule, aggregator);
             sut.Start();
         }
@@ -46,9 +45,9 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_publish_messages_when_connection_is_established()
+        public void Should_publish_messages_when_endpoint_is_created()
         {
-            aggregator.Notify(new ConnectionEstablished(connection));
+            aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whataver"), connection));
 
             sut.Publish(new MyMessage(), false);
 
@@ -58,16 +57,16 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_invoke_modules_when_connection_established()
+        public void Should_notify_modules_when_endpoint_created()
         {
-            aggregator.Notify(new ConnectionEstablished(connection));
+            aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whataver"), connection));
             publishModule.Received().BeforePublishEnabled(model);
         }
 
         [Test]
         public void Should_notify_module_before_each_publish()
         {
-            aggregator.Notify(new ConnectionEstablished(connection));
+            aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whatever"), connection));
 
             sut.Publish(new MyMessage(), false);
 
@@ -95,9 +94,9 @@ namespace Tests.Unit
         [Test]
         public void Should_enqueue_reply_when_correlation_id_same_as_request_id()
         {
-            aggregator.Notify(new ConnectionEstablished(connection));
+            aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whatever"), connection));
 
-            RogerGuid requestId = RogerGuid.NewGuid();
+            var requestId = RogerGuid.NewGuid();
 
             sut.Reply(new MyReply(), new CurrentMessageInformation{MessageId = requestId, Endpoint = new RogerEndpoint("someEndpoint")}, null, true);
 

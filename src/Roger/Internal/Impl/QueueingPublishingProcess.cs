@@ -10,7 +10,7 @@ using Roger.Messages;
 
 namespace Roger.Internal.Impl
 {
-    internal class QueueingPublishingProcess : IPublishingProcess, IReceive<ConnectionEstablished>, IReceive<ConnectionUnexpectedShutdown>
+    internal class QueueingPublishingProcess : IPublishingProcess, IReceive<ConnectionUnexpectedShutdown>, IReceive<ConsumingEnabled>
     {
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private int disposed;
@@ -25,16 +25,14 @@ namespace Roger.Internal.Impl
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly IMessageSerializer serializer;
         private readonly ITypeResolver typeResolver;
-        private readonly Func<RogerEndpoint> getEndpoint;
+        private RogerEndpoint endpoint;
         private readonly IPublishModule modules;
-        private readonly Aggregator aggregator;
 
         internal QueueingPublishingProcess(IIdGenerator idGenerator,
                                            ISequenceGenerator sequenceGenerator,
                                            IExchangeResolver exchangeResolver,
                                            IMessageSerializer serializer,
                                            ITypeResolver typeResolver,
-                                           Func<RogerEndpoint> getEndpoint,
                                            IPublishModule modules,
                                            Aggregator aggregator)
         {
@@ -44,17 +42,17 @@ namespace Roger.Internal.Impl
             routingKeyResolver = new DefaultRoutingKeyResolver();
             this.serializer = serializer;
             this.typeResolver = typeResolver;
-            this.getEndpoint = getEndpoint;
             this.modules = modules;
-            this.aggregator = aggregator;
 
             aggregator.Subscribe(this);
             modules.Initialize(this);
         }
 
-        void IReceive<ConnectionEstablished>.Receive(ConnectionEstablished message)
+        void IReceive<ConsumingEnabled>.Receive(ConsumingEnabled message)
         {
+            endpoint = message.Endpoint;
             model = message.Connection.CreateModel();
+
             modules.BeforePublishEnabled(model);
 
             EnablePublishing();
@@ -103,7 +101,7 @@ namespace Roger.Internal.Impl
 
                         try
                         {
-                            delivery.Execute(model, getEndpoint(), modules);
+                            delivery.Execute(model, endpoint, modules);
                         }
                          /* 
                          * we may experience a newtork problem even before the connection notifies its own shutdown

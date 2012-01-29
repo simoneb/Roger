@@ -16,7 +16,7 @@ namespace Roger.Internal.Impl
 {
     internal class DefaultConsumingProcess : IConsumingProcess, IReceive<ConnectionEstablished>
     {
-        private IModel receivingModel;
+        private IModel model;
         private QueueingBasicConsumer queueConsumer;
         private readonly IConsumerContainer consumerContainer;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
@@ -78,21 +78,24 @@ namespace Roger.Internal.Impl
 
         private void StartConsuming(IReliableConnection connection)
         {
-            receivingModel = connection.CreateModel();
+            model = connection.CreateModel();
 
             if(options.PrefetchCount.HasValue)
             {
                 log.DebugFormat("Setting QoS with prefetch count {0} on consuming channel", options.PrefetchCount);
-                receivingModel.BasicQos(0, options.PrefetchCount.Value, false);
+                model.BasicQos(0, options.PrefetchCount.Value, false);
             }
 
             if (Endpoint.IsEmpty)
             {
-                Endpoint = new RogerEndpoint(queueFactory.Create(receivingModel));
-                CreateBindings(
-                    new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
+                Endpoint = new RogerEndpoint(queueFactory.Create(model));
+
+                CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
                 log.DebugFormat("Created and bound queue {0}", Endpoint);
             }
+
+            aggregator.Notify(new ConsumingEnabled(Endpoint, connection));
+
 
             CreateConsumer();
             ConsumeAsynchronously();
@@ -100,11 +103,11 @@ namespace Roger.Internal.Impl
 
         private void CreateConsumer()
         {
-            queueConsumer = new QueueingBasicConsumer(receivingModel);
+            queueConsumer = new QueueingBasicConsumer(model);
 
             try
             {
-                receivingModel.BasicConsume(Endpoint.Queue, false, "", options.NoLocal, false, null, queueConsumer);
+                model.BasicConsume(Endpoint.Queue, false, "", options.NoLocal, false, null, queueConsumer);
             }
             catch (OperationInterruptedException e)
             {
@@ -146,7 +149,7 @@ namespace Roger.Internal.Impl
 
                 log.DebugFormat("Binding queue {0} to exchange {1} with binding key {2}", Endpoint, exchange, bindingKey);
 
-                receivingModel.QueueBind(Endpoint.Queue, exchange, bindingKey);
+                model.QueueBind(Endpoint.Queue, exchange, bindingKey);
             }
 
             log.Debug("Performing private bindings");
@@ -155,7 +158,7 @@ namespace Roger.Internal.Impl
             {
                 log.DebugFormat("Binding queue {0} to exchange {1} with queue name as binding key", Endpoint, exchange);
 
-                receivingModel.QueueBind(Endpoint.Queue, exchange, Endpoint.Queue);
+                model.QueueBind(Endpoint.Queue, exchange, Endpoint.Queue);
             }
         }
 
@@ -341,14 +344,14 @@ namespace Roger.Internal.Impl
 
         private void DisposeModel()
         {
-            if (receivingModel == null) 
+            if (model == null) 
                 return;
 
             try
             {
                 // todo: we could try a second attempt on a standalone channel
-                receivingModel.QueueDelete(Endpoint);
-                receivingModel.Dispose();
+                model.QueueDelete(Endpoint);
+                model.Dispose();
             }
             catch (OperationInterruptedException e)
             {

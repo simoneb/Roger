@@ -36,7 +36,7 @@ namespace Tests.Integration.Bus
 
             StartAlternativePortProxy();
 
-            Assert.IsTrue(consumer.WaitForDelivery(SecondaryBus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1)));
+            Assert.IsTrue(consumer.WaitForDelivery(SecondaryBus.ConnectionAttemptInterval + TimeSpan.FromSeconds(1)), "Didn't receive message");
         }
     }
 }
