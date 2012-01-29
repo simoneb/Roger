@@ -39,13 +39,23 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_not_create_model_until_connection_is_established()
+        public void Should_not_create_model_until_endpoint_is_known()
         {
             connection.DidNotReceive().CreateModel();
         }
 
         [Test]
-        public void Should_publish_messages_when_endpoint_is_created()
+        public void Should_not_publish_messages_until_endpoint_is_known()
+        {
+            sut.Publish(new MyMessage(), false);
+
+            Thread.Sleep(100);
+
+            model.DidNotReceiveWithAnyArgs().BasicPublish(null, null, null, null);
+        }
+
+        [Test]
+        public void Should_publish_messages_when_endpoint_is_known()
         {
             aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whataver"), connection));
 
@@ -57,7 +67,7 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_notify_modules_when_endpoint_created()
+        public void Should_notify_modules_when_endpoint_is_known()
         {
             aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whataver"), connection));
             publishModule.Received().BeforePublishEnabled(model);
@@ -73,16 +83,6 @@ namespace Tests.Unit
             Thread.Sleep(100);
 
             publishModule.Received().BeforePublish(Arg.Any<IDelivery>(), model, Arg.Any<IBasicProperties>(), Arg.Any<Action<BasicReturn>>());
-        }
-
-        [Test]
-        public void Should_not_publish_messages_until_connection_is_established()
-        {
-            sut.Publish(new MyMessage(), false);
-
-            Thread.Sleep(100);
-
-            model.DidNotReceiveWithAnyArgs().BasicPublish(null, null, null, null);
         }
 
         [Test]

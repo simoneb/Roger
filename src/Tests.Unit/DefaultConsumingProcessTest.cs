@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using MbUnit.Framework;
+﻿using MbUnit.Framework;
 using NSubstitute;
 using RabbitMQ.Client;
 using Roger;

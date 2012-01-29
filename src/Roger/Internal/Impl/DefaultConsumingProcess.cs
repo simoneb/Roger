@@ -64,6 +64,13 @@ namespace Roger.Internal.Impl
             aggregator.Subscribe(this);
         }
 
+        public CurrentMessageInformation CurrentMessage
+        {
+            get { return _currentMessage; }
+        }
+
+        public RogerEndpoint Endpoint { get; private set; }
+
         void IReceive<ConnectionEstablished>.Receive(ConnectionEstablished message)
         {
             if (consumingTask != null)
@@ -82,7 +89,7 @@ namespace Roger.Internal.Impl
 
             if(options.PrefetchCount.HasValue)
             {
-                log.DebugFormat("Setting QoS with prefetch count {0} on consuming channel", options.PrefetchCount);
+                log.InfoFormat("Setting QoS with prefetch count {0} on consuming channel", options.PrefetchCount);
                 model.BasicQos(0, options.PrefetchCount.Value, false);
             }
 
@@ -96,9 +103,9 @@ namespace Roger.Internal.Impl
 
             aggregator.Notify(new ConsumingEnabled(Endpoint, connection));
 
-
             CreateConsumer();
-            ConsumeAsynchronously();
+
+            consumingTask = Task.Factory.StartNew(ConsumeSynchronously, TaskCreationOptions.LongRunning);
         }
 
         private void CreateConsumer()
@@ -118,8 +125,6 @@ namespace Roger.Internal.Impl
                 log.Error("Exception while invoking BasicConsume method", e);
             }
         }
-
-        public RogerEndpoint Endpoint { get; private set; }
 
         private void CreateBindings(ISet<Type> messageTypes)
         {
@@ -162,11 +167,6 @@ namespace Roger.Internal.Impl
             }
         }
 
-        private void ConsumeAsynchronously()
-        {
-            consumingTask = Task.Factory.StartNew(ConsumeSynchronously, TaskCreationOptions.LongRunning);
-        }
-
         private void ConsumeSynchronously()
         {
             log.Info("Beginning consuming loop");
@@ -177,22 +177,6 @@ namespace Roger.Internal.Impl
                 AckMessage(message);
 
             log.Info("Exiting consuming loop");
-        }
-
-        private void AckMessage(CurrentMessageInformation message)
-        {
-            try
-            {
-                queueConsumer.Model.BasicAck(message.DeliveryTag, false);
-            }
-            catch (AlreadyClosedException e)
-            {
-                log.Trace("Could not ack consumed message because model was already closed", e);
-            }
-            catch (Exception e)
-            {
-                log.Warn("Could not ack consumed message for unknown cause", e);
-            }
         }
 
         private IEnumerable<CurrentMessageInformation> BlockingDequeue(IEnumerable queue)
@@ -258,6 +242,22 @@ namespace Roger.Internal.Impl
                 .Where(c => GetSupportedMessageTypes(c).Contains(messageType));
         }
 
+        private void AckMessage(CurrentMessageInformation message)
+        {
+            try
+            {
+                queueConsumer.Model.BasicAck(message.DeliveryTag, false);
+            }
+            catch (AlreadyClosedException e)
+            {
+                log.Trace("Could not ack consumed message because model was already closed", e);
+            }
+            catch (Exception e)
+            {
+                log.Warn("Could not ack consumed message for unknown cause", e);
+            }
+        }
+
         public IDisposable AddInstanceSubscription(IConsumer consumer)
         {
             var consumerReference = new WeakReference(consumer);
@@ -279,11 +279,6 @@ namespace Roger.Internal.Impl
                 Body = message,
                 MessageType = message.GetType()
             });
-        }
-
-        public CurrentMessageInformation CurrentMessage
-        {
-            get { return _currentMessage; }
         }
 
         private IDisposable RemoveInstanceConsumer(WeakReference consumerReference)
@@ -325,23 +320,6 @@ namespace Roger.Internal.Impl
             }
         }
 
-        private class Consumers
-        {
-            public IConsumer[] LocalConsumers { get; private set; }
-            public IConsumer[] StandardConsumers { get; private set; }
-
-            public IEnumerable<IConsumer> All
-            {
-                get { return StandardConsumers.Concat(LocalConsumers); }
-            }
-
-            public Consumers(IConsumer[] localConsumers, IConsumer[] standardConsumers)
-            {
-                LocalConsumers = localConsumers;
-                StandardConsumers = standardConsumers;
-            }
-        }
-
         private void DisposeModel()
         {
             if (model == null) 
@@ -360,6 +338,23 @@ namespace Roger.Internal.Impl
             catch (Exception e)
             {
                 log.Error("Exception while deleting queue and disposing model", e);
+            }
+        }
+
+        private class Consumers
+        {
+            public IConsumer[] LocalConsumers { get; private set; }
+            public IConsumer[] StandardConsumers { get; private set; }
+
+            public IEnumerable<IConsumer> All
+            {
+                get { return StandardConsumers.Concat(LocalConsumers); }
+            }
+
+            public Consumers(IConsumer[] localConsumers, IConsumer[] standardConsumers)
+            {
+                LocalConsumers = localConsumers;
+                StandardConsumers = standardConsumers;
             }
         }
     }

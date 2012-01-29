@@ -79,6 +79,10 @@
     <Compile Include="Exploratory\WCF\OrderCallback.cs" />
     <Compile Include="Exploratory\WCF\OrderService.cs" />
     <Compile Include="Exploratory\WCF\Wcf_bindings.cs" />
+    <Compile Include="Exploratory\Utils\EventExpectation.cs" />
+    <Compile Include="Exploratory\Utils\Expectation.cs" />
+    <Compile Include="Exploratory\Utils\MethodCallExpectation.cs" />
+    <Compile Include="Exploratory\Utils\WhatHappens.cs" />
     <Compile Include="With_rabbitmq_broker.cs" />
     <Compile Include="Bus\Broker_shutdown_recovery.cs" />
     <Compile Include="Bus\Client_overflow_with_duplicates_and_resequencing.cs" />
