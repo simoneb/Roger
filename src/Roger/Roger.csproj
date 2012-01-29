@@ -59,6 +59,8 @@
     <Compile Include="Internal\Impl\AbstractDeliveryFactory.cs" />
     <Compile Include="Internal\Impl\BasicReturnModule.cs" />
     <Compile Include="Internal\Impl\EmptyConsumerContainer.cs" />
+    <Compile Include="Internal\Impl\IModelWithConnection.cs" />
+    <Compile Include="Internal\Impl\ModelWithConnectionDecorator.cs" />
     <Compile Include="Internal\Impl\PublishModuleCollection.cs" />
     <Compile Include="Internal\Impl\DefaultQueueFactory.cs" />
     <Compile Include="Internal\Impl\DefaultSupportedMessageTypesResolver.cs" />
@@ -101,7 +103,7 @@
     <Compile Include="Messages\ConnectionUnexpectedShutdown.cs" />
     <Compile Include="Messages\Aggregator.cs" />
     <Compile Include="Messages\ConsumingEnabled.cs" />
-    <Compile Include="Messages\GracefulConnectionShutdown.cs" />
+    <Compile Include="Messages\ConnectionGracefulShutdown.cs" />
     <Compile Include="QueueBuilder.cs" />
     <Compile Include="RogerGuid.cs" />
     <Compile Include="Internal\Headers.cs" />

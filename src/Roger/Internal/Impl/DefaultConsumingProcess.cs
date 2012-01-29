@@ -14,9 +14,8 @@ using Roger.Utilities;
 
 namespace Roger.Internal.Impl
 {
-    internal class DefaultConsumingProcess : IConsumingProcess, IReceive<ConnectionEstablished>
+    internal class DefaultConsumingProcess : IConsumingProcess, IReceive<ConnectionEstablished>, IReceive<ConnectionUnexpectedShutdown>, IReceive<ConnectionGracefulShutdown>
     {
-        private IModel model;
         private QueueingBasicConsumer queueConsumer;
         private readonly IConsumerContainer consumerContainer;
         private readonly ILog log = LogManager.GetCurrentClassLogger();
@@ -71,31 +70,40 @@ namespace Roger.Internal.Impl
 
         public RogerEndpoint Endpoint { get; private set; }
 
+        public IModelWithConnection Model { get; private set; }
+
         void IReceive<ConnectionEstablished>.Receive(ConnectionEstablished message)
+        {
+            StartOrResumeConsumingFromConnection(message.Connection);
+        }
+
+        private void StartOrResumeConsumingFromConnection(IReliableConnection connection)
         {
             if (consumingTask != null)
             {
-                log.Info("Connection restored, letting current consuming loop complete and will restart consuming when completed");
-                consumingTask = consumingTask.ContinueWith(task => StartConsuming(message.Connection), TaskContinuationOptions.AttachedToParent);
+                log.Info("Consuming already running, letting current consuming loop complete and will restart consuming when completed");
+
+                consumingTask = consumingTask.ContinueWith(task => StartConsuming(connection), TaskContinuationOptions.AttachedToParent);
                 return;
             }
 
-            StartConsuming(message.Connection);
+            StartConsuming(connection);
         }
 
         private void StartConsuming(IReliableConnection connection)
         {
-            model = connection.CreateModel();
+            Model = connection.CreateModel();
+            Model.ModelShutdown += ModelOnModelShutdown;
 
             if(options.PrefetchCount.HasValue)
             {
                 log.InfoFormat("Setting QoS with prefetch count {0} on consuming channel", options.PrefetchCount);
-                model.BasicQos(0, options.PrefetchCount.Value, false);
+                Model.BasicQos(0, options.PrefetchCount.Value, false);
             }
 
             if (Endpoint.IsEmpty)
             {
-                Endpoint = new RogerEndpoint(queueFactory.Create(model));
+                Endpoint = new RogerEndpoint(queueFactory.Create(Model));
 
                 CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
                 log.DebugFormat("Created and bound queue {0}", Endpoint);
@@ -108,13 +116,36 @@ namespace Roger.Internal.Impl
             consumingTask = Task.Factory.StartNew(ConsumeSynchronously, TaskCreationOptions.LongRunning);
         }
 
+        void IReceive<ConnectionUnexpectedShutdown>.Receive(ConnectionUnexpectedShutdown message)
+        {
+            // ignore model shutdown if caused by connection shutdown
+            log.Debug("Ignoring model shutdown because connection was shut down unexpectedly");
+            Model.ModelShutdown -= ModelOnModelShutdown;
+        }
+
+        void IReceive<ConnectionGracefulShutdown>.Receive(ConnectionGracefulShutdown message)
+        {
+            // ignore model shutdown if caused by connection shutdown
+            log.Debug("Ignoring model shutdown because connection was shut down gracefully");
+            Model.ModelShutdown -= ModelOnModelShutdown;
+        }
+
+        private void ModelOnModelShutdown(IModel model, ShutdownEventArgs reason)
+        {
+            if (disposed == 1)
+                return;
+
+            log.ErrorFormat("Model was shut down unexpectedly: {0}, {1}", model, reason);
+            StartOrResumeConsumingFromConnection(Model.Connection);
+        }
+
         private void CreateConsumer()
         {
-            queueConsumer = new QueueingBasicConsumer(model);
+            queueConsumer = new QueueingBasicConsumer(Model);
 
             try
             {
-                model.BasicConsume(Endpoint.Queue, false, "", options.NoLocal, false, null, queueConsumer);
+                Model.BasicConsume(Endpoint.Queue, false, "", options.NoLocal, false, null, queueConsumer);
             }
             catch (OperationInterruptedException e)
             {
@@ -154,7 +185,7 @@ namespace Roger.Internal.Impl
 
                 log.DebugFormat("Binding queue {0} to exchange {1} with binding key {2}", Endpoint, exchange, bindingKey);
 
-                model.QueueBind(Endpoint.Queue, exchange, bindingKey);
+                Model.QueueBind(Endpoint.Queue, exchange, bindingKey);
             }
 
             log.Debug("Performing private bindings");
@@ -163,7 +194,7 @@ namespace Roger.Internal.Impl
             {
                 log.DebugFormat("Binding queue {0} to exchange {1} with queue name as binding key", Endpoint, exchange);
 
-                model.QueueBind(Endpoint.Queue, exchange, Endpoint.Queue);
+                Model.QueueBind(Endpoint.Queue, exchange, Endpoint.Queue);
             }
         }
 
@@ -322,14 +353,14 @@ namespace Roger.Internal.Impl
 
         private void DisposeModel()
         {
-            if (model == null) 
+            if (Model == null) 
                 return;
 
             try
             {
                 // todo: we could try a second attempt on a standalone channel
-                model.QueueDelete(Endpoint);
-                model.Dispose();
+                Model.QueueDelete(Endpoint);
+                Model.Dispose();
             }
             catch (OperationInterruptedException e)
             {

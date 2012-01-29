@@ -231,18 +231,18 @@ namespace Tests.Integration.Exploratory
             //model.BasicAck(2, false);
 
             Thread.Sleep(2000);
-            model.QueueDelete(queue);
+            //model.QueueDelete(queue);
 
             Thread.Sleep(2000);
 
-            log.Debug("Closing model");
-            model.Close();
+            //log.Debug("Closing model");
+            //model.Close();
 
             Thread.Sleep(2000);
 
 
-            //log.Debug("Closing connection");
-            //connection.Close();
+            log.Debug("Closing connection");
+            connection.Close();
             
         }
 

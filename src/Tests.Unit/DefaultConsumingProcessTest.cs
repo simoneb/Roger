@@ -12,7 +12,7 @@ namespace Tests.Unit
     public class DefaultConsumingProcessTest
     {
         private IReliableConnection connection;
-        private IModel model;
+        private IModelWithConnection model;
         private DefaultConsumingProcess sut;
         private IQueueFactory queueFactory;
         private Aggregator aggregator;
@@ -21,7 +21,7 @@ namespace Tests.Unit
         public void Setup()
         {
             connection = Substitute.For<IReliableConnection>();
-            model = Substitute.For<IModel>();
+            model = Substitute.For<IModelWithConnection>();
             connection.CreateModel().Returns(model);
 
             queueFactory = Substitute.For<IQueueFactory>();

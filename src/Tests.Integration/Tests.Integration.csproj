@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Bus\Consumer_model_unexpected_closure.cs" />
     <Compile Include="Exploratory\Federation\Federation_link_goes_down.cs" />
     <Compile Include="Exploratory\Federation\General_federation_tests.cs" />
     <Compile Include="Exploratory\Federation\Subscriber_on_secondary_node.cs" />

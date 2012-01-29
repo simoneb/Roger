@@ -1,4 +1,6 @@
 using System;
+using RabbitMQ.Client;
+using Roger.Internal.Impl;
 
 namespace Roger.Internal
 {
@@ -8,5 +10,6 @@ namespace Roger.Internal
         void Consume(object message);
         CurrentMessageInformation CurrentMessage { get; }
         RogerEndpoint Endpoint { get; }
+        IModelWithConnection Model { get; }
     }
 }

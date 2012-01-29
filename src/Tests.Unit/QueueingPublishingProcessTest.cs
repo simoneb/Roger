@@ -16,7 +16,7 @@ namespace Tests.Unit
     {
         private IReliableConnection connection;
         private QueueingPublishingProcess sut;
-        private IModel model;
+        private IModelWithConnection model;
         private IPublishModule publishModule;
         private Aggregator aggregator;
 
@@ -24,7 +24,7 @@ namespace Tests.Unit
         public void Setup()
         {
             connection = Substitute.For<IReliableConnection>();
-            model = Substitute.For<IModel>();
+            model = Substitute.For<IModelWithConnection>();
             connection.CreateModel().Returns(model);
             publishModule = Substitute.For<IPublishModule>();
 

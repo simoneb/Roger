@@ -74,7 +74,7 @@ namespace Roger.Internal.Impl
             // connection has been closed because we asked it!
             if (disposed == 1)
             {
-                aggregator.Notify(new GracefulConnectionShutdown());
+                aggregator.Notify(new ConnectionGracefulShutdown());
                 log.Debug("Connection has been shut down gracefully upon request");
             }
             else
@@ -115,9 +115,9 @@ namespace Roger.Internal.Impl
                 }
         }
 
-        public IModel CreateModel()
+        public IModelWithConnection CreateModel()
         {
-            return connection.CreateModel();
+            return new ModelWithConnectionDecorator(connection.CreateModel(), this);
         }
     }
 }

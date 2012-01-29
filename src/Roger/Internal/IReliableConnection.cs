@@ -1,5 +1,6 @@
 using System;
 using RabbitMQ.Client;
+using Roger.Internal.Impl;
 
 namespace Roger.Internal
 {
@@ -7,6 +8,6 @@ namespace Roger.Internal
     {
         TimeSpan ConnectionAttemptInterval { get; }
         void Connect();
-        IModel CreateModel();
+        IModelWithConnection CreateModel();
     }
 }

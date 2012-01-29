@@ -1,6 +1,6 @@
 ﻿namespace Roger.Messages
 {
-    internal class GracefulConnectionShutdown
+    internal class ConnectionGracefulShutdown
     {
          
     }

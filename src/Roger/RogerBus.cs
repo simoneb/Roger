@@ -14,7 +14,7 @@ namespace Roger
     /// </summary>
     public class RogerBus : IRabbitBus, 
                             IReceive<ConnectionEstablished>, 
-                            IReceive<GracefulConnectionShutdown>,
+                            IReceive<ConnectionGracefulShutdown>,
                             IReceive<ConnectionAttemptFailed>, 
                             IReceive<ConnectionUnexpectedShutdown>
     {
@@ -96,9 +96,7 @@ namespace Roger
         }
 
         public event Action Started = delegate { };
-
         public event Action Stopped = delegate {  };
-
         public event Action Interrupted = delegate { };
 
         public CurrentMessageInformation CurrentMessage
@@ -119,6 +117,11 @@ namespace Roger
         public MessageFilterCollection Filters
         {
             get { return filters; }
+        }
+
+        internal IConsumingProcess Consumer
+        {
+            get { return consumer; }
         }
 
         public void Start()
@@ -186,7 +189,7 @@ namespace Roger
             Interrupted();
         }
 
-        void IReceive<GracefulConnectionShutdown>.Receive(GracefulConnectionShutdown message)
+        void IReceive<ConnectionGracefulShutdown>.Receive(ConnectionGracefulShutdown message)
         {
             log.Debug("Bus Stopped");
             Stopped();
