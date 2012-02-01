@@ -37,7 +37,7 @@ namespace Roger
             MessageTimeToLiveOnQueue = receivedMessagesTimeToLive;
             UsePublisherConfirms = usePublisherConfirms;
             DeduplicationAndResequencing = deduplicationAndResequencing;
-            QueueName = queueName.Or(_ => "");
+            QueueName = queueName.Or(_ => "roger." + Convert.ToBase64String(Guid.NewGuid().ToByteArray()));
         }
     }
 }

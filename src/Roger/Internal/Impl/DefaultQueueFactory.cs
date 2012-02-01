@@ -34,7 +34,12 @@ namespace Roger.Internal.Impl
 
         public QueueDeclareOk Create(IModel model)
         {
-            return model.QueueDeclare(queueName(new QueueBuilder()), durable, exclusive, autoDelete, arguments);
+            return Create(queueName(new QueueBuilder()), model);
+        }
+
+        public QueueDeclareOk Create(string name, IModel model)
+        {
+            return model.QueueDeclare(name, durable, exclusive, autoDelete, arguments);
         }
     }
 }

@@ -101,13 +101,10 @@ namespace Roger.Internal.Impl
                 Model.BasicQos(0, options.PrefetchCount.Value, false);
             }
 
-            if (Endpoint.IsEmpty)
-            {
-                Endpoint = new RogerEndpoint(queueFactory.Create(Model));
+            Endpoint = new RogerEndpoint(Endpoint.IsEmpty ? queueFactory.Create(Model) : queueFactory.Create(Endpoint.Queue, Model));
 
-                CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
-                log.DebugFormat("Created and bound queue {0}", Endpoint);
-            }
+            CreateBindings(new HashSet<Type>(consumerContainer.GetAllConsumerTypes().SelectMany(supportedMessageTypesResolver.Resolve)));
+            log.DebugFormat("Declared and eventually bound endpoint {0}", Endpoint);
 
             aggregator.Notify(new ConsumingEnabled(Endpoint, connection));
 

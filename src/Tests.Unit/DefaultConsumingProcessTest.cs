@@ -49,7 +49,9 @@ namespace Tests.Unit
         }
 
         [Test]
-        public void Should_not_recreate_queue_upon_following_connections()
+        [Description(@"Redeclaring queue on connections after the first is required because if a client is disconnected for too long 
+and during disconnection his queue is deleted it will have disappeared and need to be redeclared")]
+        public void Should_redeclare_queue_with_same_previous_name_upon_following_connections()
         {
             queueFactory.Create(model).Returns(new QueueDeclareOk("someQueue", 1, 1));
 
@@ -57,6 +59,7 @@ namespace Tests.Unit
             aggregator.Notify(new ConnectionEstablished(connection));
 
             queueFactory.Received(1).Create(model);
+            queueFactory.Received(1).Create("someQueue", model);
         }
 
         [Test]
