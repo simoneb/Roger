@@ -194,6 +194,57 @@ namespace Tests.Integration.Exploratory
             }
         }
 
+        public class When_appdomain_unloads : Shutdown_protocol
+        {
+            [Test]
+            public void ReplyCode_should_be_541()
+            {
+                var ads = new AppDomainSetup {ApplicationBase = AppDomain.CurrentDomain.BaseDirectory};
+                var domain = AppDomain.CreateDomain("test connection shutdown", null, ads);
+                var runner = (IRunner)domain.CreateInstanceAndUnwrap(typeof (Runner).Assembly.FullName, typeof (Runner).FullName);
+
+                var setter = new ResultSetter();
+                runner.Run(setter);
+
+                AppDomain.Unload(domain);
+
+                Assert.AreEqual(541, setter.ReplyCode);
+                Assert.AreEqual("Domain Unload", setter.ReplyText);
+            }
+
+            class Runner : MarshalByRefObject, IRunner
+            {
+                public void Run(IResultSetter resultSetter)
+                {
+                    var connection = Helpers.CreateConnection();
+
+                    connection.ConnectionShutdown += (c, args) =>
+                    {
+                        resultSetter.ReplyCode = args.ReplyCode;
+                        resultSetter.ReplyText = args.ReplyText;
+                    };
+                }
+            }
+
+            private interface IRunner
+            {
+                void Run(IResultSetter resultSetter);
+            }
+
+            interface IResultSetter
+            {
+                ushort ReplyCode { get; set; }
+                string ReplyText { get; set; }
+            }
+
+            private class ResultSetter : MarshalByRefObject, IResultSetter
+            {
+                public ushort ReplyCode { get; set; }
+
+                public string ReplyText { get; set; }
+            }
+        }
+
         [Test]
         [Explicit]
         public void ManualTest()
@@ -242,7 +293,7 @@ namespace Tests.Integration.Exploratory
 
 
             log.Debug("Closing connection");
-            connection.Close();
+            //connection.Close();
             
         }
 

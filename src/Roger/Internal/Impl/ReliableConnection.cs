@@ -71,8 +71,7 @@ namespace Roger.Internal.Impl
             // remove handler to be safe and prevent eventual callbacks from being invoked by closed connections
             conn.ConnectionShutdown -= HandleConnectionShutdown;
 
-            // connection has been closed because we asked it!
-            if (disposed == 1)
+            if (ExpectedShutdown(reason))
             {
                 aggregator.Notify(new ConnectionGracefulShutdown());
                 log.Debug("Connection has been shut down gracefully upon request");
@@ -86,6 +85,16 @@ namespace Roger.Internal.Impl
 
                 timer.Start(ConnectionAttemptInterval);
             }
+        }
+
+        private bool ExpectedShutdown(ShutdownEventArgs reason)
+        {
+            return disposed == 1 || AppDomainUnload(reason);
+        }
+
+        private static bool AppDomainUnload(ShutdownEventArgs reason)
+        {
+            return reason.ReplyCode == 541 && reason.ReplyText.Equals("Domain Unload");
         }
 
         public void Dispose()
