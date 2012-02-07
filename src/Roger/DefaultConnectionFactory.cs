@@ -11,6 +11,7 @@ namespace Roger
         /// Creates a new instance of <see cref="DefaultConnectionFactory"/>
         /// </summary>
         /// <param name="uri">A <see cref="Uri"/> in the form <example>amqp://user:pass@host:10000/vhost</example> as specified in <c>http://www.rabbitmq.com/uri-spec.html</c></param>
+        /// <param name="heartbeatInSeconds">Connection heartbeat, in seconds</param>
         public DefaultConnectionFactory(Uri uri, ushort heartbeatInSeconds = ConnectionFactory.DefaultHeartbeat)
         {
             inner = new ConnectionFactory {uri = uri, RequestedHeartbeat = heartbeatInSeconds};

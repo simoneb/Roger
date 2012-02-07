@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -26,9 +27,19 @@ namespace Tests.Integration.Utils
             inner.WaitForConfirmsOrDie();
         }
 
+        public void WaitForConfirmsOrDie(TimeSpan timeout)
+        {
+            inner.WaitForConfirmsOrDie(timeout);
+        }
+
         public bool WaitForConfirms()
         {
             return inner.WaitForConfirms();
+        }
+
+        public bool WaitForConfirms(TimeSpan timeout, out bool timedOut)
+        {
+            return inner.WaitForConfirms(timeout, out timedOut);
         }
 
         public IBasicProperties CreateBasicProperties()

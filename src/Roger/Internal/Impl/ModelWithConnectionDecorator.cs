@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -148,6 +149,16 @@ namespace Roger.Internal.Impl
         public void WaitForConfirmsOrDie()
         {
             model.WaitForConfirmsOrDie();
+        }
+
+        public bool WaitForConfirms(TimeSpan timeout, out bool timedOut)
+        {
+            return model.WaitForConfirms(timeout, out timedOut);
+        }
+
+        public void WaitForConfirmsOrDie(TimeSpan timeout)
+        {
+            model.WaitForConfirmsOrDie(timeout);
         }
 
         public string BasicConsume(string queue, bool noAck, IBasicConsumer consumer)

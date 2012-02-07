@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RabbitMQ.ServiceModel</name>
+    </assembly>
+    <members>
+        <member name="T:RabbitMQ.ServiceModel.CurrentVersion">
+            <summary>
+            Properties of the current RabbitMQ Service Model Version
+            </summary>
+        </member>
+        <member name="T:RabbitMQ.ServiceModel.RabbitMQBinding">
+            <summary>
+            A windows communication foundation binding over AMQP
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBinding.#ctor">
+            <summary>
+            Creates a new instance of the RabbitMQBinding class initialized
+            to use the Protocols.DefaultProtocol. The broker must be set
+            before use.
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBinding.#ctor(System.String,System.Int32)">
+            <summary>
+            Uses the broker specified by the given hostname and port with
+            Protocols.DefaultProtocol.
+            </summary>
+            <param name="hostname">The hostname of the broker to connect to</param>
+            <param name="port">The port of the broker to connect to</param>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBinding.#ctor(System.String,System.Int32,RabbitMQ.Client.IProtocol)">
+            <summary>
+            Uses the broker and protocol specified
+            </summary>
+            <param name="hostname">The hostname of the broker to connect to</param>
+            <param name="port">The port of the broker to connect to</param>
+            <param name="protocol">The protocol version to use</param>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBinding.#ctor(System.String,System.Int32,System.String,System.String,System.String,System.Int64,RabbitMQ.Client.IProtocol)">
+            <summary>
+            Uses the broker, login and protocol specified
+            </summary>
+            <param name="hostname">The hostname of the broker to connect to</param>
+            <param name="port">The port of the broker to connect to</param>
+            <param name="username">The broker username to connect with</param>
+            <param name="password">The broker password to connect with</param>
+            <param name="virtualhost">The broker virtual host</param>
+            <param name="maxMessageSize">The largest allowable encoded message size</param>
+            <param name="protocol">The protocol version to use</param>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBinding.#ctor(RabbitMQ.Client.IProtocol)">
+            <summary>
+            Uses the specified protocol. The broker must be set before use.
+            </summary>
+            <param name="protocol">The protocol version to use</param>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.Scheme">
+            <summary>
+            Gets the scheme used by the binding, soap.amqp
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.HostName">
+            <summary>
+            Specifies the hostname of the RabbitMQ Server
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.Port">
+            <summary>
+            Specifies the RabbitMQ Server port
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.MaxMessageSize">
+            <summary>
+            Specifies the maximum encoded message size
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.BrokerProtocol">
+            <summary>
+            Specifies the version of the AMQP protocol that should be used to communicate with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.Transport">
+            <summary>
+            Gets the AMQP transport binding element
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.ReliableSession">
+            <summary>
+            Gets the reliable session parameters for this binding instance
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.TransactionFlow">
+            <summary>
+            Determines whether or not the TransactionFlowBindingElement will
+            be added to the channel stack
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBinding.OneWayOnly">
+            <summary>
+            Specifies whether or not the CompositeDuplex and ReliableSession
+            binding elements are added to the channel stack.
+            </summary>
+        </member>
+        <member name="T:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement">
+            <summary>
+            Represents the configuration for a RabbitMQBinding.
+            </summary>
+            <remarks>
+            This configuration element should be imported into the client
+            and server configuration files to provide declarative configuration 
+            of a AMQP bound service.
+            </remarks>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.#ctor(System.String)">
+            <summary>
+            Creates a new instance of the RabbitMQBindingConfigurationElement
+            Class initialized with values from the specified configuration.
+            </summary>
+            <param name="configurationName"></param>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.#ctor">
+            <summary>
+            Creates a new instance of the RabbitMQBindingConfigurationElement Class.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.HostName">
+            <summary>
+            Specifies the hostname of the broker that the binding should connect to.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.Port">
+            <summary>
+            Specifies the port of the broker that the binding should connect to.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.OneWayOnly">
+            <summary>
+            Specifies whether or not the CompositeDuplex and ReliableSession
+            binding elements are added to the channel stack.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.Password">
+            <summary>
+            Password to use when authenticating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.TransactionFlowEnabled">
+            <summary>
+            Specifies whether or not WS-AtomicTransactions are supported by the binding
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.Username">
+            <summary>
+            The username  to use when authenticating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.ProtocolVersion">
+            <summary>
+            Specifies the protocol version to use when communicating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.MaxMessageSize">
+            <summary>
+            Specifies the maximum encoded message size
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.Protocol">
+            <summary>
+            Gets the protocol version specified by the current configuration
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQBindingConfigurationElement.VirtualHost">
+            <summary>
+            The virtual host to access.
+            </summary>
+        </member>
+        <member name="T:RabbitMQ.ServiceModel.RabbitMQBindingSection">
+            <summary>
+            Allows the RabbitMQBinding to be declarativley configured
+            </summary>
+        </member>
+        <member name="T:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement">
+            <summary>
+            Represents the binding element used to specify AMQP transport for transmitting messages.
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.#ctor">
+            <summary>
+            Creates a new instance of the RabbitMQTransportBindingElement Class using the default protocol.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.Scheme">
+            <summary>
+            Gets the scheme used by the binding, soap.amqp
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.HostName">
+            <summary>
+            Specifies the hostname of the RabbitMQ Server
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.Port">
+            <summary>
+            Specifies the RabbitMQ Server port
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.MaxReceivedMessageSize">
+            <summary>
+            The largest receivable encoded message
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.Username">
+            <summary>
+            The username  to use when authenticating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.Password">
+            <summary>
+            Password to use when authenticating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.VirtualHost">
+            <summary>
+            Specifies the broker virtual host
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportBindingElement.BrokerProtocol">
+            <summary>
+            Specifies the version of the AMQP protocol that should be used to 
+            communicate with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.HostName">
+            <summary>
+            Specifies the hostname of the broker that the binding should connect to.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.Port">
+            <summary>
+            Specifies the port of the broker that the binding should connect to.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.Password">
+            <summary>
+            Password to use when authenticating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.Username">
+            <summary>
+            The username  to use when authenticating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.ProtocolVersion">
+            <summary>
+            Specifies the protocol version to use when communicating with the broker
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.Protocol">
+            <summary>
+            Gets the protocol version specified by the current configuration
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.VirtualHost">
+            <summary>
+            The virtual host to access.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.ServiceModel.RabbitMQTransportElement.MaxReceivedMessageSize">
+            <summary>
+            The largest receivable encoded message
+            </summary>
+        </member>
+    </members>
+</doc>
