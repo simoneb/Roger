@@ -31,8 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL" />
-    <Reference Include="Erlang, Version=0.9.5.0, Culture=neutral, PublicKeyToken=dd1e4028f8bbbc5a, processorArchitecture=MSIL" />
+    <Reference Include="Common.Logging">
+      <HintPath>..\..\lib\common-logging\net\2.0\release\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Erlang">
+      <HintPath>..\..\lib\spring-amqp\Erlang.dll</HintPath>
+    </Reference>
     <Reference Include="Gallio">
       <HintPath>..\..\tools\mbunit\Gallio.dll</HintPath>
     </Reference>
@@ -49,7 +53,9 @@
     <Reference Include="RabbitMQ.ServiceModel">
       <HintPath>..\..\lib\RabbitMQ\RabbitMQ.ServiceModel.dll</HintPath>
     </Reference>
-    <Reference Include="Spring.Erlang, Version=0.9.6.2000, Culture=neutral, PublicKeyToken=2954ea1110aebcfa, processorArchitecture=MSIL" />
+    <Reference Include="Spring.Erlang">
+      <HintPath>..\..\lib\spring-amqp\Spring.Erlang.dll</HintPath>
+    </Reference>
     <Reference Include="Spring.Messaging.Amqp.Rabbit.Admin">
       <HintPath>..\..\lib\spring-amqp\Spring.Messaging.Amqp.Rabbit.Admin.dll</HintPath>
     </Reference>
