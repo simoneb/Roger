@@ -4,7 +4,6 @@ namespace Roger.Messages
 {
     internal class ConnectionEstablished
     {
-
         public ConnectionEstablished(IReliableConnection connection)
         {
             Connection = connection;

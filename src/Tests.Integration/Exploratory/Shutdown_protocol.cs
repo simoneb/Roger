@@ -197,7 +197,7 @@ namespace Tests.Integration.Exploratory
         public class When_appdomain_unloads : Shutdown_protocol
         {
             [Test]
-            public void ReplyCode_should_be_541()
+            public void ReplyCode_should_be_541_with_specific_ReplyText()
             {
                 var ads = new AppDomainSetup {ApplicationBase = AppDomain.CurrentDomain.BaseDirectory};
                 var domain = AppDomain.CreateDomain("test connection shutdown", null, ads);
@@ -249,7 +249,6 @@ namespace Tests.Integration.Exploratory
         [Explicit]
         public void ManualTest()
         {
-
             connection.CallbackException += LoggingConnectionCallbackException(1);
             //connection.CallbackException += ThrowingConnectionCallbackException;
             //connection.CallbackException += LoggingConnectionCallbackException(2);
@@ -294,7 +293,6 @@ namespace Tests.Integration.Exploratory
 
             log.Debug("Closing connection");
             //connection.Close();
-            
         }
 
         private ModelShutdownEventHandler LoggingModelOnModelShutdown(int n)
