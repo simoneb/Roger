@@ -127,10 +127,10 @@
     <Compile Include="Internal\Impl\ReflectionExtensions.cs" />
     <Compile Include="Internal\Impl\AttributeExchangeResolver.cs" />
     <Compile Include="Internal\Impl\DefaultRoutingKeyResolver.cs" />
-    <Compile Include="Internal\Impl\DefaultTypeResolver.cs" />
+    <Compile Include="Internal\Impl\DefaultMessageTypeResolver.cs" />
     <Compile Include="IConsumerContainer.cs" />
     <Compile Include="IExchangeResolver.cs" />
-    <Compile Include="Internal\ITypeResolver.cs" />
+    <Compile Include="Internal\IMessageTypeResolver.cs" />
     <Compile Include="SimpleConsumerContainer.cs" />
     <Compile Include="Internal\Impl\ByMessageHirarchyRootSequenceGenerator.cs" />
     <Compile Include="ISequenceGenerator.cs" />

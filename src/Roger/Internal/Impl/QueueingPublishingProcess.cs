@@ -24,7 +24,7 @@ namespace Roger.Internal.Impl
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRoutingKeyResolver routingKeyResolver;
         private readonly IMessageSerializer serializer;
-        private readonly ITypeResolver typeResolver;
+        private readonly IMessageTypeResolver messageTypeResolver;
         private RogerEndpoint endpoint;
         private readonly IPublishModule modules;
 
@@ -32,7 +32,7 @@ namespace Roger.Internal.Impl
                                            ISequenceGenerator sequenceGenerator,
                                            IExchangeResolver exchangeResolver,
                                            IMessageSerializer serializer,
-                                           ITypeResolver typeResolver,
+                                           IMessageTypeResolver messageTypeResolver,
                                            IPublishModule modules,
                                            Aggregator aggregator)
         {
@@ -41,7 +41,7 @@ namespace Roger.Internal.Impl
             this.exchangeResolver = exchangeResolver;
             routingKeyResolver = new DefaultRoutingKeyResolver();
             this.serializer = serializer;
-            this.typeResolver = typeResolver;
+            this.messageTypeResolver = messageTypeResolver;
             this.modules = modules;
 
             aggregator.Subscribe(this);
@@ -95,7 +95,7 @@ namespace Roger.Internal.Impl
                             break;
                         }
                         
-                        var delivery = factory.Create(model, idGenerator, typeResolver, serializer, sequenceGenerator);
+                        var delivery = factory.Create(model, idGenerator, messageTypeResolver, serializer, sequenceGenerator);
 
                         log.Debug("Executing delivery");
 

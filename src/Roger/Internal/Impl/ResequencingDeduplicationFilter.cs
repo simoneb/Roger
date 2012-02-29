@@ -25,7 +25,7 @@ namespace Roger.Internal.Impl
                 if (Unknown(sequenceKey) || CorrectSequence(sequenceKey, receivedSequence))
                 {
                     nextSequences[sequenceKey] = receivedSequence + 1;
-                    log.DebugFormat("Correct sequence {0} for key {1}", receivedSequence, sequenceKey);
+                    log.TraceFormat("Correct sequence {0} for key {1}", receivedSequence, sequenceKey);
                     yield return message;
 
                     foreach (var p in Filter(Pending(sequenceKey, receivedSequence), model))
@@ -49,7 +49,7 @@ namespace Roger.Internal.Impl
                     }
                     catch (AlreadyClosedException e)
                     {
-                        log.Debug("Could not ack filtered-out message because model was already closed", e);
+                        log.Info("Could not ack filtered-out message because model was already closed", e);
                     }
                     catch (Exception e)
                     {

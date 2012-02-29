@@ -15,23 +15,23 @@ namespace Roger.Internal.Impl
             this.persistent = persistent;
         }
 
-        public IDelivery Create(IModel model, IIdGenerator idGenerator, ITypeResolver typeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
+        public IDelivery Create(IModel model, IIdGenerator idGenerator, IMessageTypeResolver messageTypeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
         {
-            var createProperties = CreatePropertiesFactory(model, idGenerator, typeResolver, serializer, sequenceGenerator);
+            var createProperties = CreatePropertiesFactory(model, idGenerator, messageTypeResolver, serializer, sequenceGenerator);
 
             return CreateCore(createProperties);
         }
 
         private Func<RogerEndpoint, IBasicProperties> CreatePropertiesFactory(IModel model,
                                                                               IIdGenerator idGenerator,
-                                                                              ITypeResolver typeResolver,
+                                                                              IMessageTypeResolver messageTypeResolver,
                                                                               IMessageSerializer serializer,
                                                                               ISequenceGenerator sequenceGenerator)
         {
             var properties = model.CreateBasicProperties();
 
             properties.MessageId = idGenerator.Next();
-            properties.Type = typeResolver.Unresolve(messageType);
+            properties.Type = messageTypeResolver.Unresolve(messageType);
             properties.ContentType = serializer.ContentType;
 
             properties.Headers = new Hashtable

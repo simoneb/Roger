@@ -24,7 +24,7 @@ namespace Roger.Internal.Impl
 
         public IDelivery Create(IModel model,
                                 IIdGenerator idGenerator,
-                                ITypeResolver typeResolver,
+                                IMessageTypeResolver messageTypeResolver,
                                 IMessageSerializer serializer,
                                 ISequenceGenerator sequenceGenerator)
         {

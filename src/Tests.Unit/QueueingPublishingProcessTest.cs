@@ -33,7 +33,7 @@ namespace Tests.Unit
                                                 Substitute.For<ISequenceGenerator>(),
                                                 Substitute.For<IExchangeResolver>(),
                                                 Substitute.For<IMessageSerializer>(),
-                                                Substitute.For<ITypeResolver>(),
+                                                Substitute.For<IMessageTypeResolver>(),
                                                 publishModule, aggregator);
             sut.Start();
         }

@@ -6,7 +6,7 @@ namespace Roger.Internal
     {
         IDelivery Create(IModel model,
                          IIdGenerator idGenerator,
-                         ITypeResolver typeResolver,
+                         IMessageTypeResolver messageTypeResolver,
                          IMessageSerializer serializer,
                          ISequenceGenerator sequenceGenerator);
     }

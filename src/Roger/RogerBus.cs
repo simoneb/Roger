@@ -75,7 +75,7 @@ namespace Roger
             consumer = new DefaultConsumingProcess(idGenerator,
                                                    exchangeResolver,
                                                    serializer,
-                                                   new DefaultTypeResolver(), 
+                                                   new DefaultMessageTypeResolver(), 
                                                    consumerContainer,
                                                    Filters,
                                                    queueFactory,
@@ -87,7 +87,7 @@ namespace Roger
                                                       sequenceGenerator,
                                                       exchangeResolver,
                                                       serializer,
-                                                      new DefaultTypeResolver(),
+                                                      new DefaultMessageTypeResolver(),
                                                       publishModules,
                                                       aggregator);
 

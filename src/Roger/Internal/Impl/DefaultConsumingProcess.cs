@@ -21,7 +21,7 @@ namespace Roger.Internal.Impl
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private readonly IExchangeResolver exchangeResolver;
         private readonly IRoutingKeyResolver bindingKeyResolver;
-        private readonly ITypeResolver typeResolver;
+        private readonly IMessageTypeResolver messageTypeResolver;
         private readonly IMessageSerializer serializer;
         private readonly IIdGenerator idGenerator;
         private readonly ISupportedMessageTypesResolver supportedMessageTypesResolver;
@@ -40,7 +40,7 @@ namespace Roger.Internal.Impl
         public DefaultConsumingProcess(IIdGenerator idGenerator,
                                        IExchangeResolver exchangeResolver,
                                        IMessageSerializer serializer,
-                                       ITypeResolver typeResolver,
+                                       IMessageTypeResolver messageTypeResolver,
                                        IConsumerContainer consumerContainer,
                                        IMessageFilter messageFilters,
                                        IQueueFactory queueFactory,
@@ -55,7 +55,7 @@ namespace Roger.Internal.Impl
             this.aggregator = aggregator;
             this.exchangeResolver = exchangeResolver;
             bindingKeyResolver = new DefaultRoutingKeyResolver();
-            this.typeResolver = typeResolver;
+            this.messageTypeResolver = messageTypeResolver;
             this.serializer = serializer;
             this.idGenerator = idGenerator;
             supportedMessageTypesResolver = new DefaultSupportedMessageTypesResolver();
@@ -209,15 +209,18 @@ namespace Roger.Internal.Impl
 
         private IEnumerable<CurrentMessageInformation> BlockingDequeue(IEnumerable queue)
         {
-            return queue.Cast<BasicDeliverEventArgs>().Select(CreateMessage);
+            return queue.Cast<BasicDeliverEventArgs>().Select(CreateMessage).Where(t => t.Item1).Select(t => t.Item2);
         }
 
-        private CurrentMessageInformation CreateMessage(BasicDeliverEventArgs args)
+        private Tuple<bool, CurrentMessageInformation> CreateMessage(BasicDeliverEventArgs args)
         {
             var properties = args.BasicProperties;
-            var messageType = typeResolver.Resolve(properties.Type);
+            Type messageType;
 
-            return new CurrentMessageInformation
+            if (!messageTypeResolver.TryResolve(properties.Type, out messageType))
+                return Tuple.Create<bool, CurrentMessageInformation>(false, null);
+            
+            return Tuple.Create(true, new CurrentMessageInformation
             {
                 MessageId = new RogerGuid(properties.MessageId),
                 MessageType = messageType,
@@ -227,7 +230,7 @@ namespace Roger.Internal.Impl
                 Exchange = args.Exchange,
                 Body = serializer.Deserialize(messageType, args.Body),
                 Headers = (Hashtable)properties.Headers
-            };
+            });
         }
 
         private bool SetCurrentMessageAndInvokeConsumers(CurrentMessageInformation message)

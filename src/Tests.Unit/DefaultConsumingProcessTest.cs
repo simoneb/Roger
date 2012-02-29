@@ -30,7 +30,7 @@ namespace Tests.Unit
             sut = new DefaultConsumingProcess(Substitute.For<IIdGenerator>(),
                                               Substitute.For<IExchangeResolver>(),
                                               Substitute.For<IMessageSerializer>(), 
-                                              Substitute.For<ITypeResolver>(),
+                                              Substitute.For<IMessageTypeResolver>(),
                                               Substitute.For<IConsumerContainer>(), 
                                               Substitute.For<IMessageFilter>(),
                                               queueFactory,
