@@ -65,7 +65,7 @@
     <Compile Include="Exchange_resolution.cs" />
     <Compile Include="GenericsTest.cs" />
     <Compile Include="MEF\MEFConsumerContainerTests.cs" />
-    <Compile Include="Message_type_serialization.cs" />
+    <Compile Include="Message_type_resolution.cs" />
     <Compile Include="PublisherConfirmsModuleTest.cs" />
     <Compile Include="QueueingPublishingProcessTest.cs" />
     <Compile Include="ReflectionExtensionsTest.cs" />
