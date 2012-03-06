@@ -12,18 +12,15 @@ namespace Tests.Unit.MEF
     {
         private CompositionContainer container;
         private MEFConsumerContainer sut;
-        private TypeCatalog typeCatalog;
 
         [SetUp]
         public void Setup()
         {
-            typeCatalog = new TypeCatalog();
             container = new CompositionContainer(new TypeCatalog(typeof(ExportedAsItself), 
                                                                  typeof(ExportedAsClosedGenericInterface),
                                                                  typeof(ExportedAsOpenGenericInterface),
                                                                  typeof(ExportedAsMultipleGenericInterface),
-                                                                 typeof(ExportedAsMultipleGenericAdditionalInterface)
-                                                                 ));
+                                                                 typeof(ExportedAsMultipleGenericAdditionalInterface)));
             sut = new MEFConsumerContainer(container);
         }
 

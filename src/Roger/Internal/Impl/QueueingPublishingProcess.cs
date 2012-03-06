@@ -14,7 +14,7 @@ namespace Roger.Internal.Impl
     {
         private readonly ILog log = LogManager.GetCurrentClassLogger();
         private int disposed;
-        private Task publishTask;
+        private Task publishTask = Task.Factory.StartNew(() => {});
         private readonly BlockingCollection<IDeliveryFactory> publishingQueue = new BlockingCollection<IDeliveryFactory>();
         private readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         private readonly ManualResetEventSlim publishEnabled = new ManualResetEventSlim(false);
@@ -79,7 +79,7 @@ namespace Roger.Internal.Impl
 
         public void Start()
         {
-            publishTask = Task.Factory.StartNew(() =>
+            publishTask = publishTask.ContinueWith(_ =>
             {
                 try
                 {
@@ -126,7 +126,7 @@ namespace Roger.Internal.Impl
                 {
                     log.Error("Publishing queue was disposed while iterating over it, this is not supposed to be happening");
                 }
-            }, TaskCreationOptions.LongRunning);
+            }, TaskContinuationOptions.LongRunning | TaskContinuationOptions.AttachedToParent);
         }
 
         public void Process(IDeliveryFactory factory)

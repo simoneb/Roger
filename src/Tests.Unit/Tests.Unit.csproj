@@ -72,6 +72,7 @@
     <Compile Include="ReliableConnectionTest.cs" />
     <Compile Include="ResequencingDeduplicationFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RogerBusTest.cs" />
     <Compile Include="RogerEndpointTest.cs" />
     <Compile Include="RogerGuidTests.cs" />
     <Compile Include="SequenceGeneratorTest.cs" />
