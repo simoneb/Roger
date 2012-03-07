@@ -27,6 +27,7 @@ namespace Roger
         private readonly PublishModuleCollection publishModules = new PublishModuleCollection();
         private int disposed;
         private readonly Aggregator aggregator;
+        private int started;
 
         /// <summary>
         /// Default library entry point
@@ -131,6 +132,13 @@ namespace Roger
 
         public Task<IRabbitBus> StartAsync()
         {
+            if(Interlocked.CompareExchange(ref started, 1, 0) == 1)
+            {
+                var task = new Task<IRabbitBus>(() => this);
+                task.RunSynchronously();
+                return task;
+            }
+
             log.Debug("Starting bus");
 
             publisher.Start();

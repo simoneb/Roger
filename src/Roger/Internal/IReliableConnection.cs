@@ -1,5 +1,4 @@
 using System;
-using RabbitMQ.Client;
 using Roger.Internal.Impl;
 
 namespace Roger.Internal
