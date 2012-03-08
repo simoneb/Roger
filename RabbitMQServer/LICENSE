@@ -4,12 +4,15 @@ If you have any questions regarding licensing, please contact us at
 info@rabbitmq.com.
 
 The files amqp-rabbitmq-0.8.json and amqp-rabbitmq-0.9.1.json are
-"Copyright (C) 2008-2011 VMware", Inc. and are covered by the MIT
+"Copyright (C) 2008-2012 VMware", Inc. and are covered by the MIT
 license.
 
-Mochiweb is "Copyright (c) 2007 Mochi Media, Inc." and is covered by
-the MIT license.  It was downloaded from
-http://github.com/mochi/mochiweb/
+Webmachine is Copyright (c) Basho Technologies and is covered by the
+Apache License 2.0.  It was downloaded from http://webmachine.basho.com/
+
+glMatrix is "Copyright (c) 2011, Brandon Jones" and is covered by the
+BSD 2-Clause license.  It was downloaded from
+http://code.google.com/p/glmatrix/
 
 Eldap is "Copyright (c) 2010, Torbjorn Tornkvist" and is covered by
 the MIT license.  It was downloaded from https://github.com/etnt/eldap
@@ -24,12 +27,9 @@ Sammy is "Copyright (c) 2008 Aaron Quint, Quirkey NYC, LLC" and is
 covered by the MIT license.  It was downloaded from
 http://code.quirkey.com/sammy/
 
-glMatrix is "Copyright (c) 2011, Brandon Jones" and is covered by the
-BSD 2-Clause license.  It was downloaded from
-http://code.google.com/p/glmatrix/
-
-Webmachine is Copyright (c) Basho Technologies and is covered by the
-Apache License 2.0.  It was downloaded from http://webmachine.basho.com/
+Mochiweb is "Copyright (c) 2007 Mochi Media, Inc." and is covered by
+the MIT license.  It was downloaded from
+http://github.com/mochi/mochiweb/
 
 
 The MIT license is as follows:
@@ -89,7 +89,7 @@ The rest of this package is licensed under the Mozilla Public License 1.1
 Authors and Copyright are as described below:
 
      The Initial Developer of the Original Code is VMware, Inc.
-     Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
+     Copyright (c) 2007-2012 VMware, Inc.  All rights reserved.
 
 
                           MOZILLA PUBLIC LICENSE
@@ -541,7 +541,7 @@ EXHIBIT A -Mozilla Public License.
      The Original Code is RabbitMQ.
 
      The Initial Developer of the Original Code is VMware, Inc.
-     Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.''
+     Copyright (c) 2007-2012 VMware, Inc.  All rights reserved.''
 
      [NOTE: The text of this Exhibit A may differ slightly from the text of
      the notices in the Source Code files of the Original Code. You should

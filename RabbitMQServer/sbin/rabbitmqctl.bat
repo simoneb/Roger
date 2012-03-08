@@ -12,7 +12,7 @@ REM
 REM  The Original Code is RabbitMQ.
 REM
 REM  The Initial Developer of the Original Code is VMware, Inc.
-REM  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
+REM  Copyright (c) 2007-2012 VMware, Inc.  All rights reserved.
 REM
 
 setlocal
@@ -22,10 +22,6 @@ rem enabling delayed expansion
 set TDP0=%~dp0
 set STAR=%*
 setlocal enabledelayedexpansion
-
-if exist "!TDP0!..\config\startup-config.bat" (
-    CALL "!TDP0!..\config\startup-config.bat"
-)
 
 if "!COMPUTERNAME!"=="" (
     set COMPUTERNAME=localhost
