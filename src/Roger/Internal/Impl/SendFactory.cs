@@ -10,7 +10,13 @@ namespace Roger.Internal.Impl
         private readonly byte[] body;
         private readonly Action<BasicReturn> basicReturnCallback;
 
-        public SendFactory(Type messageType, string exchange, RogerEndpoint recipient, byte[] body, Action<BasicReturn> basicReturnCallback, bool persistent) : base(messageType, persistent)
+        public SendFactory(Type messageType,
+                           string exchange,
+                           RogerEndpoint recipient,
+                           byte[] body,
+                           Action<BasicReturn> basicReturnCallback,
+                           bool persistent,
+                           bool sequence) : base(messageType, persistent, sequence)
         {
             this.exchange = exchange;
             this.recipient = recipient;

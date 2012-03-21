@@ -47,7 +47,7 @@ namespace Tests.Unit
         [Test]
         public void Should_not_publish_messages_until_endpoint_is_known()
         {
-            sut.Publish(new MyMessage(), false);
+            sut.Publish(new MyMessage(), false, false);
 
             Thread.Sleep(100);
 
@@ -59,7 +59,7 @@ namespace Tests.Unit
         {
             aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whataver"), connection));
 
-            sut.Publish(new MyMessage(), false);
+            sut.Publish(new MyMessage(), false, false);
 
             Thread.Sleep(100);
 
@@ -78,7 +78,7 @@ namespace Tests.Unit
         {
             aggregator.Notify(new ConsumingEnabled(new RogerEndpoint("whatever"), connection));
 
-            sut.Publish(new MyMessage(), false);
+            sut.Publish(new MyMessage(), false, false);
 
             Thread.Sleep(100);
 
@@ -88,7 +88,7 @@ namespace Tests.Unit
         [Test]
         public void Should_throw_when_replying_out_of_context_of_a_request()
         {
-            Assert.Throws<InvalidOperationException>(() => sut.Reply(new MyReply(), null, null, true));
+            Assert.Throws<InvalidOperationException>(() => sut.Reply(new MyReply(), null, null, true, true));
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace Tests.Unit
 
             var requestId = RogerGuid.NewGuid();
 
-            sut.Reply(new MyReply(), new CurrentMessageInformation{MessageId = requestId, Endpoint = new RogerEndpoint("someEndpoint")}, null, true);
+            sut.Reply(new MyReply(), new CurrentMessageInformation{MessageId = requestId, Endpoint = new RogerEndpoint("someEndpoint")}, null, true, true);
 
             Thread.Sleep(100);
 

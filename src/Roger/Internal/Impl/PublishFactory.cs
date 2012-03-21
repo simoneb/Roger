@@ -9,7 +9,7 @@ namespace Roger.Internal.Impl
         private readonly string routingKey;
         private readonly byte[] body;
 
-        public PublishFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent) : base(messageType, persistent)
+        public PublishFactory(Type messageType, string exchange, string routingKey, byte[] body, bool persistent, bool sequence) : base(messageType, persistent, sequence)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;

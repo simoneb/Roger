@@ -136,6 +136,18 @@ namespace Tests.Unit
             Delivering(Message<MyMessage>(1), Message<MyOtherMessage>(1)).WillReceiveJustThat();            
         }
 
+        [Test]
+        public void Should_pass_through_messages_without_sequence()
+        {
+            Delivering(MessageWithoutSequence<MyMessage>(1)).WillReceiveJustThat();
+        }
+
+        [Test]
+        public void Should_block_messages_without_headers()
+        {
+            Delivering(MessageWithoutHeaders<MyMessage>(1)).WillNotReceiveAnything();
+        }
+
         private Delivery Delivering(params uint[] i)
         {
             foreach (var u in i)
@@ -210,14 +222,33 @@ namespace Tests.Unit
 
         private static CurrentMessageInformation Message<T>(uint sequenceBodyAndDeliveryTag, string endpoint = null)
         {
+            return Message<T>(sequenceBodyAndDeliveryTag,
+                              new Hashtable {{Headers.Sequence, BitConverter.GetBytes(sequenceBodyAndDeliveryTag)}},
+                              endpoint);
+        }
+
+        private static CurrentMessageInformation Message<T>(uint sequenceBodyAndDeliveryTag,
+                                                            Hashtable headers,
+                                                            string endpoint = null)
+        {
             return new CurrentMessageInformation
             {
-                Headers = new Hashtable { { Headers.Sequence, BitConverter.GetBytes(sequenceBodyAndDeliveryTag) } },
+                Headers = headers,
                 Body = sequenceBodyAndDeliveryTag,
                 Endpoint = new RogerEndpoint(endpoint ?? "someQueue"),
                 DeliveryTag = sequenceBodyAndDeliveryTag,
-                MessageType = typeof(T)
+                MessageType = typeof (T)
             };
+        }
+
+        private CurrentMessageInformation MessageWithoutHeaders<T>(uint bodyAndDeliveryTag)
+        {
+            return Message<T>(bodyAndDeliveryTag, (Hashtable)null);
+        }
+
+        private CurrentMessageInformation MessageWithoutSequence<T>(uint bodyAndDeliveryTag)
+        {
+            return Message<T>(bodyAndDeliveryTag, new Hashtable());
         }
 
         private static CurrentMessageInformation Message(uint sequenceBodyAndDeliveryTag, string endpoint = null)

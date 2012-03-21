@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using Common;
 using Common.Logging;
@@ -134,7 +135,7 @@ namespace Tests.Integration.Exploratory
 
         public class When_model_closes : Shutdown_protocol
         {
-            public IEnumerable<Action<IModel>> CloseModel()
+            public IEnumerable<Expression<Action<IModel>>> CloseModel()
             {
                 yield return m => m.Close();
                 yield return m => m.Dispose();
@@ -142,7 +143,7 @@ namespace Tests.Integration.Exploratory
             }
 
             [Test, Factory("CloseModel")]
-            public void Should_notify_model_and_then_consumer(Action<IModel> close)
+            public void Should_notify_model_and_then_consumer(Expression<Action<IModel>> close)
             {
                 var model = connection.CreateModel();
 
@@ -154,7 +155,7 @@ namespace Tests.Integration.Exploratory
                 wh.CaptureMethod<IModel, ShutdownEventArgs>(consumer.HandleModelShutdown);
                 model.ModelShutdown += wh.CaptureEvent<ModelShutdownEventHandler>();
 
-                close(model);
+                close.Compile().Invoke(model);
             }
 
             private class SpyConsumer : QueueingBasicConsumer

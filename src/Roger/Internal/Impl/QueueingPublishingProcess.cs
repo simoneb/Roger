@@ -151,7 +151,7 @@ namespace Roger.Internal.Impl
             }
         }
 
-        public void Publish(object message, bool persistent)
+        public void Publish(object message, bool persistent, bool sequence)
         {
             var messageType = message.GetType();
 
@@ -159,10 +159,11 @@ namespace Roger.Internal.Impl
                                        Exchange(messageType),
                                        RoutingKey(messageType),
                                        Serialize(message),
-                                       persistent));
+                                       persistent,
+                                       sequence));
         }
 
-        public void Request(object message, Action<BasicReturn> basicReturnCallback, bool persistent)
+        public void Request(object message, Action<BasicReturn> basicReturnCallback, bool persistent, bool sequence)
         {
             var messageType = message.GetType();
 
@@ -171,10 +172,11 @@ namespace Roger.Internal.Impl
                                        RoutingKey(messageType),
                                        Serialize(message),
                                        basicReturnCallback, 
-                                       persistent));
+                                       persistent, 
+                                       sequence));
         }
 
-        public void Send(RogerEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback, bool persistent)
+        public void Send(RogerEndpoint recipient, object message, Action<BasicReturn> basicReturnCallback, bool persistent, bool sequence)
         {
             var messageType = message.GetType();
 
@@ -183,10 +185,11 @@ namespace Roger.Internal.Impl
                                     recipient,
                                     Serialize(message),
                                     basicReturnCallback,
-                                    persistent));
+                                    persistent,
+                                    sequence));
         }
 
-        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback, bool persistent)
+        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback, bool persistent, bool sequence)
         {
             var messageType = message.GetType();
 
@@ -195,10 +198,11 @@ namespace Roger.Internal.Impl
                                                 RoutingKey(messageType),
                                                 Serialize(message),
                                                 basicReturnCallback,
-                                                persistent));
+                                                persistent,
+                                                sequence));
         }
 
-        public void Reply(object message, CurrentMessageInformation currentMessage, Action<BasicReturn> basicReturnCallback, bool persistent)
+        public void Reply(object message, CurrentMessageInformation currentMessage, Action<BasicReturn> basicReturnCallback, bool persistent, bool sequence)
         {
             EnsureMessageHandlingContext(currentMessage);
 
@@ -207,7 +211,8 @@ namespace Roger.Internal.Impl
                                      currentMessage,
                                      Serialize(message),
                                      basicReturnCallback,
-                                     persistent));
+                                     persistent, 
+                                     sequence));
         }
 
         private void EnsureMessageHandlingContext(CurrentMessageInformation currentMessage)

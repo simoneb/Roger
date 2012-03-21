@@ -19,43 +19,60 @@ namespace Roger.Internal.Impl
         {
             foreach (var message in input)
             {
-                var receivedSequence = BitConverter.ToUInt32((byte[])message.Headers[Headers.Sequence], 0);
-                var sequenceKey = new SequenceKey(message.Endpoint, message.MessageType);
-
-                if (Unknown(sequenceKey) || CorrectSequence(sequenceKey, receivedSequence))
+                if (message.Headers == null)
                 {
-                    nextSequences[sequenceKey] = receivedSequence + 1;
-                    log.TraceFormat("Correct sequence {0} for key {1}", receivedSequence, sequenceKey);
+                    log.Warn("Received message with no headers, perhaps it's coming from an unexpected source?");
+                    TryAckFilteredMessage(model, message);
+                }
+                else if(!message.Headers.ContainsKey(Headers.Sequence))
                     yield return message;
-
-                    foreach (var p in Filter(Pending(sequenceKey, receivedSequence), model))
-                        yield return p;
-                }
-                else if (Unordered(sequenceKey, receivedSequence))
-                {
-                    log.WarnFormat("Unexpected sequence {0} for key {1}. Was expecting {2}", receivedSequence, sequenceKey, nextSequences[sequenceKey]);
-                    pendingMessages[sequenceKey].Add(receivedSequence, message);
-                }
                 else
                 {
-                    log.DebugFormat("Filtering out (and acking) message sequence {0} - id {1} for key {2} as already processed", 
-                                    receivedSequence, 
-                                    message.MessageId, 
-                                    sequenceKey);
+                    var receivedSequence = BitConverter.ToUInt32((byte[]) message.Headers[Headers.Sequence], 0);
+                    var sequenceKey = new SequenceKey(message.Endpoint, message.MessageType);
 
-                    try
+                    if (Unknown(sequenceKey) || CorrectSequence(sequenceKey, receivedSequence))
                     {
-                        model.BasicAck(message.DeliveryTag, false);
+                        nextSequences[sequenceKey] = receivedSequence + 1;
+                        log.TraceFormat("Correct sequence {0} for key {1}", receivedSequence, sequenceKey);
+                        yield return message;
+
+                        foreach (var p in Filter(Pending(sequenceKey, receivedSequence), model))
+                            yield return p;
                     }
-                    catch (AlreadyClosedException e)
+                    else if (Unordered(sequenceKey, receivedSequence))
                     {
-                        log.Info("Could not ack filtered-out message because model was already closed", e);
+                        log.WarnFormat("Unexpected sequence {0} for key {1}. Was expecting {2}", receivedSequence,
+                                       sequenceKey, nextSequences[sequenceKey]);
+                        pendingMessages[sequenceKey].Add(receivedSequence, message);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        log.Warn("Could not ack filtered-out message for unknown cause", e);
+                        log.DebugFormat(
+                            "Filtering out (and acking) message sequence {0} - id {1} for key {2} as already processed",
+                            receivedSequence,
+                            message.MessageId,
+                            sequenceKey);
+
+                        TryAckFilteredMessage(model, message);
                     }
                 }
+            }
+        }
+
+        private void TryAckFilteredMessage(IModel model, CurrentMessageInformation message)
+        {
+            try
+            {
+                model.BasicAck(message.DeliveryTag, false);
+            }
+            catch (AlreadyClosedException e)
+            {
+                log.Info("Could not ack filtered-out message because model was already closed", e);
+            }
+            catch (Exception e)
+            {
+                log.Warn("Could not ack filtered-out message for unknown cause", e);
             }
         }
 

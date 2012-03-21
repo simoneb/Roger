@@ -23,9 +23,18 @@ namespace Roger
         /// </summary>
         RogerEndpoint LocalEndpoint { get; }
 
+        /// <summary>
+        /// A collection of filters to apply to incoming messages
+        /// </summary>
         MessageFilterCollection Filters { get; }
 
         event Action Started;
+
+        /// <summary>
+        /// Fired when either an attempt at connecting to the server is unsuccessful or an existing connection is shut down unexpectedly
+        /// </summary>
+        event Action Interrupted;
+
         event Action Stopped;
 
         /// <summary>
@@ -39,19 +48,12 @@ namespace Roger
         void Start();
 
         /// <summary>
-        /// Subscribes a consumer manually to the messages it is interested in
-        /// This is not usually necessary as consumer subscription is carried out automatically
-        /// </summary>
-        /// <param name="instanceConsumer">The consumer instance</param>
-        /// <returns>A subscription token which, when disposed, removes the subscription</returns>
-        IDisposable AddInstanceSubscription(IConsumer instanceConsumer);
-
-        /// <summary>
         /// Publishes a message so that subscribers will receive it
         /// </summary>
         /// <param name="message">The message to be published</param>
         /// <param name="persistent"> </param>
-        void Publish(object message, bool persistent = true);
+        /// <param name="sequence"> </param>
+        void Publish(object message, bool persistent = true, bool sequence = true);
 
         /// <summary>
         /// Publishes a message so that every subscriber will receive it, 
@@ -60,7 +62,8 @@ namespace Roger
         /// <param name="message">The message to be published</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscriber</param>
         /// <param name="persistent"> </param>
-        void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
+        /// <param name="sequence"> </param>
+        void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = true);
 
         /// <summary>
         /// Sends a request by means of <paramref name="message"/>, expecting a reply,
@@ -70,7 +73,8 @@ namespace Roger
         /// <param name="message">The request message</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>
         /// <param name="persistent"> </param>
-        void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
+        /// <param name="sequence"> </param>
+        void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = false);
 
         /// <summary>
         /// Replies to a request sent by means of <see cref="Request"/>
@@ -78,13 +82,8 @@ namespace Roger
         /// <param name="message">The response message</param>
         /// <param name="basicReturnCallback">A callback invoked when the message cannot be routed to any subscribers</param>
         /// <param name="persistent"> </param>
-        void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
-
-        /// <summary>
-        /// Manually shove a message into the bus and let consumers consume it
-        /// </summary>
-        /// <param name="message">The message</param>
-        void Consume(object message);
+        /// <param name="sequence"> </param>
+        void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = false);
 
         /// <summary>
         /// Sends a message to a specific endpoint, communicating if there was a failure during publishing
@@ -93,11 +92,21 @@ namespace Roger
         /// <param name="message">The message</param>
         /// <param name="basicReturnCallback">A callback invoked if the message could not be routed to the endpoint</param>
         /// <param name="persistent"> </param>
-        void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true);
+        /// <param name="sequence"> </param>
+        void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = false);
 
         /// <summary>
-        /// Fired when either an attempt at connecting to the server is unsuccessful or an existing connection is shut down unexpectedly
+        /// Subscribes a consumer manually to the messages it is interested in
+        /// This is not usually necessary as consumer subscription is carried out automatically
         /// </summary>
-        event Action Interrupted;
+        /// <param name="instanceConsumer">The consumer instance</param>
+        /// <returns>A subscription token which, when disposed, removes the subscription</returns>
+        IDisposable AddInstanceSubscription(IConsumer instanceConsumer);
+
+        /// <summary>
+        /// Manually shove a message into the bus and let consumers consume it
+        /// </summary>
+        /// <param name="message">The message</param>
+        void Consume(object message);
     }
 }

@@ -15,7 +15,8 @@ namespace Roger.Internal.Impl
                                                string routingKey,
                                                byte[] body,
                                                Action<BasicReturn> basicReturnCallback,
-                                               bool persistent) : base(messageType, persistent)
+                                               bool persistent,
+                                               bool sequence) : base(messageType, persistent, sequence)
         {
             this.exchange = exchange;
             this.routingKey = routingKey;

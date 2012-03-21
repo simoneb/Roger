@@ -70,8 +70,7 @@ namespace Roger
                                                        options.MessageTimeToLiveOnQueue, 
                                                        options.QueueName);
 
-            if (options.DeduplicationAndResequencing)
-                Filters.Add(new ResequencingDeduplicationFilter());
+            Filters.Add(new ResequencingDeduplicationFilter());
 
             consumer = new DefaultConsumingProcess(idGenerator,
                                                    exchangeResolver,
@@ -150,34 +149,34 @@ namespace Roger
             });
         }
 
+        public void Publish(object message, bool persistent = true, bool sequence = true)
+        {
+            publisher.Publish(message, persistent, sequence);
+        }
+
+        public void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = false)
+        {
+            publisher.Request(message, basicReturnCallback, persistent, sequence);
+        }
+
+        public void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = false)
+        {
+            publisher.Send(endpoint, message, basicReturnCallback, persistent, sequence);
+        }
+
+        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = true)
+        {
+            publisher.PublishMandatory(message, basicReturnCallback, persistent, sequence);
+        }
+
+        public void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true, bool sequence = false)
+        {
+            publisher.Reply(message, CurrentMessage, basicReturnCallback, persistent, sequence);
+        }
+
         public IDisposable AddInstanceSubscription(IConsumer instanceConsumer)
         {
             return consumer.AddInstanceSubscription(instanceConsumer);
-        }
-
-        public void Publish(object message, bool persistent = true)
-        {
-            publisher.Publish(message, persistent);
-        }
-
-        public void Request(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
-        {
-            publisher.Request(message, basicReturnCallback, persistent);
-        }
-
-        public void Send(RogerEndpoint endpoint, object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
-        {
-            publisher.Send(endpoint, message, basicReturnCallback, persistent);
-        }
-
-        public void PublishMandatory(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
-        {
-            publisher.PublishMandatory(message, basicReturnCallback, persistent);
-        }
-
-        public void Reply(object message, Action<BasicReturn> basicReturnCallback = null, bool persistent = true)
-        {
-            publisher.Reply(message, CurrentMessage, basicReturnCallback, persistent);
         }
 
         public void Consume(object message)

@@ -8,11 +8,13 @@ namespace Roger.Internal.Impl
     {
         private readonly Type messageType;
         private readonly bool persistent;
+        private readonly bool sequence;
 
-        protected AbstractDeliveryFactory(Type messageType, bool persistent)
+        protected AbstractDeliveryFactory(Type messageType, bool persistent, bool sequence)
         {
             this.messageType = messageType;
             this.persistent = persistent;
+            this.sequence = sequence;
         }
 
         public IDelivery Create(IModel model, IIdGenerator idGenerator, IMessageTypeResolver messageTypeResolver, IMessageSerializer serializer, ISequenceGenerator sequenceGenerator)
@@ -34,15 +36,15 @@ namespace Roger.Internal.Impl
             properties.Type = messageTypeResolver.Unresolve(messageType);
             properties.ContentType = serializer.ContentType;
 
-            properties.Headers = new Hashtable
-            {
-                {Headers.Sequence, BitConverter.GetBytes(sequenceGenerator.Next(messageType))}
-            };
+            properties.Headers = new Hashtable();
+
+            if(sequence)
+                properties.Headers[Headers.Sequence] = BitConverter.GetBytes(sequenceGenerator.Next(messageType));
 
             if (persistent)
                 properties.DeliveryMode = 2;
 
-            FillAdditionalProperties(properties, idGenerator);
+            FillAdditionalProperties(properties);
 
             return endpoint =>
             {
@@ -51,7 +53,7 @@ namespace Roger.Internal.Impl
             };
         }
 
-        protected virtual void FillAdditionalProperties(IBasicProperties properties, IIdGenerator idGenerator)
+        protected virtual void FillAdditionalProperties(IBasicProperties properties)
         {
         }
 

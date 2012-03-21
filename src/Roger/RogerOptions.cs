@@ -10,7 +10,6 @@ namespace Roger
         public TimeSpan? QueueUnusedTimeout { get; set; }
         public TimeSpan? MessageTimeToLiveOnQueue { get; set; }
         public bool UsePublisherConfirms { get; set; }
-        public bool DeduplicationAndResequencing { get; set; }
         public Func<QueueBuilder, string> QueueName { get; set; }
 
         /// <summary>
@@ -28,7 +27,6 @@ namespace Roger
                             TimeSpan? queueUnusedTimeout = null,
                             TimeSpan? receivedMessagesTimeToLive = null,
                             bool usePublisherConfirms = true,
-                            bool deduplicationAndResequencing = true,
                             Func<QueueBuilder, string> queueName = null)
         {
             NoLocal = noLocal;
@@ -36,7 +34,6 @@ namespace Roger
             QueueUnusedTimeout = queueUnusedTimeout;
             MessageTimeToLiveOnQueue = receivedMessagesTimeToLive;
             UsePublisherConfirms = usePublisherConfirms;
-            DeduplicationAndResequencing = deduplicationAndResequencing;
             QueueName = queueName.Or(_ => "roger." + Convert.ToBase64String(Guid.NewGuid().ToByteArray()));
         }
     }

@@ -15,7 +15,8 @@ namespace Roger.Internal.Impl
                             CurrentMessageInformation currentMessage,
                             byte[] body,
                             Action<BasicReturn> basicReturnCallback,
-                            bool persistent) : base(messageType, persistent)
+                            bool persistent,
+                            bool sequence) : base(messageType, persistent, sequence)
         {
             this.exchange = exchange;
             this.currentMessage = currentMessage;
@@ -28,7 +29,7 @@ namespace Roger.Internal.Impl
             return new ReplyDelivery(exchange, currentMessage.Endpoint, body, basicReturnCallback, createProperties);
         }
 
-        protected override void FillAdditionalProperties(IBasicProperties properties, IIdGenerator idGenerator)
+        protected override void FillAdditionalProperties(IBasicProperties properties)
         {
             properties.CorrelationId = currentMessage.MessageId;
         }
