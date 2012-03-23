@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -17,8 +18,8 @@ namespace ManagedShovel
         private readonly ConcurrentDictionary<ulong, ulong> toBeConfirmed = new ConcurrentDictionary<ulong, ulong>();
         private LastCreatedQueueProxy inboundModel;
         private Thread thread;
-        private readonly RollingEnumerator<string> sources;
-        private readonly RollingEnumerator<string> destinations;
+        private readonly IEnumerator<string> sources;
+        private readonly IEnumerator<string> destinations;
 
         internal ManagedShovel(ManagedShovelConfiguration configuration)
         {
@@ -84,7 +85,7 @@ namespace ManagedShovel
 
                     Console.WriteLine("Connecting outbound connection {0}", destinations.Current);
 
-                    outboundConnection = new ConnectionFactory {Uri = destinations.Next}.CreateConnection();
+                    outboundConnection = new ConnectionFactory {Uri = destinations.Current}.CreateConnection();
                     var outboundModel = outboundConnection.CreateModel();
 
                     outboundConnection.ConnectionShutdown += OutboundConnectionShutdown;
@@ -173,6 +174,7 @@ namespace ManagedShovel
         {
             TryClose(inboundConnection);
             TryClose(outboundConnection);
+            toBeConfirmed.Clear();
         }
 
         private void OutboundConnectionShutdown(IConnection connection, ShutdownEventArgs reason)
@@ -187,7 +189,10 @@ namespace ManagedShovel
 
         private void OutboundModelOnBasicAcks(IModel model, BasicAckEventArgs args)
         {
-            inboundModel.BasicAck(toBeConfirmed[args.DeliveryTag], false);
+            ulong tag;
+
+            if(toBeConfirmed.TryRemove(args.DeliveryTag, out tag))
+                inboundModel.BasicAck(tag, false);
         }
 
         public void Stop()
