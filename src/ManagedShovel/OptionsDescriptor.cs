@@ -42,7 +42,7 @@ namespace ManagedShovel
             return this;
         }
 
-        public OptionsDescriptor MaxHops(int hops = 1)
+        public OptionsDescriptor MaxHops(ushort hops = 1)
         {
             configuration.MaxHops = hops;
             return this;

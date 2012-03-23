@@ -53,6 +53,7 @@
     <Compile Include="OptionsDescriptor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RollingEnumerator.cs" />
     <Compile Include="SourceDeclarationsDescriptor.cs" />
     <Compile Include="ToDeclarationsDescriptor.cs" />
     <Compile Include="ToDescriptor.cs" />

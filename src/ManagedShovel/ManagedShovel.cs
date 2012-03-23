@@ -17,10 +17,14 @@ namespace ManagedShovel
         private readonly ConcurrentDictionary<ulong, ulong> toBeConfirmed = new ConcurrentDictionary<ulong, ulong>();
         private LastCreatedQueueProxy inboundModel;
         private Thread thread;
+        private readonly RollingEnumerator<string> sources;
+        private readonly RollingEnumerator<string> destinations;
 
         internal ManagedShovel(ManagedShovelConfiguration configuration)
         {
             this.configuration = configuration;
+            sources = new RollingEnumerator<string>(configuration.Sources);
+            destinations = new RollingEnumerator<string>(configuration.Destinations);
         }
 
         public static FromDescriptor From(string broker, params string[] brokers)
@@ -52,11 +56,15 @@ namespace ManagedShovel
         {
             while (true)
             {
-                Debug.WriteLine("Starting...");
+                Console.WriteLine("Starting...");
 
                 try
                 {
-                    inboundConnection = new ConnectionFactory {Uri = configuration.Sources.First()}.CreateConnection();
+                    sources.MoveNext();
+
+                    Console.WriteLine("Connecting inbound connection {0}", sources.Current);
+
+                    inboundConnection = new ConnectionFactory {Uri = sources.Current}.CreateConnection();
                     inboundModel = new LastCreatedQueueProxy(inboundConnection.CreateModel());
 
                     inboundConnection.ConnectionShutdown += InboundConnectionShutdown;
@@ -72,8 +80,11 @@ namespace ManagedShovel
                     if (configuration.PrefetchCount > 0)
                         inboundModel.BasicQos(0, configuration.PrefetchCount, false);
 
-                    outboundConnection =
-                        new ConnectionFactory {Uri = configuration.Destinations.First()}.CreateConnection();
+                    destinations.MoveNext();
+
+                    Console.WriteLine("Connecting outbound connection {0}", destinations.Current);
+
+                    outboundConnection = new ConnectionFactory {Uri = destinations.Next}.CreateConnection();
                     var outboundModel = outboundConnection.CreateModel();
 
                     outboundConnection.ConnectionShutdown += OutboundConnectionShutdown;
@@ -91,7 +102,7 @@ namespace ManagedShovel
 
                     inboundModel.BasicConsume(queue, configuration.AckMode == AckMode.NoAck, consumer);
 
-                    Debug.WriteLine("Started");
+                    Console.WriteLine("Started");
 
                     foreach (var delivery in consumer.Queue.Cast<BasicDeliverEventArgs>())
                     {
@@ -103,7 +114,7 @@ namespace ManagedShovel
                         if(/*configuration.MaxHops > 0 && */ // uncomment to allow MaxHops = 0 enable messages to flow around forever
                             hops != null && BitConverter.ToInt32((byte[]) hops, 0) >= configuration.MaxHops)
                         {
-                            Debug.WriteLine("Ignoring incoming message as MaxHops reached");
+                            Console.WriteLine("Ignoring incoming message as MaxHops reached");
                             inboundModel.BasicAck(delivery.DeliveryTag, false);
                             continue;
                         }
@@ -131,19 +142,19 @@ namespace ManagedShovel
                     if (inboundConnection.CloseReason.Initiator == ShutdownInitiator.Application ||
                         outboundConnection.CloseReason.Initiator == ShutdownInitiator.Application)
                     {
-                        Debug.WriteLine("Stopping");
+                        Console.WriteLine("Stopping");
                         break;
                     }
 
-                    Debug.WriteLine("No more elements in queue, continuing");
-                    Debug.WriteLine("Cleaning up before restarting in {0}", configuration.ReconnectDelay);
+                    Console.WriteLine("No more elements in queue, continuing");
+                    Console.WriteLine("Cleaning up before restarting in {0}", configuration.ReconnectDelay);
 
                     CleanupAndWait();
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("Exception: {0}", new[]{e.Message});
-                    Debug.WriteLine("Cleaning up before restarting in {0}", configuration.ReconnectDelay);
+                    Console.WriteLine("Exception: {0}", new[]{e.Message});
+                    Console.WriteLine("Cleaning up before restarting in {0}", configuration.ReconnectDelay);
 
                     CleanupAndWait();
                 }
@@ -166,12 +177,12 @@ namespace ManagedShovel
 
         private void OutboundConnectionShutdown(IConnection connection, ShutdownEventArgs reason)
         {
-            Debug.WriteLine("Inbound connection \"{0}\" shutdown", connection);
+            Console.WriteLine("Inbound connection \"{0}\" shutdown", connection);
         }
 
         private void InboundConnectionShutdown(IConnection connection, ShutdownEventArgs reason)
         {
-            Debug.WriteLine("Outbound connection \"{0}\" shutdown", connection);
+            Console.WriteLine("Outbound connection \"{0}\" shutdown", connection);
         }
 
         private void OutboundModelOnBasicAcks(IModel model, BasicAckEventArgs args)
@@ -185,7 +196,7 @@ namespace ManagedShovel
 
             thread.Join(100);
 
-            Debug.WriteLine("Stopped");
+            Console.WriteLine("Stopped");
         }
     }
 }

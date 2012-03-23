@@ -29,6 +29,6 @@ namespace ManagedShovel
         public Action<IBasicProperties>[] PublishProperties { get; set; }
         public Tuple<string, string> PublishFields { get; set; }
         public TimeSpan ReconnectDelay { get; set; }
-        public int MaxHops { get; set; }
+        public ushort MaxHops { get; set; }
     }
 }
